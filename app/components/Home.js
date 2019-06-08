@@ -11,33 +11,29 @@ export default class Home extends Component<Props> {
 
   render() {
     return (
-      <nav className="navbar" role="navigation" aria-label="main navigation">
-        <div className="navbar-brand">
-          <Link to={routes.HOME}>
-            <a className="navbar-item" href="#">
-              <img
-                src="./img/trtl-logo.png"
-                alt="logo"
-                className="img-responsive"
-              />
-            </a>
-          </Link>
-          <Link to={routes.HOME}>
-            <a className="navbar-item">History</a>
-          </Link>
-          <Link to={routes.COUNTER}>
-            <a className="navbar-item">Send</a>
-          </Link>
-          <Link to={routes.COUNTER}>
-            <a className="navbar-item">Receive</a>
-          </Link>
-        </div>
-      </nav>
-    );
-  }
-}
-
-/*
+      <div>
+        <nav className="navbar" role="navigation" aria-label="main navigation">
+          <div className="navbar-brand">
+            <Link to={routes.HOME}>
+              <a className="navbar-item" href="#">
+                <img
+                  src="./img/trtl-logo.png"
+                  alt="logo"
+                  className="img-responsive"
+                />
+              </a>
+            </Link>
+            <Link to={routes.HOME}>
+              <a className="navbar-item">History</a>
+            </Link>
+            <Link to={routes.COUNTER}>
+              <a className="navbar-item">Send</a>
+            </Link>
+            <Link to={routes.COUNTER}>
+              <a className="navbar-item">Receive</a>
+            </Link>
+          </div>
+        </nav>
         <div className="Site-content">
           <table className="table is-striped is-hoverable is-fullwidth">
             <thead>
@@ -68,4 +64,7 @@ export default class Home extends Component<Props> {
             </tbody>
           </table>
         </div>
-*/
+      </div>
+    );
+  }
+}
