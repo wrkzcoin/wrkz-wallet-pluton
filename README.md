@@ -19,7 +19,20 @@ And then install the dependencies with yarn.
 
 ```bash
 $ cd nova
+$ yarn global add typescript
 $ yarn
+```
+
+Finally, compile typescript files with this command.
+
+```bash
+$ tsc
+```
+
+Run the wallet.
+
+```bash
+$ yarn start
 ```
 
 ## Starting Development
