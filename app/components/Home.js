@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
-// import styles from './Home.css';
+import styles from './Home.css';
 
 type Props = {};
 
@@ -11,7 +11,7 @@ export default class Home extends Component<Props> {
 
   render() {
     return (
-      <div>
+      <div className="body">
         <nav className="navbar" role="navigation" aria-label="main navigation">
           <div className="navbar-brand">
             <Link to={routes.HOME}>
@@ -34,7 +34,7 @@ export default class Home extends Component<Props> {
             </Link>
           </div>
         </nav>
-        <div className="Site-content">
+        <div className="wrapper">
           <table className="table is-striped is-hoverable is-fullwidth">
             <thead>
               <tr>
@@ -63,6 +63,10 @@ export default class Home extends Component<Props> {
               </tr>
             </tbody>
           </table>
+        </div>
+        <div>
+          <span class="tag is-white">Synchronization: 60.00%</span>
+          <progress className="progress is-success" value="60" max="100" />
         </div>
       </div>
     );

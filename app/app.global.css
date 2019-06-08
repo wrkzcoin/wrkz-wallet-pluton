@@ -4,3 +4,13 @@
  */
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma/css/bulma.min.css';
+
+.body {
+  display: flex;
+  min-height: 98vh;
+  flex-direction: column;
+}
+
+.wrapper {
+  flex: 1;
+}

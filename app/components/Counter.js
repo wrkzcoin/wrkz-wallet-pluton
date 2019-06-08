@@ -26,7 +26,7 @@ export default class Receive extends Component<Props> {
       copyToClipboard
     } = this.props;
     return (
-      <div>
+      <div className>
         <div>
           <nav
             className="navbar"
@@ -56,21 +56,24 @@ export default class Receive extends Component<Props> {
           </nav>
         </div>
         <section>
-          <div className="container is-fluid">
+          <div className="container is-fluid body">
             <div className="notification">
-              <h1>Receiving Address</h1>
-              <textarea
-                className="textarea is-success"
-                placeholder={window.session.address}
-                readOnly
-              />
-              <button
-                type="button"
-                className="button is-success"
-                onClick={() => copyToClipboard()}
-              >
-                Copy to Clipboard
-              </button>
+              <label className="label" htmlFor="receiveaddress">
+                Receiving Address
+                <textarea
+                  className="textarea"
+                  placeholder={window.session.address}
+                  id="receiveaddress"
+                  readOnly
+                />
+                <button
+                  type="button"
+                  className="button is-success"
+                  onClick={() => copyToClipboard()}
+                >
+                  Copy to Clipboard
+                </button>
+              </label>
             </div>
           </div>
         </section>

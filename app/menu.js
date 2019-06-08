@@ -194,8 +194,11 @@ export default class MenuBuilder {
             accelerator: 'Ctrl+N'
           },
           {
-            label: '&Save a Copy',
-            accelerator: 'Ctrl+Shft+S'
+            label: '&Save',
+            accelerator: 'Ctrl+S'
+          },
+          {
+            label: '&Save as'
           },
           {
             label: '&Delete'
