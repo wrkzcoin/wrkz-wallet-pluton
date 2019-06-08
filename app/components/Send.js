@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { clipboardy } from 'clipboardy';
 import routes from '../constants/routes';
-// import styles from './Counter.css';
+// import styles from './Send.css';
 
 type Props = {};
 
@@ -34,7 +34,7 @@ export default class Send extends Component<Props> {
                 <a className="navbar-item">History</a>
               </Link>
               <Link to={routes.SEND}>
-                <a className="navbar-item">Send</a>
+                <a className="navbar-item is-active">Send</a>
               </Link>
               <Link to={routes.COUNTER}>
                 <a className="navbar-item">Receive</a>

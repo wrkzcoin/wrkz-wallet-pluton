@@ -13,7 +13,7 @@ type Props = {
   counter: number
 };
 
-export default class Counter extends Component<Props> {
+export default class Receive extends Component<Props> {
   props: Props;
 
   render() {
@@ -49,7 +49,7 @@ export default class Counter extends Component<Props> {
                 <a className="navbar-item">Send</a>
               </Link>
               <Link to={routes.COUNTER}>
-                <a className="navbar-item">Receive</a>
+                <a className="navbar-item is-active">Receive</a>
               </Link>
             </div>
           </nav>

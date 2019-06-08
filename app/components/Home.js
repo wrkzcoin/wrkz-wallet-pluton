@@ -24,7 +24,7 @@ export default class Home extends Component<Props> {
               </a>
             </Link>
             <Link to={routes.HOME}>
-              <a className="navbar-item">History</a>
+              <a className="navbar-item is-active">History</a>
             </Link>
             <Link to={routes.SEND}>
               <a className="navbar-item">Send</a>
