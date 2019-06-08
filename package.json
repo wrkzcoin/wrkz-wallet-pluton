@@ -256,6 +256,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1",
     "bulma": "^0.7.5",
+    "clipboardy": "^2.0.0",
     "connected-react-router": "^6.3.2",
     "core-js": "2",
     "devtron": "^1.4.0",

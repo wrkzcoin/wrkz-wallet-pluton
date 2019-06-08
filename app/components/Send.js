@@ -5,25 +5,13 @@ import { clipboardy } from 'clipboardy';
 import routes from '../constants/routes';
 // import styles from './Counter.css';
 
-type Props = {
-  increment: () => void,
-  incrementIfOdd: () => void,
-  incrementAsync: () => void,
-  decrement: () => void,
-  counter: number
-};
+type Props = {};
 
-export default class Counter extends Component<Props> {
+export default class Send extends Component<Props> {
   props: Props;
 
   render() {
-    const {
-      increment,
-      incrementIfOdd,
-      incrementAsync,
-      decrement,
-      counter
-    } = this.props;
+    const {} = this.props;
     return (
       <div>
         <div>
@@ -54,20 +42,6 @@ export default class Counter extends Component<Props> {
             </div>
           </nav>
         </div>
-        <br />
-        <section>
-          <div className="container is-fluid">
-            <div className="notification">
-              <h1>Receiving Address</h1>
-              <textarea
-                className="textarea is-success"
-                placeholder={window.session.address}
-                readOnly
-              />
-              <button type="button" className="button is-success">Copy to Clipboard</button>
-            </div>
-          </div>
-        </section>
       </div>
     );
   }

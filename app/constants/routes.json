@@ -1,5 +1,6 @@
 {
   "HOME": "/",
   "COUNTER": "/counter",
-  "TRANSACTIONS": "/transactions"
+  "TRANSACTIONS": "/transactions",
+  "SEND": "/send"
 }

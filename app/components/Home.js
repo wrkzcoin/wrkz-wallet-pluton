@@ -26,7 +26,7 @@ export default class Home extends Component<Props> {
             <Link to={routes.HOME}>
               <a className="navbar-item">History</a>
             </Link>
-            <Link to={routes.COUNTER}>
+            <Link to={routes.SEND}>
               <a className="navbar-item">Send</a>
             </Link>
             <Link to={routes.COUNTER}>
