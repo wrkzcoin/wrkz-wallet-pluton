@@ -58,22 +58,29 @@ export default class Receive extends Component<Props> {
         <section>
           <div className="container is-fluid body">
             <div className="notification">
-              <label className="label" htmlFor="receiveaddress">
-                Receiving Address
-                <textarea
-                  className="textarea"
-                  placeholder={window.session.address}
-                  id="receiveaddress"
-                  readOnly
-                />
-                <button
-                  type="button"
-                  className="button is-success"
-                  onClick={() => copyToClipboard()}
-                >
-                  Copy to Clipboard
-                </button>
-              </label>
+              <div className="columns">
+                <div className="column is-three-quarters">
+                  <label className="label" htmlFor="receiveaddress">
+                    Receiving Address
+                    <textarea
+                      className="textarea"
+                      placeholder={window.session.address}
+                      id="receiveaddress"
+                      readOnly
+                    />
+                    <button
+                      type="button"
+                      className="button is-success"
+                      onClick={() => copyToClipboard()}
+                    >
+                      Copy to Clipboard
+                    </button>
+                  </label>
+                </div>
+                <div className="column">
+                  <img src="./img/frame.png" alt="QR code for wallet address" />
+                </div>
+              </div>
             </div>
           </div>
         </section>
