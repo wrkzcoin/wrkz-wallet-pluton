@@ -12,7 +12,7 @@
 First, clone the repo via git:
 
 ```bash
-git clone --depth 1 --single-branch --branch master https://github.com/ExtraHash/nova.git
+git clone https://github.com/ExtraHash/nova.git
 ```
 
 And then install the dependencies with yarn.
