@@ -9,9 +9,9 @@ import SendPage from './containers/SendPage';
 export default () => (
   <App>
     <Switch>
-      <Route path={routes.COUNTER} component={CounterPage} />
-      <Route path={routes.HOME} component={HomePage} />
-      <Route path={routes.SEND} component={SendPage} />
+      <Route exact path={routes.COUNTER} component={CounterPage} />
+      <Route exact path={routes.HOME} component={HomePage} />
+      <Route exact path={routes.SEND} component={SendPage} />
     </Switch>
   </App>
 );
