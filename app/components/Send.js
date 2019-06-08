@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { clipboardy } from 'clipboardy';
 import routes from '../constants/routes';
 // import styles from './Send.css';
 

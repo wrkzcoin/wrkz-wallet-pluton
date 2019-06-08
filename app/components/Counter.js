@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { clipboardy } from 'clipboardy';
 import routes from '../constants/routes';
 // import styles from './Counter.css';
 
@@ -10,7 +9,8 @@ type Props = {
   incrementIfOdd: () => void,
   incrementAsync: () => void,
   decrement: () => void,
-  counter: number
+  counter: number,
+  copyToClipboard: () => void
 };
 
 export default class Receive extends Component<Props> {
@@ -22,7 +22,8 @@ export default class Receive extends Component<Props> {
       incrementIfOdd,
       incrementAsync,
       decrement,
-      counter
+      counter,
+      copyToClipboard
     } = this.props;
     return (
       <div>
@@ -64,7 +65,13 @@ export default class Receive extends Component<Props> {
                 placeholder={window.session.address}
                 readOnly
               />
-              <button type="button" className="button is-success">Copy to Clipboard</button>
+              <button
+                type="button"
+                className="button is-success"
+                onClick={() => copyToClipboard()}
+              >
+                Copy to Clipboard
+              </button>
             </div>
           </div>
         </section>

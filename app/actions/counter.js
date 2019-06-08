@@ -1,4 +1,5 @@
 // @flow
+import clipboardy from 'clipboardy';
 import type { GetState, Dispatch } from '../reducers/types';
 
 export const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
@@ -34,4 +35,10 @@ export function incrementAsync(delay: number = 1000) {
       dispatch(increment());
     }, delay);
   };
+}
+
+export function copyToClipboard(text: string = window.session.address) {
+  return (dispatch: Dispatch) => {
+    clipboardy.writeSync(text);
+  }
 }
