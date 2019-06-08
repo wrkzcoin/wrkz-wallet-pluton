@@ -45,7 +45,11 @@ $ yarn dev
 
 ## Packaging for Production
 
-To package apps for the local platform:
+First make sure you have the needed dependency `rpmbuild`. For example, on arch...
+
+`yay -s rpm`
+
+To package apps for the local platform
 
 ```bash
 $ yarn package
