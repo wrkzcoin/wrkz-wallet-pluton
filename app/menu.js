@@ -190,12 +190,48 @@ export default class MenuBuilder {
             accelerator: 'Ctrl+O'
           },
           {
+            label: '&New / Restore',
+            accelerator: 'Ctrl+N'
+          },
+          {
+            label: '&Save a Copy',
+            accelerator: 'Ctrl+Shft+S'
+          },
+          {
+            label: '&Delete'
+          },
+
+          {
             label: '&Close',
             accelerator: 'Ctrl+W',
             click: () => {
               this.mainWindow.close();
             }
           }
+        ]
+      },
+      {
+        label: '&Wallet',
+        submenu: [
+          {
+            label: '&Information'
+          },
+          {
+            label: '&Password'
+          },
+          {
+            label: '&Seed'
+          },
+          {
+            label: '&Private Keys'
+          },
+          {
+            label: '&Addresses'
+          },
+          {
+            label: '&Find',
+            accelerator: 'Ctrl+F'
+          },
         ]
       },
       {
@@ -240,32 +276,42 @@ export default class MenuBuilder {
               ]
       },
       {
+        label: '&Tools',
+        submenu: [
+          {
+            label: '&Preferences'
+          },
+          {
+            label: '&Pay to Many'
+          },
+          {
+            label: '&Load Offline Transaction'
+          },
+        ]
+      },
+      {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
+            label: 'About',
             click() {
-              shell.openExternal('http://electron.atom.io');
+              shell.openExternal('http://github.com/ExtraHash/nova');
             }
           },
           {
-            label: 'Documentation',
+            label: 'Check for Updates',
             click() {
-              shell.openExternal(
-                'https://github.com/atom/electron/tree/master/docs#readme'
-              );
             }
           },
           {
-            label: 'Community Discussions',
+            label: 'Report Bug',
             click() {
-              shell.openExternal('https://discuss.atom.io/c/electron');
+              shell.openExternal('https://github.com/ExtraHash/nova/issues');
             }
           },
           {
-            label: 'Search Issues',
+            label: 'Donate to Developers',
             click() {
-              shell.openExternal('https://github.com/atom/electron/issues');
             }
           }
         ]

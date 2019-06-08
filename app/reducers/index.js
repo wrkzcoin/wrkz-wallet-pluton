@@ -9,6 +9,10 @@ window.session = new WalletSession();
 window.session.wallet.start();
 log.debug('Initialized wallet session ', window.session.address);
 
+function updateSync() {
+
+}
+
 export default function createRootReducer(history: History) {
   return combineReducers<{}, *>({
     router: connectRouter(history),
