@@ -1,7 +1,7 @@
 {
-  "name": "nova-wallet",
-  "productName": "Nova",
-  "version": "0.0.1",
+  "name": "proton-wallet",
+  "productName": "Proton",
+  "version": "0.0.2",
   "description": "TurtleCoin wallet based on React, React Router, Webpack, React Hot Loader",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -101,13 +101,13 @@
     "publish": {
       "provider": "github",
       "owner": "ExtraHash",
-      "repo": "nova",
+      "repo": "proton",
       "private": false
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ExtraHash/nova.git"
+    "url": "git+https://github.com/ExtraHash/proton.git"
   },
   "author": {
     "name": "ExtraHash",
@@ -127,7 +127,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ExtraHash/nova/issues"
+    "url": "https://github.com/ExtraHash/proton/issues"
   },
   "keywords": [
     "electron",

@@ -55,7 +55,6 @@ export default class Receive extends Component<Props> {
             </div>
           </nav>
         </div>
-        <br />
         <section>
           <div className="container is-fluid">
             <div className="notification">

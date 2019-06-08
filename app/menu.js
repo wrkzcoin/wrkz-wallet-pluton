@@ -231,7 +231,7 @@ export default class MenuBuilder {
           {
             label: '&Find',
             accelerator: 'Ctrl+F'
-          },
+          }
         ]
       },
       {
@@ -286,7 +286,7 @@ export default class MenuBuilder {
           },
           {
             label: '&Load Offline Transaction'
-          },
+          }
         ]
       },
       {
@@ -295,24 +295,22 @@ export default class MenuBuilder {
           {
             label: 'About',
             click() {
-              shell.openExternal('http://github.com/ExtraHash/nova');
+              shell.openExternal('http://github.com/ExtraHash/proton');
             }
           },
           {
             label: 'Check for Updates',
-            click() {
-            }
+            click() {}
           },
           {
             label: 'Report Bug',
             click() {
-              shell.openExternal('https://github.com/ExtraHash/nova/issues');
+              shell.openExternal('https://github.com/ExtraHash/proton/issues');
             }
           },
           {
             label: 'Donate to Developers',
-            click() {
-            }
+            click() {}
           }
         ]
       }
