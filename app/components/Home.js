@@ -12,28 +12,39 @@ export default class Home extends Component<Props> {
   render() {
     return (
       <div className="body">
-        <nav className="navbar" role="navigation" aria-label="main navigation">
-          <div className="navbar-brand">
-            <Link to={routes.HOME}>
-              <a className="navbar-item" href="#">
-                <img
-                  src="./img/trtl-logo.png"
-                  alt="logo"
-                  className="img-responsive"
-                />
-              </a>
-            </Link>
-            <Link to={routes.HOME}>
-              <a className="navbar-item is-active">History</a>
-            </Link>
-            <Link to={routes.SEND}>
-              <a className="navbar-item">Send</a>
-            </Link>
-            <Link to={routes.COUNTER}>
-              <a className="navbar-item">Receive</a>
-            </Link>
+        <div className="columns">
+          <div class="column is-three-fifths">
+            <nav
+              className="navbar"
+              role="navigation"
+              aria-label="main navigation"
+            >
+              <div className="navbar-brand">
+                <Link to={routes.HOME}>
+                  <a className="navbar-item" href="#">
+                    <img
+                      src={window.config.logo}
+                      alt="logo"
+                      className="img-responsive"
+                    />
+                  </a>
+                </Link>
+                <Link to={routes.HOME}>
+                  <a className="navbar-item is-active">Wallet</a>
+                </Link>
+                <Link to={routes.SEND}>
+                  <a className="navbar-item">Send</a>
+                </Link>
+                <Link to={routes.COUNTER}>
+                  <a className="navbar-item">Receive</a>
+                </Link>
+              </div>
+            </nav>
           </div>
-        </nav>
+          <div class="column">
+            <input class="input is-rounded" type="text" placeholder="Search..." />
+          </div>
+    </div>
         <div className="wrapper">
           <table className="table is-striped is-hoverable is-fullwidth">
             <thead>
@@ -45,6 +56,22 @@ export default class Home extends Component<Props> {
               </tr>
             </thead>
             <tbody>
+              <tr>
+                <td>May 06 2019 01:39</td>
+                <td>
+                48f88e078a549dc788464348774f10beaf402dc4dc79f7362fbc6f70370af97a
+                </td>
+                <td>-420.00</td>
+                <td>1,030.37</td>
+              </tr>
+              <tr>
+                <td>May 06 2019 01:39</td>
+                <td>
+                f4e971acd7679e0d0a8cc6c2f0a5eda535c0d8c67bd0732fa2cf78da76eb6b4e
+                </td>
+                <td>+1,337.00</td>
+                <td>1,450.37</td>
+              </tr>
               <tr>
                 <td>May 06 2019 01:39</td>
                 <td>
@@ -65,7 +92,7 @@ export default class Home extends Component<Props> {
           </table>
         </div>
         <div>
-          <span class="tag is-white">Synchronization: 60.00%</span>
+          <span className="tag is-white">Synchronization: 60.00%</span>
           <progress className="progress is-success" value="60" max="100" />
         </div>
       </div>

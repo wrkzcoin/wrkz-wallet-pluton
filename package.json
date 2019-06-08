@@ -265,6 +265,7 @@
     "electron-log": "^3.0.4",
     "electron-updater": "^4.0.6",
     "history": "^4.9.0",
+    "qrcode.react": "^0.9.3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-hot-loader": "^4.8.2",
@@ -274,7 +275,8 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "source-map-support": "^0.5.11",
-    "turtlecoin-wallet-backend": "^2.0.0"
+    "turtlecoin-wallet-backend": "^2.0.0",
+    "walletsession": "^1.0.0"
   },
   "devEngines": {
     "node": ">=7.x",

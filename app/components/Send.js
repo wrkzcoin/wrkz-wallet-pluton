@@ -13,28 +13,39 @@ export default class Send extends Component<Props> {
     const {} = this.props;
     return (
       <div>
-        <nav className="navbar" role="navigation" aria-label="main navigation">
-          <div className="navbar-brand">
-            <Link to={routes.HOME}>
-              <a className="navbar-item" href="#">
-                <img
-                  src="./img/trtl-logo.png"
-                  alt="logo"
-                  className="img-responsive"
-                />
-              </a>
-            </Link>
-            <Link to={routes.HOME}>
-              <a className="navbar-item">History</a>
-            </Link>
-            <Link to={routes.SEND}>
-              <a className="navbar-item is-active">Send</a>
-            </Link>
-            <Link to={routes.COUNTER}>
-              <a className="navbar-item">Receive</a>
-            </Link>
+        <div className="columns">
+          <div class="column is-three-fifths">
+            <nav
+              className="navbar"
+              role="navigation"
+              aria-label="main navigation"
+            >
+              <div className="navbar-brand">
+                <Link to={routes.HOME}>
+                  <a className="navbar-item" href="#">
+                    <img
+                      src={window.config.logo}
+                      alt="logo"
+                      className="img-responsive"
+                    />
+                  </a>
+                </Link>
+                <Link to={routes.HOME}>
+                  <a className="navbar-item">Wallet</a>
+                </Link>
+                <Link to={routes.SEND}>
+                  <a className="navbar-item is-active">Send</a>
+                </Link>
+                <Link to={routes.COUNTER}>
+                  <a className="navbar-item">Receive</a>
+                </Link>
+              </div>
+            </nav>
           </div>
-        </nav>
+          <div class="column">
+            <input class="input is-rounded" type="text" placeholder="Search..." />
+          </div>
+      </div>
         <section>
           <div className="container is-fluid">
             <div className="notification">
