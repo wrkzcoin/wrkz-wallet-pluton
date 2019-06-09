@@ -29,7 +29,7 @@ export default class Receive extends Component<Props> {
     return (
       <div>
         <div className="columns">
-          <div class="column is-three-fifths">
+          <div className="column is-three-fifths">
             <nav
               className="navbar"
               role="navigation"
@@ -55,16 +55,19 @@ export default class Receive extends Component<Props> {
                   <a className="navbar-item is-active">Receive</a>
                 </Link>
                 <Link to={routes.ADDRESSES}>
-                <a className="navbar-item">Addresses</a>
-              </Link>
+                  <a className="navbar-item">Addresses</a>
+                </Link>
               </div>
             </nav>
           </div>
-          <div class="column">
-            <input class="input is-rounded" type="text" placeholder="Search..." />
+          <div className="column">
+            <input
+              className="input is-rounded"
+              type="text"
+              placeholder="Search..."
+            />
           </div>
         </div>
-        <section>
           <div className="container is-fluid body">
             <div className="notification">
               <div className="columns">
@@ -79,12 +82,12 @@ export default class Receive extends Component<Props> {
                     />
                     <button
                       type="button"
-                      className="button is-success"
+                      className="button is-success padding5"
                       onClick={() => copyToClipboard()}
                     >
                       Copy to Clipboard
                     </button>
-                    <button type="button" className="button">
+                    <button type="button" className="button padding5">
                       Use a New Address
                     </button>
                   </label>
@@ -92,13 +95,16 @@ export default class Receive extends Component<Props> {
                 <div className="column">
                   <br />
                   <span className={styles.qrcode}>
-                    <QRCode value={window.session.address} renderAs="svg" bgColor="#f5f5f5"  />
+                    <QRCode
+                      value={window.session.address}
+                      renderAs="svg"
+                      bgColor="#f5f5f5"
+                    />
                   </span>
                 </div>
               </div>
             </div>
           </div>
-        </section>
       </div>
     );
   }

@@ -1,4 +1,7 @@
 {
+  "walletFile": "default.wallet",
   "logo": "./img/trtl-logo.png",
-  "stickywallet": "proton.wallet"
+  "enableAutoOptimization": true,
+  "scanCoinbaseTransactions": false,
+  "logLevel": "DISABLED"
 }

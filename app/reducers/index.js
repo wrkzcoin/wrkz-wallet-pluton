@@ -6,7 +6,11 @@ import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import counter from './counter';
 import WalletSession from '../wallet/session';
-import config from '../constants/config';
+import iConfig from '../constants/config';
+
+log.debug(`Proton wallet started...`)
+
+let config = iConfig;
 
 const homedir = os.homedir();
 const directories = [
@@ -15,32 +19,73 @@ const directories = [
   `${homedir}/.protonwallet/wallets`
 ];
 window.directories = directories;
-// eslint-disable-next-line no-unused-vars
 const [programDirectory, logDirectory, walletDirectory] = directories;
+
+if (!fs.existsSync(`${programDirectory}/config.json`)) {
+  fs.writeFile(
+    `${programDirectory}/config.json`,
+    JSON.stringify(config, null, 4),
+    err => {
+      if (err) throw err;
+      log.debug('Config not detected, wrote internal config to disk.');
+    }
+  );
+} else {
+  log.debug("Config file found in user's home directory, defaulting to local config...")
+  const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
+  config = JSON.parse(rawUserConfig);
+}
+
 log.debug('Checking if program directories are present...');
+// eslint-disable-next-line func-names
 directories.forEach(function(dir) {
   if (!fs.existsSync(dir)) {
-    log.debug(
-      'No directories detected, initial startup detected. Running setup...'
-    );
     fs.mkdirSync(dir);
+      log.debug(
+        `${dir} directories not detected, creating...`
+      );
+  } else {
+    if (dir === programDirectory) {
+      log.debug('Directories found. Initializing wallet session...')
+    }
   }
 });
 
 window.config = config;
-log.debug('Initialized configuration file...');
 
 window.session = new WalletSession();
 window.session.wallet.start();
 log.debug('Initialized wallet session ', window.session.address);
 
-const walletLogStream = fs.createWriteStream(`${logDirectory}/divinewallet.log`, {
-  flags: 'a'
+
+if (window.config.logLevel !== 'DISABLED') {
+  const walletLogStream = fs.createWriteStream(
+    `${logDirectory}/protonwallet.log`,
+    {
+      flags: 'a'
+    }
+  );
+}
+
+window.session.wallet.on('transaction', transaction => {
+  log.debug(`Transaction of ${transaction.totalAmount()} received!`);
+});
+
+window.session.wallet.on('sync', (walletHeight, networkHeight) => {
+  log.debug(
+    `Wallet synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
+  );
+});
+
+window.session.wallet.on('desync', (walletHeight, networkHeight) => {
+  log.debug(
+    `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
+  );
 });
 
 window.session.wallet.saveWalletToFile(
-  `${walletDirectory}/proton.wallet`,
-  'hunter2'
+  `${walletDirectory}/${config.walletFile}`,
+  ''
 );
 
 export default function createRootReducer(history: History) {

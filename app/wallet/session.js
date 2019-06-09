@@ -1,5 +1,6 @@
 import { WalletBackend, BlockchainCacheApi } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
+import fs from 'fs';
 
 export default class WalletSession {
   constructor(opts) {
@@ -11,16 +12,16 @@ export default class WalletSession {
     ] = window.directories;
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
-      `${walletDirectory}/proton.wallet`,
-      'hunter2'
+      `${walletDirectory}/${window.config.walletFile}`,
+      ''
     );
     if (error) {
-      log.debug(error);
-      if (error.errorCode == 1) {
-        log.debug('Didn\'t find default wallet file, creating...')
+      if (error.errorCode === 1) {
+        log.debug("Didn't find default wallet file, creating...");
         openWallet = WalletBackend.createWallet(this.daemon);
       }
     }
+    log.debug(`Opened wallet file at ${walletDirectory}/${window.config.walletFile}`)
     this.wallet = openWallet;
     this.syncStatus = this.updateSyncStatus();
     this.address = this.wallet.getPrimaryAddress();

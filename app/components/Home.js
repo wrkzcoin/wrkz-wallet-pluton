@@ -1,13 +1,46 @@
 // @flow
 import React, { Component } from 'react';
+import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import styles from './Home.css';
 
-type Props = {};
+type Props = {
+  syncStatus: Number;
+};
+
+function isLoading(syncStatus) {
+  if (syncStatus > 100) {
+    return <Loading />;
+  }
+  return;
+}
 
 export default class Home extends Component<Props> {
   props: Props;
+
+  constructor(props?: Props) {
+    super(props);
+    this.state = { syncStatus: window.session.updateSyncStatus()};
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(() => this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  tick() {
+    this.setState(prevState => ({
+      syncStatus: window.session.updateSyncStatus()
+    }));
+  }
+
+
+
+
   render() {
     return (
       <div className="body">
@@ -61,7 +94,7 @@ export default class Home extends Component<Props> {
               <tr>
                 <td>May 06 2019 01:39</td>
                 <td>
-                48f88e078a549dc788464348774f10beaf402dc4dc79f7362fbc6f70370af97a
+                  48f88e078a549dc788464348774f10beaf402dc4dc79f7362fbc6f70370af97a
                 </td>
                 <td>-420.00</td>
                 <td>1,030.37</td>
@@ -69,7 +102,7 @@ export default class Home extends Component<Props> {
               <tr>
                 <td>May 06 2019 01:39</td>
                 <td>
-                f4e971acd7679e0d0a8cc6c2f0a5eda535c0d8c67bd0732fa2cf78da76eb6b4e
+                  f4e971acd7679e0d0a8cc6c2f0a5eda535c0d8c67bd0732fa2cf78da76eb6b4e
                 </td>
                 <td>+1,337.00</td>
                 <td>1,450.37</td>
@@ -94,8 +127,7 @@ export default class Home extends Component<Props> {
           </table>
         </div>
         <div>
-          <span className="tag is-white">Synchronization: 60.00%</span>
-          <progress className="progress is-success" value="60" max="100" />
+          <span className="tag is-white is-large">Synchronization: {this.state.syncStatus}% {this.state.syncStatus < 100 && <ReactLoading type={'bubbles'} color={'#000000'} height={30} width={30} />}</span>
         </div>
       </div>
     );
