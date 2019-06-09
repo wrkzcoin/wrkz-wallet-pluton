@@ -5,6 +5,7 @@ import App from './containers/App';
 import HomePage from './containers/HomePage';
 import CounterPage from './containers/CounterPage';
 import SendPage from './containers/SendPage';
+import AddressesPage from './containers/AddressesPage';
 
 export default () => (
   <App>
@@ -12,6 +13,7 @@ export default () => (
       <Route exact path={routes.COUNTER} component={CounterPage} />
       <Route exact path={routes.HOME} component={HomePage} />
       <Route exact path={routes.SEND} component={SendPage} />
+      <Route exact path={routes.ADDRESSES} component={AddressesPage} />
     </Switch>
   </App>
 );

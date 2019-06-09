@@ -39,7 +39,7 @@ export default class Send extends Component<Props> {
                 <Link to={routes.COUNTER}>
                   <a className="navbar-item">Receive</a>
                 </Link>
-                <Link to={routes.COUNTER}>
+                <Link to={routes.ADDRESSES}>
                   <a className="navbar-item">Addresses</a>
                 </Link>
               </div>

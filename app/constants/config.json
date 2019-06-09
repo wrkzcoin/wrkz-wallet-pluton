@@ -1,3 +1,4 @@
 {
-  "logo": "./img/trtl-logo.png"
+  "logo": "./img/trtl-logo.png",
+  "stickywallet": "proton.wallet"
 }

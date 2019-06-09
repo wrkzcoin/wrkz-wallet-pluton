@@ -6,8 +6,9 @@ import styles from './Home.css';
 
 type Props = {};
 
-export default class Home extends Component<Props> {
+export default class Addresses extends Component<Props> {
   props: Props;
+
   render() {
     return (
       <div className="body">
@@ -29,7 +30,7 @@ export default class Home extends Component<Props> {
                   </a>
                 </Link>
                 <Link to={routes.HOME}>
-                  <a className="navbar-item is-active">Wallet</a>
+                  <a className="navbar-item">Wallet</a>
                 </Link>
                 <Link to={routes.SEND}>
                   <a className="navbar-item">Send</a>
@@ -38,7 +39,7 @@ export default class Home extends Component<Props> {
                   <a className="navbar-item">Receive</a>
                 </Link>
                 <Link to={routes.ADDRESSES}>
-                <a className="navbar-item">Addresses</a>
+                <a className="navbar-item is-active">Addresses</a>
               </Link>
               </div>
             </nav>
@@ -51,51 +52,35 @@ export default class Home extends Component<Props> {
           <table className="table is-striped is-hoverable is-fullwidth">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Hash</th>
-                <th>Amount</th>
+                <th>Address</th>
                 <th>Balance</th>
+                <th>Tx</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>May 06 2019 01:39</td>
                 <td>
-                48f88e078a549dc788464348774f10beaf402dc4dc79f7362fbc6f70370af97a
+                  <p className="help">TRTLuzUt6Eu1nT9UMMaJZNSiLbZB4LBnRje1N8XS6L6KJ6qgK1HQidNiDsuSTuYXVCNTSTbvZ7CVARpKxPFyRNMWZUcPxKjMzFe</p>
                 </td>
-                <td>-420.00</td>
-                <td>1,030.37</td>
+                <td>420</td>
+                <td>1</td>
               </tr>
               <tr>
-                <td>May 06 2019 01:39</td>
                 <td>
-                f4e971acd7679e0d0a8cc6c2f0a5eda535c0d8c67bd0732fa2cf78da76eb6b4e
+                  <p className="help">TRTLuy4pxXa69MkSq4f5WgL42iw4iJtxiBJU6sQQqyaUYwWRaLuTBTPCJoH3c6E8roiujYVtgoT1PGyEjoRvHgLX7XiZaYKxkA4</p>
                 </td>
-                <td>+1,337.00</td>
-                <td>1,450.37</td>
+                <td>300</td>
+                <td>1</td>
               </tr>
               <tr>
-                <td>May 06 2019 01:39</td>
                 <td>
-                  709aa64a95b5561192769064fad55b1b07d7178418b357cb44082d61453bda39
+                  <p className="help">TRTLv3fwwPY5bdcBnkhAuR8YbSjwFr2fqEFG8c2nbQWmQcwMrwipbxCMgvqdqK4LRFF7aN3oCNzMKLodUVJnRGXZUx7SmDwBiKe</p>
                 </td>
-                <td>+13.37</td>
-                <td>113.37</td>
-              </tr>
-              <tr>
-                <td>May 06 2019 01:37</td>
-                <td>
-                  b92b66cc9c9123b1885b1fb0aabb396d3344ffef880f7c3b534c2ae4984a6bf0
-                </td>
-                <td>+100.00</td>
-                <td>100.00</td>
+                <td>310.37</td>
+                <td>2</td>
               </tr>
             </tbody>
           </table>
-        </div>
-        <div>
-          <span className="tag is-white">Synchronization: 60.00%</span>
-          <progress className="progress is-success" value="60" max="100" />
         </div>
       </div>
     );

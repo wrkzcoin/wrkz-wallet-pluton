@@ -54,7 +54,7 @@ export default class Receive extends Component<Props> {
                 <Link to={routes.COUNTER}>
                   <a className="navbar-item is-active">Receive</a>
                 </Link>
-                <Link to={routes.COUNTER}>
+                <Link to={routes.ADDRESSES}>
                 <a className="navbar-item">Addresses</a>
               </Link>
               </div>
