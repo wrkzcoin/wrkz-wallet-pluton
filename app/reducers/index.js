@@ -2,6 +2,7 @@
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
+import { LogLevel } from 'turtlecoin-wallet-backend';
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import counter from './counter';
@@ -58,13 +59,14 @@ window.session.wallet.start();
 log.debug('Initialized wallet session ', window.session.address);
 
 
-if (window.config.logLevel !== 'DISABLED') {
-  const walletLogStream = fs.createWriteStream(
-    `${logDirectory}/protonwallet.log`,
-    {
-      flags: 'a'
-    }
-  );
+if (window.config.logLevel === 'DEBUG') {
+    window.session.wallet.setLogLevel(LogLevel.DEBUG);
+    window.session.wallet.setLoggerCallback((prettyMessage, message, level, categories) => {
+        let logStream = fs.createWriteStream(logDirectory + '/protonwallet.log', {
+            flags: 'a'
+        });
+        logStream.write(prettyMessage + '\n');
+  });
 }
 
 window.session.wallet.on('transaction', transaction => {
