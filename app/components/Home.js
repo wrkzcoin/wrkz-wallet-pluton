@@ -29,7 +29,7 @@ export default class Home extends Component<Props> {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 500);
+    this.interval = setInterval(() => this.refresh(), 100);
   }
 
   componentWillUnmount() {
@@ -111,11 +111,22 @@ export default class Home extends Component<Props> {
             </tbody>
           </table>
         </div>
-        <div>
-          <span className="tag is-white is-large">Balance: {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL</span>
-          <span className="tag is-white is-large">Locked: {session.atomicToHuman(this.state.lockedBalance, true)} TRTL</span>
-          <span className="tag is-white is-large">Synchronization: {this.state.syncStatus}% {this.state.syncStatus < 100 && <ReactLoading type={'bubbles'} color={'#000000'} height={30} width={30} />}</span>
+        <div class="field is-grouped is-grouped-multiline">
+        <div class="control">
+          <div class="tags has-addons">
+            <span class="tag is-gray is-large">Balance:</span>
+            <span class="tag is-info is-large">{session.atomicToHuman(this.state.unlockedBalance, true)} TRTL</span>
+          </div>
         </div>
+
+        <div class="control">
+          <div class="tags has-addons">
+            <span class="tag is-gray is-large">Synchronization:</span>
+            {this.state.syncStatus < 100 && <span class="tag is-warning is-large">{this.state.syncStatus}%<ReactLoading type={'bubbles'} color={'#000000'} height={30} width={30} /></span>}
+            {this.state.syncStatus === 100 && <span class="tag is-success is-large">{this.state.syncStatus}%</span>}
+          </div>
+        </div>
+      </div>
       </div>
     );
   }
