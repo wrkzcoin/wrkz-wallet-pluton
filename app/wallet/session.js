@@ -1,6 +1,8 @@
 import { WalletBackend, BlockchainCacheApi } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
+import { config, directories } from '../reducers/index'
+
 
 export default class WalletSession {
   constructor(opts) {
@@ -9,10 +11,10 @@ export default class WalletSession {
       programDirectory,
       logDirectory,
       walletDirectory
-    ] = window.directories;
+    ] = directories;
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
-      `${walletDirectory}/${window.config.walletFile}`,
+      `${walletDirectory}/${config.walletFile}`,
       ''
     );
     if (error) {
@@ -21,7 +23,7 @@ export default class WalletSession {
         openWallet = WalletBackend.createWallet(this.daemon);
       }
     }
-    log.debug(`Opened wallet file at ${walletDirectory}/${window.config.walletFile}`)
+    log.debug(`Opened wallet file at ${walletDirectory}/${config.walletFile}`)
     this.wallet = openWallet;
     this.syncStatus = this.updateSyncStatus();
     this.address = this.wallet.getPrimaryAddress();

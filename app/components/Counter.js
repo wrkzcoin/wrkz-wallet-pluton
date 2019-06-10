@@ -5,6 +5,7 @@ import QRCode from 'qrcode.react';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import styles from './Counter.css';
+import { config, session } from '../reducers/index'
 
 type Props = {
   increment: () => void,
@@ -21,7 +22,7 @@ export default class Receive extends Component<Props> {
 
   constructor(props?: Props) {
     super(props);
-    this.state = { syncStatus: window.session.updateSyncStatus()};
+    this.state = { syncStatus: session.updateSyncStatus()};
   }
 
   componentDidMount() {
@@ -34,7 +35,7 @@ export default class Receive extends Component<Props> {
 
   tick() {
     this.setState(prevState => ({
-      syncStatus: window.session.updateSyncStatus()
+      syncStatus: session.updateSyncStatus()
     }));
   }
 
@@ -60,7 +61,7 @@ export default class Receive extends Component<Props> {
                 <Link to={routes.HOME}>
                   <a className="navbar-item" href="#">
                     <img
-                      src={window.config.logo}
+                      src={config.logo}
                       alt="logo"
                       className="img-responsive"
                     />
@@ -97,7 +98,7 @@ export default class Receive extends Component<Props> {
                     Receiving Address
                     <textarea
                       className="textarea"
-                      placeholder={window.session.address}
+                      placeholder={session.address}
                       id="receiveaddress"
                       readOnly
                     />
@@ -117,7 +118,7 @@ export default class Receive extends Component<Props> {
                   <br />
                   <span className={styles.qrcode}>
                     <QRCode
-                      value={window.session.address}
+                      value={session.address}
                       renderAs="svg"
                       bgColor="#f5f5f5"
                     />

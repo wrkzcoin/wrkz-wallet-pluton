@@ -4,6 +4,7 @@ import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import styles from './Home.css';
+import { config, session } from '../reducers/index'
 
 type Props = {};
 
@@ -12,7 +13,7 @@ export default class Addresses extends Component<Props> {
 
   constructor(props?: Props) {
     super(props);
-    this.state = { syncStatus: window.session.updateSyncStatus()};
+    this.state = { syncStatus: session.updateSyncStatus()};
   }
 
   componentDidMount() {
@@ -25,7 +26,7 @@ export default class Addresses extends Component<Props> {
 
   tick() {
     this.setState(prevState => ({
-      syncStatus: window.session.updateSyncStatus()
+      syncStatus: session.updateSyncStatus()
     }));
   }
 
@@ -43,7 +44,7 @@ export default class Addresses extends Component<Props> {
                 <Link to={routes.HOME}>
                   <a className="navbar-item" href="#">
                     <img
-                      src={window.config.logo}
+                      src={config.logo}
                       alt="logo"
                       className="img-responsive"
                     />

@@ -11,15 +11,16 @@ import iConfig from '../constants/config';
 
 log.debug(`Proton wallet started...`)
 
-let config = iConfig;
+export let config = iConfig;
 
 const homedir = os.homedir();
-const directories = [
+
+export const directories = [
   `${homedir}/.protonwallet`,
   `${homedir}/.protonwallet/logs`,
   `${homedir}/.protonwallet/wallets`
 ];
-window.directories = directories;
+
 const [programDirectory, logDirectory, walletDirectory] = directories;
 
 if (!fs.existsSync(`${programDirectory}/config.json`)) {
@@ -52,16 +53,14 @@ directories.forEach(function(dir) {
   }
 });
 
-window.config = config;
-
-window.session = new WalletSession();
-window.session.wallet.start();
-log.debug('Initialized wallet session ', window.session.address);
+export let session = new WalletSession();
+session.wallet.start();
+log.debug('Initialized wallet session ', session.address);
 
 
-if (window.config.logLevel === 'DEBUG') {
-    window.session.wallet.setLogLevel(LogLevel.DEBUG);
-    window.session.wallet.setLoggerCallback((prettyMessage, message, level, categories) => {
+if (config.logLevel === 'DEBUG') {
+    session.wallet.setLogLevel(LogLevel.DEBUG);
+    session.wallet.setLoggerCallback((prettyMessage, message, level, categories) => {
         let logStream = fs.createWriteStream(logDirectory + '/protonwallet.log', {
             flags: 'a'
         });
@@ -69,23 +68,23 @@ if (window.config.logLevel === 'DEBUG') {
   });
 }
 
-window.session.wallet.on('transaction', transaction => {
+session.wallet.on('transaction', transaction => {
   log.debug(`Transaction of ${transaction.totalAmount()} received!`);
 });
 
-window.session.wallet.on('sync', (walletHeight, networkHeight) => {
+session.wallet.on('sync', (walletHeight, networkHeight) => {
   log.debug(
     `Wallet synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
   );
 });
 
-window.session.wallet.on('desync', (walletHeight, networkHeight) => {
+session.wallet.on('desync', (walletHeight, networkHeight) => {
   log.debug(
     `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
   );
 });
 
-window.session.wallet.saveWalletToFile(
+session.wallet.saveWalletToFile(
   `${walletDirectory}/${config.walletFile}`,
   ''
 );

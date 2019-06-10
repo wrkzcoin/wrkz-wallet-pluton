@@ -1,5 +1,6 @@
 // @flow
 import { app, Menu, shell, BrowserWindow } from 'electron';
+import log from 'electron-log';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -195,7 +196,10 @@ export default class MenuBuilder {
           },
           {
             label: '&Save',
-            accelerator: 'Ctrl+S'
+            accelerator: 'Ctrl+S',
+            click: () => {
+              log.debug('Wallet saved by user input')
+            }
           },
           {
             label: '&Save as'
