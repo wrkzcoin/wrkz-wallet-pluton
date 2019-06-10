@@ -9,7 +9,7 @@ import counter from './counter';
 import WalletSession from '../wallet/session';
 import iConfig from '../constants/config';
 
-log.debug(`Proton wallet started...`)
+log.debug(`Proton wallet started...`);
 
 export let config = iConfig;
 
@@ -33,7 +33,9 @@ if (!fs.existsSync(`${programDirectory}/config.json`)) {
     }
   );
 } else {
-  log.debug("Config file found in user's home directory, defaulting to local config...")
+  log.debug(
+    "Config file found in user's home directory, defaulting to local config..."
+  );
   const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
   config = JSON.parse(rawUserConfig);
 }
@@ -43,34 +45,28 @@ log.debug('Checking if program directories are present...');
 directories.forEach(function(dir) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
-      log.debug(
-        `${dir} directories not detected, creating...`
-      );
-  } else {
-    if (dir === programDirectory) {
-      log.debug('Directories found. Initializing wallet session...')
-    }
+    log.debug(`${dir} directories not detected, creating...`);
+  } else if (dir === programDirectory) {
+    log.debug('Directories found. Initializing wallet session...');
   }
 });
 
 export let session = new WalletSession();
 log.debug('Initialized wallet session ', session.address);
 
-
 if (config.logLevel === 'DEBUG') {
-    session.wallet.setLogLevel(LogLevel.DEBUG);
-    session.wallet.setLoggerCallback((prettyMessage, message, level, categories) => {
-        let logStream = fs.createWriteStream(logDirectory + '/protonwallet.log', {
-            flags: 'a'
-        });
-        logStream.write(prettyMessage + '\n');
-  });
+  session.wallet.setLogLevel(LogLevel.DEBUG);
+  session.wallet.setLoggerCallback(
+    (prettyMessage, message, level, categories) => {
+      let logStream = fs.createWriteStream(logDirectory + '/protonwallet.log', {
+        flags: 'a'
+      });
+      logStream.write(prettyMessage + '\n');
+    }
+  );
 }
 
-session.wallet.saveWalletToFile(
-  `${walletDirectory}/${config.walletFile}`,
-  ''
-);
+session.wallet.saveWalletToFile(`${walletDirectory}/${config.walletFile}`, '');
 
 export default function createRootReducer(history: History) {
   return combineReducers<{}, *>({

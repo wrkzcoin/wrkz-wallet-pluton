@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
-import styles from './Home.css';
-import { config, session } from '../reducers/index'
+// import styles from './Home.css';
+import { config, session } from '../reducers/index';
 
 type Props = {};
 
@@ -40,12 +40,11 @@ export default class Addresses extends Component<Props> {
     }));
   }
 
-
   render() {
     return (
       <div className="body">
         <div className="columns">
-          <div class="column is-three-fifths">
+          <div className="column is-three-fifths">
             <nav
               className="navbar"
               role="navigation"
@@ -71,55 +70,84 @@ export default class Addresses extends Component<Props> {
                   <a className="navbar-item">Receive</a>
                 </Link>
                 <Link to={routes.ADDRESSES}>
-                <a className="navbar-item is-active">Addresses</a>
-              </Link>
+                  <a className="navbar-item is-active">Addresses</a>
+                </Link>
               </div>
             </nav>
           </div>
-          <div class="column">
-            <input class="input is-rounded" type="text" placeholder="Search..." />
+          <div className="column">
+            <input
+              className="input is-rounded"
+              type="text"
+              placeholder="Search..."
+            />
           </div>
-    </div>
+        </div>
         <div className="wrapper">
           <table className="table is-striped is-hoverable is-fullwidth is-narrow">
             <thead>
               <tr>
-                <th><i className="fa fa-plus-circle"></i></th>
+                <th>
+                  <i className="fa fa-plus-circle" />
+                </th>
                 <th>Address</th>
                 <th>Balance</th>
                 <th>Tx</th>
               </tr>
             </thead>
             <tbody>
-              {this.state.addresses.map(( address, index ) => {
+              {this.state.addresses.map((address, index) => {
                 return (
                   <tr key={index}>
                     <td />
-                    <td><p className="help">{address}</p></td>
-                    <td>{session.atomicToHuman(session.getUnlockedBalance([address]), true)}</td>
+                    <td>
+                      <p className="help">{address}</p>
+                    </td>
+                    <td>
+                      {session.atomicToHuman(
+                        session.getUnlockedBalance([address]),
+                        true
+                      )}
+                    </td>
                     <td>{session.getTransactions().length}</td>
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
         </div>
-        <div class="field is-grouped is-grouped-multiline">
-        <div class="control">
-          <div class="tags has-addons">
-            <span class="tag is-gray is-large">Balance:</span>
-            <span class="tag is-info is-large">{session.atomicToHuman(this.state.unlockedBalance, true)} TRTL</span>
+        <div className="field is-grouped is-grouped-multiline">
+          <div className="control">
+            <div className="tags has-addons">
+              <span className="tag is-gray is-large">Balance:</span>
+              <span className="tag is-info is-large">
+                {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div class="control">
-          <div class="tags has-addons">
-            <span class="tag is-gray is-large">Synchronization:</span>
-            {this.state.syncStatus < 100 && <span class="tag is-warning is-large">{this.state.syncStatus}%<ReactLoading type={'bubbles'} color={'#000000'} height={30} width={30} /></span>}
-            {this.state.syncStatus === 100 && <span class="tag is-success is-large">{this.state.syncStatus}%</span>}
+          <div className="control">
+            <div className="tags has-addons">
+              <span className="tag is-gray is-large">Synchronization:</span>
+              {this.state.syncStatus < 100 && (
+                <span className="tag is-warning is-large">
+                  {this.state.syncStatus}%
+                  <ReactLoading
+                    type={'bubbles'}
+                    color={'#000000'}
+                    height={30}
+                    width={30}
+                  />
+                </span>
+              )}
+              {this.state.syncStatus === 100 && (
+                <span className="tag is-success is-large">
+                  {this.state.syncStatus}%
+                </span>
+              )}
+            </div>
           </div>
         </div>
-      </div>
       </div>
     );
   }
