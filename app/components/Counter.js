@@ -15,6 +15,9 @@ type Props = {
   counter: Number,
   copyToClipboard: () => void,
   syncStatus: Number,
+  unlockedBalance: Number;
+  lockedBalance: Number;
+  transactions: Array<string>;
 };
 
 export default class Receive extends Component<Props> {
@@ -22,20 +25,28 @@ export default class Receive extends Component<Props> {
 
   constructor(props?: Props) {
     super(props);
-    this.state = { syncStatus: session.updateSyncStatus()};
+    this.state = {
+      syncStatus: session.getSyncStatus(),
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance(),
+      transactions: session.getTransactions()
+    };
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 1000);
+    this.interval = setInterval(() => this.refresh(), 500);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  tick() {
+  refresh() {
     this.setState(prevState => ({
-      syncStatus: session.updateSyncStatus()
+      syncStatus: session.getSyncStatus(),
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance(),
+      transactions: session.getTransactions()
     }));
   }
 
@@ -109,7 +120,11 @@ export default class Receive extends Component<Props> {
                     >
                       Copy to Clipboard
                     </button>
-                    <button type="button" className="button padding5">
+                    <button
+                      type="button"
+                      className="button padding5"
+                      onClick={() => session.addAddress()}
+                    >
                       Use a New Address
                     </button>
                   </label>
@@ -128,6 +143,8 @@ export default class Receive extends Component<Props> {
             </div>
           </div>
           <div>
+            <span className="tag is-white is-large">Balance: {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL</span>
+            <span className="tag is-white is-large">Locked: {session.atomicToHuman(this.state.lockedBalance, true)} TRTL</span>
             <span className="tag is-white is-large">Synchronization: {this.state.syncStatus}% {this.state.syncStatus < 100 && <ReactLoading type={'bubbles'} color={'#000000'} height={30} width={30} />}</span>
           </div>
       </div>

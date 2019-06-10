@@ -1,13 +1,18 @@
 // @flow
 import React, { Component } from 'react';
+import { Utilities } from 'turtlecoin-wallet-backend';
 import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import styles from './Home.css';
 import { config, session } from '../reducers/index'
 
+
 type Props = {
   syncStatus: Number;
+  unlockedBalance: Number;
+  lockedBalance: Number;
+  transactions: Array<string>;
 };
 
 export default class Home extends Component<Props> {
@@ -15,20 +20,28 @@ export default class Home extends Component<Props> {
 
   constructor(props?: Props) {
     super(props);
-    this.state = { syncStatus: session.updateSyncStatus()};
+    this.state = {
+      syncStatus: session.getSyncStatus(),
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance(),
+      transactions: session.getTransactions()
+    };
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 1000);
+    this.interval = setInterval(() => this.refresh(), 500);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  tick() {
+  refresh() {
     this.setState(prevState => ({
-      syncStatus: session.updateSyncStatus()
+      syncStatus: session.getSyncStatus(),
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance(),
+      transactions: session.getTransactions()
     }));
   }
 
@@ -85,42 +98,22 @@ export default class Home extends Component<Props> {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>May 06 2019 01:39</td>
-                <td>
-                  48f88e078a549dc788464348774f10beaf402dc4dc79f7362fbc6f70370af97a
-                </td>
-                <td>-420.00</td>
-                <td>1,030.37</td>
-              </tr>
-              <tr>
-                <td>May 06 2019 01:39</td>
-                <td>
-                  f4e971acd7679e0d0a8cc6c2f0a5eda535c0d8c67bd0732fa2cf78da76eb6b4e
-                </td>
-                <td>+1,337.00</td>
-                <td>1,450.37</td>
-              </tr>
-              <tr>
-                <td>May 06 2019 01:39</td>
-                <td>
-                  709aa64a95b5561192769064fad55b1b07d7178418b357cb44082d61453bda39
-                </td>
-                <td>+13.37</td>
-                <td>113.37</td>
-              </tr>
-              <tr>
-                <td>May 06 2019 01:37</td>
-                <td>
-                  b92b66cc9c9123b1885b1fb0aabb396d3344ffef880f7c3b534c2ae4984a6bf0
-                </td>
-                <td>+100.00</td>
-                <td>100.00</td>
-              </tr>
+              {this.state.transactions.map(( tx, index ) => {
+                return (
+                  <tr key={index}>
+                    <td>{tx[0]}</td>
+                    <td>{tx[1]}</td>
+                    <td>{session.atomicToHuman(tx[2], true)}</td>
+                    <td />
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
         <div>
+          <span className="tag is-white is-large">Balance: {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL</span>
+          <span className="tag is-white is-large">Locked: {session.atomicToHuman(this.state.lockedBalance, true)} TRTL</span>
           <span className="tag is-white is-large">Synchronization: {this.state.syncStatus}% {this.state.syncStatus < 100 && <ReactLoading type={'bubbles'} color={'#000000'} height={30} width={30} />}</span>
         </div>
       </div>

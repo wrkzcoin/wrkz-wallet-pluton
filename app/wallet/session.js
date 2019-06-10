@@ -1,4 +1,4 @@
-import { WalletBackend, BlockchainCacheApi } from 'turtlecoin-wallet-backend';
+import { WalletBackend, BlockchainCacheApi, ConventionalDaemon } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
 import { config, directories } from '../reducers/index'
@@ -6,6 +6,7 @@ import { config, directories } from '../reducers/index'
 
 export default class WalletSession {
   constructor(opts) {
+    // this.daemon = new ConventionalDaemon('nodes.hashvault.pro', true);
     this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
     const [
       programDirectory,
@@ -25,11 +26,58 @@ export default class WalletSession {
     }
     log.debug(`Opened wallet file at ${walletDirectory}/${config.walletFile}`)
     this.wallet = openWallet;
-    this.syncStatus = this.updateSyncStatus();
+    this.wallet.start();
+    this.syncStatus = this.getSyncStatus();
     this.address = this.wallet.getPrimaryAddress();
+
+    this.wallet.on('transaction', (transaction) => {
+      log.debug(`Transaction of ${transaction.totalAmount()} received!`);
+    });
+
+    this.wallet.on('sync', (walletHeight, networkHeight) => {
+      log.debug(
+        `Wallet synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
+      );
+    });
+
+    this.wallet.on('desync', (walletHeight, networkHeight) => {
+      log.debug(`Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`);
+    });
+
   }
 
-  updateSyncStatus() {
+  addAddress() {
+    log.debug('Adding subwallet...');
+
+  }
+
+  getAddresses() {
+    return this.wallet.getAddresses();
+  }
+
+  getTransactions() {
+    const rawTransactions = this.wallet.getTransactions();
+    let formattedTransactions =
+      rawTransactions.map( tx =>
+        [
+          this.convertTimestamp(tx.timestamp),
+          tx.hash,
+          tx.totalAmount()
+        ])
+    return formattedTransactions;
+  }
+
+  getUnlockedBalance(subwallets?: Array<string>) {
+    const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
+    return unlockedBalance;
+  }
+
+  getLockedBalance(subwallets?: Array<string>) {
+    const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
+    return lockedBalance;
+  }
+
+  getSyncStatus() {
     let [
       walletHeight,
       localHeight,
@@ -64,7 +112,32 @@ export default class WalletSession {
     return this.roundToNearestHundredth(percentSync);
   }
 
-  roundToNearestHundredth(x) {
+  formatLikeCurrency(x: Number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  atomicToHuman(x: Number, prettyPrint: Boolean) {
+    if (prettyPrint) {
+      return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
+    } else {
+      return x / 100;
+    }
+  }
+
+  convertTimestamp(timestamp: Date) {
+    let d = new Date(timestamp * 1000), // Convert the passed timestamp to milliseconds
+        yyyy = d.getFullYear(),
+        mm = ('0' + (d.getMonth() + 1)).slice(-2), // Months are zero based. Add leading 0.
+        dd = ('0' + d.getDate()).slice(-2), // Add leading 0.
+        hh = ('0' + d.getHours()).slice(-2),
+        min = ('0' + d.getMinutes()).slice(-2), // Add leading 0.
+        time;
+    // ie: 2013-02-18, 16:35
+    time = yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + min;
+    return time;
+};
+
+  roundToNearestHundredth(x: Number) {
     return Math.ceil(x * 100) / 100;
   }
 }

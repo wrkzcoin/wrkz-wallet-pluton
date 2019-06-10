@@ -13,22 +13,33 @@ export default class Addresses extends Component<Props> {
 
   constructor(props?: Props) {
     super(props);
-    this.state = { syncStatus: session.updateSyncStatus()};
+    this.state = {
+      syncStatus: session.getSyncStatus(),
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance(),
+      transactions: session.getTransactions(),
+      addresses: session.getAddresses()
+    };
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 1000);
+    this.interval = setInterval(() => this.refresh(), 500);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  tick() {
+  refresh() {
     this.setState(prevState => ({
-      syncStatus: session.updateSyncStatus()
+      syncStatus: session.getSyncStatus(),
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance(),
+      transactions: session.getTransactions(),
+      addresses: session.getAddresses()
     }));
   }
+
 
   render() {
     return (
@@ -73,37 +84,29 @@ export default class Addresses extends Component<Props> {
           <table className="table is-striped is-hoverable is-fullwidth">
             <thead>
               <tr>
+                <th><i className="fa fa-plus-circle"></i></th>
                 <th>Address</th>
                 <th>Balance</th>
                 <th>Tx</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <p className="help">TRTLuzUt6Eu1nT9UMMaJZNSiLbZB4LBnRje1N8XS6L6KJ6qgK1HQidNiDsuSTuYXVCNTSTbvZ7CVARpKxPFyRNMWZUcPxKjMzFe</p>
-                </td>
-                <td>420</td>
-                <td>1</td>
-              </tr>
-              <tr>
-                <td>
-                  <p className="help">TRTLuy4pxXa69MkSq4f5WgL42iw4iJtxiBJU6sQQqyaUYwWRaLuTBTPCJoH3c6E8roiujYVtgoT1PGyEjoRvHgLX7XiZaYKxkA4</p>
-                </td>
-                <td>300</td>
-                <td>1</td>
-              </tr>
-              <tr>
-                <td>
-                  <p className="help">TRTLv3fwwPY5bdcBnkhAuR8YbSjwFr2fqEFG8c2nbQWmQcwMrwipbxCMgvqdqK4LRFF7aN3oCNzMKLodUVJnRGXZUx7SmDwBiKe</p>
-                </td>
-                <td>310.37</td>
-                <td>2</td>
-              </tr>
+              {this.state.addresses.map(( address, index ) => {
+                return (
+                  <tr key={index}>
+                    <td />
+                    <td><p className="help">{address}</p></td>
+                    <td>{session.atomicToHuman(session.getUnlockedBalance([address]), true)}</td>
+                    <td>{session.getTransactions().length}</td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
         <div>
+          <span className="tag is-white is-large">Balance: {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL</span>
+          <span className="tag is-white is-large">Locked: {session.atomicToHuman(this.state.lockedBalance, true)} TRTL</span>
           <span className="tag is-white is-large">Synchronization: {this.state.syncStatus}% {this.state.syncStatus < 100 && <ReactLoading type={'bubbles'} color={'#000000'} height={30} width={30} />}</span>
         </div>
       </div>

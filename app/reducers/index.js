@@ -54,7 +54,6 @@ directories.forEach(function(dir) {
 });
 
 export let session = new WalletSession();
-session.wallet.start();
 log.debug('Initialized wallet session ', session.address);
 
 
@@ -67,22 +66,6 @@ if (config.logLevel === 'DEBUG') {
         logStream.write(prettyMessage + '\n');
   });
 }
-
-session.wallet.on('transaction', transaction => {
-  log.debug(`Transaction of ${transaction.totalAmount()} received!`);
-});
-
-session.wallet.on('sync', (walletHeight, networkHeight) => {
-  log.debug(
-    `Wallet synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
-  );
-});
-
-session.wallet.on('desync', (walletHeight, networkHeight) => {
-  log.debug(
-    `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
-  );
-});
 
 session.wallet.saveWalletToFile(
   `${walletDirectory}/${config.walletFile}`,
