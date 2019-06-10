@@ -81,7 +81,7 @@ export default class Addresses extends Component<Props> {
           </div>
     </div>
         <div className="wrapper">
-          <table className="table is-striped is-hoverable is-fullwidth">
+          <table className="table is-striped is-hoverable is-fullwidth is-narrow">
             <thead>
               <tr>
                 <th><i className="fa fa-plus-circle"></i></th>

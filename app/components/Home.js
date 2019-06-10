@@ -88,7 +88,7 @@ export default class Home extends Component<Props> {
           </div>
     </div>
         <div className="wrapper">
-          <table className="table is-striped is-hoverable is-fullwidth">
+          <table className="table is-striped is-hoverable is-fullwidth is-narrow ">
             <thead>
               <tr>
                 <th>Date</th>
