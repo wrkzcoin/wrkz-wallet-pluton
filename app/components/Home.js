@@ -9,13 +9,6 @@ type Props = {
   syncStatus: Number;
 };
 
-function isLoading(syncStatus) {
-  if (syncStatus > 100) {
-    return <Loading />;
-  }
-  return;
-}
-
 export default class Home extends Component<Props> {
   props: Props;
 

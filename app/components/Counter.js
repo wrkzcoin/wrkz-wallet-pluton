@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import ReactLoading from 'react-loading';
 import QRCode from 'qrcode.react';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
@@ -10,12 +11,32 @@ type Props = {
   incrementIfOdd: () => void,
   incrementAsync: () => void,
   decrement: () => void,
-  counter: number,
-  copyToClipboard: () => void
+  counter: Number,
+  copyToClipboard: () => void,
+  syncStatus: Number,
 };
 
 export default class Receive extends Component<Props> {
   props: Props;
+
+  constructor(props?: Props) {
+    super(props);
+    this.state = { syncStatus: window.session.updateSyncStatus()};
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(() => this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  tick() {
+    this.setState(prevState => ({
+      syncStatus: window.session.updateSyncStatus()
+    }));
+  }
 
   render() {
     const {
@@ -27,7 +48,7 @@ export default class Receive extends Component<Props> {
       copyToClipboard
     } = this.props;
     return (
-      <div>
+      <div className="body">
         <div className="columns">
           <div className="column is-three-fifths">
             <nav
@@ -68,7 +89,7 @@ export default class Receive extends Component<Props> {
             />
           </div>
         </div>
-          <div className="container is-fluid body">
+          <div className="container is-fluid wrapper">
             <div className="notification">
               <div className="columns">
                 <div className="column is-three-quarters">
@@ -104,6 +125,9 @@ export default class Receive extends Component<Props> {
                 </div>
               </div>
             </div>
+          </div>
+          <div>
+            <span className="tag is-white is-large">Synchronization: {this.state.syncStatus}% {this.state.syncStatus < 100 && <ReactLoading type={'bubbles'} color={'#000000'} height={30} width={30} />}</span>
           </div>
       </div>
     );

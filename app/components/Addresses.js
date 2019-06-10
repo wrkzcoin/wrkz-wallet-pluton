@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import styles from './Home.css';
@@ -8,6 +9,25 @@ type Props = {};
 
 export default class Addresses extends Component<Props> {
   props: Props;
+
+  constructor(props?: Props) {
+    super(props);
+    this.state = { syncStatus: window.session.updateSyncStatus()};
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(() => this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  tick() {
+    this.setState(prevState => ({
+      syncStatus: window.session.updateSyncStatus()
+    }));
+  }
 
   render() {
     return (
@@ -81,6 +101,9 @@ export default class Addresses extends Component<Props> {
               </tr>
             </tbody>
           </table>
+        </div>
+        <div>
+          <span className="tag is-white is-large">Synchronization: {this.state.syncStatus}% {this.state.syncStatus < 100 && <ReactLoading type={'bubbles'} color={'#000000'} height={30} width={30} />}</span>
         </div>
       </div>
     );
