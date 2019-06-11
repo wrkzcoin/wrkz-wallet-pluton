@@ -60,114 +60,115 @@ export default class Receive extends Component<Props> {
       copyToClipboard
     } = this.props;
     return (
-      <div className="body">
-        <div className="columns">
-          <div className="column is-three-fifths">
-            <nav
-              className="navbar"
-              role="navigation"
-              aria-label="main navigation"
-            >
-              <div className="navbar-brand">
-                <Link to={routes.HOME}>
-                  <a className="navbar-item" href="#">
-                    <img
-                      src={config.logo}
-                      alt="logo"
-                      className="img-responsive"
-                    />
-                  </a>
-                </Link>
-                <Link to={routes.HOME}>
-                  <a className="navbar-item">Wallet</a>
-                </Link>
-                <Link to={routes.SEND}>
-                  <a className="navbar-item">Send</a>
-                </Link>
-                <Link to={routes.COUNTER}>
-                  <a className="navbar-item is-active">Receive</a>
-                </Link>
-                <Link to={routes.ADDRESSES}>
-                  <a className="navbar-item">Addresses</a>
-                </Link>
-              </div>
-            </nav>
-          </div>
-          <div className="column">
-            <input
-              className="input is-rounded"
-              type="text"
-              placeholder="Search..."
-            />
-          </div>
-        </div>
-        <div className="container is-fluid wrapper">
-          <div className="notification">
-            <div className="columns">
-              <div className="column is-three-quarters">
-                <label className="label" htmlFor="receiveaddress">
-                  Receiving Address
-                  <textarea
-                    className="textarea"
-                    placeholder={session.address}
-                    id="receiveaddress"
-                    readOnly
-                  />
-                  <br />
-                  <span>
-                    <button
-                      type="button"
-                      className="button is-success is-large"
-                      onClick={() => copyToClipboard()}
-                    >
-                      Copy to Clipboard
-                    </button>
-                  </span>
-                </label>
-              </div>
-              <div className="column">
-                <br />
-                <span>
-                  <QRCode
-                    value={session.address}
-                    renderAs="svg"
-                    bgColor="#f5f5f5"
-                    size="256"
-                  />
-                </span>
-              </div>
+      <div>
+        <div className="box has-background-grey-lighter headerbar">
+          <div className="columns">
+            <div className="column is-three-fifths">
+              <nav
+                className="navbar has-background-grey-lighter"
+                role="navigation"
+                aria-label="main navigation"
+              >
+                <div className="navbar-brand">
+                  <Link to={routes.HOME}>
+                    <a className="navbar-item" href="#">
+                      <img
+                        src={config.logo}
+                        alt="logo"
+                        className="img-responsive"
+                      />
+                    </a>
+                  </Link>
+                  <Link to={routes.HOME}>
+                    <a className="navbar-item">Wallet</a>
+                  </Link>
+                  <Link to={routes.SEND}>
+                    <a className="navbar-item">Send</a>
+                  </Link>
+                  <Link to={routes.COUNTER}>
+                    <a className="navbar-item is-active">Receive</a>
+                  </Link>
+                  <Link to={routes.ADDRESSES}>
+                    <a className="navbar-item">Addresses</a>
+                  </Link>
+                </div>
+              </nav>
+            </div>
+            <div className="column">
+              <input
+                className="input is-rounded"
+                type="text"
+                placeholder="Search..."
+              />
             </div>
           </div>
         </div>
-        <div className="field is-grouped is-grouped-multiline">
-          <div className="control">
-            <div className="tags has-addons">
-              <span className="tag is-gray is-large">Balance:</span>
-              <span className="tag is-info is-large">
-                {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+        <div className="notification width maincontent">
+          <div className="columns">
+            <div className="column is-three-quarters">
+              <label className="label" htmlFor="receiveaddress">
+                Receiving Address
+                <textarea
+                  className="textarea is-family-monospace"
+                  placeholder={session.address}
+                  id="receiveaddress"
+                  readOnly
+                />
+                <br />
+                <span>
+                  <button
+                    type="button"
+                    className="button is-success is-large"
+                    onClick={() => copyToClipboard()}
+                  >
+                    Copy to Clipboard
+                  </button>
+                </span>
+              </label>
+            </div>
+            <div className="column">
+              <br />
+              <span>
+                <QRCode
+                  value={session.address}
+                  renderAs="svg"
+                  bgColor="#f5f5f5"
+                  size="256"
+                />
               </span>
             </div>
           </div>
-
-          <div className="control">
-            <div className="tags has-addons">
-              <span className="tag is-gray is-large">Synchronization:</span>
-              {this.state.syncStatus < 100 && (
-                <span className="tag is-warning is-large">
-                  {this.state.syncStatus}%
-                  <ReactLoading
-                    type={'bubbles'}
-                    color={'#000000'}
-                    height={30}
-                    width={30}
-                  />
+        </div>
+        <div className="box has-background-grey-lighter footerbar">
+          <div className="field is-grouped is-grouped-multiline">
+            <div className="control">
+              <div className="tags has-addons">
+                <span className="tag is-white is-large">Balance:</span>
+                <span className="tag is-info is-large">
+                  {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
                 </span>
-              )}
-              {this.state.syncStatus === 100 && (
-                <span className="tag is-success is-large">
-                  {this.state.syncStatus}%
-                </span>
-              )}
+              </div>
+            </div>
+            <div className="control">
+              <div className="tags has-addons">
+                <span className="tag is-white is-large">Sync:</span>
+                {this.state.syncStatus < 100 && (
+                  <span className="tag is-warning is-large">
+                    {this.state.syncStatus}%
+                    <ReactLoading
+                      type="bubbles"
+                      color="#000000"
+                      height={30}
+                      width={30}
+                    />
+                  </span>
+                )}
+                {this.state.syncStatus === 100 && (
+                  <span className="tag is-success is-large">
+                    {this.state.syncStatus}%
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>

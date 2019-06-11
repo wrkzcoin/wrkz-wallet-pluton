@@ -5,19 +5,31 @@
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma/css/bulma.min.css';
 
-.body {
-  display: flex;
-  min-height: 98vh;
-  flex-direction: column;
-}
-
-.wrapper {
-  flex: 1;
-}
-
-.footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
+.footerbar {
+  position: absolute;
+  bottom: 0px;
   width: 100%;
+  height: 80px;
+}
+
+.headerbar {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 80px;
+}
+
+.maincontent {
+  position: relative;
+  margin-top: 80px;
+  margin-bottom: 80px;
+  width: 100%;
+  height: 100%;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+@font-face {
+  font-family: 'Source Code Pro';
+  src: local('Source Code Pro'), url(../node_modules/source-code-pro/WOFF/TTF/SourceCodePro-Regular.ttf.woff) format('woff');
 }
