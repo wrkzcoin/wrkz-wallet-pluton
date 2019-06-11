@@ -45,7 +45,7 @@ export default class Send extends Component<Props> {
     log.debug(`** Sending transaction: Amount: ${amount} Address ${sendToAddress} PID: ${paymentID} Fee ${fee}...`
     );
 
-
+    session.sendTransaction(sendToAddress, amount, paymentID, fee);
 
   }
 

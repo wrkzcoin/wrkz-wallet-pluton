@@ -116,6 +116,10 @@ export default class WalletSession {
     return this.roundToNearestHundredth(percentSync);
   }
 
+  sendTransaction() {
+    log.debug("We're all gonna make it!");
+  }
+
   formatLikeCurrency(x: Number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
