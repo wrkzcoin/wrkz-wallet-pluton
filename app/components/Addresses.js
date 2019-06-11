@@ -85,8 +85,9 @@ export default class Addresses extends Component<Props> {
             </div>
           </div>
         </div>
-        <div className="maincontent">
-          <table className="table is-striped is-hoverable is-fullwidth is-narrow is-family-monospace">
+        <div className="maincontent has-background-light">
+          <br />
+          <table className="table is-striped is-hoverable is-fullwidth is-narrow is-family-monospace has-background-light">
             <thead>
               <tr>
                 <th>
