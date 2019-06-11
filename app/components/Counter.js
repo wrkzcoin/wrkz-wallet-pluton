@@ -115,7 +115,7 @@ export default class Receive extends Component<Props> {
                   readOnly
                 />
                 <br />
-                <span>
+                <div className="buttons">
                   <button
                     type="button"
                     className="button is-success"
@@ -126,7 +126,7 @@ export default class Receive extends Component<Props> {
                   <button type="button" className="button">
                     Use a New Address
                   </button>
-                </span>
+                </div>
               </label>
             </div>
             <div className="column">

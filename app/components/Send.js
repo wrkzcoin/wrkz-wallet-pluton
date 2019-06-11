@@ -145,12 +145,14 @@ export default class Send extends Component<Props> {
               </p>
             </label>
           </div>
-          <button type="submit" className="button is-success">
-            Send
-          </button>
-          <button type="submit" className="button">
-            Clear
-          </button>
+          <div className="buttons">
+            <button type="submit" className="button is-success">
+              Send
+            </button>
+            <button type="submit" className="button">
+              Clear
+            </button>
+          </div>
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline">

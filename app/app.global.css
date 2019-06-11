@@ -28,6 +28,10 @@
   overflow-y: scroll;
 }
 
+slightpadding {
+  padding: 5px 5px 5px 5px;
+}
+
 @font-face {
   font-family: 'Source Code Pro';
   src: local('Source Code Pro'), url(../node_modules/source-code-pro/WOFF/TTF/SourceCodePro-Regular.ttf.woff) format('woff');
