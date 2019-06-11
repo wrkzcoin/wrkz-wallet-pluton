@@ -28,6 +28,7 @@
   overflow-y: scroll;
 }
 
+
 slightpadding {
   padding: 5px 5px 5px 5px;
 }
@@ -36,3 +37,14 @@ slightpadding {
   font-family: 'Source Code Pro';
   src: local('Source Code Pro'), url(../node_modules/source-code-pro/WOFF/TTF/SourceCodePro-Regular.ttf.woff) format('woff');
 }
+
+html {
+  overflow: hidden;
+  overflow-x: hidden;
+  }
+  ::-webkit-scrollbar {
+  width: 0px;
+  }
+  ::-webkit-scrollbar-thumb {
+  background: #f5f5f5;
+  }

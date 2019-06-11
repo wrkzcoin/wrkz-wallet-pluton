@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 // import styles from './Home.css';
 import { config, session } from '../reducers/index';
+import navBar from './NavBar'
+
 
 type Props = {};
 
@@ -43,48 +45,7 @@ export default class Addresses extends Component<Props> {
   render() {
     return (
       <div>
-        <div className="box has-background-grey-lighter headerbar">
-          <div className="columns">
-            <div className="column is-three-fifths">
-              <nav
-                className="navbar has-background-grey-lighter"
-                role="navigation"
-                aria-label="main navigation"
-              >
-                <div className="navbar-brand">
-                  <Link to={routes.HOME}>
-                    <a className="navbar-item" href="#">
-                      <img
-                        src={config.logo}
-                        alt="logo"
-                        className="img-responsive"
-                      />
-                    </a>
-                  </Link>
-                  <Link to={routes.HOME}>
-                    <a className="navbar-item">Wallet</a>
-                  </Link>
-                  <Link to={routes.SEND}>
-                    <a className="navbar-item">Send</a>
-                  </Link>
-                  <Link to={routes.COUNTER}>
-                    <a className="navbar-item">Receive</a>
-                  </Link>
-                  <Link to={routes.ADDRESSES}>
-                    <a className="navbar-item is-active">Addresses</a>
-                  </Link>
-                </div>
-              </nav>
-            </div>
-            <div className="column">
-              <input
-                className="input is-rounded"
-                type="text"
-                placeholder="Search..."
-              />
-            </div>
-          </div>
-        </div>
+        {navBar()}
         <div className="maincontent has-background-light">
           <table className="table is-striped is-hoverable is-fullwidth is-narrow is-family-monospace has-background-light">
             <thead>
