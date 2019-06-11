@@ -12,11 +12,11 @@ type Props = {
   incrementIfOdd: () => void,
   incrementAsync: () => void,
   decrement: () => void,
-  counter: Number,
+  counter: number,
   copyToClipboard: () => void,
-  syncStatus: Number,
-  unlockedBalance: Number,
-  lockedBalance: Number,
+  syncStatus: number,
+  unlockedBalance: number,
+  lockedBalance: number,
   transactions: Array<string>
 };
 
@@ -118,10 +118,13 @@ export default class Receive extends Component<Props> {
                 <span>
                   <button
                     type="button"
-                    className="button is-success is-large"
+                    className="button is-success"
                     onClick={() => copyToClipboard()}
                   >
                     Copy to Clipboard
+                  </button>
+                  <button type="button" className="button">
+                    Use a New Address
                   </button>
                 </span>
               </label>
