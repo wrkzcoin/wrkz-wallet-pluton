@@ -89,7 +89,6 @@ export default class Home extends Component<Props> {
           </div>
         </div>
         <div className="maincontent has-background-light">
-          <br />
           <table className="table has-background-light is-striped is-hoverable is-fullwidth is-narrow is-family-monospace">
             <thead>
               <tr>
