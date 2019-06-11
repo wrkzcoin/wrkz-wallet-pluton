@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import { config, session } from '../reducers/index';
 import navBar from './NavBar';
+import log from 'electron-log';
 
 
 // import styles from './Send.css';
@@ -13,7 +14,8 @@ type Props = {
   syncStatus: Number,
   unlockedBalance: Number,
   lockedBalance: Number,
-  transactions: Array<string>
+  transactions: Array<string>,
+  handleSubmit: () => void,
 };
 
 export default class Send extends Component<Props> {
@@ -26,11 +28,15 @@ export default class Send extends Component<Props> {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions()
-    };
+    }
+  }
+
+  handleSubmit() {
+    log.debug('Sending transaction...');
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 100);
+    this.interval = setInterval(() => this.refresh(), 250);
   }
 
   componentWillUnmount() {
@@ -51,69 +57,71 @@ export default class Send extends Component<Props> {
       <div>
         {navBar()}
         <div className="box has-background-light maincontent">
-          <div className="field">
-            <label className="label" htmlFor="address">
-              Send to Address
-              <div className="control">
-                <input
-                  className="input is-family-monospace"
-                  type="text"
-                  placeholder="Enter a TurtleCoin address to send funds to."
-                  id="label"
-                />
-              </div>
-            </label>
-          </div>
-          <div className="field">
-            <label className="label" htmlFor="paymentid">
-              Payment ID (Optional)
-              <div className="control">
-                <input
-                  className="input is-family-monospace"
-                  type="text"
-                  placeholder="Enter a payment ID"
-                  id="paymentid"
-                />
-              </div>
-            </label>
-          </div>
-          <div className="field">
-            <label className="label" htmlFor="amount">
-              Amount
-              <div className="control">
-                <input
-                  className="input is-family-monospace"
-                  type="text"
-                  placeholder="How much TRTL to send (eg. 100)"
-                  id="amount"
-                />
-              </div>
-            </label>
-          </div>
-          <div className="field">
-            <label className="label" htmlFor="fee">
-              Fee (Optional)
-              <div className="control">
-                <input
-                  className="input is-family-monospace"
-                  type="text"
-                  placeholder="Enter desired mining fee"
-                  id="fee"
-                />
-              </div>
-              <p className="help">
-                This will default to the lowest possible fee (0.1 TRTL)
-              </p>
-            </label>
-          </div>
-          <div className="buttons">
-            <button type="submit" className="button is-success">
-              Send
-            </button>
-            <button type="submit" className="button">
-              Clear
-            </button>
-          </div>
+          <form onSubmit={this.handleSubmit}>
+            <div className="field">
+              <label className="label" htmlFor="address">
+                Send to Address
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="Enter a TurtleCoin address to send funds to."
+                    id="label"
+                  />
+                </div>
+              </label>
+            </div>
+            <div className="field">
+              <label className="label" htmlFor="paymentid">
+                Payment ID (Optional)
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="Enter a payment ID"
+                    id="paymentid"
+                  />
+                </div>
+              </label>
+            </div>
+            <div className="field">
+              <label className="label" htmlFor="amount">
+                Amount
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="How much TRTL to send (eg. 100)"
+                    id="amount"
+                  />
+                </div>
+              </label>
+            </div>
+            <div className="field">
+              <label className="label" htmlFor="fee">
+                Fee (Optional)
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="Enter desired mining fee"
+                    id="fee"
+                  />
+                </div>
+                <p className="help">
+                  This will default to the lowest possible fee (0.1 TRTL)
+                </p>
+              </label>
+            </div>
+            <div className="buttons">
+              <button type="submit" className="button is-success">
+                Send
+              </button>
+              <button type="reset" className="button">
+                Clear
+              </button>
+            </div>
+          </form>
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline">
