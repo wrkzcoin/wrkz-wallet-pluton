@@ -7,7 +7,6 @@ import { config, session } from '../reducers/index';
 import navBar from './NavBar';
 import log from 'electron-log';
 
-
 // import styles from './Send.css';
 
 type Props = {
@@ -31,8 +30,23 @@ export default class Send extends Component<Props> {
     }
   }
 
-  handleSubmit() {
-    log.debug('Sending transaction...');
+  handleSubmit(event) {
+
+    // We're preventing the default refresh of the page that occurs on form submit
+    event.preventDefault();
+
+    const [sendToAddress, amount, paymentID, fee] = [
+      event.target[0].value,          // sendToAddress
+      event.target[1].value,          // amount
+      event.target[2].value || undefined,          // paymentID
+      event.target[3].value || 0.1    // fee
+    ]
+
+    log.debug(`** Sending transaction: Amount: ${amount} Address ${sendToAddress} PID: ${paymentID} Fee ${fee}...`
+    );
+
+
+
   }
 
   componentDidMount() {
@@ -72,6 +86,19 @@ export default class Send extends Component<Props> {
               </label>
             </div>
             <div className="field">
+            <label className="label" htmlFor="amount">
+              Amount
+              <div className="control">
+                <input
+                  className="input"
+                  type="text"
+                  placeholder="How much TRTL to send (eg. 100)"
+                  id="amount"
+                />
+              </div>
+            </label>
+          </div>
+            <div className="field">
               <label className="label" htmlFor="paymentid">
                 Payment ID (Optional)
                 <div className="control">
@@ -80,19 +107,6 @@ export default class Send extends Component<Props> {
                     type="text"
                     placeholder="Enter a payment ID"
                     id="paymentid"
-                  />
-                </div>
-              </label>
-            </div>
-            <div className="field">
-              <label className="label" htmlFor="amount">
-                Amount
-                <div className="control">
-                  <input
-                    className="input"
-                    type="text"
-                    placeholder="How much TRTL to send (eg. 100)"
-                    id="amount"
                   />
                 </div>
               </label>

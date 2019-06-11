@@ -67,6 +67,10 @@ export default class WalletSession {
     return formattedTransactions;
   }
 
+  sendTransaction() {
+    this.wallet.sendTransactionAdvanced
+  }
+
   getUnlockedBalance(subwallets?: Array<string>) {
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
     return unlockedBalance;
