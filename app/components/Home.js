@@ -110,10 +110,10 @@ export default class Home extends Component<Props> {
             </tbody>
           </table>
         </div>
-        <div className="field is-grouped is-grouped-multiline">
+        <div className="field is-grouped is-grouped-multiline has-background-grey-lighter">
           <div className="control">
             <div className="tags has-addons">
-              <span className="tag is-gray is-large">Balance:</span>
+              <span className="tag is-dark is-large">Balance:</span>
               <span className="tag is-info is-large">
                 {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
               </span>
@@ -122,13 +122,13 @@ export default class Home extends Component<Props> {
 
           <div className="control">
             <div className="tags has-addons">
-              <span className="tag is-gray is-large">Synchronization:</span>
+              <span className="tag is-dark is-large">Synchronization:</span>
               {this.state.syncStatus < 100 && (
                 <span className="tag is-warning is-large">
                   {this.state.syncStatus}%
                   <ReactLoading
-                    type={'bubbles'}
-                    color={'#000000'}
+                    type="bubbles"
+                    color="#000000"
                     height={30}
                     width={30}
                   />

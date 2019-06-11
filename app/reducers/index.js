@@ -58,10 +58,10 @@ if (config.logLevel === 'DEBUG') {
   session.wallet.setLogLevel(LogLevel.DEBUG);
   session.wallet.setLoggerCallback(
     (prettyMessage, message, level, categories) => {
-      let logStream = fs.createWriteStream(logDirectory + '/protonwallet.log', {
+      let logStream = fs.createWriteStream(`${logDirectory}/protonwallet.log`, {
         flags: 'a'
       });
-      logStream.write(prettyMessage + '\n');
+      logStream.write(`${prettyMessage}\n`);
     }
   );
 }
