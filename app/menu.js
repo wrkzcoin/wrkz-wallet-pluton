@@ -1,6 +1,7 @@
 // @flow
-import { app, Menu, shell, BrowserWindow } from 'electron';
+import { app, Menu, shell, BrowserWindow, remote, dialog } from 'electron';
 import log from 'electron-log';
+import { session } from './reducers/index';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -181,6 +182,13 @@ export default class MenuBuilder {
     return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
 
+  handleSave(showDialog: boolean) {
+    const saved = session.saveWallet();
+    if(showDialog) {
+    dialog.showMessageBox(null, {type: 'info', buttons: ['OK'], title: 'Saved!', message: 'Your wallet was saved successfully.'});
+    }
+  }
+
   buildDefaultTemplate() {
     const templateDefault = [
       {
@@ -198,20 +206,17 @@ export default class MenuBuilder {
             label: '&Save',
             accelerator: 'Ctrl+S',
             click: () => {
-              log.debug('Wallet saved by user input')
+              this.handleSave(true)
             }
           },
           {
             label: '&Save as'
           },
           {
-            label: '&Delete'
-          },
-
-          {
             label: '&Close',
             accelerator: 'Ctrl+W',
             click: () => {
+              this.handleSave(false);
               this.mainWindow.close();
             }
           }

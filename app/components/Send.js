@@ -1,11 +1,12 @@
+/* eslint-disable class-methods-use-this */
 // @flow
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
+import log from 'electron-log';
 import routes from '../constants/routes';
 import { config, session } from '../reducers/index';
 import navBar from './NavBar';
-import log from 'electron-log';
 
 // import styles from './Send.css';
 
@@ -14,7 +15,7 @@ type Props = {
   unlockedBalance: Number,
   lockedBalance: Number,
   transactions: Array<string>,
-  handleSubmit: () => void,
+  handleSubmit: () => void
 };
 
 export default class Send extends Component<Props> {
@@ -27,22 +28,7 @@ export default class Send extends Component<Props> {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions()
-    }
-  }
-
-  handleSubmit(event) {
-
-    // We're preventing the default refresh of the page that occurs on form submit
-    event.preventDefault();
-
-    const [sendToAddress, amount, paymentID, fee] = [
-      event.target[0].value,          // sendToAddress
-      event.target[1].value,          // amount
-      event.target[2].value || undefined,          // paymentID
-      event.target[3].value || 0.1    // fee
-    ]
-
-    session.sendTransaction(sendToAddress, amount, paymentID, fee);
+    };
   }
 
   componentDidMount() {
@@ -51,6 +37,20 @@ export default class Send extends Component<Props> {
 
   componentWillUnmount() {
     clearInterval(this.interval);
+  }
+
+  handleSubmit(event) {
+    // We're preventing the default refresh of the page that occurs on form submit
+    event.preventDefault();
+
+    const [sendToAddress, amount, paymentID, fee] = [
+      event.target[0].value, // sendToAddress
+      event.target[1].value, // amount
+      event.target[2].value || undefined, // paymentID
+      event.target[3].value || 0.1 // fee
+    ];
+
+    session.sendTransaction(sendToAddress, amount, paymentID, fee);
   }
 
   refresh() {
@@ -82,18 +82,18 @@ export default class Send extends Component<Props> {
               </label>
             </div>
             <div className="field">
-            <label className="label" htmlFor="amount">
-              Amount
-              <div className="control">
-                <input
-                  className="input"
-                  type="text"
-                  placeholder="How much TRTL to send (eg. 100)"
-                  id="amount"
-                />
-              </div>
-            </label>
-          </div>
+              <label className="label" htmlFor="amount">
+                Amount
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder="How much TRTL to send (eg. 100)"
+                    id="amount"
+                  />
+                </div>
+              </label>
+            </div>
             <div className="field">
               <label className="label" htmlFor="paymentid">
                 Payment ID (Optional)

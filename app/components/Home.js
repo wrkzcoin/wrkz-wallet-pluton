@@ -62,9 +62,23 @@ export default class Home extends Component<Props> {
               {this.state.transactions.map((tx, index) => {
                 return (
                   <tr key={index}>
-                    <td>{tx[0]}</td>
+                    <td>
+                      {tx[0] === 0 && (
+                        <p className="has-text-danger">Unconfirmed</p>
+                      )}
+                      {tx[0] > 0 && <p>{session.convertTimestamp(tx[0])}</p>}
+                    </td>
                     <td>{tx[1]}</td>
-                    <td>{tx[2] < 0 && <p className="has-text-danger">{session.atomicToHuman(tx[2], true)}</p>}{tx[2] > 0 && <p>&nbsp;{session.atomicToHuman(tx[2], true)}</p>}</td>
+                    <td>
+                      {tx[2] < 0 && (
+                        <p className="has-text-danger">
+                          {session.atomicToHuman(tx[2], true)}
+                        </p>
+                      )}
+                      {tx[2] > 0 && (
+                        <p>&nbsp;{session.atomicToHuman(tx[2], true)}</p>
+                      )}
+                    </td>
                     <td />
                   </tr>
                 );

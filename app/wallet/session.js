@@ -46,6 +46,8 @@ export default class WalletSession {
     });
   }
 
+
+
   addAddress() {
     log.debug('Adding subwallet...');
   }
@@ -56,8 +58,8 @@ export default class WalletSession {
 
   getTransactions() {
     const rawTransactions = this.wallet.getTransactions();
-    let formattedTransactions = rawTransactions.map(tx => [
-      this.convertTimestamp(tx.timestamp),
+    const formattedTransactions = rawTransactions.map(tx => [
+      tx.timestamp,
       tx.hash,
       tx.totalAmount()
     ]);
@@ -107,6 +109,12 @@ export default class WalletSession {
       percentSync = 99.99;
     }
     return this.roundToNearestHundredth(percentSync);
+  }
+
+  saveWallet() {
+    const [programDirectory, logDirectory, walletDirectory] = directories;
+    this.wallet.saveWalletToFile(`${walletDirectory}/${config.walletFile}`, '');
+    log.debug('Wallet saved!');
   }
 
   async sendTransaction(
