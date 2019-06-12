@@ -28,7 +28,7 @@ export default class Home extends Component<Props> {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 100);
+    this.interval = setInterval(() => this.refresh(), 1000);
   }
 
   componentWillUnmount() {

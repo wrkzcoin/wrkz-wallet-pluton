@@ -59,8 +59,10 @@ export default class WalletSession {
       log.debug(error.toString());
     }
     this.wallet = openWallet;
-    log.debug(this.wallet.getPrimaryAddress())
-
+    log.debug(this.wallet.getPrimaryAddress());
+    this.address = this.wallet.getPrimaryAddress();
+    this.wallet.start();
+    this.syncStatus = this.getSyncStatus();
   }
 
   addAddress() {
@@ -126,10 +128,15 @@ export default class WalletSession {
     return this.roundToNearestHundredth(percentSync);
   }
 
-  saveWallet() {
-    const [programDirectory, logDirectory, walletDirectory] = directories;
-    this.wallet.saveWalletToFile(`${walletDirectory}/${config.walletFile}`, '');
-    log.debug('Wallet saved!');
+  saveWallet(filePath?: string) {
+    if (filePath !== undefined) {
+      this.wallet.saveWalletToFile(`${filePath}`, '');
+      log.debug(`Wallet copy saved at ${filePath}`);
+    } else {
+      log.debug('Entered default save block');
+      const [programDirectory, logDirectory, walletDirectory] = directories;
+      this.wallet.saveWalletToFile(`${walletDirectory}/${config.walletFile}`, '');
+    }
   }
 
   async sendTransaction(

@@ -33,7 +33,7 @@ export default class Send extends Component<Props> {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 250);
+    this.interval = setInterval(() => this.refresh(), 1000);
   }
 
   componentWillUnmount() {

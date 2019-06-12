@@ -35,7 +35,7 @@ export default class Receive extends Component<Props> {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 100);
+    this.interval = setInterval(() => this.refresh(), 1000);
   }
 
   componentWillUnmount() {
@@ -101,7 +101,7 @@ export default class Receive extends Component<Props> {
                   value={session.address}
                   renderAs="svg"
                   bgColor="#f5f5f5"
-                  size="256"
+                  size={256}
                 />
               </span>
             </div>

@@ -1,9 +1,9 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-undef */
 // @flow
-import { app, Menu, shell, BrowserWindow, remote, dialog } from 'electron';
+import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
+import clipboardy from 'clipboardy';
 import log from 'electron-log';
-import { WalletBackend } from 'turtlecoin-wallet-backend';
 import { session } from './reducers/index';
 
 export default class MenuBuilder {
@@ -200,13 +200,60 @@ export default class MenuBuilder {
   handleOpen() {
     log.debug(session.wallet.getPrimaryAddress());
     const selectedPath = dialog.showOpenDialog()[0];
+    if (selectedPath === undefined) {
+      return;
+    }
     this.handleSave(false);
     session.handleWalletOpen(selectedPath);
   }
 
-  handleSaveAs() {
-    const savePath = dialog.showSaveDialog(null);
-    console.log(savePath)
+  handleSaveAs(showDialog: boolean) {
+    const savePath = dialog.showSaveDialog();
+    console.log(savePath);
+    session.saveWallet(savePath);
+    if (showDialog) {
+      dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: ['OK'],
+        title: 'Saved!',
+        message: 'Your wallet was saved successfully.'
+      });
+    }
+  }
+
+  handleSeed() {
+    log.debug(session.wallet.getMnemonicSeed());
+    dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['Copy to Clipboard', 'OK'],
+      title: 'Seed',
+      message:
+        `Your wallet seed is:\n\n` +
+        `${session.wallet.getMnemonicSeed()[0]}\n\n` +
+        `Please save this seed safely and securely. If you lose your seed, you not will be able to recover your funds.`
+    });
+  }
+
+  handlePrivateKeys() {
+    const [
+      privateSpendKey,
+      privateViewKey
+    ] = session.wallet.getPrimaryAddressPrivateKeys();
+
+    const msg =
+      // eslint-disable-next-line prefer-template
+      `Private Spend Key:\n\n` +
+      privateSpendKey +
+      `\n\nPrivate View Key:\n\n` +
+      privateViewKey +
+      `\n\nPlease save these keys safely and securely. \nIf you lose your keys, you will not be able to recover your funds.`;
+
+    dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['Copy to Clipboard', 'OK'],
+      title: 'Seed',
+      message: msg
+    });
   }
 
   buildDefaultTemplate() {
@@ -233,9 +280,9 @@ export default class MenuBuilder {
             }
           },
           {
-            label: '&Save as',
+            label: '&Save a Copy',
             click: () => {
-              this.handleSaveAs();
+              this.handleSaveAs(true);
             }
           },
           {
@@ -252,23 +299,19 @@ export default class MenuBuilder {
         label: '&Wallet',
         submenu: [
           {
-            label: '&Information'
-          },
-          {
             label: '&Password'
           },
           {
-            label: '&Seed'
+            label: '&Seed',
+            click: () => {
+              this.handleSeed();
+            }
           },
           {
-            label: '&Private Keys'
-          },
-          {
-            label: '&Addresses'
-          },
-          {
-            label: '&Find',
-            accelerator: 'Ctrl+F'
+            label: '&Private Keys',
+            click: () => {
+              this.handlePrivateKeys();
+            }
           }
         ]
       },
@@ -337,19 +380,11 @@ export default class MenuBuilder {
             }
           },
           {
-            label: 'Check for Updates',
-            click() {}
-          },
-          {
             label: 'Report Bug',
             click() {
               shell.openExternal('https://github.com/ExtraHash/proton/issues');
             }
           },
-          {
-            label: 'Donate to Developers',
-            click() {}
-          }
         ]
       }
     ];
