@@ -133,7 +133,7 @@ export default class WalletSession {
       this.wallet.saveWalletToFile(`${filePath}`, '');
       log.debug(`Wallet copy saved at ${filePath}`);
     } else {
-      log.debug('Entered default save block');
+      log.debug('Saved wallet to default location.');
       const [programDirectory, logDirectory, walletDirectory] = directories;
       this.wallet.saveWalletToFile(`${walletDirectory}/${config.walletFile}`, '');
     }
