@@ -1,8 +1,8 @@
 {
   "name": "proton-wallet",
   "productName": "Proton",
-  "version": "0.0.2",
-  "description": "TurtleCoin wallet based on React, React Router, Webpack, React Hot Loader",
+  "version": "0.0.3",
+  "description": "TurtleCoin wallet based on React, React Router, Webpack, and React Hot Loader",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -286,7 +286,7 @@
     "yarn": ">=0.21.3"
   },
   "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
+    "url": "TRTLv2ExtraXM4mgiQcS2dFavDRe6R2i51Y4CpggeTRBgj7s2TmyQVXTf5ytutUq3B7whB4xWD1gp8MZ54MvrU9dDbzScHzoXww"
   },
   "browserslist": "electron 1.6",
   "husky": {
