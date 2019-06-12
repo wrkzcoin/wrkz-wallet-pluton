@@ -72,6 +72,7 @@ export default class Receive extends Component<Props> {
                     Receiving Address
                     <textarea
                       className="textarea is-family-monospace is-large"
+                      rows="6"
                       placeholder={session.address}
                       id="receiveaddress"
                       readOnly
@@ -101,7 +102,7 @@ export default class Receive extends Component<Props> {
                   value={session.address}
                   renderAs="svg"
                   bgColor="#f5f5f5"
-                  size={256}
+                  size={248}
                 />
               </span>
             </div>
