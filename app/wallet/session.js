@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import {
   WalletBackend,
   BlockchainCacheApi,
@@ -46,7 +47,21 @@ export default class WalletSession {
     });
   }
 
+  handleWalletOpen(selectedPath) {
+    log.debug(this.wallet.getPrimaryAddress());
+    this.wallet.stop();
+    const [openWallet, error] = WalletBackend.openWalletFromFile(
+      this.daemon,
+      selectedPath,
+      ''
+    );
+    if (error) {
+      log.debug(error.toString());
+    }
+    this.wallet = openWallet;
+    log.debug(this.wallet.getPrimaryAddress())
 
+  }
 
   addAddress() {
     log.debug('Adding subwallet...');

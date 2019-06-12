@@ -1,3 +1,4 @@
+/* eslint-disable react/button-has-type */
 /* eslint-disable class-methods-use-this */
 // @flow
 import React, { Component } from 'react';
@@ -73,7 +74,7 @@ export default class Send extends Component<Props> {
                 Send to Address
                 <div className="control">
                   <input
-                    className="input"
+                    className="input is-large"
                     type="text"
                     placeholder="Enter a TurtleCoin address to send funds to."
                     id="label"
@@ -86,7 +87,7 @@ export default class Send extends Component<Props> {
                 Amount
                 <div className="control">
                   <input
-                    className="input"
+                    className="input is-large"
                     type="text"
                     placeholder="How much TRTL to send (eg. 100)"
                     id="amount"
@@ -99,7 +100,7 @@ export default class Send extends Component<Props> {
                 Payment ID (Optional)
                 <div className="control">
                   <input
-                    className="input"
+                    className="input is-large"
                     type="text"
                     placeholder="Enter a payment ID"
                     id="paymentid"
@@ -107,27 +108,11 @@ export default class Send extends Component<Props> {
                 </div>
               </label>
             </div>
-            <div className="field">
-              <label className="label" htmlFor="fee">
-                Fee (Optional)
-                <div className="control">
-                  <input
-                    className="input"
-                    type="text"
-                    placeholder="Enter desired mining fee"
-                    id="fee"
-                  />
-                </div>
-                <p className="help">
-                  This will default to the lowest possible fee (0.1 TRTL)
-                </p>
-              </label>
-            </div>
             <div className="buttons">
-              <button type="submit" className="button is-success">
+              <button type="submit" className="button is-success is-large">
                 Send
               </button>
-              <button type="reset" className="button">
+              <button type="reset" className="button is-large">
                 Clear
               </button>
             </div>

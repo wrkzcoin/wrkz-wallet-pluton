@@ -6,8 +6,7 @@ import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import styles from './Counter.css';
 import { config, session } from '../reducers/index';
-import navBar from './NavBar'
-
+import navBar from './NavBar';
 
 type Props = {
   increment: () => void,
@@ -63,32 +62,37 @@ export default class Receive extends Component<Props> {
     } = this.props;
     return (
       <div>
-      {navBar()}
+        {navBar()}
         <div className="notification width maincontent">
           <div className="columns">
             <div className="column is-three-quarters">
-              <label className="label" htmlFor="receiveaddress">
-                Receiving Address
-                <textarea
-                  className="textarea is-family-monospace"
-                  placeholder={session.address}
-                  id="receiveaddress"
-                  readOnly
-                />
-                <br />
-                <div className="buttons">
-                  <button
-                    type="button"
-                    className="button is-success"
-                    onClick={() => copyToClipboard()}
-                  >
-                    Copy to Clipboard
-                  </button>
-                  <button type="button" className="button">
-                    Use a New Address
-                  </button>
+              <form>
+                <div className="field">
+                  <label className="label" htmlFor="receiveaddress">
+                    Receiving Address
+                    <textarea
+                      className="textarea is-family-monospace is-large"
+                      placeholder={session.address}
+                      id="receiveaddress"
+                      readOnly
+                    />
+                  </label>
                 </div>
-              </label>
+                <div className="field">
+                  <div className="buttons">
+                    <button
+                      type="button"
+                      className="button is-success is-large"
+                      onClick={() => copyToClipboard()}
+                    >
+                      Copy to Clipboard
+                    </button>
+                    <button type="button" className="button is-large">
+                      Use a New Address
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
             <div className="column">
               <br />

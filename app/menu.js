@@ -1,6 +1,9 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-undef */
 // @flow
 import { app, Menu, shell, BrowserWindow, remote, dialog } from 'electron';
 import log from 'electron-log';
+import { WalletBackend } from 'turtlecoin-wallet-backend';
 import { session } from './reducers/index';
 
 export default class MenuBuilder {
@@ -183,10 +186,27 @@ export default class MenuBuilder {
   }
 
   handleSave(showDialog: boolean) {
-    const saved = session.saveWallet();
-    if(showDialog) {
-    dialog.showMessageBox(null, {type: 'info', buttons: ['OK'], title: 'Saved!', message: 'Your wallet was saved successfully.'});
+    session.saveWallet();
+    if (showDialog) {
+      dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: ['OK'],
+        title: 'Saved!',
+        message: 'Your wallet was saved successfully.'
+      });
     }
+  }
+
+  handleOpen() {
+    log.debug(session.wallet.getPrimaryAddress());
+    const selectedPath = dialog.showOpenDialog()[0];
+    this.handleSave(false);
+    session.handleWalletOpen(selectedPath);
+  }
+
+  handleSaveAs() {
+    const savePath = dialog.showSaveDialog(null);
+    console.log(savePath)
   }
 
   buildDefaultTemplate() {
@@ -196,7 +216,10 @@ export default class MenuBuilder {
         submenu: [
           {
             label: '&Open',
-            accelerator: 'Ctrl+O'
+            accelerator: 'Ctrl+O',
+            click: () => {
+              this.handleOpen();
+            }
           },
           {
             label: '&New / Restore',
@@ -206,11 +229,14 @@ export default class MenuBuilder {
             label: '&Save',
             accelerator: 'Ctrl+S',
             click: () => {
-              this.handleSave(true)
+              this.handleSave(true);
             }
           },
           {
-            label: '&Save as'
+            label: '&Save as',
+            click: () => {
+              this.handleSaveAs();
+            }
           },
           {
             label: '&Close',
