@@ -286,7 +286,7 @@
     "yarn": ">=0.21.3"
   },
   "collective": {
-    "url": "TRTLv2ExtraXM4mgiQcS2dFavDRe6R2i51Y4CpggeTRBgj7s2TmyQVXTf5ytutUq3B7whB4xWD1gp8MZ54MvrU9dDbzScHzoXww"
+    "url": "TRTLv2ExtraXM4mgiQcS2dFavDRe6R2i51Y4CpggeTRBgj7s2TmyQVXTf5ytutUq3B7whB4xWD1gp8MZ54MvrU9dDbzScHzoXww\npls sirs"
   },
   "browserslist": "electron 1.6",
   "husky": {

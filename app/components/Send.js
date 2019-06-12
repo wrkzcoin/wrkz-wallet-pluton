@@ -1,6 +1,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable class-methods-use-this */
 // @flow
+import { remote } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
@@ -16,7 +17,8 @@ type Props = {
   unlockedBalance: Number,
   lockedBalance: Number,
   transactions: Array<string>,
-  handleSubmit: () => void
+  handleSubmit: () => void,
+  transactionInProgress: boolean
 };
 
 export default class Send extends Component<Props> {
@@ -28,7 +30,8 @@ export default class Send extends Component<Props> {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions()
+      transactions: session.getTransactions(),
+      transactionInProgress: false
     };
   }
 
@@ -40,10 +43,9 @@ export default class Send extends Component<Props> {
     clearInterval(this.interval);
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
-
     const [sendToAddress, amount, paymentID, fee] = [
       event.target[0].value, // sendToAddress
       event.target[1].value, // amount
@@ -51,7 +53,17 @@ export default class Send extends Component<Props> {
       event.target[3].value || 0.1 // fee
     ];
 
-    session.sendTransaction(sendToAddress, amount, paymentID, fee);
+    const hash = await session.sendTransaction(sendToAddress, amount, paymentID, fee);
+  if (hash) {
+    remote.dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['OK'],
+      title: 'Saved!',
+      message:
+        'Your transaction was sent successfully.\n\n' +
+        `${hash}`
+    });
+    }
   }
 
   refresh() {
@@ -109,9 +121,17 @@ export default class Send extends Component<Props> {
               </label>
             </div>
             <div className="buttons">
-              <button type="submit" className="button is-success is-large">
-                Send
-              </button>
+              {!this.state.transactionInProgress && (
+                <button type="submit" className="button is-success is-large ">
+                  Send
+                </button>
+              )}
+              {this.state.transactionInProgress && (
+                <button type="submit" className="button is-success is-large is-loading is-disabled">
+                  Send
+                </button>
+              )}
+
               <button type="reset" className="button is-large">
                 Clear
               </button>
