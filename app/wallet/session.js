@@ -1,18 +1,17 @@
-import { WalletBackend, BlockchainCacheApi, ConventionalDaemon } from 'turtlecoin-wallet-backend';
+import {
+  WalletBackend,
+  BlockchainCacheApi,
+  ConventionalDaemon
+} from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
-import { config, directories } from '../reducers/index'
-
+import { config, directories } from '../reducers/index';
 
 export default class WalletSession {
   constructor(opts) {
     // this.daemon = new ConventionalDaemon('nodes.hashvault.pro', true);
     this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
-    const [
-      programDirectory,
-      logDirectory,
-      walletDirectory
-    ] = directories;
+    const [programDirectory, logDirectory, walletDirectory] = directories;
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
       `${walletDirectory}/${config.walletFile}`,
@@ -24,13 +23,13 @@ export default class WalletSession {
         openWallet = WalletBackend.createWallet(this.daemon);
       }
     }
-    log.debug(`Opened wallet file at ${walletDirectory}/${config.walletFile}`)
+    log.debug(`Opened wallet file at ${walletDirectory}/${config.walletFile}`);
     this.wallet = openWallet;
     this.wallet.start();
     this.syncStatus = this.getSyncStatus();
     this.address = this.wallet.getPrimaryAddress();
 
-    this.wallet.on('transaction', (transaction) => {
+    this.wallet.on('transaction', transaction => {
       log.debug(`Transaction of ${transaction.totalAmount()} received!`);
     });
 
@@ -41,14 +40,14 @@ export default class WalletSession {
     });
 
     this.wallet.on('desync', (walletHeight, networkHeight) => {
-      log.debug(`Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`);
+      log.debug(
+        `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
+      );
     });
-
   }
 
   addAddress() {
     log.debug('Adding subwallet...');
-
   }
 
   getAddresses() {
@@ -57,18 +56,12 @@ export default class WalletSession {
 
   getTransactions() {
     const rawTransactions = this.wallet.getTransactions();
-    let formattedTransactions =
-      rawTransactions.map( tx =>
-        [
-          this.convertTimestamp(tx.timestamp),
-          tx.hash,
-          tx.totalAmount()
-        ])
+    let formattedTransactions = rawTransactions.map(tx => [
+      this.convertTimestamp(tx.timestamp),
+      tx.hash,
+      tx.totalAmount()
+    ]);
     return formattedTransactions;
-  }
-
-  sendTransaction() {
-    this.wallet.sendTransactionAdvanced
   }
 
   getUnlockedBalance(subwallets?: Array<string>) {
@@ -116,36 +109,53 @@ export default class WalletSession {
     return this.roundToNearestHundredth(percentSync);
   }
 
-  sendTransaction() {
-    log.debug("We're all gonna make it!");
+  async sendTransaction(
+    sendToAddress: string,
+    amount: number,
+    paymentID: string,
+    fee: number
+  ) {
+    log.debug(
+      `** Sending transaction: Amount: ${amount} Address ${sendToAddress} PID: ${paymentID} Fee ${fee}...`
+    );
+    const [hash, err] = await this.wallet.sendTransactionBasic(
+      sendToAddress,
+      parseInt(amount, 10),
+      paymentID
+    );
+    if (err) {
+      log.debug(`Failed to send transaction: ${err.toString()}`);
+      return err;
+    }
+    log.debug(`Transaction succeeded! ${hash}`);
+    return hash;
   }
 
   formatLikeCurrency(x: Number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
-  atomicToHuman(x: Number, prettyPrint: Boolean) {
+  atomicToHuman(x: number, prettyPrint: boolean) {
     if (prettyPrint) {
       return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
-    } else {
-      return x / 100;
     }
+    return x / 100;
   }
 
   convertTimestamp(timestamp: Date) {
     let d = new Date(timestamp * 1000), // Convert the passed timestamp to milliseconds
-        yyyy = d.getFullYear(),
-        mm = ('0' + (d.getMonth() + 1)).slice(-2), // Months are zero based. Add leading 0.
-        dd = ('0' + d.getDate()).slice(-2), // Add leading 0.
-        hh = ('0' + d.getHours()).slice(-2),
-        min = ('0' + d.getMinutes()).slice(-2), // Add leading 0.
-        time;
+      yyyy = d.getFullYear(),
+      mm = `0${d.getMonth() + 1}`.slice(-2), // Months are zero based. Add leading 0.
+      dd = `0${d.getDate()}`.slice(-2), // Add leading 0.
+      hh = `0${d.getHours()}`.slice(-2),
+      min = `0${d.getMinutes()}`.slice(-2), // Add leading 0.
+      time;
     // ie: 2013-02-18, 16:35
-    time = yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + min;
+    time = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
     return time;
-};
+  }
 
-  roundToNearestHundredth(x: Number) {
+  roundToNearestHundredth(x: number) {
     return Math.ceil(x * 100) / 100;
   }
 }

@@ -42,11 +42,7 @@ export default class Send extends Component<Props> {
       event.target[3].value || 0.1    // fee
     ]
 
-    log.debug(`** Sending transaction: Amount: ${amount} Address ${sendToAddress} PID: ${paymentID} Fee ${fee}...`
-    );
-
     session.sendTransaction(sendToAddress, amount, paymentID, fee);
-
   }
 
   componentDidMount() {
