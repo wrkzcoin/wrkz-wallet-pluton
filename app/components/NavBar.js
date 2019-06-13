@@ -28,7 +28,7 @@ export default function navBar(activePage) {
                   <Link to={routes.HOME}>
                     <span className="navbar-item">
                       <i className="fa fa-credit-card" />
-                      &nbsp;<strong>Wallet</strong>
+                      &nbsp;&nbsp;<strong>Wallet</strong>
                     </span>
                   </Link>
                 )}
@@ -36,7 +36,7 @@ export default function navBar(activePage) {
                   <Link to={routes.HOME}>
                     <span className="navbar-item">
                       <i className="fa fa-credit-card" />
-                      &nbsp;Wallet
+                      &nbsp;&nbsp;Wallet
                     </span>
                   </Link>
                 )}
@@ -44,7 +44,7 @@ export default function navBar(activePage) {
                   <Link to={routes.SEND}>
                     <span className="navbar-item">
                       <i className="fa fa-paper-plane" />
-                      &nbsp;<strong>Send</strong>
+                      &nbsp;&nbsp;<strong>Send</strong>
                     </span>
                   </Link>
                 )}
@@ -52,7 +52,7 @@ export default function navBar(activePage) {
                   <Link to={routes.SEND}>
                     <span className="navbar-item">
                       <i className="fa fa-paper-plane" />
-                      &nbsp;Send
+                      &nbsp;&nbsp;Send
                     </span>
                   </Link>
                 )}
@@ -60,7 +60,7 @@ export default function navBar(activePage) {
                   <Link to={routes.COUNTER}>
                     <span className="navbar-item">
                       <i className="fa fa-arrow-circle-down" />
-                      &nbsp;<strong>Receive</strong>
+                      &nbsp;&nbsp;<strong>Receive</strong>
                     </span>
                   </Link>
                 )}
@@ -68,7 +68,7 @@ export default function navBar(activePage) {
                   <Link to={routes.COUNTER}>
                     <span className="navbar-item">
                       <i className="fa fa-arrow-circle-down" />
-                      &nbsp;Receive
+                      &nbsp;&nbsp;Receive
                     </span>
                   </Link>
                 )}
@@ -76,7 +76,7 @@ export default function navBar(activePage) {
                   <Link to={routes.ADDRESSES}>
                     <span className="navbar-item">
                       <i className="fa fa-address-book" />
-                      &nbsp;<strong>Addresses</strong>
+                      &nbsp;&nbsp;<strong>Addresses</strong>
                     </span>
                   </Link>
                 )}
@@ -84,7 +84,7 @@ export default function navBar(activePage) {
                   <Link to={routes.ADDRESSES}>
                     <span className="navbar-item">
                       <i className="fa fa-address-book" />
-                      &nbsp;Addresses
+                      &nbsp;&nbsp;Addresses
                     </span>
                   </Link>
                 )}
