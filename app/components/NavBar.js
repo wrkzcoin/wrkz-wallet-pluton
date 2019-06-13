@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import { config } from '../reducers/index';
 
-export default function navBar() {
+export default function navBar(activePage) {
   return (
     <React-Fragment>
       <div className="box  has-background-grey-lighter headerbar">
@@ -24,18 +24,70 @@ export default function navBar() {
                     />
                   </span>
                 </Link>
-                <Link to={routes.HOME}>
-                  <span className="navbar-item">Wallet</span>
-                </Link>
-                <Link to={routes.SEND}>
-                  <span className="navbar-item">Send</span>
-                </Link>
-                <Link to={routes.COUNTER}>
-                  <span className="navbar-item">Receive</span>
-                </Link>
-                <Link to={routes.ADDRESSES}>
-                  <span className="navbar-item">Addresses</span>
-                </Link>
+                {activePage === 'wallet' && (
+                  <Link to={routes.HOME}>
+                    <span className="navbar-item">
+                      <i className="fa fa-credit-card" />
+                      &nbsp;<strong>Wallet</strong>
+                    </span>
+                  </Link>
+                )}
+                {activePage !== 'wallet' && (
+                  <Link to={routes.HOME}>
+                    <span className="navbar-item">
+                      <i className="fa fa-credit-card" />
+                      &nbsp;Wallet
+                    </span>
+                  </Link>
+                )}
+                {activePage === 'send' && (
+                  <Link to={routes.SEND}>
+                    <span className="navbar-item">
+                      <i className="fa fa-paper-plane" />
+                      &nbsp;<strong>Send</strong>
+                    </span>
+                  </Link>
+                )}
+                {activePage !== 'send' && (
+                  <Link to={routes.SEND}>
+                    <span className="navbar-item">
+                      <i className="fa fa-paper-plane" />
+                      &nbsp;Send
+                    </span>
+                  </Link>
+                )}
+                {activePage === 'receive' && (
+                  <Link to={routes.COUNTER}>
+                    <span className="navbar-item">
+                      <i className="fa fa-arrow-circle-down" />
+                      &nbsp;<strong>Receive</strong>
+                    </span>
+                  </Link>
+                )}
+                {activePage !== 'receive' && (
+                  <Link to={routes.COUNTER}>
+                    <span className="navbar-item">
+                      <i className="fa fa-arrow-circle-down" />
+                      &nbsp;Receive
+                    </span>
+                  </Link>
+                )}
+                {activePage === 'addresses' && (
+                  <Link to={routes.ADDRESSES}>
+                    <span className="navbar-item">
+                      <i className="fa fa-address-book" />
+                      &nbsp;<strong>Addresses</strong>
+                    </span>
+                  </Link>
+                )}
+                {activePage !== 'addresses' && (
+                  <Link to={routes.ADDRESSES}>
+                    <span className="navbar-item">
+                      <i className="fa fa-address-book" />
+                      &nbsp;Addresses
+                    </span>
+                  </Link>
+                )}
               </div>
             </nav>
           </div>

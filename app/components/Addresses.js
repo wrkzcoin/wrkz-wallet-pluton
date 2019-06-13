@@ -45,7 +45,7 @@ export default class Addresses extends Component<Props> {
   render() {
     return (
       <div>
-        {navBar()}
+        {navBar('addresses')}
         <div className="maincontent has-background-light">
           <table className="table is-striped is-hoverable is-fullwidth is-narrow is-family-monospace has-background-light">
             <thead>

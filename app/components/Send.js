@@ -53,16 +53,19 @@ export default class Send extends Component<Props> {
       event.target[3].value || 0.1 // fee
     ];
 
-    const hash = await session.sendTransaction(sendToAddress, amount, paymentID, fee);
-  if (hash) {
-    remote.dialog.showMessageBox(null, {
-      type: 'info',
-      buttons: ['OK'],
-      title: 'Saved!',
-      message:
-        'Your transaction was sent successfully.\n\n' +
-        `${hash}`
-    });
+    const hash = await session.sendTransaction(
+      sendToAddress,
+      amount,
+      paymentID,
+      fee
+    );
+    if (hash) {
+      remote.dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: ['OK'],
+        title: 'Saved!',
+        message: 'Your transaction was sent successfully.\n\n' + `${hash}`
+      });
     }
   }
 
@@ -78,7 +81,7 @@ export default class Send extends Component<Props> {
   render() {
     return (
       <div>
-        {navBar()}
+        {navBar('send')}
         <div className="box has-background-light maincontent">
           <form onSubmit={this.handleSubmit}>
             <div className="field">
@@ -127,7 +130,10 @@ export default class Send extends Component<Props> {
                 </button>
               )}
               {this.state.transactionInProgress && (
-                <button type="submit" className="button is-success is-large is-loading is-disabled">
+                <button
+                  type="submit"
+                  className="button is-success is-large is-loading is-disabled"
+                >
                   Send
                 </button>
               )}

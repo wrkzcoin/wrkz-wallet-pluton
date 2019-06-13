@@ -47,7 +47,7 @@ export default class Home extends Component<Props> {
   render() {
     return (
       <div>
-        {navBar()}
+        {navBar('wallet')}
         <div className="maincontent has-background-light">
           <table className="table has-background-light is-striped is-hoverable is-fullwidth is-narrow is-family-monospace">
             <thead>

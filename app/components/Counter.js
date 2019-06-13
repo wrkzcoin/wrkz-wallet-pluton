@@ -62,7 +62,7 @@ export default class Receive extends Component<Props> {
     } = this.props;
     return (
       <div>
-        {navBar()}
+        {navBar('receive')}
         <div className="notification width maincontent">
           <div className="columns">
             <div className="column is-three-quarters">
