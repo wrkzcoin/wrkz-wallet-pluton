@@ -52,8 +52,6 @@ export default class WalletSession {
   handleWalletOpen(selectedPath: string) {
     this.wallet.stop();
     const [programDirectory, logDirectory, walletDirectory] = directories;
-    log.debug(selectedPath);
-    log.debug(config);
     const modifyConfig = config;
     modifyConfig.walletFile = selectedPath;
     log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
@@ -133,7 +131,7 @@ export default class WalletSession {
   saveWallet(filePath?: string) {
     if (filePath !== undefined) {
       this.wallet.saveWalletToFile(`${filePath}`, '');
-      log.debug(`Wallet copy saved at ${filePath}`);
+      log.debug(`Wallet saved at ${filePath}`);
     } else {
       log.debug('No path provided!');
       return;
