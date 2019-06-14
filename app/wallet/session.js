@@ -6,10 +6,7 @@ import {
 } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
-import { config, directories } from '../reducers/index';
-
-log.debug(directories);
-
+import { config } from '../reducers/index';
 
 export default class WalletSession {
   constructor(opts) {
