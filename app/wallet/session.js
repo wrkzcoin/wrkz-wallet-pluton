@@ -49,13 +49,22 @@ export default class WalletSession {
     });
   }
 
-  handleWalletOpen(selectedPath) {
-    // this.wallet.stop();
+  handleWalletOpen(selectedPath: string) {
+    this.wallet.stop();
+    const [programDirectory, logDirectory, walletDirectory] = directories;
     log.debug(selectedPath);
     log.debug(config);
     const modifyConfig = config;
     modifyConfig.walletFile = selectedPath;
     log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
+    fs.writeFile(
+      `${programDirectory}/config.json`,
+      JSON.stringify(config, null, 4),
+      err => {
+        if (err) throw err;
+        log.debug('Wrote config to disk, reloading...');
+      }
+    );
   }
 
   addAddress() {
@@ -153,7 +162,7 @@ export default class WalletSession {
     return hash;
   }
 
-  formatLikeCurrency(x: Number) {
+  formatLikeCurrency(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 

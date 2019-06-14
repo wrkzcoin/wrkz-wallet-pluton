@@ -203,7 +203,6 @@ export default class MenuBuilder {
       return;
     }
     const selectedPath = getPaths[0];
-    this.handleSave(false);
     session.handleWalletOpen(selectedPath);
   }
 
