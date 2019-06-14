@@ -53,8 +53,10 @@ export default class WalletSession {
     this.wallet.stop();
     const [programDirectory, logDirectory, walletDirectory] = directories;
     const modifyConfig = config;
-    modifyConfig.walletFile = selectedPath;
+    // modifyConfig.walletFile = selectedPath;
     log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
+    config.walletFile = selectedPath;
+    log.debug('config in memory ', config);
     fs.writeFile(
       `${programDirectory}/config.json`,
       JSON.stringify(config, null, 4),
