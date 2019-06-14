@@ -4,7 +4,7 @@
 import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
 import clipboardy from 'clipboardy';
 import log from 'electron-log';
-import { session } from './reducers/index';
+import { session, config } from './reducers/index';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -186,7 +186,7 @@ export default class MenuBuilder {
   }
 
   handleSave(showDialog: boolean) {
-    session.saveWallet();
+    session.saveWallet(config.walletFile);
     if (showDialog) {
       dialog.showMessageBox(null, {
         type: 'info',

@@ -48,21 +48,8 @@ export default class WalletSession {
   }
 
   handleWalletOpen(selectedPath) {
-    log.debug(this.wallet.getPrimaryAddress());
-    this.wallet.stop();
-    const [openWallet, error] = WalletBackend.openWalletFromFile(
-      this.daemon,
-      selectedPath,
-      ''
-    );
-    if (error) {
-      log.debug(error.toString());
-    }
-    this.wallet = openWallet;
-    log.debug(this.wallet.getPrimaryAddress());
-    this.address = this.wallet.getPrimaryAddress();
-    this.wallet.start();
-    this.syncStatus = this.getSyncStatus();
+    // this.wallet.stop();
+    log.debug('Reached!');
   }
 
   addAddress() {
@@ -133,9 +120,8 @@ export default class WalletSession {
       this.wallet.saveWalletToFile(`${filePath}`, '');
       log.debug(`Wallet copy saved at ${filePath}`);
     } else {
-      log.debug('Saved wallet to default location.');
-      const [programDirectory, logDirectory, walletDirectory] = directories;
-      this.wallet.saveWalletToFile(`${walletDirectory}/${config.walletFile}`, '');
+      log.debug('No path provided!');
+      return;
     }
   }
 
