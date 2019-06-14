@@ -4,6 +4,7 @@ import {
   BlockchainCacheApi,
   ConventionalDaemon
 } from 'turtlecoin-wallet-backend';
+import app from 'electron';
 import log from 'electron-log';
 import fs from 'fs';
 import { config, directories } from '../reducers/index';
@@ -49,11 +50,19 @@ export default class WalletSession {
     });
   }
 
+  readConfigFromDisk() {
+    const [programDirectory, logDirectory, walletDirectory] = directories;
+    const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
+    return JSON.parse(rawUserConfig);
+  }
+
+
   handleWalletOpen(selectedPath: string) {
     this.wallet.stop();
+    // this.wallet = undefined;
     const [programDirectory, logDirectory, walletDirectory] = directories;
     const modifyConfig = config;
-    // modifyConfig.walletFile = selectedPath;
+    modifyConfig.walletFile = selectedPath;
     log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
     config.walletFile = selectedPath;
     log.debug('config in memory ', config);
@@ -62,9 +71,13 @@ export default class WalletSession {
       JSON.stringify(config, null, 4),
       err => {
         if (err) throw err;
-        log.debug('Wrote config to disk, reloading...');
+        log.debug(err);
+        return false;
       }
+
     );
+    log.debug('Wrote config file to disk. Reloading...');
+    return true;
   }
 
   addAddress() {
@@ -174,15 +187,14 @@ export default class WalletSession {
   }
 
   convertTimestamp(timestamp: Date) {
-    let d = new Date(timestamp * 1000), // Convert the passed timestamp to milliseconds
-      yyyy = d.getFullYear(),
-      mm = `0${d.getMonth() + 1}`.slice(-2), // Months are zero based. Add leading 0.
-      dd = `0${d.getDate()}`.slice(-2), // Add leading 0.
-      hh = `0${d.getHours()}`.slice(-2),
-      min = `0${d.getMinutes()}`.slice(-2), // Add leading 0.
-      time;
+    const d = new Date(timestamp * 1000) // Convert the passed timestamp to milliseconds
+    const yyyy = d.getFullYear()
+    const mm = `0${d.getMonth() + 1}`.slice(-2) // Months are zero based. Add leading 0.
+    const dd = `0${d.getDate()}`.slice(-2) // Add leading 0.
+    const hh = `0${d.getHours()}`.slice(-2)
+    const min = `0${d.getMinutes()}`.slice(-2) // Add leading 0.
     // ie: 2013-02-18, 16:35
-    time = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+    const time = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
     return time;
   }
 

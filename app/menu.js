@@ -203,7 +203,18 @@ export default class MenuBuilder {
       return;
     }
     const selectedPath = getPaths[0];
-    session.handleWalletOpen(selectedPath);
+    const savedSuccessfully = session.handleWalletOpen(selectedPath);
+    if (savedSuccessfully) {
+      app.relaunch();
+      app.exit();
+    } else {
+      dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Error opening wallet!',
+        message: 'The wallet was not opened successfully. Try again.'
+      });
+    }
   }
 
   handleSaveAs(showDialog: boolean) {
