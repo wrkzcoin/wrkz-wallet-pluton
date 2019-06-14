@@ -8,11 +8,13 @@ import log from 'electron-log';
 import fs from 'fs';
 import { config, directories } from '../reducers/index';
 
+log.debug(directories);
+
+
 export default class WalletSession {
   constructor(opts) {
     // this.daemon = new ConventionalDaemon('nodes.hashvault.pro', true);
     this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
-    const [programDirectory, logDirectory, walletDirectory] = directories;
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
       config.walletFile,
@@ -49,7 +51,11 @@ export default class WalletSession {
 
   handleWalletOpen(selectedPath) {
     // this.wallet.stop();
-    log.debug('Reached!');
+    log.debug(selectedPath);
+    log.debug(config);
+    let modifyConfig = config
+    modifyConfig.walletFile = selectedPath
+    log.debug('modified config:\n' + JSON.stringify(modifyConfig, null, 4));
   }
 
   addAddress() {
