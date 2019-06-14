@@ -198,18 +198,20 @@ export default class MenuBuilder {
   }
 
   handleOpen() {
-    log.debug(session.wallet.getPrimaryAddress());
-    const selectedPath = dialog.showOpenDialog()[0];
-    if (selectedPath === undefined) {
+    const getPaths = dialog.showOpenDialog();
+    if (getPaths === undefined) {
       return;
     }
+    const selectedPath = getPaths[0];
     this.handleSave(false);
     session.handleWalletOpen(selectedPath);
   }
 
   handleSaveAs(showDialog: boolean) {
     const savePath = dialog.showSaveDialog();
-    console.log(savePath);
+    if (savePath === undefined) {
+      return;
+    }
     session.saveWallet(savePath);
     if (showDialog) {
       dialog.showMessageBox(null, {

@@ -1,5 +1,5 @@
 {
-  "walletFile": "default.wallet",
+  "walletFile": "",
   "logo": "./img/trtl-logo.png",
   "enableAutoOptimization": true,
   "scanCoinbaseTransactions": false,
