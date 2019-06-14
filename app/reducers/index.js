@@ -55,7 +55,7 @@ directories.forEach(function(dir) {
   }
 });
 
-export let session = new WalletSession();
+export const session = new WalletSession();
 log.debug('Initialized wallet session ', session.address);
 
 if (config.logLevel === 'DEBUG') {

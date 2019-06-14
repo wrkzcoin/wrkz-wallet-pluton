@@ -6,10 +6,13 @@ import {
 } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
-import { config } from '../reducers/index';
+import { config, directories } from '../reducers/index';
 
 export default class WalletSession {
   constructor(opts) {
+    const [programDirectory, logDirectory, walletDirectory] = directories;
+    log.debug(programDirectory);
+
     // this.daemon = new ConventionalDaemon('nodes.hashvault.pro', true);
     this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
     let [openWallet, error] = WalletBackend.openWalletFromFile(
@@ -50,9 +53,9 @@ export default class WalletSession {
     // this.wallet.stop();
     log.debug(selectedPath);
     log.debug(config);
-    let modifyConfig = config
-    modifyConfig.walletFile = selectedPath
-    log.debug('modified config:\n' + JSON.stringify(modifyConfig, null, 4));
+    const modifyConfig = config;
+    modifyConfig.walletFile = selectedPath;
+    log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
   }
 
   addAddress() {
