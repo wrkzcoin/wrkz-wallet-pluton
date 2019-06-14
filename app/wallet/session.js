@@ -15,7 +15,7 @@ export default class WalletSession {
     const [programDirectory, logDirectory, walletDirectory] = directories;
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
-      `${walletDirectory}/${config.walletFile}`,
+      config.walletFile,
       ''
     );
     if (error) {
@@ -24,7 +24,7 @@ export default class WalletSession {
         openWallet = WalletBackend.createWallet(this.daemon);
       }
     }
-    log.debug(`Opened wallet file at ${walletDirectory}/${config.walletFile}`);
+    log.debug(`Opened wallet file at ${config.walletFile}`);
     this.wallet = openWallet;
     this.wallet.start();
     this.syncStatus = this.getSyncStatus();

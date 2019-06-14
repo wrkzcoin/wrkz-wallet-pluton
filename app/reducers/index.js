@@ -23,6 +23,10 @@ export const directories = [
 
 const [programDirectory, logDirectory, walletDirectory] = directories;
 
+if (config.walletFile === '') {
+  config.walletFile = `${walletDirectory}/default.wallet`
+}
+
 if (!fs.existsSync(`${programDirectory}/config.json`)) {
   fs.writeFile(
     `${programDirectory}/config.json`,
@@ -66,7 +70,7 @@ if (config.logLevel === 'DEBUG') {
   );
 }
 
-session.wallet.saveWalletToFile(`${walletDirectory}/${config.walletFile}`, '');
+session.wallet.saveWalletToFile(config.walletFile, '');
 
 export default function createRootReducer(history: History) {
   return combineReducers<{}, *>({
