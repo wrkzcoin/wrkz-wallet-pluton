@@ -3,5 +3,6 @@
   "COUNTER": "/counter",
   "SEND": "/send",
   "ADDRESSES": "/addresses",
-  "IMPORT": "/import"
+  "IMPORT": "/import",
+  "IMPORTKEY": "/importkey"
 }

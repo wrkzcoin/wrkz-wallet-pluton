@@ -62,6 +62,18 @@ export default class WalletSession {
     }
   }
 
+  handleImportFromKey(viewKey: string, spendKey: string, savePath: string, height: number) {
+    const [importedWallet, err] = WalletBackend.importWalletFromKeys(this.daemon, height, viewKey, spendKey);
+    if (err) {
+      log.debug('Failed to load wallet: ' + err.toString());
+      return false;
+    } else {
+      importedWallet.saveWalletToFile(savePath, '');
+      log.debug('Wrote config file to disk.');
+      return true;
+    }
+  }
+
   handleNewWallet(filename: string) {
     const newWallet = WalletBackend.createWallet(this.daemon);
     const saved = newWallet.saveWalletToFile(filename, '');

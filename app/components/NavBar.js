@@ -80,8 +80,8 @@ export default function navBar(activePage) {
                     </span>
                   </Link>
                 )}
-                {activePage === 'bewbz' && (
-                  <Link to={routes.ADDRESSES}>
+                {activePage === 'bewbz2' && (
+                  <Link to={routes.IMPORTKEY}>
                     <span className="navbar-item">
                       <i className="fa fa-address-book" />
                       &nbsp;&nbsp;Addresses
