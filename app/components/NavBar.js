@@ -72,7 +72,7 @@ export default function navBar(activePage) {
                     </span>
                   </Link>
                 )}
-                {activePage === 'addresses' && (
+                {activePage === 'bewbz' && (
                   <Link to={routes.ADDRESSES}>
                     <span className="navbar-item">
                       <i className="fa fa-address-book" />
@@ -80,7 +80,7 @@ export default function navBar(activePage) {
                     </span>
                   </Link>
                 )}
-                {activePage !== 'addresses' && (
+                {activePage === 'bewbz' && (
                   <Link to={routes.ADDRESSES}>
                     <span className="navbar-item">
                       <i className="fa fa-address-book" />

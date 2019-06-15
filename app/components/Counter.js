@@ -88,9 +88,6 @@ export default class Receive extends Component<Props> {
                     >
                       Copy to Clipboard
                     </button>
-                    <button type="button" className="button is-large">
-                      Use a New Address
-                    </button>
                   </div>
                 </div>
               </form>

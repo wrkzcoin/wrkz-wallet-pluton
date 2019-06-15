@@ -2,5 +2,6 @@
   "HOME": "/",
   "COUNTER": "/counter",
   "SEND": "/send",
-  "ADDRESSES": "/addresses"
+  "ADDRESSES": "/addresses",
+  "IMPORT": "/import"
 }

@@ -50,7 +50,19 @@ export default class WalletSession {
     });
   }
 
-  handleNewWallet(filename) {
+  handleImportFromSeed(seed: string, filePath: string, height?: number) {
+    const [importedWallet, err] = WalletBackend.importWalletFromSeed(this.daemon, height, seed);
+    if (err) {
+      log.debug('Failed to load wallet: ' + err.toString());
+      return false;
+    } else {
+      importedWallet.saveWalletToFile(filePath, '');
+      log.debug('Wrote config file to disk.');
+      return true;
+    }
+  }
+
+  handleNewWallet(filename: string) {
     const newWallet = WalletBackend.createWallet(this.daemon);
     const saved = newWallet.saveWalletToFile(filename, '');
     if (!saved) {

@@ -233,34 +233,24 @@ export default class MenuBuilder {
     }
   }
 
-  handleSeed() {
-    const msg =
-      `Your wallet seed is:\n\n` +
-      `${session.wallet.getMnemonicSeed()[0]}\n\n` +
-      `Please save this seed safely and securely. If you lose your seed, you not will be able to recover your funds.`
-    const userSelection = dialog.showMessageBox(null, {
-      type: 'info',
-      buttons: ['Copy to Clipboard', 'Cancel'],
-      title: 'Seed',
-      message: msg
-    });
-    if (userSelection === 0) {
-      clipboardy.writeSync(msg);
-    }
-  }
-
-  handlePrivateKeys() {
+  handleBackup() {
+    const publicAddress = session.wallet.getPrimaryAddress();
     const [
       privateSpendKey,
       privateViewKey
     ] = session.wallet.getPrimaryAddressPrivateKeys();
+    const [mnemonicSeed, err] = session.wallet.getMnemonicSeed();
+    log.debug(err);
 
     const msg =
       // eslint-disable-next-line prefer-template
-      `Private Spend Key:\n\n` +
+      publicAddress +
+      `\n\nPrivate Spend Key:\n\n` +
       privateSpendKey +
       `\n\nPrivate View Key:\n\n` +
       privateViewKey +
+      `\n\nMnemonic Seed:\n\n` +
+      mnemonicSeed +
       `\n\nPlease save these keys safely and securely. \nIf you lose your keys, you will not be able to recover your funds.`;
 
     const userSelection = dialog.showMessageBox(null, {
@@ -388,15 +378,9 @@ export default class MenuBuilder {
             label: '&Password'
           },
           {
-            label: '&Seed',
+            label: '&Backup',
             click: () => {
-              this.handleSeed();
-            }
-          },
-          {
-            label: '&Private Keys',
-            click: () => {
-              this.handlePrivateKeys();
+              this.handleBackup();
             }
           }
         ]
@@ -442,6 +426,7 @@ export default class MenuBuilder {
                 }
               ]
       },
+      /*
       {
         label: '&Tools',
         submenu: [
@@ -456,6 +441,7 @@ export default class MenuBuilder {
           }
         ]
       },
+      */
       {
         label: 'Help',
         submenu: [
@@ -470,7 +456,7 @@ export default class MenuBuilder {
             click() {
               shell.openExternal('https://github.com/ExtraHash/proton/issues');
             }
-          },
+          }
         ]
       }
     ];
