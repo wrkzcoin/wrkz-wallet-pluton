@@ -50,6 +50,16 @@ export default class WalletSession {
     });
   }
 
+  handleNewWallet(filename) {
+    const newWallet = WalletBackend.createWallet(this.daemon);
+    const saved = newWallet.saveWalletToFile(filename, '');
+    if (!saved) {
+      log.debug('Failed to save wallet!');
+      return false;
+    }
+    return true;
+  }
+
   readConfigFromDisk() {
     const [programDirectory, logDirectory, walletDirectory] = directories;
     const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
@@ -59,13 +69,13 @@ export default class WalletSession {
 
   handleWalletOpen(selectedPath: string) {
     this.wallet.stop();
+
     // this.wallet = undefined;
     const [programDirectory, logDirectory, walletDirectory] = directories;
     const modifyConfig = config;
     modifyConfig.walletFile = selectedPath;
     log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
     config.walletFile = selectedPath;
-    log.debug('config in memory ', config);
     fs.writeFile(
       `${programDirectory}/config.json`,
       JSON.stringify(config, null, 4),
@@ -76,7 +86,8 @@ export default class WalletSession {
       }
 
     );
-    log.debug('Wrote config file to disk. Reloading...');
+    log.debug('Wrote config file to disk.');
+
     return true;
   }
 

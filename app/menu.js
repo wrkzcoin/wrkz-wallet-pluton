@@ -204,7 +204,7 @@ export default class MenuBuilder {
     }
     const selectedPath = getPaths[0];
     const savedSuccessfully = session.handleWalletOpen(selectedPath);
-    if (savedSuccessfully) {
+    if (savedSuccessfully === true) {
       app.relaunch();
       app.exit();
     } else {
@@ -268,6 +268,52 @@ export default class MenuBuilder {
     });
   }
 
+  handleNew() {
+    dialog.showMessageBox(null, {
+      type: 'question',
+      buttons: ['OK'],
+      title: 'New Wallet',
+      message: 'Press OK to select a location for your new wallet.'
+    });
+    const savePath = dialog.showSaveDialog();
+    if (savePath === undefined) {
+      return;
+    }
+    log.debug(savePath);
+    const createdSuccessfuly = session.handleNewWallet(savePath);
+    if (createdSuccessfuly === false) {
+      dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Error saving wallet!',
+        message: 'The wallet was not created successfully. Check your directory permissions and try again.'
+      });
+    } else {
+      dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: ['OK'],
+        title: 'Created!',
+        message: 'Your new wallet was created successfully. Press OK to open...'
+      });
+      const savedSuccessfully = session.handleWalletOpen(savePath);
+      if (savedSuccessfully === true) {
+        app.relaunch();
+        app.exit();
+      } else {
+        dialog.showMessageBox(null, {
+          type: 'error',
+          buttons: ['OK'],
+          title: 'Error opening wallet!',
+          message: 'The wallet was not opened successfully. Try again.'
+        });
+      }
+    }
+  }
+
+  handleRestore() {
+    log.debug('Reached!');
+  }
+
   buildDefaultTemplate() {
     const templateDefault = [
       {
@@ -281,8 +327,17 @@ export default class MenuBuilder {
             }
           },
           {
-            label: '&New / Restore',
-            accelerator: 'Ctrl+N'
+            label: '&New',
+            accelerator: 'Ctrl+N',
+            click: () => {
+              this.handleNew();
+            }
+          },
+          {
+            label: '&Restore',
+            click: () => {
+              this.handleRestore();
+            }
           },
           {
             label: '&Save',
