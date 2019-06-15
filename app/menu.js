@@ -234,16 +234,19 @@ export default class MenuBuilder {
   }
 
   handleSeed() {
-    log.debug(session.wallet.getMnemonicSeed());
-    dialog.showMessageBox(null, {
+    const msg =
+      `Your wallet seed is:\n\n` +
+      `${session.wallet.getMnemonicSeed()[0]}\n\n` +
+      `Please save this seed safely and securely. If you lose your seed, you not will be able to recover your funds.`
+    const userSelection = dialog.showMessageBox(null, {
       type: 'info',
-      buttons: ['Copy to Clipboard', 'OK'],
+      buttons: ['Copy to Clipboard', 'Cancel'],
       title: 'Seed',
-      message:
-        `Your wallet seed is:\n\n` +
-        `${session.wallet.getMnemonicSeed()[0]}\n\n` +
-        `Please save this seed safely and securely. If you lose your seed, you not will be able to recover your funds.`
+      message: msg
     });
+    if (userSelection === 0) {
+      clipboardy.writeSync(msg);
+    }
   }
 
   handlePrivateKeys() {
@@ -260,12 +263,15 @@ export default class MenuBuilder {
       privateViewKey +
       `\n\nPlease save these keys safely and securely. \nIf you lose your keys, you will not be able to recover your funds.`;
 
-    dialog.showMessageBox(null, {
+    const userSelection = dialog.showMessageBox(null, {
       type: 'info',
-      buttons: ['Copy to Clipboard', 'OK'],
+      buttons: ['Copy to Clipboard', 'Cancel'],
       title: 'Seed',
       message: msg
     });
+    if (userSelection === 0) {
+      clipboardy.writeSync(msg);
+    }
   }
 
   handleNew() {
@@ -286,7 +292,8 @@ export default class MenuBuilder {
         type: 'error',
         buttons: ['OK'],
         title: 'Error saving wallet!',
-        message: 'The wallet was not created successfully. Check your directory permissions and try again.'
+        message:
+          'The wallet was not created successfully. Check your directory permissions and try again.'
       });
     } else {
       dialog.showMessageBox(null, {
@@ -311,7 +318,19 @@ export default class MenuBuilder {
   }
 
   handleRestore() {
-    log.debug('Reached!');
+    log.debug('Import menu selected.');
+    // seed will be 0, keys will be 1
+    const userSelection = dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['Seed', 'Keys'],
+      title: 'Seed',
+      message: 'Would you like to restore from seed or keys?'
+    });
+    if (userSelection === 0) {
+      log.debug('User selected to import from seed...');
+    } else if (userSelection === 1) {
+      log.debug('User selected to import from keys...');
+    }
   }
 
   buildDefaultTemplate() {
