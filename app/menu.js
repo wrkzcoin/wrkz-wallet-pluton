@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-undef */
 // @flow
-import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
+import { app, Menu, shell, BrowserWindow, dialog, ipcMain } from 'electron';
 import clipboardy from 'clipboardy';
 import log from 'electron-log';
 import { session, config } from './reducers/index';
@@ -12,6 +12,7 @@ export default class MenuBuilder {
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
   }
+
 
   buildMenu() {
     if (
@@ -187,7 +188,7 @@ export default class MenuBuilder {
 
   handleSave(showDialog: boolean) {
     session.saveWallet(config.walletFile);
-    if (showDialog) {
+    if (showDialog === true) {
       dialog.showMessageBox(null, {
         type: 'info',
         buttons: ['OK'],
@@ -318,8 +319,10 @@ export default class MenuBuilder {
     });
     if (userSelection === 0) {
       log.debug('User selected to import from seed...');
+      this.mainWindow.webContents.send('importSeed');
     } else if (userSelection === 1) {
       log.debug('User selected to import from keys...');
+      this.mainWindow.webContents.send('importKey');
     }
   }
 

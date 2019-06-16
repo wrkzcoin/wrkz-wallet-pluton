@@ -2,11 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import { config } from '../reducers/index';
+import log from 'electron-log';
 
 export default function navBar(activePage) {
   return (
     <React-Fragment>
-      <div className="box  has-background-grey-lighter headerbar">
+      <div className="box has-background-grey-lighter headerbar">
         <div className="columns">
           <div className="column is-three-fifths">
             <nav

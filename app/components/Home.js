@@ -1,7 +1,9 @@
 // @flow
+import { ipcRenderer } from 'electron';
+import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import routes from '../constants/routes';
 // import styles from './Home.css';
 import { config, session } from '../reducers/index';
@@ -11,10 +13,11 @@ type Props = {
   syncStatus: Number,
   unlockedBalance: Number,
   lockedBalance: Number,
-  transactions: Array<string>
+  transactions: Array<string>,
+  history: any
 };
 
-export default class Home extends Component<Props> {
+class Home extends Component<Props> {
   props: Props;
 
   constructor(props?: Props) {
@@ -23,16 +26,32 @@ export default class Home extends Component<Props> {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions()
+      transactions: session.getTransactions(),
+      importSeed: false,
+      importKey: false
     };
+  }
+
+  handleImportFromSeed(evt, route) {
+    log.debug('Reached seed import in renderer process...');
+    this.props.history.push('/import');
+  }
+
+  handleImportFromKey(evt, route) {
+    log.debug('Reached key import in renderer process...')
+    this.props.history.push('/importkey');
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
+    ipcRenderer.on('importSeed', this.handleImportFromSeed);
+    ipcRenderer.on('importKey', this.handleImportFromKey);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    ipcRenderer.off('importSeed', this.handleImportFromSeed);
+    ipcRenderer.off('importKey', this.handleImportFromKey);
   }
 
   refresh() {
@@ -45,6 +64,7 @@ export default class Home extends Component<Props> {
   }
 
   render() {
+
     return (
       <div>
         {navBar('wallet')}
@@ -123,3 +143,5 @@ export default class Home extends Component<Props> {
     );
   }
 }
+
+export default withRouter(Home);
