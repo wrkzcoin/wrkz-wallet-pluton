@@ -1,21 +1,20 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable class-methods-use-this */
 // @flow
-import { remote, app } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
-import routes from '../constants/routes';
-import { config, session } from '../reducers/index';
+import { session } from '../reducers/index';
 import navBar from './NavBar';
 
 // import styles from './Send.css';
 
 type Props = {
-  syncStatus: Number,
-  unlockedBalance: Number,
-  lockedBalance: Number,
+  syncStatus: number,
+  unlockedBalance: number,
+  lockedBalance: number,
   transactions: Array<string>,
   handleSubmit: () => void,
   transactionInProgress: boolean
@@ -31,16 +30,41 @@ export default class Send extends Component<Props> {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(),
-      transactionInProgress: false
+      importkey: false,
+      importseed: false
     };
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
+    ipcRenderer.on('importSeed', (evt, route) =>
+      this.handleImportFromSeed(evt, route)
+    );
+    ipcRenderer.on('importKey', (evt, route) =>
+      this.handleImportFromKey(evt, route)
+    );
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    ipcRenderer.off('importSeed', this.handleImportFromSeed);
+    ipcRenderer.off('importKey', this.handleImportFromKey);
+  }
+
+  handleImportFromSeed(evt, route) {
+    clearInterval(this.interval);
+    ipcRenderer.off('importSeed', this.handleImportFromSeed);
+    this.setState({
+      importseed: true
+    });
+  }
+
+  handleImportFromKey(evt, route) {
+    clearInterval(this.interval);
+    ipcRenderer.off('importKey', this.handleImportFromKey);
+    this.setState({
+      importkey: true
+    });
   }
 
   handleSubmit(event) {
@@ -58,7 +82,7 @@ export default class Send extends Component<Props> {
       return;
     }
     if (height === '') {
-      height = 0
+      height = '0';
     }
 
     const savePath = remote.dialog.showSaveDialog();
@@ -66,13 +90,19 @@ export default class Send extends Component<Props> {
       return;
     }
 
-    const importedSuccessfully = session.handleImportFromKey(viewKey, spendKey, savePath, parseInt(height));
+    const importedSuccessfully = session.handleImportFromKey(
+      viewKey,
+      spendKey,
+      savePath,
+      parseInt(height)
+    );
     if (importedSuccessfully === true) {
       remote.dialog.showMessageBox(null, {
         type: 'info',
         buttons: ['OK'],
         title: 'Wallet imported successfully!',
-        message: 'The wallet was imported successfully. You can now open your wallet file.'
+        message:
+          'The wallet was imported successfully. You can now open your wallet file.'
       });
     } else {
       remote.dialog.showMessageBox(null, {
@@ -94,37 +124,40 @@ export default class Send extends Component<Props> {
   }
 
   render() {
+    if (this.state.importseed === true) {
+      return <Redirect to="/import" />;
+    }
     return (
       <div>
         {navBar('import')}
         <div className="box has-background-light maincontent">
           <form onSubmit={this.handleSubmit}>
-          <div className="field">
-          <label className="label" htmlFor="scanheight">
-            Private Spend Key
-            <div className="control">
-              <input
-                className="input is-large"
-                type="text"
-                placeholder="Enter your private view key..."
-                id="scanheight"
-              />
+            <div className="field">
+              <label className="label" htmlFor="scanheight">
+                Private Spend Key
+                <div className="control">
+                  <input
+                    className="input is-large"
+                    type="text"
+                    placeholder="Enter your private view key..."
+                    id="scanheight"
+                  />
+                </div>
+              </label>
             </div>
-          </label>
-        </div>
-        <div className="field">
-        <label className="label" htmlFor="scanheight">
-          Private View Key
-          <div className="control">
-            <input
-              className="input is-large"
-              type="text"
-              placeholder="Enter your private spend key..."
-              id="scanheight"
-            />
-          </div>
-        </label>
-      </div>
+            <div className="field">
+              <label className="label" htmlFor="scanheight">
+                Private View Key
+                <div className="control">
+                  <input
+                    className="input is-large"
+                    type="text"
+                    placeholder="Enter your private spend key..."
+                    id="scanheight"
+                  />
+                </div>
+              </label>
+            </div>
             <div className="field">
               <label className="label" htmlFor="scanheight">
                 Scan Height (Optional)
@@ -139,9 +172,9 @@ export default class Send extends Component<Props> {
               </label>
             </div>
             <div className="buttons">
-                <button type="submit" className="button is-success is-large ">
-                  Import
-                </button>
+              <button type="submit" className="button is-success is-large ">
+                Import
+              </button>
               <button type="reset" className="button is-large">
                 Clear
               </button>

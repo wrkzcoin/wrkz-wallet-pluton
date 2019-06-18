@@ -4,7 +4,6 @@ import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
-// import styles from './Home.css';
 import { session } from '../reducers/index';
 import navBar from './NavBar';
 

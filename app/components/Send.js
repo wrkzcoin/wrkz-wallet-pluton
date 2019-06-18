@@ -1,24 +1,25 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable class-methods-use-this */
 // @flow
-import { remote } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
-import routes from '../constants/routes';
-import { config, session } from '../reducers/index';
+import { session } from '../reducers/index';
 import navBar from './NavBar';
 
 // import styles from './Send.css';
 
 type Props = {
-  syncStatus: Number,
-  unlockedBalance: Number,
-  lockedBalance: Number,
+  syncStatus: number,
+  unlockedBalance: number,
+  lockedBalance: number,
   transactions: Array<string>,
   handleSubmit: () => void,
-  transactionInProgress: boolean
+  transactionInProgress: boolean,
+  importseed: boolean,
+  importkey: boolean
 };
 
 export default class Send extends Component<Props> {
@@ -31,16 +32,26 @@ export default class Send extends Component<Props> {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(),
-      transactionInProgress: false
+      transactionInProgress: false,
+      importkey: false,
+      importseed: false
     };
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
+    ipcRenderer.on('importSeed', (evt, route) =>
+      this.handleImportFromSeed(evt, route)
+    );
+    ipcRenderer.on('importKey', (evt, route) =>
+      this.handleImportFromKey(evt, route)
+    );
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    ipcRenderer.off('importSeed', this.handleImportFromSeed);
+    ipcRenderer.off('importKey', this.handleImportFromKey);
   }
 
   async handleSubmit(event) {
@@ -69,6 +80,22 @@ export default class Send extends Component<Props> {
     }
   }
 
+  handleImportFromSeed(evt, route) {
+    clearInterval(this.interval);
+    ipcRenderer.off('importSeed', this.handleImportFromSeed);
+    this.setState({
+      importseed: true
+    });
+  }
+
+  handleImportFromKey(evt, route) {
+    clearInterval(this.interval);
+    ipcRenderer.off('importKey', this.handleImportFromKey);
+    this.setState({
+      importkey: true
+    });
+  }
+
   refresh() {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus(),
@@ -79,6 +106,14 @@ export default class Send extends Component<Props> {
   }
 
   render() {
+    if (this.state.importkey === true) {
+      return <Redirect to="/importkey" />;
+    }
+
+    if (this.state.importseed === true) {
+      return <Redirect to="/import" />;
+    }
+
     return (
       <div>
         {navBar('send')}

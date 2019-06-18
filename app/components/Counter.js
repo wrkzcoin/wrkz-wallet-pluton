@@ -1,11 +1,11 @@
 // @flow
+import { ipcRenderer } from 'electron';
+import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import QRCode from 'qrcode.react';
-import { Link } from 'react-router-dom';
-import routes from '../constants/routes';
-import styles from './Counter.css';
-import { config, session } from '../reducers/index';
+import { Redirect } from 'react-router-dom';
+import { session } from '../reducers/index';
 import navBar from './NavBar';
 
 type Props = {
@@ -30,16 +30,42 @@ export default class Receive extends Component<Props> {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions()
+      transactions: session.getTransactions(),
+      importkey: false,
+      importseed: false,
     };
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
+    ipcRenderer.on('importSeed', (evt, route) =>
+      this.handleImportFromSeed(evt, route)
+    );
+    ipcRenderer.on('importKey', (evt, route) =>
+      this.handleImportFromKey(evt, route)
+    );
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    ipcRenderer.off('importSeed', this.handleImportFromSeed);
+    ipcRenderer.off('importKey', this.handleImportFromKey);
+  }
+
+  handleImportFromSeed(evt, route) {
+    clearInterval(this.interval);
+    ipcRenderer.off('importSeed', this.handleImportFromSeed);
+    this.setState({
+      importseed: true
+    });
+  }
+
+  handleImportFromKey(evt, route) {
+    clearInterval(this.interval);
+    ipcRenderer.off('importKey', this.handleImportFromKey);
+    this.setState({
+      importkey: true
+    });
   }
 
   refresh() {
@@ -60,6 +86,15 @@ export default class Receive extends Component<Props> {
       counter,
       copyToClipboard
     } = this.props;
+
+    if (this.state.importkey === true) {
+      return <Redirect to="/importkey" />;
+    }
+
+    if (this.state.importseed === true) {
+      return <Redirect to="/import" />;
+    }
+
     return (
       <div>
         {navBar('receive')}
