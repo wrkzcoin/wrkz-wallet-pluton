@@ -36,11 +36,9 @@ export default class Home extends Component<Props> {
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
-    // ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importSeed', (evt, route) =>
       this.handleImportFromSeed(evt, route)
     );
-    // ipcRenderer.on('importKey', this.handleImportFromKey);
     ipcRenderer.on('importKey', (evt, route) =>
       this.handleImportFromKey(evt, route)
     );
@@ -53,14 +51,16 @@ export default class Home extends Component<Props> {
   }
 
   handleImportFromSeed(evt, route) {
-    log.debug('Reached seed import in renderer process...');
+    clearInterval(this.interval);
+    ipcRenderer.off('importSeed', this.handleImportFromSeed);
     this.setState({
       importseed: true
     });
   }
 
   handleImportFromKey(evt, route) {
-    log.debug('Reached key import in renderer process...');
+    clearInterval(this.interval);
+    ipcRenderer.off('importKey', this.handleImportFromKey);
     this.setState({
       importkey: true
     });
