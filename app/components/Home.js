@@ -3,10 +3,9 @@ import { ipcRenderer } from 'electron';
 import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import { Link, Redirect } from 'react-router-dom';
-import routes from '../constants/routes';
+import { Redirect } from 'react-router-dom';
 // import styles from './Home.css';
-import { config, session } from '../reducers/index';
+import { session } from '../reducers/index';
 import navBar from './NavBar';
 
 type Props = {
