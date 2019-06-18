@@ -3,22 +3,25 @@ import { ipcRenderer } from 'electron';
 import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import routes from '../constants/routes';
 // import styles from './Home.css';
 import { config, session } from '../reducers/index';
 import navBar from './NavBar';
 
 type Props = {
-  syncStatus: Number,
-  unlockedBalance: Number,
-  lockedBalance: Number,
+  syncStatus: number,
+  unlockedBalance: number,
+  lockedBalance: number,
   transactions: Array<string>,
-  history: any
+  history: any,
+  importkey: boolean,
+  importseed: boolean
 };
 
-class Home extends Component<Props> {
+export default class Home extends Component<Props> {
   props: Props;
+
 
   constructor(props?: Props) {
     super(props);
@@ -27,19 +30,9 @@ class Home extends Component<Props> {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(),
-      importSeed: false,
-      importKey: false
+      importkey: false,
+      importseed: false
     };
-  }
-
-  handleImportFromSeed(evt, route) {
-    log.debug('Reached seed import in renderer process...');
-    this.props.history.push('/import');
-  }
-
-  handleImportFromKey(evt, route) {
-    log.debug('Reached key import in renderer process...')
-    this.props.history.push('/importkey');
   }
 
   componentDidMount() {
@@ -54,6 +47,22 @@ class Home extends Component<Props> {
     ipcRenderer.off('importKey', this.handleImportFromKey);
   }
 
+  handleImportFromSeed(evt, route) {
+    log.debug('Reached seed import in renderer process...');
+    this.setState({
+      importseed: true
+    })
+    console.log(this.state);
+  }
+
+  handleImportFromKey(evt, route) {
+    log.debug('Reached key import in renderer process...')
+    this.setState({
+      importkey: true
+    })
+    console.log(this.state);
+  }
+
   refresh() {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus(),
@@ -64,6 +73,18 @@ class Home extends Component<Props> {
   }
 
   render() {
+
+    if (this.state.importkey === true) {
+      return (
+        <Redirect to="/importkey"/>
+      )
+    }
+
+    if (this.state.importseed === true) {
+      return (
+        <Redirect to="/import"/>
+      )
+    }
 
     return (
       <div>
@@ -143,5 +164,3 @@ class Home extends Component<Props> {
     );
   }
 }
-
-export default withRouter(Home);
