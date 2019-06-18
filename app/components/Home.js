@@ -22,7 +22,6 @@ type Props = {
 export default class Home extends Component<Props> {
   props: Props;
 
-
   constructor(props?: Props) {
     super(props);
     this.state = {
@@ -37,8 +36,14 @@ export default class Home extends Component<Props> {
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
-    ipcRenderer.on('importSeed', this.handleImportFromSeed);
-    ipcRenderer.on('importKey', this.handleImportFromKey);
+    // ipcRenderer.on('importSeed', this.handleImportFromSeed);
+    ipcRenderer.on('importSeed', (evt, route) =>
+      this.handleImportFromSeed(evt, route)
+    );
+    // ipcRenderer.on('importKey', this.handleImportFromKey);
+    ipcRenderer.on('importSeed', (evt, route) =>
+      this.handleImportFromSeed(evt, route)
+    );
   }
 
   componentWillUnmount() {
@@ -51,15 +56,15 @@ export default class Home extends Component<Props> {
     log.debug('Reached seed import in renderer process...');
     this.setState({
       importseed: true
-    })
+    });
     console.log(this.state);
   }
 
   handleImportFromKey(evt, route) {
-    log.debug('Reached key import in renderer process...')
+    log.debug('Reached key import in renderer process...');
     this.setState({
       importkey: true
-    })
+    });
     console.log(this.state);
   }
 
@@ -73,17 +78,12 @@ export default class Home extends Component<Props> {
   }
 
   render() {
-
     if (this.state.importkey === true) {
-      return (
-        <Redirect to="/importkey"/>
-      )
+      return <Redirect to="/importkey" />;
     }
 
     if (this.state.importseed === true) {
-      return (
-        <Redirect to="/import"/>
-      )
+      return <Redirect to="/import" />;
     }
 
     return (
