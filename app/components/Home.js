@@ -16,7 +16,7 @@ type Props = {
   transactions: Array<string>,
   history: any,
   importkey: boolean,
-  importseed: boolean
+  importseed: boolean,
 };
 
 export default class Home extends Component<Props> {
@@ -30,7 +30,7 @@ export default class Home extends Component<Props> {
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(),
       importkey: false,
-      importseed: false
+      importseed: false,
     };
   }
 
@@ -41,8 +41,8 @@ export default class Home extends Component<Props> {
       this.handleImportFromSeed(evt, route)
     );
     // ipcRenderer.on('importKey', this.handleImportFromKey);
-    ipcRenderer.on('importSeed', (evt, route) =>
-      this.handleImportFromSeed(evt, route)
+    ipcRenderer.on('importKey', (evt, route) =>
+      this.handleImportFromKey(evt, route)
     );
   }
 
@@ -57,7 +57,6 @@ export default class Home extends Component<Props> {
     this.setState({
       importseed: true
     });
-    console.log(this.state);
   }
 
   handleImportFromKey(evt, route) {
@@ -65,7 +64,6 @@ export default class Home extends Component<Props> {
     this.setState({
       importkey: true
     });
-    console.log(this.state);
   }
 
   refresh() {
