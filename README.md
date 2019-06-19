@@ -62,8 +62,20 @@ To package apps for the local platform
 $ yarn package
 ```
 
+## Todo
+
+* make config writing and file restarting work for importing
+* paginate data for transactions (infinite scroll?)
+* figure out why index.js is running twice
+* add a settings page with settings (rescan, optimize) 
+* incoming transaction notifiaction
+* utilities: generate payment id and inegrated address
+* Option to use system tray (on closing/minimizing wallet)
+* Provides list of public nodes, fetch/updated daily from turtlecoin-nodes-json repo. (settings page)
+* Allow to add custom node address.
+
+
 ## License
 
-MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate)
-
 MIT © [ExtraHash](https://github.com/ExtraHash)
+MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate
