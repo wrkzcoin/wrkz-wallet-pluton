@@ -77,6 +77,7 @@ $ yarn package
 * add a splash screen
 * center modals 
 * make transaction hash on wallet page link to explorer
+* use event handling instead of polling for transaction list
 
 
 ## License
