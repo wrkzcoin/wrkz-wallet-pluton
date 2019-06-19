@@ -105,11 +105,11 @@ export default class Settings extends Component<Props> {
         <div className="box has-background-light maincontent">
           <form onSubmit={this.handleSubmit}>
             <div class="field">
-              <input id="coinbasescan" type="checkbox" className="switch is-success" />
+              <input id="coinbasescan" type="checkbox" className="switch is-success is-rounded" />
               <label for="coinbasescan">Scan for solo mined blocks</label>
             </div>
             <div class="field">
-              <input id="auto_opt" type="checkbox" className="switch is-success" />
+              <input id="auto_opt" type="checkbox" className="switch is-success is-rounded" />
               <label for="auto_opt">Keep wallet optimized automatically</label>
             </div>
             <div className="buttons">
