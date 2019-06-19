@@ -56,14 +56,12 @@ export default class Settings extends Component<Props> {
   async handleSubmit(event) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
-    const [sendToAddress, amount, paymentID, fee] = [
-      event.target[0].value, // sendToAddress
-      event.target[1].value, // amount
-      event.target[2].value || undefined, // paymentID
-      event.target[3].value || 0.1 // fee
+    const [coinbaseScan, autoOptimize] = [
+      event.target[0].value, // whether or not to scan coinbase transactions
+      event.target[1].value, // whether or not to keep wallet auto-optimized
     ];
 
-    log.debug(sendToAddress);
+    log.debug('coinbaseScan = ' + coinbaseScan, '\nautoOptimize = ' + autoOptimize);
 
   }
 
@@ -107,8 +105,12 @@ export default class Settings extends Component<Props> {
         <div className="box has-background-light maincontent">
           <form onSubmit={this.handleSubmit}>
             <div class="field">
-              <input id="switchColorSuccess" type="checkbox" name="switchColorSuccess" className="switch is-success" />
-              <label for="switchColorSuccess">Scan coinbase transactions</label>
+              <input id="coinbasescan" type="checkbox" className="switch is-success" />
+              <label for="coinbasescan">Scan for solo mined blocks</label>
+            </div>
+            <div class="field">
+              <input id="auto_opt" type="checkbox" className="switch is-success" />
+              <label for="auto_opt">Keep wallet optimized automatically</label>
             </div>
             <div className="buttons">
               <button
