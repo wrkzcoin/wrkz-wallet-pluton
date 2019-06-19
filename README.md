@@ -67,8 +67,8 @@ $ yarn package
 * make config writing and file restarting work for importing
 * paginate data for transactions (infinite scroll?)
 * move session class initialization out of index.js reducer
-* add a settings page with settings (rescan, optimize) 
-* incoming transaction notifiaction
+* change session from a class to a static factory function
+* incoming transaction notification
 * utilities: generate payment id and inegrated address
 * Option to use system tray (on closing/minimizing wallet)
 * Provides list of public nodes, fetch/updated daily from turtlecoin-nodes-json repo. (settings page)
@@ -82,4 +82,4 @@ $ yarn package
 ## License
 
 MIT © [ExtraHash](https://github.com/ExtraHash)
-MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate
+MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate)
