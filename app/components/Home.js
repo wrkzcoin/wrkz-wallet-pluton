@@ -114,7 +114,7 @@ export default class Home extends Component<Props> {
                         </p>
                       )}
                       {tx[2] > 0 && (
-                        <p>&nbsp;{session.atomicToHuman(tx[2], true)}</p>
+                        <p>{session.atomicToHuman(tx[2], true)}</p>
                       )}
                     </td>
                     <td />
