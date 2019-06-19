@@ -66,13 +66,17 @@ $ yarn package
 
 * make config writing and file restarting work for importing
 * paginate data for transactions (infinite scroll?)
-* figure out why index.js is running twice
+* move session class initialization out of index.js reducer
 * add a settings page with settings (rescan, optimize) 
 * incoming transaction notifiaction
 * utilities: generate payment id and inegrated address
 * Option to use system tray (on closing/minimizing wallet)
 * Provides list of public nodes, fetch/updated daily from turtlecoin-nodes-json repo. (settings page)
 * Allow to add custom node address.
+* get save / open menus opening in focus
+* add a splash screen
+* center modals 
+* make transaction hash on wallet page link to explorer
 
 
 ## License

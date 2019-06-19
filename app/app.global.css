@@ -4,6 +4,7 @@
  */
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma/css/bulma.min.css';
+@import '~bulma-extensions/dist/css/bulma-extensions.min.css';
 
 .footerbar {
   position: absolute;
@@ -30,6 +31,14 @@
 
 slightpadding {
   padding: 5px 5px 5px 5px;
+}
+
+.settingscog {
+  float: right
+}
+
+.navigation {
+  color: #363636
 }
 
 @font-face {

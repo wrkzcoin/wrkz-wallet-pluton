@@ -1,9 +1,11 @@
+/* eslint-disable react/button-has-type */
+/* eslint-disable class-methods-use-this */
 // @flow
-import { ipcRenderer } from 'electron';
-import log from 'electron-log';
+import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect, Link } from 'react-router-dom';
+import log from 'electron-log';
 import { session } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
@@ -13,12 +15,13 @@ type Props = {
   unlockedBalance: number,
   lockedBalance: number,
   transactions: Array<string>,
-  history: any,
-  importkey: boolean,
-  importseed: boolean
+  handleSubmit: () => void,
+  transactionInProgress: boolean,
+  importseed: boolean,
+  importkey: boolean
 };
 
-export default class Home extends Component<Props> {
+export default class Settings extends Component<Props> {
   props: Props;
 
   constructor(props?: Props) {
@@ -28,6 +31,7 @@ export default class Home extends Component<Props> {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(),
+      transactionInProgress: false,
       importkey: false,
       importseed: false
     };
@@ -47,6 +51,20 @@ export default class Home extends Component<Props> {
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
+  }
+
+  async handleSubmit(event) {
+    // We're preventing the default refresh of the page that occurs on form submit
+    event.preventDefault();
+    const [sendToAddress, amount, paymentID, fee] = [
+      event.target[0].value, // sendToAddress
+      event.target[1].value, // amount
+      event.target[2].value || undefined, // paymentID
+      event.target[3].value || 0.1 // fee
+    ];
+
+    log.debug(sendToAddress);
+
   }
 
   handleImportFromSeed(evt, route) {
@@ -85,44 +103,25 @@ export default class Home extends Component<Props> {
 
     return (
       <div>
-        {navBar('wallet')}
-        <div className="maincontent has-background-light">
-          <table className="table has-background-light is-striped is-hoverable is-fullwidth is-narrow is-family-monospace">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Hash</th>
-                <th>Amount</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.transactions.map((tx, index) => {
-                return (
-                  <tr key={index}>
-                    <td>
-                      {tx[0] === 0 && (
-                        <p className="has-text-danger">Unconfirmed</p>
-                      )}
-                      {tx[0] > 0 && <p>{session.convertTimestamp(tx[0])}</p>}
-                    </td>
-                    <td>{tx[1]}</td>
-                    <td>
-                      {tx[2] < 0 && (
-                        <p className="has-text-danger">
-                          {session.atomicToHuman(tx[2], true)}
-                        </p>
-                      )}
-                      {tx[2] > 0 && (
-                        <p>&nbsp;{session.atomicToHuman(tx[2], true)}</p>
-                      )}
-                    </td>
-                    <td />
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        {navBar('settings')}
+        <div className="box has-background-light maincontent">
+          <form onSubmit={this.handleSubmit}>
+            <div class="field">
+              <input id="switchColorSuccess" type="checkbox" name="switchColorSuccess" className="switch is-success" />
+              <label for="switchColorSuccess">Scan coinbase transactions</label>
+            </div>
+            <div className="buttons">
+              <button
+                type="submit"
+                className="button is-success is-large"
+              >
+                Save Changes
+              </button>
+              <button type="reset" className="button is-large">
+                Discard
+              </button>
+            </div>
+          </form>
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">

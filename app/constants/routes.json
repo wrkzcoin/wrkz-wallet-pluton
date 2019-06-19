@@ -4,5 +4,6 @@
   "SEND": "/send",
   "ADDRESSES": "/addresses",
   "IMPORT": "/import",
-  "IMPORTKEY": "/importkey"
+  "IMPORTKEY": "/importkey",
+  "SETTINGS": "/settings"
 }

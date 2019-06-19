@@ -97,7 +97,7 @@ export default class Addresses extends Component<Props> {
                     {this.state.syncStatus}%
                     <ReactLoading
                       type="bubbles"
-                      color="#000000"
+                      color="#363636"
                       height={30}
                       width={30}
                     />

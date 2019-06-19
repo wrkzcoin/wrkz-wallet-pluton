@@ -4,9 +4,11 @@ import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import QRCode from 'qrcode.react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { session } from '../reducers/index';
 import navBar from './NavBar';
+import routes from '../constants/routes';
+
 
 type Props = {
   increment: () => void,
@@ -141,7 +143,7 @@ export default class Receive extends Component<Props> {
           </div>
         </div>
         <div className="box has-background-grey-lighter footerbar">
-          <div className="field is-grouped is-grouped-multiline">
+          <div className="field is-grouped is-grouped-multiline is-grouped-right">
             <div className="control">
               <div className="tags has-addons">
                 <span className="tag is-white is-large">Balance:</span>
@@ -158,7 +160,7 @@ export default class Receive extends Component<Props> {
                     {this.state.syncStatus}%
                     <ReactLoading
                       type="bubbles"
-                      color="#000000"
+                      color="#363636"
                       height={30}
                       width={30}
                     />
@@ -169,6 +171,17 @@ export default class Receive extends Component<Props> {
                     {this.state.syncStatus}%
                   </span>
                 )}
+              </div>
+            </div>
+            <div className="control">
+              <div className="tags has-addons">
+                <span className="tag has-background-grey-lighter is-large is-right">
+                  <Link className="settingslink" to={routes.SETTINGS}>
+                    <span className="icon has-text-dark">
+                      <i className="fa fa-cog" />
+                    </span>
+                  </Link>
+                </span>
               </div>
             </div>
           </div>

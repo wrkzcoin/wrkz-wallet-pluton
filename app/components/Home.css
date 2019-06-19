@@ -7,3 +7,8 @@
 .Site-content {
   flex: 1;
 }
+
+.settingsbox {
+  margin-left: auto;
+  margin-right: 0;
+}
