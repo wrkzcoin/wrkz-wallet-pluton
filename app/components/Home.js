@@ -155,17 +155,6 @@ export default class Home extends Component<Props> {
                 )}
               </div>
             </div>
-            <div className="control">
-              <div className="tags has-addons">
-                <span className="tag has-background-grey-lighter is-large is-right">
-                  <Link className="settingslink" to={routes.SETTINGS}>
-                    <span className="icon has-text-dark">
-                      <i className="fa fa-cog" />
-                    </span>
-                  </Link>
-                </span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

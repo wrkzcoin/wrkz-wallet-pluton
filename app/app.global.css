@@ -29,8 +29,28 @@
   overflow-y: scroll;
 }
 
-slightpadding {
+.slightpadding {
   padding: 5px 5px 5px 5px;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.container {
+  justify-content: space-between;
+  flex-direction: column;
+  height: 100vh;
+  display: flex;
+}
+.container .btn-holder {
+  justify-content: flex-end;
+  display: flex;
+}
+
+.bottombuttons {
+  position: absolute;
+  bottom: 0;
 }
 
 .settingscog {

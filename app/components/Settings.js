@@ -112,17 +112,21 @@ export default class Settings extends Component<Props> {
               <input id="auto_opt" type="checkbox" className="switch is-success is-rounded" />
               <label for="auto_opt">Keep wallet optimized automatically</label>
             </div>
-            <div className="buttons">
-              <button
-                type="submit"
-                className="button is-success is-large"
-              >
-                Save Changes
-              </button>
-              <button type="reset" className="button is-large">
-                Discard
-              </button>
+            <div class="field">
+            <input id="minimize_to_tray" type="checkbox" className="switch is-success is-rounded" />
+              <label for="minimize_to_tray">Minimize to system tray</label>
             </div>
+              <div className="buttons">
+                <button
+                  type="submit"
+                  className="button is-success is-large"
+                >
+                  Save
+                </button>
+                <button type="reset" className="button is-large">
+                  Discard
+                </button>
+              </div>
           </form>
         </div>
         <div className="box has-background-grey-lighter footerbar">
@@ -154,17 +158,6 @@ export default class Settings extends Component<Props> {
                     {this.state.syncStatus}%
                   </span>
                 )}
-              </div>
-            </div>
-            <div className="control">
-              <div className="tags has-addons">
-                <span className="tag has-background-grey-lighter is-large is-right">
-                  <Link className="settingslink" to={routes.SETTINGS}>
-                    <span className="icon has-text-dark">
-                      <i className="fa fa-cog" />
-                    </span>
-                  </Link>
-                </span>
               </div>
             </div>
           </div>

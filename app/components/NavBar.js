@@ -89,16 +89,26 @@ export default function navBar(activePage) {
                     </span>
                   </Link>
                 )}
+                <Link to={routes.HOME}>
+              </Link>
               </div>
             </nav>
           </div>
-          <div className="column">
+          <div className="column is-one-third">
             <input
               className="input is-rounded"
               type="text"
               placeholder="Search..."
             />
           </div>
+          <div className="column">
+          <Link to={routes.SETTINGS}>
+            <span className="navbar-item settingscog">
+              <i className="fa fa-cog" />
+              &nbsp;
+            </span>
+          </Link>
+        </div>
         </div>
       </div>
     </React-Fragment>
