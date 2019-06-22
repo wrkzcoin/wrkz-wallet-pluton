@@ -185,14 +185,6 @@ export default class Send extends Component<Props> {
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             <div className="control">
               <div className="tags has-addons">
-                <span className="tag is-white is-large">Balance:</span>
-                <span className="tag is-info is-large">
-                  {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
-                </span>
-              </div>
-            </div>
-            <div className="control">
-              <div className="tags has-addons">
                 <span className="tag is-white is-large">Sync:</span>
                 {this.state.syncStatus < 100 && (
                   <span className="tag is-warning is-large">
@@ -212,6 +204,14 @@ export default class Send extends Component<Props> {
                 )}
               </div>
             </div>
+            <div className="control">
+            <div className="tags has-addons">
+              <span className="tag is-white is-large">Balance:</span>
+              <span className="tag is-info is-large">
+                {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+              </span>
+            </div>
+          </div>
           </div>
         </div>
       </div>
