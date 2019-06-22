@@ -57,12 +57,15 @@ export default class WalletSession {
       return false;
     } else {
       importedWallet.saveWalletToFile(filePath, '');
+
       log.debug('Wrote config file to disk.');
       return true;
     }
   }
 
   handleImportFromKey(viewKey: string, spendKey: string, savePath: string, height: number) {
+
+
     const [importedWallet, err] = WalletBackend.importWalletFromKeys(this.daemon, height, viewKey, spendKey);
     if (err) {
       log.debug('Failed to load wallet: ' + err.toString());
@@ -100,7 +103,7 @@ export default class WalletSession {
     modifyConfig.walletFile = selectedPath;
     log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
     config.walletFile = selectedPath;
-    fs.writeFile(
+    fs.writeFileSync(
       `${programDirectory}/config.json`,
       JSON.stringify(config, null, 4),
       err => {

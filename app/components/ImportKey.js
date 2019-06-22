@@ -2,11 +2,12 @@
 /* eslint-disable class-methods-use-this */
 // @flow
 import { remote, ipcRenderer } from 'electron';
+import fs from 'fs';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
-import { session } from '../reducers/index';
+import { session, config } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
@@ -104,7 +105,7 @@ export default class Send extends Component<Props> {
         buttons: ['OK'],
         title: 'Wallet imported successfully!',
         message:
-          'The wallet was imported successfully. You can now open your wallet file.'
+          'The wallet was imported successfully. Opening your new wallet file...'
       });
     } else {
       remote.dialog.showMessageBox(null, {

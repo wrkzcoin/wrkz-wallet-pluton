@@ -2,6 +2,7 @@
 /* eslint-disable class-methods-use-this */
 // @flow
 import { remote, ipcRenderer } from 'electron';
+import fs from 'fs';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect, Link } from 'react-router-dom';
@@ -9,6 +10,7 @@ import log from 'electron-log';
 import { session } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
+import { config, directories } from '../reducers/index';
 
 
 // import styles from './Send.css';
@@ -80,8 +82,8 @@ export default class Send extends Component<Props> {
     if (seed === undefined) {
       return;
     }
-    if (height === undefined) {
-      height = 0
+    if (height === '') {
+      height = '0'
     }
 
     const savePath = remote.dialog.showSaveDialog();
@@ -95,8 +97,24 @@ export default class Send extends Component<Props> {
         type: 'info',
         buttons: ['OK'],
         title: 'Wallet imported successfully!',
-        message: 'The wallet was imported successfully. You can now open your wallet file.'
+        message: 'The wallet was imported successfully. Opening your new wallet file...'
       });
+      const [programDirectory, logDirectory, walletDirectory] = directories;
+      const modifyConfig = config;
+      modifyConfig.walletFile = savePath;
+      log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
+      config.walletFile = savePath;
+      fs.writeFileSync(
+        `${programDirectory}/config.json`,
+        JSON.stringify(config, null, 4),
+        err => {
+          if (err) throw err;
+          log.debug(err);
+        }
+      );
+      log.debug('Wrote config file to disk.');
+      remote.app.relaunch();
+      remote.app.exit();
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
