@@ -58,11 +58,13 @@ export default class Settings extends Component<Props> {
     event.preventDefault();
     const [coinbaseScan, autoOptimize] = [
       event.target[0].value, // whether or not to scan coinbase transactions
-      event.target[1].value, // whether or not to keep wallet auto-optimized
+      event.target[1].value // whether or not to keep wallet auto-optimized
     ];
 
-    log.debug('coinbaseScan = ' + coinbaseScan, '\nautoOptimize = ' + autoOptimize);
-
+    log.debug(
+      `coinbaseScan = ${coinbaseScan}`,
+      `\nautoOptimize = ${autoOptimize}`
+    );
   }
 
   handleImportFromSeed(evt, route) {
@@ -104,29 +106,40 @@ export default class Settings extends Component<Props> {
         {navBar('settings')}
         <div className="box has-background-light maincontent">
           <form onSubmit={this.handleSubmit}>
-            <div class="field">
-              <input id="coinbasescan" type="checkbox" className="switch is-success is-rounded" />
-              <label for="coinbasescan">Scan for solo mined blocks</label>
+            <div className="field">
+              <input
+                id="coinbasescan"
+                type="checkbox"
+                className="switch is-success is-rounded"
+              />
+              <label htmlFor="coinbasescan">Scan for solo mined blocks</label>
             </div>
-            <div class="field">
-              <input id="auto_opt" type="checkbox" className="switch is-success is-rounded" />
-              <label for="auto_opt">Keep wallet optimized automatically</label>
+            <div className="field">
+              <input
+                id="auto_opt"
+                type="checkbox"
+                className="switch is-success is-rounded"
+              />
+              <label htmlFor="auto_opt">
+                Keep wallet optimized automatically
+              </label>
             </div>
-            <div class="field">
-            <input id="minimize_to_tray" type="checkbox" className="switch is-success is-rounded" />
-              <label for="minimize_to_tray">Minimize to system tray</label>
+            <div className="field">
+              <input
+                id="minimize_to_tray"
+                type="checkbox"
+                className="switch is-success is-rounded"
+              />
+              <label htmlFor="minimize_to_tray">Minimize to system tray</label>
             </div>
-              <div className="buttons">
-                <button
-                  type="submit"
-                  className="button is-success is-large"
-                >
-                  Save
-                </button>
-                <button type="reset" className="button is-large">
-                  Discard
-                </button>
-              </div>
+            <div className="buttons">
+              <button type="submit" className="button is-success is-large">
+                Save
+              </button>
+              <button type="reset" className="button is-large">
+                Discard
+              </button>
+            </div>
           </form>
         </div>
         <div className="box has-background-grey-lighter footerbar">
@@ -153,13 +166,13 @@ export default class Settings extends Component<Props> {
               </div>
             </div>
             <div className="control">
-            <div className="tags has-addons">
-              <span className="tag is-white is-large">Balance:</span>
-              <span className="tag is-info is-large">
-                {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
-              </span>
+              <div className="tags has-addons">
+                <span className="tag is-white is-large">Balance:</span>
+                <span className="tag is-info is-large">
+                  {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+                </span>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>

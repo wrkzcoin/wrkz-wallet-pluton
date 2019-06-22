@@ -43,5 +43,5 @@ export function copyToClipboard(text: string = session.address) {
   return (dispatch: Dispatch) => {
     log.debug(`Address copied to clipboard ${text}`);
     clipboardy.writeSync(text);
-  }
+  };
 }

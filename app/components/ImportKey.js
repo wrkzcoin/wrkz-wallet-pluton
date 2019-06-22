@@ -11,7 +11,6 @@ import { session, config, directories } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
-
 // import styles from './Send.css';
 
 type Props = {

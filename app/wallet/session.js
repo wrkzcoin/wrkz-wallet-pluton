@@ -47,30 +47,40 @@ export default class WalletSession {
   }
 
   handleImportFromSeed(seed: string, filePath: string, height?: number) {
-    const [importedWallet, err] = WalletBackend.importWalletFromSeed(this.daemon, height, seed);
+    const [importedWallet, err] = WalletBackend.importWalletFromSeed(
+      this.daemon,
+      height,
+      seed
+    );
     if (err) {
-      log.debug('Failed to load wallet: ' + err.toString());
+      log.debug(`Failed to load wallet: ${err.toString()}`);
       return false;
-    } else {
-      importedWallet.saveWalletToFile(filePath, '');
-
-      log.debug('Wrote config file to disk.');
-      return true;
     }
+    importedWallet.saveWalletToFile(filePath, '');
+
+    log.debug('Wrote config file to disk.');
+    return true;
   }
 
-  handleImportFromKey(viewKey: string, spendKey: string, savePath: string, height: number) {
-
-
-    const [importedWallet, err] = WalletBackend.importWalletFromKeys(this.daemon, height, viewKey, spendKey);
+  handleImportFromKey(
+    viewKey: string,
+    spendKey: string,
+    savePath: string,
+    height: number
+  ) {
+    const [importedWallet, err] = WalletBackend.importWalletFromKeys(
+      this.daemon,
+      height,
+      viewKey,
+      spendKey
+    );
     if (err) {
-      log.debug('Failed to load wallet: ' + err.toString());
+      log.debug(`Failed to load wallet: ${err.toString()}`);
       return false;
-    } else {
-      importedWallet.saveWalletToFile(savePath, '');
-      log.debug('Wrote config file to disk.');
-      return true;
     }
+    importedWallet.saveWalletToFile(savePath, '');
+    log.debug('Wrote config file to disk.');
+    return true;
   }
 
   handleNewWallet(filename: string) {
@@ -89,7 +99,6 @@ export default class WalletSession {
     return JSON.parse(rawUserConfig);
   }
 
-
   handleWalletOpen(selectedPath: string) {
     this.wallet.stop();
 
@@ -107,7 +116,6 @@ export default class WalletSession {
         log.debug(err);
         return false;
       }
-
     );
     log.debug('Wrote config file to disk.');
 
@@ -123,7 +131,11 @@ export default class WalletSession {
   }
 
   getTransactions(startIndex, numTransactions, includeFusions) {
-    const rawTransactions = this.wallet.getTransactions(startIndex, numTransactions, includeFusions);
+    const rawTransactions = this.wallet.getTransactions(
+      startIndex,
+      numTransactions,
+      includeFusions
+    );
     const formattedTransactions = rawTransactions.map(tx => [
       tx.timestamp,
       tx.hash,
@@ -183,7 +195,6 @@ export default class WalletSession {
       log.debug(`Wallet saved at ${filePath}`);
     } else {
       log.debug('No path provided!');
-      return;
     }
   }
 
@@ -221,12 +232,12 @@ export default class WalletSession {
   }
 
   convertTimestamp(timestamp: Date) {
-    const d = new Date(timestamp * 1000) // Convert the passed timestamp to milliseconds
-    const yyyy = d.getFullYear()
-    const mm = `0${d.getMonth() + 1}`.slice(-2) // Months are zero based. Add leading 0.
-    const dd = `0${d.getDate()}`.slice(-2) // Add leading 0.
-    const hh = `0${d.getHours()}`.slice(-2)
-    const min = `0${d.getMinutes()}`.slice(-2) // Add leading 0.
+    const d = new Date(timestamp * 1000); // Convert the passed timestamp to milliseconds
+    const yyyy = d.getFullYear();
+    const mm = `0${d.getMonth() + 1}`.slice(-2); // Months are zero based. Add leading 0.
+    const dd = `0${d.getDate()}`.slice(-2); // Add leading 0.
+    const hh = `0${d.getHours()}`.slice(-2);
+    const min = `0${d.getMinutes()}`.slice(-2); // Add leading 0.
     // ie: 2013-02-18, 16:35
     const time = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
     return time;

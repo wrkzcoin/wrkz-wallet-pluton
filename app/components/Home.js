@@ -10,7 +10,6 @@ import routes from '../constants/routes';
 
 let displayedTransactionCount = 50;
 
-
 type Props = {
   syncStatus: number,
   unlockedBalance: number,
@@ -21,7 +20,6 @@ type Props = {
   importseed: boolean
 };
 
-
 export default class Home extends Component<Props> {
   props: Props;
 
@@ -31,7 +29,11 @@ export default class Home extends Component<Props> {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions(0, displayedTransactionCount, false),
+      transactions: session.getTransactions(
+        0,
+        displayedTransactionCount,
+        false
+      ),
       importkey: false,
       importseed: false
     };
@@ -45,12 +47,16 @@ export default class Home extends Component<Props> {
     ipcRenderer.on('importKey', (evt, route) =>
       this.handleImportFromKey(evt, route)
     );
-    session.wallet.on('transaction', (transaction) => {
+    session.wallet.on('transaction', transaction => {
       log.debug('Transaction found, refreshing transaction list...');
-      displayedTransactionCount++
+      displayedTransactionCount++;
       this.setState({
-        transactions: session.getTransactions(0, displayedTransactionCount, false)
-      })
+        transactions: session.getTransactions(
+          0,
+          displayedTransactionCount,
+          false
+        )
+      });
     });
   }
 
@@ -58,8 +64,8 @@ export default class Home extends Component<Props> {
     clearInterval(this.interval);
     displayedTransactionCount = 50;
     this.setState({
-      transactions: session.getTransactions(0, displayedTransactionCount, false),
-    })
+      transactions: session.getTransactions(0, displayedTransactionCount, false)
+    });
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
   }
@@ -82,18 +88,18 @@ export default class Home extends Component<Props> {
 
   handleLoadMore(evt, route) {
     evt.preventDefault();
-    displayedTransactionCount = displayedTransactionCount + 50;
+    displayedTransactionCount += 50;
     this.setState({
-      transactions: session.getTransactions(0, displayedTransactionCount, false),
-    })
+      transactions: session.getTransactions(0, displayedTransactionCount, false)
+    });
   }
 
   resetDefault(evt, route) {
     evt.preventDefault();
     displayedTransactionCount = 50;
     this.setState({
-      transactions: session.getTransactions(0, displayedTransactionCount, false),
-    })
+      transactions: session.getTransactions(0, displayedTransactionCount, false)
+    });
   }
 
   refresh() {
@@ -141,9 +147,7 @@ export default class Home extends Component<Props> {
                           {session.atomicToHuman(tx[2], true)}
                         </p>
                       )}
-                      {tx[2] > 0 && (
-                        <p>{session.atomicToHuman(tx[2], true)}</p>
-                      )}
+                      {tx[2] > 0 && <p>{session.atomicToHuman(tx[2], true)}</p>}
                     </td>
                     <td />
                   </tr>
@@ -151,19 +155,27 @@ export default class Home extends Component<Props> {
               })}
             </tbody>
           </table>
-            <form>
-              <div className="field">
-                <div className="buttons">
-                  <button type="submit" className="button is-warning" onClick={this.handleLoadMore.bind(this)}>
-                    Load more...
-                  </button>
-                  <button type="submit" className="button is-danger" onClick={this.resetDefault.bind(this)}>
-                    Reset
-                  </button>
-                </div>
+          <form>
+            <div className="field">
+              <div className="buttons">
+                <button
+                  type="submit"
+                  className="button is-warning"
+                  onClick={this.handleLoadMore.bind(this)}
+                >
+                  Load more...
+                </button>
+                <button
+                  type="submit"
+                  className="button is-danger"
+                  onClick={this.resetDefault.bind(this)}
+                >
+                  Reset
+                </button>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
+        </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             <div className="control">
@@ -188,13 +200,13 @@ export default class Home extends Component<Props> {
               </div>
             </div>
             <div className="control">
-            <div className="tags has-addons">
-              <span className="tag is-white is-large">Balance:</span>
-              <span className="tag is-info is-large">
-                {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
-              </span>
+              <div className="tags has-addons">
+                <span className="tag is-white is-large">Balance:</span>
+                <span className="tag is-info is-large">
+                  {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+                </span>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>

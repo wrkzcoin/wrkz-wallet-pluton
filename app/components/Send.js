@@ -10,7 +10,6 @@ import { session } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
-
 // import styles from './Send.css';
 
 type Props = {
@@ -205,13 +204,13 @@ export default class Send extends Component<Props> {
               </div>
             </div>
             <div className="control">
-            <div className="tags has-addons">
-              <span className="tag is-white is-large">Balance:</span>
-              <span className="tag is-info is-large">
-                {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
-              </span>
+              <div className="tags has-addons">
+                <span className="tag is-white is-large">Balance:</span>
+                <span className="tag is-info is-large">
+                  {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+                </span>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>

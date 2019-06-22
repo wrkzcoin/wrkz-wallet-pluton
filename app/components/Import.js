@@ -12,7 +12,6 @@ import navBar from './NavBar';
 import routes from '../constants/routes';
 import { config, directories } from '../reducers/index';
 
-
 // import styles from './Send.css';
 
 type Props = {
@@ -35,7 +34,7 @@ export default class Send extends Component<Props> {
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(),
       importkey: false,
-      importseed: false,
+      importseed: false
     };
   }
 
@@ -83,7 +82,7 @@ export default class Send extends Component<Props> {
       return;
     }
     if (height === '') {
-      height = '0'
+      height = '0';
     }
 
     const savePath = remote.dialog.showSaveDialog();
@@ -91,13 +90,18 @@ export default class Send extends Component<Props> {
       return;
     }
 
-    const importedSuccessfully = session.handleImportFromSeed(seed, savePath, parseInt(height));
+    const importedSuccessfully = session.handleImportFromSeed(
+      seed,
+      savePath,
+      parseInt(height)
+    );
     if (importedSuccessfully === true) {
       remote.dialog.showMessageBox(null, {
         type: 'info',
         buttons: ['OK'],
         title: 'Wallet imported successfully!',
-        message: 'The wallet was imported successfully. Opening your new wallet file...'
+        message:
+          'The wallet was imported successfully. Opening your new wallet file...'
       });
       const [programDirectory, logDirectory, walletDirectory] = directories;
       const modifyConfig = config;
@@ -149,7 +153,7 @@ export default class Send extends Component<Props> {
                 Mnemonic Seed
                 <textarea
                   className="textarea is-large"
-                  placeholder='Enter your seed here.'
+                  placeholder="Enter your seed here."
                   id="seed"
                 />
               </label>
@@ -168,9 +172,9 @@ export default class Send extends Component<Props> {
               </label>
             </div>
             <div className="buttons">
-                <button type="submit" className="button is-success is-large ">
-                  Import
-                </button>
+              <button type="submit" className="button is-success is-large ">
+                Import
+              </button>
               <button type="reset" className="button is-large">
                 Clear
               </button>

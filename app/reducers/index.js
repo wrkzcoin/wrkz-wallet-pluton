@@ -24,7 +24,7 @@ export const directories = [
 const [programDirectory, logDirectory, walletDirectory] = directories;
 
 if (config.walletFile === '') {
-  config.walletFile = `${walletDirectory}/default.wallet`
+  config.walletFile = `${walletDirectory}/default.wallet`;
 }
 
 if (!fs.existsSync(`${programDirectory}/config.json`)) {
@@ -62,9 +62,12 @@ if (config.logLevel === 'DEBUG') {
   session.wallet.setLogLevel(LogLevel.DEBUG);
   session.wallet.setLoggerCallback(
     (prettyMessage, message, level, categories) => {
-      let logStream = fs.createWriteStream(`${logDirectory}/protonwallet.log`, {
-        flags: 'a'
-      });
+      const logStream = fs.createWriteStream(
+        `${logDirectory}/protonwallet.log`,
+        {
+          flags: 'a'
+        }
+      );
       logStream.write(`${prettyMessage}\n`);
     }
   );

@@ -59,25 +59,27 @@
 }
 
 .settingscog {
-  float: right
+  float: right;
 }
 
 .navigation {
-  color: #363636
+  color: #363636;
 }
 
 @font-face {
   font-family: 'Source Code Pro';
-  src: local('Source Code Pro'), url(../node_modules/source-code-pro/WOFF/TTF/SourceCodePro-Regular.ttf.woff) format('woff');
+  src: local('Source Code Pro'),
+    url(../node_modules/source-code-pro/WOFF/TTF/SourceCodePro-Regular.ttf.woff)
+      format('woff');
 }
 
 html {
   overflow: hidden;
   overflow-x: hidden;
-  }
-  ::-webkit-scrollbar {
+}
+::-webkit-scrollbar {
   width: 0px;
-  }
-  ::-webkit-scrollbar-thumb {
+}
+::-webkit-scrollbar-thumb {
   background: #f5f5f5;
-  }
+}

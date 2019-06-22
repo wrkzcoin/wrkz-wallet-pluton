@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import log from 'electron-log';
 import routes from '../constants/routes';
 import { config } from '../reducers/index';
-import log from 'electron-log';
 
 export default function navBar(activePage) {
   return (
@@ -89,8 +89,7 @@ export default function navBar(activePage) {
                     </span>
                   </Link>
                 )}
-                <Link to={routes.HOME}>
-              </Link>
+                <Link to={routes.HOME} />
               </div>
             </nav>
           </div>
@@ -102,13 +101,13 @@ export default function navBar(activePage) {
             />
           </div>
           <div className="column">
-          <Link to={routes.SETTINGS}>
-            <span className="navbar-item settingscog">
-              <i className="fa fa-cog" />
-              &nbsp;
-            </span>
-          </Link>
-        </div>
+            <Link to={routes.SETTINGS}>
+              <span className="navbar-item settingscog">
+                <i className="fa fa-cog" />
+                &nbsp;
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
     </React-Fragment>

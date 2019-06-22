@@ -9,7 +9,6 @@ import { session } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
-
 type Props = {
   increment: () => void,
   incrementIfOdd: () => void,
@@ -34,7 +33,7 @@ export default class Receive extends Component<Props> {
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(),
       importkey: false,
-      importseed: false,
+      importseed: false
     };
   }
 
@@ -166,13 +165,13 @@ export default class Receive extends Component<Props> {
               </div>
             </div>
             <div className="control">
-            <div className="tags has-addons">
-              <span className="tag is-white is-large">Balance:</span>
-              <span className="tag is-info is-large">
-                {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
-              </span>
+              <div className="tags has-addons">
+                <span className="tag is-white is-large">Balance:</span>
+                <span className="tag is-info is-large">
+                  {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+                </span>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>

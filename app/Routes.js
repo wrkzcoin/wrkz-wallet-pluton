@@ -10,7 +10,6 @@ import ImportPage from './containers/ImportPage';
 import ImportKeyPage from './containers/ImportKeyPage';
 import SettingsPage from './containers/SettingsPage';
 
-
 export default () => (
   <App>
     <Switch>
