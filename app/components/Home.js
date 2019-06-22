@@ -8,6 +8,9 @@ import { session } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
+let displayedTransactionCount = 10;
+
+
 type Props = {
   syncStatus: number,
   unlockedBalance: number,
@@ -18,6 +21,7 @@ type Props = {
   importseed: boolean
 };
 
+
 export default class Home extends Component<Props> {
   props: Props;
 
@@ -27,7 +31,7 @@ export default class Home extends Component<Props> {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions(),
+      transactions: session.getTransactions(0, displayedTransactionCount, false),
       importkey: false,
       importseed: false
     };
@@ -41,10 +45,21 @@ export default class Home extends Component<Props> {
     ipcRenderer.on('importKey', (evt, route) =>
       this.handleImportFromKey(evt, route)
     );
+    session.wallet.on('transaction', (transaction) => {
+      log.debug('Transaction found, refreshing transaction list...');
+      displayedTransactionCount++
+      this.setState({
+        transactions: session.getTransactions(0, displayedTransactionCount, false)
+      })
+    });
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    displayedTransactionCount = 50;
+    this.setState({
+      transactions: session.getTransactions(0, displayedTransactionCount, false),
+    })
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
   }
@@ -65,12 +80,25 @@ export default class Home extends Component<Props> {
     });
   }
 
+  handleLoadMore(evt, route) {
+    evt.preventDefault();
+    displayedTransactionCount = displayedTransactionCount + 50;
+    this.setState({
+      transactions: session.getTransactions(0, displayedTransactionCount, false),
+    })
+  }
+
+  resetDefault(evt, route) {
+    evt.preventDefault();
+    displayedTransactionCount = 50;
+    this.setState({
+      transactions: session.getTransactions(0, displayedTransactionCount, false),
+    })
+  }
+
   refresh() {
     this.setState(prevState => ({
-      syncStatus: session.getSyncStatus(),
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions()
+      syncStatus: session.getSyncStatus()
     }));
   }
 
@@ -123,7 +151,19 @@ export default class Home extends Component<Props> {
               })}
             </tbody>
           </table>
-        </div>
+            <form>
+              <div className="field">
+                <div className="buttons">
+                  <button type="submit" className="button is-warning" onClick={this.handleLoadMore.bind(this)}>
+                    Load more...
+                  </button>
+                  <button type="submit" className="button is-danger" onClick={this.resetDefault.bind(this)}>
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             <div className="control">

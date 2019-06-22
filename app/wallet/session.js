@@ -33,10 +33,6 @@ export default class WalletSession {
     this.syncStatus = this.getSyncStatus();
     this.address = this.wallet.getPrimaryAddress();
 
-    this.wallet.on('transaction', transaction => {
-      log.debug(`Transaction of ${transaction.totalAmount()} received!`);
-    });
-
     this.wallet.on('sync', (walletHeight, networkHeight) => {
       log.debug(
         `Wallet synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
@@ -126,8 +122,8 @@ export default class WalletSession {
     return this.wallet.getAddresses();
   }
 
-  getTransactions() {
-    const rawTransactions = this.wallet.getTransactions();
+  getTransactions(startIndex, numTransactions, includeFusions) {
+    const rawTransactions = this.wallet.getTransactions(startIndex, numTransactions, includeFusions);
     const formattedTransactions = rawTransactions.map(tx => [
       tx.timestamp,
       tx.hash,

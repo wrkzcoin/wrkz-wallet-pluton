@@ -80,7 +80,6 @@ export default class Send extends Component<Props> {
       event.target[2].value // scan height
     ];
 
-    log.debug('viewkey', viewKey, '\nspendkey', spendKey);
     if (viewKey === undefined || spendKey === undefined) {
       return;
     }
