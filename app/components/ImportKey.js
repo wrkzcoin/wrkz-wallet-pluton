@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
-import { session, config } from '../reducers/index';
+import { session, config, directories } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
@@ -107,6 +107,22 @@ export default class Send extends Component<Props> {
         message:
           'The wallet was imported successfully. Opening your new wallet file...'
       });
+      const [programDirectory, logDirectory, walletDirectory] = directories;
+      const modifyConfig = config;
+      modifyConfig.walletFile = savePath;
+      log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
+      config.walletFile = savePath;
+      fs.writeFileSync(
+        `${programDirectory}/config.json`,
+        JSON.stringify(config, null, 4),
+        err => {
+          if (err) throw err;
+          log.debug(err);
+        }
+      );
+      log.debug('Wrote config file to disk.');
+      remote.app.relaunch();
+      remote.app.exit();
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
