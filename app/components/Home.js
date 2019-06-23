@@ -3,10 +3,10 @@ import { ipcRenderer } from 'electron';
 import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import request from 'request';
 import { session } from '../reducers/index';
 import navBar from './NavBar';
-import routes from '../constants/routes';
 
 let displayedTransactionCount = 50;
 

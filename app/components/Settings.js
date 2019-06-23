@@ -1,6 +1,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable class-methods-use-this */
 // @flow
+import request from 'request';
 import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
@@ -10,6 +11,20 @@ import { session } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
+function getNodeList() {
+  const options = {
+    method: 'GET',
+    url:
+      'https://raw.githubusercontent.com/turtlecoin/turtlecoin-nodes-json/master/turtlecoin-nodes.json'
+  };
+  // eslint-disable-next-line func-names
+  request(options, function(error, response, body) {
+    if (error) throw new Error(error);
+    log.debug(body);
+    return body;
+  });
+}
+
 type Props = {
   syncStatus: number,
   unlockedBalance: number,
@@ -18,7 +33,8 @@ type Props = {
   handleSubmit: () => void,
   transactionInProgress: boolean,
   importseed: boolean,
-  importkey: boolean
+  importkey: boolean,
+  nodeList: Array<string>
 };
 
 export default class Settings extends Component<Props> {
@@ -33,7 +49,8 @@ export default class Settings extends Component<Props> {
       transactions: session.getTransactions(),
       transactionInProgress: false,
       importkey: false,
-      importseed: false
+      importseed: false,
+      nodeList: getNodeList()
     };
   }
 
