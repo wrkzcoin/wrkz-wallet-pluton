@@ -16,15 +16,6 @@ export default function navBar(activePage) {
               aria-label="main navigation"
             >
               <div className="navbar-brand">
-                <Link to={routes.HOME}>
-                  <span className="navbar-item" href="#">
-                    <img
-                      src={config.logo}
-                      alt="logo"
-                      className="img-responsive"
-                    />
-                  </span>
-                </Link>
                 {activePage === 'wallet' && (
                   <Link to={routes.HOME}>
                     <span className="navbar-item">
