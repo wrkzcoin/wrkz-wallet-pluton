@@ -123,39 +123,66 @@ export default class Settings extends Component<Props> {
         {navBar('settings')}
         <div className="box has-background-light maincontent">
           <form onSubmit={this.handleSubmit}>
-            <div className="field">
-              <input
-                id="coinbasescan"
-                type="checkbox"
-                className="switch is-success is-rounded"
-              />
-              <label htmlFor="coinbasescan">Scan for solo mined blocks</label>
-            </div>
-            <div className="field">
-              <input
-                id="auto_opt"
-                type="checkbox"
-                className="switch is-success is-rounded"
-              />
-              <label htmlFor="auto_opt">
-                Keep wallet optimized automatically
-              </label>
-            </div>
-            <div className="field">
-              <input
-                id="minimize_to_tray"
-                type="checkbox"
-                className="switch is-success is-rounded"
-              />
-              <label htmlFor="minimize_to_tray">Minimize to system tray</label>
-            </div>
-            <div className="buttons">
-              <button type="submit" className="button is-success is-large">
-                Save
-              </button>
-              <button type="reset" className="button is-large">
-                Discard
-              </button>
+            <div className="columns">
+              <div className="column">
+              <h2 className="title">Configuration</h2>
+                <div className="field">
+                  <input
+                    id="coinbasescan"
+                    type="checkbox"
+                    className="switch is-success is-rounded"
+                  />
+                  <label htmlFor="coinbasescan">
+                    Scan for solo mined blocks
+                  </label>
+                </div>
+                <div className="field">
+                  <input
+                    id="auto_opt"
+                    type="checkbox"
+                    className="switch is-success is-rounded"
+                  />
+                  <label htmlFor="auto_opt">
+                    Keep wallet optimized automatically
+                  </label>
+                </div>
+                <div className="field">
+                  <input
+                    id="minimize_to_tray"
+                    type="checkbox"
+                    className="switch is-success is-rounded"
+                  />
+                  <label htmlFor="minimize_to_tray">
+                    Minimize to system tray
+                  </label>
+                </div>
+                <div className="buttons">
+                  <button type="submit" className="button is-success is-large">
+                    Save
+                  </button>
+                  <button type="reset" className="button is-large">
+                    Discard
+                  </button>
+                </div>
+              </div>
+              <div className="column">
+                <h2 className="title">Node Settings</h2>
+                <label className="label">
+                  Change Node
+                  <div className="field has-addons">
+                    <div className="control is-expanded">
+                      <input
+                        className="input"
+                        type="text"
+                        placeholder="Find a repository"
+                      />
+                    </div>
+                    <div className="control">
+                      <a className="button is-warning">Connect to node...</a>
+                    </div>
+                  </div>
+                </label>
+              </div>
             </div>
           </form>
         </div>

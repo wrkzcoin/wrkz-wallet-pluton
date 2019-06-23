@@ -64,13 +64,11 @@ $ yarn package
 
 ## Todo
 
-* make config writing and file restarting work for importing
-* paginate data for transactions (infinite scroll?)
 * move session class initialization out of index.js reducer
 * change session from a class to a static factory function
 * incoming transaction notification
 * utilities: generate payment id and inegrated address
-* Option to use system tray (on closing/minimizing wallet)
+* Option to use system tray (on closing/minimizing wallet) // in progress
 * Provides list of public nodes, fetch/updated daily from turtlecoin-nodes-json repo. (settings page)
 * Allow to add custom node address.
 * get save / open menus opening in focus

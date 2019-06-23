@@ -130,14 +130,16 @@ export default class Receive extends Component<Props> {
             </div>
             <div className="column">
               <br />
-              <span>
-                <QRCode
-                  value={session.address}
-                  renderAs="svg"
-                  bgColor="#f5f5f5"
-                  size={248}
-                />
-              </span>
+              <center>
+                <span>
+                  <QRCode
+                    value={session.address}
+                    renderAs="svg"
+                    bgColor="#f5f5f5"
+                    size={248}
+                  />
+                </span>
+              </center>
             </div>
           </div>
         </div>
