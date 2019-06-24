@@ -52,7 +52,7 @@ export default class Settings extends Component<Props> {
       importkey: false,
       importseed: false,
       nodeList: getNodeList(),
-      connectednode: session.daemon.cacheBaseURL
+      connectednode: session.daemon.cacheBaseURL || session.daemon.daemonHost
     };
   }
 
@@ -127,22 +127,22 @@ export default class Settings extends Component<Props> {
           <form onSubmit={this.handleSubmit}>
             <div className="columns">
               <div className="column">
-              <label className="label">
-              Change Node
-              <div className="field has-addons">
-                <div className="control">
-                  <input
-                    className="input"
-                    type="text"
-                    placeholder={this.state.connectednode}
-                  />
-                </div>
-                <div className="control">
-                  <a className="button is-warning">Connect to node...</a>
-                </div>
-              </div>
-            </label>
-            <br />
+                <label className="label">
+                  Change Node
+                  <div className="field has-addons">
+                    <div className="control">
+                      <input
+                        className="input"
+                        type="text"
+                        placeholder={this.state.connectednode}
+                      />
+                    </div>
+                    <div className="control">
+                      <a className="button is-warning">Connect to node...</a>
+                    </div>
+                  </div>
+                </label>
+                <br />
                 <div className="field">
                   <input
                     id="coinbasescan"
