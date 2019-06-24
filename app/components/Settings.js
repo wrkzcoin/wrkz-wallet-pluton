@@ -10,6 +10,7 @@ import log from 'electron-log';
 import { session } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
+import { NET_SESSION_NAME } from 'electron-updater/out/electronHttpExecutor';
 
 function getNodeList() {
   const options = {
@@ -20,7 +21,6 @@ function getNodeList() {
   // eslint-disable-next-line func-names
   request(options, function(error, response, body) {
     if (error) throw new Error(error);
-    log.debug(body);
     return body;
   });
 }
@@ -42,6 +42,7 @@ export default class Settings extends Component<Props> {
 
   constructor(props?: Props) {
     super(props);
+    log.debug(session.daemon);
     this.state = {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
@@ -50,7 +51,8 @@ export default class Settings extends Component<Props> {
       transactionInProgress: false,
       importkey: false,
       importseed: false,
-      nodeList: getNodeList()
+      nodeList: getNodeList(),
+      connectednode: session.daemon.cacheBaseURL
     };
   }
 
@@ -125,7 +127,22 @@ export default class Settings extends Component<Props> {
           <form onSubmit={this.handleSubmit}>
             <div className="columns">
               <div className="column">
-              <h2 className="title">Configuration</h2>
+              <label className="label">
+              Change Node
+              <div className="field has-addons">
+                <div className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    placeholder={this.state.connectednode}
+                  />
+                </div>
+                <div className="control">
+                  <a className="button is-warning">Connect to node...</a>
+                </div>
+              </div>
+            </label>
+            <br />
                 <div className="field">
                   <input
                     id="coinbasescan"
@@ -156,6 +173,7 @@ export default class Settings extends Component<Props> {
                     Minimize to system tray
                   </label>
                 </div>
+                <br />
                 <div className="buttons">
                   <button type="submit" className="button is-success is-large">
                     Save
@@ -164,24 +182,6 @@ export default class Settings extends Component<Props> {
                     Discard
                   </button>
                 </div>
-              </div>
-              <div className="column">
-                <h2 className="title">Node Settings</h2>
-                <label className="label">
-                  Change Node
-                  <div className="field has-addons">
-                    <div className="control is-expanded">
-                      <input
-                        className="input"
-                        type="text"
-                        placeholder="Find a repository"
-                      />
-                    </div>
-                    <div className="control">
-                      <a className="button is-warning">Connect to node...</a>
-                    </div>
-                  </div>
-                </label>
               </div>
             </div>
           </form>

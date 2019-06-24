@@ -68,14 +68,10 @@ $ yarn package
 * change session from a class to a static factory function
 * incoming transaction notification
 * utilities: generate payment id and inegrated address
-* Option to use system tray (on closing/minimizing wallet) // in progress
-* Provides list of public nodes, fetch/updated daily from turtlecoin-nodes-json repo. (settings page)
-* Allow to add custom node address.
 * get save / open menus opening in focus
 * add a splash screen
 * center modals 
 * make transaction hash on wallet page link to explorer
-* use event handling instead of polling for transaction list
 
 
 ## License
