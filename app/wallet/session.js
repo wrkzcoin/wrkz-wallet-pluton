@@ -14,8 +14,8 @@ export default class WalletSession {
     const [programDirectory, logDirectory, walletDirectory] = directories;
     log.debug(programDirectory);
 
-    this.daemon = new ConventionalDaemon('nodes.hashvault.pro', true);
-    // this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
+    // this.daemon = new ConventionalDaemon('nodes.hashvault.pro', true);
+    this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
 
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
@@ -45,6 +45,21 @@ export default class WalletSession {
         `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
       );
     });
+  }
+
+  changeDaemon(
+    connectionString: string,
+    port: string,
+    isBlockchainCacheAPI: boolean
+  ) {
+    this.saveWallet(config.walletFile);
+    this.wallet.stop();
+    this.daemon = null;
+    if (isBlockchainCacheAPI) {
+      this.daemon = new BlockchainCacheApi('connectionString', true);
+    } else {
+      this.daemon = new ConventionalDaemon(connectionString, port);
+    }
   }
 
   handleImportFromSeed(seed: string, filePath: string, height?: number) {

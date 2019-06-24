@@ -2,15 +2,13 @@
 /* eslint-disable class-methods-use-this */
 // @flow
 import request from 'request';
-import { remote, ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
 import { session } from '../reducers/index';
 import navBar from './NavBar';
-import routes from '../constants/routes';
-import { NET_SESSION_NAME } from 'electron-updater/out/electronHttpExecutor';
 
 function getNodeList() {
   const options = {
@@ -72,6 +70,13 @@ export default class Settings extends Component<Props> {
     ipcRenderer.off('importKey', this.handleImportFromKey);
   }
 
+  changeNode(event) {
+    event.preventDefault();
+    const [connectionString] = [event.target[0].value];
+
+    log.debug(connectionString);
+  }
+
   async handleSubmit(event) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
@@ -124,25 +129,9 @@ export default class Settings extends Component<Props> {
       <div>
         {navBar('settings')}
         <div className="box has-background-light maincontent">
-          <form onSubmit={this.handleSubmit}>
-            <div className="columns">
-              <div className="column">
-                <label className="label">
-                  Change Node
-                  <div className="field has-addons">
-                    <div className="control">
-                      <input
-                        className="input"
-                        type="text"
-                        placeholder={this.state.connectednode}
-                      />
-                    </div>
-                    <div className="control">
-                      <a className="button is-warning">Connect to node...</a>
-                    </div>
-                  </div>
-                </label>
-                <br />
+          <div className="columns">
+            <div className="column">
+              <form onSubmit={this.handleSubmit}>
                 <div className="field">
                   <input
                     id="coinbasescan"
@@ -182,9 +171,30 @@ export default class Settings extends Component<Props> {
                     Discard
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
-          </form>
+            <div className="column">
+              <form onSubmit={this.changeNode}>
+                <label className="label">
+                  Change Node
+                  <div className="field has-addons">
+                    <div className="control">
+                      <input
+                        className="input"
+                        type="text"
+                        placeholder={this.state.connectednode}
+                      />
+                    </div>
+                    <div className="control">
+                      <button className="button is-warning">
+                        Connect to node...
+                      </button>
+                    </div>
+                  </div>
+                </label>
+              </form>
+            </div>
+          </div>
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">

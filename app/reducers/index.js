@@ -73,8 +73,6 @@ if (config.logLevel === 'DEBUG') {
   );
 }
 
-session.wallet.saveWalletToFile(config.walletFile, '');
-
 export default function createRootReducer(history: History) {
   return combineReducers<{}, *>({
     router: connectRouter(history),
