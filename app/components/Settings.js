@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
-import { session } from '../reducers/index';
+import { session, config } from '../reducers/index';
 import navBar from './NavBar';
 
 function getNodeList() {
@@ -131,22 +131,27 @@ export default class Settings extends Component<Props> {
         <div className="box has-background-light maincontent">
           <div className="columns">
             <div className="column">
+              <h2 className="title">Configuration</h2>
               <form onSubmit={this.handleSubmit}>
                 <div className="field">
                   <input
-                    id="coinbasescan"
+                    className="is-checkradio is-success"
+                    id="scanCoinbaseTransactions"
                     type="checkbox"
-                    className="switch is-success is-rounded"
+                    name="scanCoinbaseTransactions"
+                    checked={config.scanCoinbaseTransactions}
                   />
-                  <label htmlFor="coinbasescan">
+                  <label htmlFor="exampleCheckboxBackgroundColorDefault">
                     Scan for solo mined blocks
                   </label>
                 </div>
                 <div className="field">
                   <input
-                    id="auto_opt"
+                    id="enableAutoOptimization"
                     type="checkbox"
-                    className="switch is-success is-rounded"
+                    className="is-checkradio is-success"
+                    name="enableAutoOptimization"
+                    checked={config.enableAutoOptimization}
                   />
                   <label htmlFor="auto_opt">
                     Keep wallet optimized automatically
@@ -154,13 +159,32 @@ export default class Settings extends Component<Props> {
                 </div>
                 <div className="field">
                   <input
-                    id="minimize_to_tray"
+                    id="minimizeToTray"
                     type="checkbox"
-                    className="switch is-success is-rounded"
+                    className="is-checkradio is-success"
+                    name="minimizeToTray"
+                    checked={config.minimizeToTray}
                   />
                   <label htmlFor="minimize_to_tray">
                     Minimize to system tray
                   </label>
+                </div>
+                <div className="field">
+                  <div className="control">
+                    <label className="label">
+                      Log Level
+                      <br />
+                      <div className="select">
+                        <select>
+                          <option>DISABLED</option>
+                          <option>DEBUG</option>
+                          <option>ERROR</option>
+                          <option>INFO</option>
+                          <option>WARNING</option>
+                        </select>
+                      </div>
+                    </label>
+                  </div>
                 </div>
                 <br />
                 <div className="buttons">
@@ -173,9 +197,16 @@ export default class Settings extends Component<Props> {
                 </div>
               </form>
             </div>
+            <div className="is-divider-vertical"/>
             <div className="column">
+            <h2 className="title">Node Settings</h2>
+            <div className="field">
+            <input className="is-checkradio is-success" id="exampleCheckboxSuccess" type="checkbox" name="exampleCheckboxSuccess" checked="checked" />
+            <label htmlFor="exampleCheckboxSuccess">Autoselect best node</label>
+          </div>
+          <br />
               <form onSubmit={this.changeNode}>
-                <label className="label">
+                <label className="label has-text-grey-lighter">
                   Change Node
                   <div className="field has-addons">
                     <div className="control">
@@ -183,10 +214,11 @@ export default class Settings extends Component<Props> {
                         className="input"
                         type="text"
                         placeholder={this.state.connectednode}
+                        disabled
                       />
                     </div>
                     <div className="control">
-                      <button className="button is-warning">
+                      <button className="button is-warning" disabled>
                         Connect to node...
                       </button>
                     </div>
@@ -198,9 +230,9 @@ export default class Settings extends Component<Props> {
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
-            <div className="control">
+            <div className="control statusicons">
               <div className="tags has-addons">
-                <span className="tag is-white is-large">Sync:</span>
+                <span className="tag is-dark is-large">Sync:</span>
                 {this.state.syncStatus < 100 && (
                   <span className="tag is-warning is-large">
                     {this.state.syncStatus}%
@@ -219,9 +251,9 @@ export default class Settings extends Component<Props> {
                 )}
               </div>
             </div>
-            <div className="control">
+            <div className="control statusicons">
               <div className="tags has-addons">
-                <span className="tag is-white is-large">Balance:</span>
+                <span className="tag is-dark is-large">Balance:</span>
                 <span className="tag is-info is-large">
                   {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
                 </span>

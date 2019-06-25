@@ -1,7 +1,7 @@
 {
   "walletFile": "",
-  "logo": "./img/trtl-logo.png",
   "enableAutoOptimization": true,
   "scanCoinbaseTransactions": false,
+  "minimizeToTray": false,
   "logLevel": "DISABLED"
 }

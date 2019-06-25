@@ -86,7 +86,7 @@ export default function navBar(activePage) {
           </div>
           <div className="column is-one-third">
             <input
-              className="input is-rounded"
+              className="input searchbar"
               type="text"
               placeholder="Search..."
             />

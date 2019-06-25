@@ -24,9 +24,30 @@
   height: 80px;
 }
 
+.txlist {
+  left: -9px;
+}
+
+.searchbar {
+  left: 15px;
+  bottom: -2px;
+}
+
+.statusicons {
+  left: -18px;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .maincontent {
   position: absolute;
-  padding-left: 12px;
+  padding-left: 32px;
+  padding-right: 32px;
   margin-top: 80px;
   width: 100%;
   height: calc(100% - 160px);
