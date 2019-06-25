@@ -2,6 +2,7 @@
   "walletFile": "",
   "enableAutoOptimization": true,
   "scanCoinbaseTransactions": false,
+  "autoSelectDaemon": true,
   "minimizeToTray": false,
   "logLevel": "DISABLED"
 }

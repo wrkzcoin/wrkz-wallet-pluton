@@ -197,14 +197,22 @@ export default class Settings extends Component<Props> {
                 </div>
               </form>
             </div>
-            <div className="is-divider-vertical"/>
+            <div className="is-divider-vertical" />
             <div className="column">
-            <h2 className="title">Node Settings</h2>
-            <div className="field">
-            <input className="is-checkradio is-success" id="exampleCheckboxSuccess" type="checkbox" name="exampleCheckboxSuccess" checked="checked" />
-            <label htmlFor="exampleCheckboxSuccess">Autoselect best node</label>
-          </div>
-          <br />
+              <h2 className="title">Node Settings</h2>
+              <div className="field">
+                <input
+                  className="is-checkradio is-success"
+                  id="autoSelectDaemon"
+                  type="checkbox"
+                  name="autoSelectDaemon"
+                  checked={config.autoSelectDaemon}
+                />
+                <label htmlFor="exampleCheckboxSuccess">
+                  Autoselect best node
+                </label>
+              </div>
+              <br />
               <form onSubmit={this.changeNode}>
                 <label className="label has-text-grey-lighter">
                   Change Node
