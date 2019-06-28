@@ -7,10 +7,9 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
-import { session } from '../reducers/index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
-import { config, directories } from '../reducers/index';
+import { config, session, directories } from '../index';
 
 // import styles from './Send.css';
 

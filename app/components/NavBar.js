@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import log from 'electron-log';
 import routes from '../constants/routes';
-import { config } from '../reducers/index';
+import { config } from '../index';
 
 export default function navBar(activePage) {
   return (

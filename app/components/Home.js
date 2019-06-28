@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
 import request from 'request';
-import { session } from '../reducers/index';
+import { config, session } from '../index';
 import navBar from './NavBar';
 
 let displayedTransactionCount = 50;

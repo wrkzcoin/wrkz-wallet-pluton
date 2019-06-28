@@ -1,7 +1,6 @@
 // @flow
 import clipboardy from 'clipboardy';
 import log from 'electron-log';
-import { session } from '../reducers/index';
 import type { GetState, Dispatch } from '../reducers/types';
 
 export const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
@@ -39,9 +38,11 @@ export function incrementAsync(delay: number = 1000) {
   };
 }
 
+/*
 export function copyToClipboard(text: string = session.address) {
   return (dispatch: Dispatch) => {
     log.debug(`Address copied to clipboard ${text}`);
     clipboardy.writeSync(text);
   };
 }
+*/

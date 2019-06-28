@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import QRCode from 'qrcode.react';
 import { Redirect, Link } from 'react-router-dom';
-import { session } from '../reducers/index';
+import { config, session } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 

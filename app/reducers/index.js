@@ -6,11 +6,11 @@ import { LogLevel } from 'turtlecoin-wallet-backend';
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import counter from './counter';
-import WalletSession from '../wallet/session';
-import iConfig from '../constants/config';
+// import WalletSession from '../wallet/session';
+// import iConfig from '../constants/config';
 
-log.debug(`Proton wallet started...`);
-
+// log.debug(`Proton wallet started...`);
+/*
 export let config = iConfig;
 
 const homedir = os.homedir();
@@ -72,6 +72,8 @@ if (config.logLevel === 'DEBUG') {
     }
   );
 }
+
+*/
 
 export default function createRootReducer(history: History) {
   return combineReducers<{}, *>({

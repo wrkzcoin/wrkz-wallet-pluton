@@ -4,10 +4,10 @@ import {
   BlockchainCacheApi,
   ConventionalDaemon
 } from 'turtlecoin-wallet-backend';
-import app from 'electron';
+import app, { dialog } from 'electron';
 import log from 'electron-log';
 import fs from 'fs';
-import { config, directories } from '../reducers/index';
+import { config, directories } from '../index';
 
 export default class WalletSession {
   constructor(opts) {
@@ -26,6 +26,12 @@ export default class WalletSession {
       if (error.errorCode === 1) {
         log.debug("Didn't find default wallet file, creating...");
         openWallet = WalletBackend.createWallet(this.daemon);
+      } else if (error.errorCode === 5) {
+        log.debug(error);
+        dialog.showErrorBox(
+          'Error',
+          'The wallet was not imported successfully. Try again.'
+        );
       }
     }
     log.debug(`Opened wallet file at ${config.walletFile}`);

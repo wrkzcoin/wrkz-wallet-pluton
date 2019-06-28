@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
-import { session, config } from '../reducers/index';
+import { config, session } from '../index';
 import navBar from './NavBar';
 
 function getNodeList() {

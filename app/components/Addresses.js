@@ -4,7 +4,7 @@ import ReactLoading from 'react-loading';
 import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 // import styles from './Home.css';
-import { config, session } from '../reducers/index';
+import { config, session } from '../index';
 import navBar from './NavBar';
 
 type Props = {};
