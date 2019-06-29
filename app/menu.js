@@ -185,37 +185,12 @@ export default class MenuBuilder {
     return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
 
-  handleSave(showDialog: boolean) {
-    // session.saveWallet(config.walletFile);
+  handleSave() {
     this.mainWindow.webContents.send('handleSave');
-    if (showDialog) {
-      dialog.showMessageBox(null, {
-        type: 'info',
-        buttons: ['OK'],
-        title: 'Saved!',
-        message: 'The wallet was saved successfully.'
-      });
-    }
   }
 
   handleOpen() {
-    const getPaths = dialog.showOpenDialog();
-    if (getPaths === undefined) {
-      return;
-    }
-    const selectedPath = getPaths[0];
-    const savedSuccessfully = session.handleWalletOpen(selectedPath);
-    if (savedSuccessfully === true) {
-      app.relaunch();
-      app.exit();
-    } else {
-      dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: ['OK'],
-        title: 'Error opening wallet!',
-        message: 'The wallet was not opened successfully. Try again.'
-      });
-    }
+    this.mainWindow.webContents.send('handleOpen');
   }
 
   handleSaveAs(showDialog: boolean) {
@@ -358,7 +333,7 @@ export default class MenuBuilder {
             label: '&Save',
             accelerator: 'Ctrl+S',
             click: () => {
-              this.handleSave(true);
+              this.handleSave();
             }
           },
           {
@@ -371,7 +346,7 @@ export default class MenuBuilder {
             label: '&Close',
             accelerator: 'Ctrl+W',
             click: () => {
-              this.handleSave(false);
+              this.handleSave();
               this.mainWindow.close();
             }
           }

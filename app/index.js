@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
@@ -12,7 +13,6 @@ import WalletSession from './wallet/session';
 import iConfig from './constants/config';
 
 export let config = iConfig;
-
 
 log.debug(`Proton wallet started...`);
 
@@ -61,9 +61,46 @@ directories.forEach(function(dir) {
 export const session = new WalletSession();
 log.debug('Initialized wallet session ', session.address);
 
-ipcRenderer.on('handleSave', (evt, route) =>
-  session.saveWallet(config.walletFile)
-);
+// eslint-disable-next-line func-names
+ipcRenderer.on('handleSave', function(evt, route) {
+  const saved = session.saveWallet(config.walletFile);
+  if (saved) {
+    remote.dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['OK'],
+      title: 'Saved!',
+      message: 'The wallet was saved successfully.'
+    });
+  } else {
+    remote.dialog.showMessageBox(null, {
+      type: 'error',
+      buttons: ['OK'],
+      title: 'Error!',
+      message:
+        'The wallet was not saved successfully. Check directory permissions and try again.'
+    });
+  }
+});
+
+ipcRenderer.on('handleOpen', function(evt, route) {
+  const getPaths = remote.dialog.showOpenDialog();
+  if (getPaths === undefined) {
+    return;
+  }
+  const selectedPath = getPaths[0];
+  const savedSuccessfully = session.handleWalletOpen(selectedPath);
+  if (savedSuccessfully === true) {
+    remote.app.relaunch();
+    remote.app.exit();
+  } else {
+    remote.dialog.showMessageBox(null, {
+      type: 'error',
+      buttons: ['OK'],
+      title: 'Error opening wallet!',
+      message: 'The wallet was not opened successfully. Try again.'
+    });
+  }
+});
 
 if (config.logLevel === 'DEBUG') {
   session.wallet.setLogLevel(LogLevel.DEBUG);
@@ -83,7 +120,6 @@ if (config.logLevel === 'DEBUG') {
 const store = configureStore();
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
-
 
 render(
   <AppContainer>
