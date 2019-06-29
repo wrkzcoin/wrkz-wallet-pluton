@@ -8,6 +8,7 @@ import { Redirect, Link } from 'react-router-dom';
 import { config, session } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
+import clipboardy from 'clipboardy';
 
 type Props = {
   increment: () => void,
@@ -69,6 +70,13 @@ export default class Receive extends Component<Props> {
     });
   }
 
+  handleCopyAddressToClipboard(text: string = session.address) {
+      return (dispatch: Dispatch) => {
+        log.debug(`Address copied to clipboard ${text}`);
+        clipboardy.writeSync(text);
+      };
+  }
+
   refresh() {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus(),
@@ -120,7 +128,7 @@ export default class Receive extends Component<Props> {
                     <button
                       type="button"
                       className="button is-success is-large"
-                      onClick={() => copyToClipboard()}
+                      onClick={() => copyToClipboard(session.address)}
                     >
                       Copy to Clipboard
                     </button>

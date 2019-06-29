@@ -38,11 +38,9 @@ export function incrementAsync(delay: number = 1000) {
   };
 }
 
-/*
-export function copyToClipboard(text: string = session.address) {
+export function copyToClipboard(text: string) {
   return (dispatch: Dispatch) => {
     log.debug(`Address copied to clipboard ${text}`);
     clipboardy.writeSync(text);
   };
 }
-*/
