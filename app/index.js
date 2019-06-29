@@ -11,6 +11,7 @@ import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 import WalletSession from './wallet/session';
 import iConfig from './constants/config';
+import clipboardy from 'clipboardy';
 
 export let config = iConfig;
 
@@ -82,6 +83,20 @@ ipcRenderer.on('handleSave', function(evt, route) {
   }
 });
 
+ipcRenderer.on('handleSaveAs', function(evt, route) {
+  const savePath = remote.dialog.showSaveDialog();
+  if (savePath === undefined) {
+    return;
+  }
+  session.saveWallet(savePath);
+  remote.dialog.showMessageBox(null, {
+    type: 'info',
+    buttons: ['OK'],
+    title: 'Saved!',
+    message: 'Your wallet was saved successfully.'
+  });
+});
+
 ipcRenderer.on('handleOpen', function(evt, route) {
   const getPaths = remote.dialog.showOpenDialog();
   if (getPaths === undefined) {
@@ -99,6 +114,37 @@ ipcRenderer.on('handleOpen', function(evt, route) {
       title: 'Error opening wallet!',
       message: 'The wallet was not opened successfully. Try again.'
     });
+  }
+});
+
+ipcRenderer.on('handleBackup', function(evt, route) {
+  const publicAddress = session.wallet.getPrimaryAddress();
+  const [
+    privateSpendKey,
+    privateViewKey
+  ] = session.wallet.getPrimaryAddressPrivateKeys();
+  const [mnemonicSeed, err] = session.wallet.getMnemonicSeed();
+  log.debug(err);
+
+  const msg =
+    // eslint-disable-next-line prefer-template
+    publicAddress +
+    `\n\nPrivate Spend Key:\n\n` +
+    privateSpendKey +
+    `\n\nPrivate View Key:\n\n` +
+    privateViewKey +
+    `\n\nMnemonic Seed:\n\n` +
+    mnemonicSeed +
+    `\n\nPlease save these keys safely and securely. \nIf you lose your keys, you will not be able to recover your funds.`;
+
+  const userSelection = remote.dialog.showMessageBox(null, {
+    type: 'info',
+    buttons: ['Copy to Clipboard', 'Cancel'],
+    title: 'Seed',
+    message: msg
+  });
+  if (userSelection === 0) {
+    clipboardy.writeSync(msg);
   }
 });
 

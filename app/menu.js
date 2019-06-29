@@ -1,8 +1,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-undef */
 // @flow
-import { app, Menu, shell, BrowserWindow, dialog, ipcMain } from 'electron';
-import clipboardy from 'clipboardy';
+import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
 import log from 'electron-log';
 // import { session, config } from './index';
 
@@ -194,22 +193,13 @@ export default class MenuBuilder {
   }
 
   handleSaveAs(showDialog: boolean) {
-    const savePath = dialog.showSaveDialog();
-    if (savePath === undefined) {
-      return;
-    }
-    session.saveWallet(savePath);
-    if (showDialog) {
-      dialog.showMessageBox(null, {
-        type: 'info',
-        buttons: ['OK'],
-        title: 'Saved!',
-        message: 'Your wallet was saved successfully.'
-      });
-    }
+    this.mainWindow.webContents.send('handleSaveAs');
   }
 
   handleBackup() {
+    this.mainWindow.webContents.send('handleBackup');
+    /*
+
     const publicAddress = session.wallet.getPrimaryAddress();
     const [
       privateSpendKey,
@@ -238,6 +228,8 @@ export default class MenuBuilder {
     if (userSelection === 0) {
       clipboardy.writeSync(msg);
     }
+
+    */
   }
 
   handleNew() {
@@ -339,7 +331,7 @@ export default class MenuBuilder {
           {
             label: '&Save a Copy',
             click: () => {
-              this.handleSaveAs(true);
+              this.handleSaveAs();
             }
           },
           {
