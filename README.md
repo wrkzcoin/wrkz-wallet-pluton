@@ -69,7 +69,7 @@ $ yarn package
 * incoming transaction notification
 * utilities: generate payment id and inegrated address
 * make transaction hash on wallet page link to explorer
-* change session from a class to a static factory function
+* change session from a class to a static factory function and reinitialize properly
 
 ## License
 
