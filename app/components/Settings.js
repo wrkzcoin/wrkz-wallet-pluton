@@ -174,7 +174,7 @@ export default class Settings extends Component<Props> {
                     <label className="label">
                       Log Level
                       <br />
-                      <div className="select">
+                      <div className="select" disabled>
                         <select>
                           <option>DISABLED</option>
                           <option>DEBUG</option>

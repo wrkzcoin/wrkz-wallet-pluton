@@ -4,6 +4,7 @@ import fs from 'fs';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
+import { ipcRenderer, remote } from 'electron';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './app.global.css';
@@ -11,6 +12,7 @@ import WalletSession from './wallet/session';
 import iConfig from './constants/config';
 
 export let config = iConfig;
+
 
 log.debug(`Proton wallet started...`);
 
@@ -59,6 +61,10 @@ directories.forEach(function(dir) {
 export const session = new WalletSession();
 log.debug('Initialized wallet session ', session.address);
 
+ipcRenderer.on('handleSave', (evt, route) =>
+  session.saveWallet(config.walletFile)
+);
+
 if (config.logLevel === 'DEBUG') {
   session.wallet.setLogLevel(LogLevel.DEBUG);
   session.wallet.setLoggerCallback(
@@ -77,6 +83,7 @@ if (config.logLevel === 'DEBUG') {
 const store = configureStore();
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
+
 
 render(
   <AppContainer>

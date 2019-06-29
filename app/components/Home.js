@@ -68,6 +68,17 @@ export default class Home extends Component<Props> {
     });
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
+    session.wallet.off('transaction', transaction => {
+      log.debug('Transaction found, refreshing transaction list...');
+      displayedTransactionCount++;
+      this.setState({
+        transactions: session.getTransactions(
+          0,
+          displayedTransactionCount,
+          false
+        )
+      });
+    });
   }
 
   handleImportFromSeed(evt, route) {

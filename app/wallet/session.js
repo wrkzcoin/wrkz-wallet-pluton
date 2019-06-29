@@ -14,7 +14,8 @@ export default class WalletSession {
     const [programDirectory, logDirectory, walletDirectory] = directories;
     log.debug(programDirectory);
 
-    this.daemon = new ConventionalDaemon('127.0.0.1', '11898');
+    // this.daemon = new ConventionalDaemon('127.0.0.1', '11898');
+    this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
 
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
@@ -212,10 +213,18 @@ export default class WalletSession {
 
   saveWallet(filePath?: string) {
     if (filePath !== undefined) {
-      this.wallet.saveWalletToFile(`${filePath}`, '');
-      log.debug(`Wallet saved at ${filePath}`);
+      const saved = this.wallet.saveWalletToFile(`${filePath}`, '');
+      if (!saved) {
+        log.debug('Failed to save wallet.');
+        return false;
+      }
+      if (saved) {
+        log.debug(`Wallet saved at ${filePath}`);
+        return true;
+      }
     } else {
       log.debug('No path provided!');
+      return false;
     }
   }
 

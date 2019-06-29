@@ -4,7 +4,7 @@
 import { app, Menu, shell, BrowserWindow, dialog, ipcMain } from 'electron';
 import clipboardy from 'clipboardy';
 import log from 'electron-log';
-import { session, config } from './reducers/index';
+// import { session, config } from './index';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -186,13 +186,14 @@ export default class MenuBuilder {
   }
 
   handleSave(showDialog: boolean) {
-    session.saveWallet(config.walletFile);
-    if (showDialog === true) {
+    // session.saveWallet(config.walletFile);
+    this.mainWindow.webContents.send('handleSave');
+    if (showDialog) {
       dialog.showMessageBox(null, {
         type: 'info',
         buttons: ['OK'],
         title: 'Saved!',
-        message: 'Your wallet was saved successfully.'
+        message: 'The wallet was saved successfully.'
       });
     }
   }
@@ -265,12 +266,15 @@ export default class MenuBuilder {
   }
 
   handleNew() {
-    dialog.showMessageBox(null, {
+    const userSelection = dialog.showMessageBox(null, {
       type: 'question',
-      buttons: ['OK'],
+      buttons: ['Cancel', 'OK'],
       title: 'New Wallet',
       message: 'Press OK to select a location for your new wallet.'
     });
+    if (userSelection !== 1) {
+      return;
+    }
     const savePath = dialog.showSaveDialog();
     if (savePath === undefined) {
       return;
@@ -312,14 +316,14 @@ export default class MenuBuilder {
     // seed will be 0, keys will be 1
     const userSelection = dialog.showMessageBox(null, {
       type: 'info',
-      buttons: ['Seed', 'Keys'],
+      buttons: ['Cancel', 'Seed', 'Keys'],
       title: 'Seed',
       message: 'Would you like to restore from seed or keys?'
     });
-    if (userSelection === 0) {
+    if (userSelection === 1) {
       log.debug('User selected to import from seed...');
       this.mainWindow.webContents.send('importSeed');
-    } else if (userSelection === 1) {
+    } else if (userSelection === 2) {
       log.debug('User selected to import from keys...');
       this.mainWindow.webContents.send('importKey');
     }
