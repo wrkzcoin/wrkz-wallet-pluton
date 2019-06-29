@@ -132,8 +132,8 @@ export default class Home extends Component<Props> {
     return (
       <div>
         {navBar('wallet')}
-        <div className="maincontent txlist has-background-light">
-          <table className="table has-background-light is-striped is-hoverable is-fullwidth is-narrow is-family-monospace">
+        <div className="maincontent has-background-light">
+          <table className=" txlist table has-background-light is-striped is-hoverable is-fullwidth is-narrow is-family-monospace">
             <thead>
               <tr>
                 <th>Date</th>
@@ -153,10 +153,9 @@ export default class Home extends Component<Props> {
                       {tx[0] > 0 && <p>{session.convertTimestamp(tx[0])}</p>}
                     </td>
                     <td>{tx[1]}</td>
-
                     {tx[2] < 0 && (
-                      <td className="is-negative-transaction">
-                        <p className="has-text-danger">
+                      <td>
+                        <p className="has-text-danger is-negative-transaction">
                           {session.atomicToHuman(tx[2], true)}
                         </p>
                       </td>
@@ -166,6 +165,7 @@ export default class Home extends Component<Props> {
                         <p>{session.atomicToHuman(tx[2], true)}</p>
                       </td>
                     )}
+                    <td />
                   </tr>
                 );
               })}

@@ -30,7 +30,9 @@
 }
 
 .txlist {
+  position: relative;
   left: -9px;
+  width: calc(100% + 9px)
 }
 
 .searchbar {
