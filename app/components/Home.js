@@ -154,27 +154,25 @@ export default class Home extends Component<Props> {
                     </td>
                     <td>{tx[1]}</td>
 
-                      {tx[2] < 0 && (
-                        <td className="is-negative-transaction">
+                    {tx[2] < 0 && (
+                      <td className="is-negative-transaction">
                         <p className="has-text-danger">
                           {session.atomicToHuman(tx[2], true)}
                         </p>
-                        </td>
-                      )}
-                      {
-                        tx[2] > 0 &&
-                        <td>
-                          <p>{session.atomicToHuman(tx[2], true)}</p>
-                        </td>
-                      }
-
-                    <td />
+                      </td>
+                    )}
+                    {tx[2] > 0 && (
+                      <td>
+                        <p>{session.atomicToHuman(tx[2], true)}</p>
+                      </td>
+                    )}
                   </tr>
                 );
               })}
             </tbody>
           </table>
-          {this.state.transactions.length < this.state.totalTransactionCount && (
+          {this.state.transactions.length <
+            this.state.totalTransactionCount && (
             <form>
               <div className="field">
                 <div className="buttons">
