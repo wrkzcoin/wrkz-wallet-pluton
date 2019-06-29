@@ -13,6 +13,11 @@
   height: 80px;
 }
 
+.is-negative-transaction {
+  position: relative;
+  left: -1ch;
+}
+
 * {
   box-sizing: border-box;
 }

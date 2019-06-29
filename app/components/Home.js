@@ -34,6 +34,7 @@ export default class Home extends Component<Props> {
         displayedTransactionCount,
         false
       ),
+      totalTransactionCount: session.getTransactions().length,
       importkey: false,
       importseed: false
     };
@@ -152,40 +153,49 @@ export default class Home extends Component<Props> {
                       {tx[0] > 0 && <p>{session.convertTimestamp(tx[0])}</p>}
                     </td>
                     <td>{tx[1]}</td>
-                    <td>
+
                       {tx[2] < 0 && (
+                        <td className="is-negative-transaction">
                         <p className="has-text-danger">
                           {session.atomicToHuman(tx[2], true)}
                         </p>
+                        </td>
                       )}
-                      {tx[2] > 0 && <p>{session.atomicToHuman(tx[2], true)}</p>}
-                    </td>
+                      {
+                        tx[2] > 0 &&
+                        <td>
+                          <p>{session.atomicToHuman(tx[2], true)}</p>
+                        </td>
+                      }
+
                     <td />
                   </tr>
                 );
               })}
             </tbody>
           </table>
-          <form>
-            <div className="field">
-              <div className="buttons">
-                <button
-                  type="submit"
-                  className="button is-warning"
-                  onClick={this.handleLoadMore.bind(this)}
-                >
-                  Load more...
-                </button>
-                <button
-                  type="submit"
-                  className="button is-danger"
-                  onClick={this.resetDefault.bind(this)}
-                >
-                  Reset
-                </button>
+          {this.state.transactions.length < this.state.totalTransactionCount && (
+            <form>
+              <div className="field">
+                <div className="buttons">
+                  <button
+                    type="submit"
+                    className="button is-warning"
+                    onClick={this.handleLoadMore.bind(this)}
+                  >
+                    Load more...
+                  </button>
+                  <button
+                    type="submit"
+                    className="button is-danger"
+                    onClick={this.resetDefault.bind(this)}
+                  >
+                    Reset
+                  </button>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          )}
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">

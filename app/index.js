@@ -8,6 +8,7 @@ import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { ipcRenderer, remote } from 'electron';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
+import { WalletBackend } from 'turtlecoin-wallet-backend';
 import './app.global.css';
 import WalletSession from './wallet/session';
 import iConfig from './constants/config';
@@ -102,6 +103,21 @@ ipcRenderer.on('handleOpen', function(evt, route) {
   if (getPaths === undefined) {
     return;
   }
+  const [wallet, error] = WalletBackend.openWalletFromFile(
+    session.daemon,
+    getPaths[0],
+    ''
+  );
+  if (error) {
+    log.debug(`Failed to open wallet: ${error.toString()}`);
+    remote.dialog.showMessageBox(null, {
+      type: 'error',
+      buttons: ['OK'],
+      title: 'Error opening wallet!',
+      message: error.toString()
+    });
+    return;
+  }
   const selectedPath = getPaths[0];
   const savedSuccessfully = session.handleWalletOpen(selectedPath);
   if (savedSuccessfully === true) {
@@ -114,6 +130,52 @@ ipcRenderer.on('handleOpen', function(evt, route) {
       title: 'Error opening wallet!',
       message: 'The wallet was not opened successfully. Try again.'
     });
+  }
+  return;
+});
+
+ipcRenderer.on('handleNew', function(evt, route) {
+  const userSelection = remote.dialog.showMessageBox(null, {
+    type: 'question',
+    buttons: ['Cancel', 'OK'],
+    title: 'New Wallet',
+    message: 'Press OK to select a location for your new wallet.'
+  });
+  if (userSelection !== 1) {
+    return;
+  }
+  const savePath = remote.dialog.showSaveDialog();
+  if (savePath === undefined) {
+    return;
+  }
+  const createdSuccessfuly = session.handleNewWallet(savePath);
+  if (createdSuccessfuly === false) {
+    remote.dialog.showMessageBox(null, {
+      type: 'error',
+      buttons: ['OK'],
+      title: 'Error saving wallet!',
+      message:
+        'The wallet was not created successfully. Check your directory permissions and try again.'
+    });
+  } else {
+    remote.dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['OK'],
+      title: 'Created!',
+      message: 'Your new wallet was created successfully. Press OK to open...'
+    });
+    const savedSuccessfully = session.handleWalletOpen(savePath);
+    if (savedSuccessfully === true) {
+      remote.app.relaunch();
+      remote.app.exit();
+    } else {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Error opening wallet!',
+        message: 'The wallet was not opened successfully. Try again.'
+      });
+    }
   }
 });
 

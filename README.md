@@ -64,15 +64,12 @@ $ yarn package
 
 ## Todo
 
-* move session class initialization out of index.js reducer
-* change session from a class to a static factory function
+* implement password functionality
+* add a splash screen
 * incoming transaction notification
 * utilities: generate payment id and inegrated address
-* get save / open menus opening in focus
-* add a splash screen
-* center modals 
 * make transaction hash on wallet page link to explorer
-
+* change session from a class to a static factory function
 
 ## License
 
