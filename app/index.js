@@ -6,13 +6,13 @@ import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { ipcRenderer, remote } from 'electron';
+import { WalletBackend } from 'turtlecoin-wallet-backend';
+import clipboardy from 'clipboardy';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
-import { WalletBackend } from 'turtlecoin-wallet-backend';
 import './app.global.css';
 import WalletSession from './wallet/session';
 import iConfig from './constants/config';
-import clipboardy from 'clipboardy';
 
 export let config = iConfig;
 
@@ -60,7 +60,7 @@ directories.forEach(function(dir) {
   }
 });
 
-export const session = new WalletSession();
+export let session = new WalletSession();
 log.debug('Initialized wallet session ', session.address);
 
 // eslint-disable-next-line func-names
@@ -121,8 +121,8 @@ ipcRenderer.on('handleOpen', function(evt, route) {
   const selectedPath = getPaths[0];
   const savedSuccessfully = session.handleWalletOpen(selectedPath);
   if (savedSuccessfully === true) {
-    remote.app.relaunch();
-    remote.app.exit();
+    session = null;
+    session = new WalletSession();
   } else {
     remote.dialog.showMessageBox(null, {
       type: 'error',
