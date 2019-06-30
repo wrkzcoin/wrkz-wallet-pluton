@@ -14,8 +14,8 @@ export default class WalletSession {
     const [programDirectory, logDirectory, walletDirectory] = directories;
     log.debug(programDirectory);
 
-    // this.daemon = new ConventionalDaemon('127.0.0.1', '11898');
-    this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
+    this.daemon = new ConventionalDaemon('absolutelyseething.com', '11898');
+    // this.daemon = new BlockchainCacheApi('blockapi.absolutelyseething.com', true);
 
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
