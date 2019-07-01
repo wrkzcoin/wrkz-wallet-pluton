@@ -4,10 +4,10 @@ import {
   BlockchainCacheApi,
   ConventionalDaemon
 } from 'turtlecoin-wallet-backend';
-import app, { dialog } from 'electron';
+import app, { dialog, remote } from 'electron';
 import log from 'electron-log';
 import fs from 'fs';
-import { config, directories } from '../index';
+import { config, directories, eventEmitter } from '../index';
 
 export default class WalletSession {
   constructor(opts) {
@@ -28,10 +28,13 @@ export default class WalletSession {
         openWallet = WalletBackend.createWallet(this.daemon);
       } else if (error.errorCode === 5) {
         log.debug(error);
-        dialog.showErrorBox(
-          'Error',
-          'The wallet was not imported successfully. Try again.'
-        );
+        eventEmitter.emit('loginWithPassword');
+        remote.dialog.showMessageBox(null, {
+          type: 'warning',
+          buttons: ['OK'],
+          title: 'Authentication Required',
+          message: 'Authenticaton required, please enter your password...'
+        });
       }
     }
     log.debug(`Opened wallet file at ${config.walletFile}`);
