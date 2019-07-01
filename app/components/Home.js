@@ -102,7 +102,9 @@ export default class Home extends Component<Props> {
         displayedTransactionCount,
         false
       ),
-      totalTransactionCount: session.getTransactions().length
+      totalTransactionCount: session.getTransactions().length,
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance()
     });
   }
 
