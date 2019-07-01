@@ -6,14 +6,14 @@ import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { ipcRenderer, remote } from 'electron';
-import { WalletBackend } from 'turtlecoin-wallet-backend';
+import { WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
 import clipboardy from 'clipboardy';
+import EventEmitter from 'events';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 import WalletSession from './wallet/session';
 import iConfig from './constants/config';
-import EventEmitter from 'events';
 
 export const eventEmitter = new EventEmitter();
 
@@ -64,6 +64,9 @@ directories.forEach(function(dir) {
 });
 
 export let session = new WalletSession();
+
+startWallet();
+
 log.debug('Initialized wallet session ', session.address);
 
 // eslint-disable-next-line func-names
@@ -126,6 +129,7 @@ ipcRenderer.on('handleOpen', function(evt, route) {
   if (savedSuccessfully === true) {
     session = null;
     session = new WalletSession();
+    startWallet();
     eventEmitter.emit('openNewWallet');
   } else {
     remote.dialog.showMessageBox(null, {
@@ -141,6 +145,7 @@ ipcRenderer.on('handleOpen', function(evt, route) {
 eventEmitter.on('initializeNewSession', function() {
   session = null;
   session = new WalletSession();
+  startWallet();
   eventEmitter.emit('openNewWallet');
 });
 
@@ -178,6 +183,7 @@ ipcRenderer.on('handleNew', function(evt, route) {
     if (savedSuccessfully === true) {
       session = null;
       session = new WalletSession();
+      startWallet();
       eventEmitter.emit('openNewWallet');
     } else {
       remote.dialog.showMessageBox(null, {
@@ -239,6 +245,11 @@ if (config.logLevel === 'DEBUG') {
 const store = configureStore();
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
+
+async function startWallet() {
+  await session.wallet.start();
+  eventEmitter.emit('gotNodeFee');
+}
 
 render(
   <AppContainer>

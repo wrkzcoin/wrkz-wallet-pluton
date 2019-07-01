@@ -37,7 +37,8 @@ export default class Home extends Component<Props> {
       ),
       totalTransactionCount: session.getTransactions().length,
       importkey: false,
-      importseed: false
+      importseed: false,
+      nodeFee: session.daemon.feeAmount
     };
   }
 
@@ -49,18 +50,12 @@ export default class Home extends Component<Props> {
     ipcRenderer.on('importKey', (evt, route) =>
       this.handleImportFromKey(evt, route)
     );
-    session.wallet.on('transaction', transaction => {
-      log.debug('Transaction found, refreshing transaction list...');
-      displayedTransactionCount++;
-      this.setState({
-        transactions: session.getTransactions(
-          0,
-          displayedTransactionCount,
-          false
-        )
-      });
-    });
+    session.wallet.on(
+      'transaction',
+      this.refreshListOnNewTransaction.bind(this)
+    );
     eventEmitter.on('openNewWallet', this.openNewWallet.bind(this));
+    eventEmitter.on('gotNodeFee', this.refreshNodeFee.bind(this));
   }
 
   componentWillUnmount() {
@@ -72,16 +67,42 @@ export default class Home extends Component<Props> {
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('openNewWallet', this.openNewWallet.bind(this));
+    eventEmitter.on('gotNodeFee', this.refreshNodeFee.bind(this));
+    session.wallet.off(
+      'transaction',
+      this.refreshListOnNewTransaction.bind(this)
+    );
   }
 
-  openNewWallet() {
-    log.debug('Initialized new wallet session, refreshing transaction list...');
+  refreshNodeFee() {
+    this.setState({
+      nodeFee: session.daemon.feeAmount
+    });
+  }
+
+  refreshListOnNewTransaction() {
+    log.debug('Transaction found, refreshing transaction list...');
+    displayedTransactionCount++;
     this.setState({
       transactions: session.getTransactions(
         0,
         displayedTransactionCount,
         false
-      )
+      ),
+      totalTransactionCount: session.getTransactions().length
+    });
+  }
+
+  openNewWallet() {
+    log.debug('Initialized new wallet session, refreshing transaction list...');
+    displayedTransactionCount = 50;
+    this.setState({
+      transactions: session.getTransactions(
+        0,
+        displayedTransactionCount,
+        false
+      ),
+      totalTransactionCount: session.getTransactions().length
     });
   }
 
@@ -200,6 +221,16 @@ export default class Home extends Component<Props> {
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
+            {this.state.nodeFee > 0 && (
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-dark is-large">Node Fee:</span>
+                  <span className="tag is-danger is-large">
+                    {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>

@@ -34,7 +34,8 @@ export default class Send extends Component<Props> {
       transactions: session.getTransactions(),
       importkey: false,
       importseed: false,
-      importCompleted: false
+      importCompleted: false,
+      nodeFee: session.daemon.feeAmount
     };
   }
 
@@ -46,12 +47,20 @@ export default class Send extends Component<Props> {
     ipcRenderer.on('importKey', (evt, route) =>
       this.handleImportFromKey(evt, route)
     );
+    eventEmitter.on('initializeNewSession', this.handleInitialize.bind(this));
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
+    eventEmitter.off('initializeNewSession', this.handleInitialize);
+  }
+
+  handleInitialize() {
+    this.setState({
+      importCompleted: true
+    });
   }
 
   handleImportFromSeed(evt, route) {
@@ -96,15 +105,14 @@ export default class Send extends Component<Props> {
       viewKey,
       spendKey,
       savePath,
-      parseInt(height)
+      parseInt(height, 10)
     );
     if (importedSuccessfully === true) {
       remote.dialog.showMessageBox(null, {
         type: 'info',
         buttons: ['OK'],
         title: 'Wallet imported successfully!',
-        message:
-          'The wallet was imported successfully.'
+        message: 'The wallet was imported successfully.'
       });
       const [programDirectory, logDirectory, walletDirectory] = directories;
       const modifyConfig = config;
@@ -126,7 +134,8 @@ export default class Send extends Component<Props> {
         type: 'error',
         buttons: ['OK'],
         title: 'Error importing wallet!',
-        message: 'The wallet was not imported successfully. Try again.'
+        message:
+          'The wallet was not imported successfully. Check that your keys are valid and try again.'
       });
     }
   }
@@ -203,6 +212,16 @@ export default class Send extends Component<Props> {
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
+            {this.state.nodeFee > 0 && (
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-dark is-large">Node Fee:</span>
+                  <span className="tag is-danger is-large">
+                    {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>

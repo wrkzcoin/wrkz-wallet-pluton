@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
-import { config, session } from '../index';
+import { config, session, eventEmitter } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
@@ -35,7 +35,9 @@ export default class Send extends Component<Props> {
       transactions: session.getTransactions(),
       transactionInProgress: false,
       importkey: false,
-      importseed: false
+      importseed: false,
+      nodeFee: session.daemon.feeAmount,
+      transactionComplete: false
     };
   }
 
@@ -47,23 +49,70 @@ export default class Send extends Component<Props> {
     ipcRenderer.on('importKey', (evt, route) =>
       this.handleImportFromKey(evt, route)
     );
+    eventEmitter.on('transactionComplete', this.transactionComplete.bind(this));
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
+    eventEmitter.off(
+      'transactionComplete',
+      this.transactionComplete.bind(this)
+    );
+  }
+
+  transactionComplete() {
+    this.setState({
+      transactionComplete: true
+    });
   }
 
   async handleSubmit(event) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
+
     const [sendToAddress, amount, paymentID, fee] = [
       event.target[0].value, // sendToAddress
-      event.target[1].value, // amount
+      event.target[1].value || 0, // amount
       event.target[2].value || undefined, // paymentID
-      event.target[3].value || 0.1 // fee
+      event.target[3].value || 10 // fee
     ];
+
+    let displayIfPaymentID;
+
+    if (event.target[2].value !== '') {
+      displayIfPaymentID = ` with a transaction hash of ${
+        event.target[2].value
+      }`;
+    } else {
+      displayIfPaymentID = '';
+    }
+
+    let displayIfNodeFee;
+
+    if (session.daemon.feeAmount > 0) {
+      displayIfNodeFee = ` and a node fee of ${session.daemon.feeAmount} TRTL`;
+    } else {
+      displayIfNodeFee = '';
+    }
+
+    const totalTransactionAmount =
+      parseInt(amount, 10) +
+      parseInt(fee, 10) +
+      parseInt(session.daemon.feeAmount, 10);
+
+    const userSelection = remote.dialog.showMessageBox(null, {
+      type: 'warning',
+      buttons: ['Cancel', 'OK'],
+      title: 'Please Confirm Transaction',
+      message: `You are about to send ${totalTransactionAmount} TRTL to ${sendToAddress}${displayIfPaymentID} which includes a network fee of ${fee} TRTL${displayIfNodeFee}. Do you wish to proceed?`
+    });
+
+    if (userSelection !== 1) {
+      log.debug('Transaction cancelled by user.');
+      return;
+    }
 
     const hash = await session.sendTransaction(
       sendToAddress,
@@ -78,6 +127,7 @@ export default class Send extends Component<Props> {
         title: 'Saved!',
         message: 'Your transaction was sent successfully.\n\n' + `${hash}`
       });
+      eventEmitter.emit('transactionComplete');
     }
   }
 
@@ -113,6 +163,10 @@ export default class Send extends Component<Props> {
 
     if (this.state.importseed === true) {
       return <Redirect to="/import" />;
+    }
+
+    if (this.state.transactionComplete === true) {
+      return <Redirect to="/" />;
     }
 
     return (
@@ -182,6 +236,16 @@ export default class Send extends Component<Props> {
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
+            {this.state.nodeFee > 0 && (
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-dark is-large">Node Fee:</span>
+                  <span className="tag is-danger is-large">
+                    {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>

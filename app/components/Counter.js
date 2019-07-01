@@ -34,7 +34,8 @@ export default class Receive extends Component<Props> {
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(),
       importkey: false,
-      importseed: false
+      importseed: false,
+      nodeFee: session.daemon.feeAmount
     };
   }
 
@@ -71,10 +72,10 @@ export default class Receive extends Component<Props> {
   }
 
   handleCopyAddressToClipboard(text: string = session.address) {
-      return (dispatch: Dispatch) => {
-        log.debug(`Address copied to clipboard ${text}`);
-        clipboardy.writeSync(text);
-      };
+    return (dispatch: Dispatch) => {
+      log.debug(`Address copied to clipboard ${text}`);
+      clipboardy.writeSync(text);
+    };
   }
 
   refresh() {
@@ -153,6 +154,16 @@ export default class Receive extends Component<Props> {
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
+          {this.state.nodeFee > 0 &&
+            <div className="control statusicons">
+              <div className="tags has-addons">
+                <span className="tag is-dark is-large">Node Fee:</span>
+                  <span className="tag is-danger is-large">
+                  {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                </span>
+              </div>
+            </div>
+            }
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>

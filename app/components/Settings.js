@@ -49,7 +49,8 @@ export default class Settings extends Component<Props> {
       importkey: false,
       importseed: false,
       nodeList: getNodeList(),
-      connectednode: session.daemon.cacheBaseURL || session.daemon.daemonHost
+      connectednode: session.daemon.cacheBaseURL || session.daemon.daemonHost,
+      nodeFee: session.daemon.feeAmount
     };
   }
 
@@ -237,6 +238,16 @@ export default class Settings extends Component<Props> {
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
+            {this.state.nodeFee > 0 && (
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-dark is-large">Node Fee:</span>
+                  <span className="tag is-danger is-large">
+                    {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>

@@ -11,7 +11,6 @@ import navBar from './NavBar';
 import routes from '../constants/routes';
 import { config, session, directories, eventEmitter } from '../index';
 
-
 // import styles from './Send.css';
 
 type Props = {
@@ -34,7 +33,9 @@ export default class Send extends Component<Props> {
       lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(),
       importkey: false,
-      importseed: false
+      importseed: false,
+      importCompleted: false,
+      nodeFee: session.daemon.feeAmount
     };
   }
 
@@ -46,12 +47,14 @@ export default class Send extends Component<Props> {
     ipcRenderer.on('importKey', (evt, route) =>
       this.handleImportFromKey(evt, route)
     );
+    eventEmitter.on('initializeNewSession', this.handleInitialize.bind(this));
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
+    eventEmitter.off('initializeNewSession', this.handleInitialize.bind(this));
   }
 
   handleImportFromSeed(evt, route) {
@@ -100,8 +103,7 @@ export default class Send extends Component<Props> {
         type: 'info',
         buttons: ['OK'],
         title: 'Wallet imported successfully!',
-        message:
-          'The wallet was imported successfully.'
+        message: 'The wallet was imported successfully.'
       });
       const [programDirectory, logDirectory, walletDirectory] = directories;
       const modifyConfig = config;
@@ -137,9 +139,19 @@ export default class Send extends Component<Props> {
     }));
   }
 
+  handleInitialize() {
+    this.setState({
+      importCompleted: true
+    });
+  }
+
   render() {
     if (this.state.importkey === true) {
       return <Redirect to="/importkey" />;
+    }
+
+    if (this.state.importCompleted === true) {
+      return <Redirect to="/" />;
     }
 
     return (
@@ -182,6 +194,16 @@ export default class Send extends Component<Props> {
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
+            {this.state.nodeFee > 0 && (
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-dark is-large">Node Fee:</span>
+                  <span className="tag is-danger is-large">
+                    {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>

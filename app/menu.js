@@ -264,7 +264,6 @@ export default class MenuBuilder {
             label: '&Close',
             accelerator: 'Ctrl+W',
             click: () => {
-              this.handleSave();
               this.mainWindow.close();
             }
           }
