@@ -9,7 +9,8 @@ import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
 import navBar from './NavBar';
 import routes from '../constants/routes';
-import { config, session, directories } from '../index';
+import { config, session, directories, eventEmitter } from '../index';
+
 
 // import styles from './Send.css';
 
@@ -100,7 +101,7 @@ export default class Send extends Component<Props> {
         buttons: ['OK'],
         title: 'Wallet imported successfully!',
         message:
-          'The wallet was imported successfully. Opening your new wallet file...'
+          'The wallet was imported successfully.'
       });
       const [programDirectory, logDirectory, walletDirectory] = directories;
       const modifyConfig = config;
@@ -116,8 +117,7 @@ export default class Send extends Component<Props> {
         }
       );
       log.debug('Wrote config file to disk.');
-      remote.app.relaunch();
-      remote.app.exit();
+      eventEmitter.emit('initializeNewSession');
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',

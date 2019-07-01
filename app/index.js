@@ -13,6 +13,9 @@ import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 import WalletSession from './wallet/session';
 import iConfig from './constants/config';
+import EventEmitter from 'events';
+
+export const eventEmitter = new EventEmitter();
 
 export let config = iConfig;
 
@@ -123,6 +126,7 @@ ipcRenderer.on('handleOpen', function(evt, route) {
   if (savedSuccessfully === true) {
     session = null;
     session = new WalletSession();
+    eventEmitter.emit('openNewWallet');
   } else {
     remote.dialog.showMessageBox(null, {
       type: 'error',
@@ -132,6 +136,12 @@ ipcRenderer.on('handleOpen', function(evt, route) {
     });
   }
   return;
+});
+
+eventEmitter.on('initializeNewSession', function() {
+  session = null;
+  session = new WalletSession();
+  eventEmitter.emit('openNewWallet');
 });
 
 ipcRenderer.on('handleNew', function(evt, route) {
@@ -166,8 +176,9 @@ ipcRenderer.on('handleNew', function(evt, route) {
     });
     const savedSuccessfully = session.handleWalletOpen(savePath);
     if (savedSuccessfully === true) {
-      remote.app.relaunch();
-      remote.app.exit();
+      session = null;
+      session = new WalletSession();
+      eventEmitter.emit('openNewWallet');
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',

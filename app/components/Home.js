@@ -7,6 +7,7 @@ import { Redirect } from 'react-router-dom';
 import request from 'request';
 import { config, session } from '../index';
 import navBar from './NavBar';
+import { eventEmitter } from '../index';
 
 let displayedTransactionCount = 50;
 
@@ -59,6 +60,7 @@ export default class Home extends Component<Props> {
         )
       });
     });
+    eventEmitter.on('openNewWallet', this.openNewWallet.bind(this));
   }
 
   componentWillUnmount() {
@@ -69,16 +71,17 @@ export default class Home extends Component<Props> {
     });
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
-    session.wallet.off('transaction', transaction => {
-      log.debug('Transaction found, refreshing transaction list...');
-      displayedTransactionCount++;
-      this.setState({
-        transactions: session.getTransactions(
-          0,
-          displayedTransactionCount,
-          false
-        )
-      });
+    eventEmitter.off('openNewWallet', this.openNewWallet.bind(this));
+  }
+
+  openNewWallet() {
+    log.debug('Initialized new wallet session, refreshing transaction list...');
+    this.setState({
+      transactions: session.getTransactions(
+        0,
+        displayedTransactionCount,
+        false
+      )
     });
   }
 

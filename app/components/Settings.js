@@ -40,7 +40,6 @@ export default class Settings extends Component<Props> {
 
   constructor(props?: Props) {
     super(props);
-    log.debug(session.daemon);
     this.state = {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
