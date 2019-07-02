@@ -35,15 +35,18 @@ export default class Send extends Component<Props> {
       importkey: false,
       importseed: false,
       importCompleted: false,
-      nodeFee: session.daemon.feeAmount
+      nodeFee: session.daemon.feeAmount,
+      changePassword: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
+    ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
@@ -51,9 +54,16 @@ export default class Send extends Component<Props> {
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
+  }
+
+  handlePasswordChange() {
+    this.setState({
+      changePassword: true
+    })
   }
 
   handleInitialize() {
@@ -144,6 +154,9 @@ export default class Send extends Component<Props> {
   }
 
   render() {
+    if (this.state.changePassword === true) {
+      return <Redirect to="/changepassword" />
+    }
     if (this.state.importseed === true) {
       return <Redirect to="/import" />;
     }

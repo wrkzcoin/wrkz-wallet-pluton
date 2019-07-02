@@ -6,5 +6,6 @@
   "IMPORT": "/import",
   "IMPORTKEY": "/importkey",
   "SETTINGS": "/settings",
-  "LOGIN": "/login"
+  "LOGIN": "/login",
+  "CHANGEPASSWORD": "/changepassword"
 }

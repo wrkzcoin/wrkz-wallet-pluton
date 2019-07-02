@@ -204,6 +204,10 @@ export default class MenuBuilder {
     this.mainWindow.webContents.send('handleNew');
   }
 
+  handlePasswordChange() {
+    this.mainWindow.webContents.send('handlePasswordChange');
+  }
+
   handleRestore() {
     log.debug('Import menu selected.');
     // seed will be 0, keys will be 1
@@ -273,7 +277,10 @@ export default class MenuBuilder {
         label: '&Wallet',
         submenu: [
           {
-            label: '&Password'
+            label: '&Password',
+            click: () => {
+              this.handlePasswordChange();
+            }
           },
           {
             label: '&Backup',

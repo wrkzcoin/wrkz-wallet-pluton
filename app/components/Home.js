@@ -39,7 +39,8 @@ export default class Home extends Component<Props> {
       importkey: false,
       importseed: false,
       nodeFee: session.daemon.feeAmount,
-      loginFailed: session.loginFailed
+      loginFailed: session.loginFailed,
+      changePassword: false
     };
 
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
@@ -48,16 +49,17 @@ export default class Home extends Component<Props> {
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(this);
     this.openNewWallet = this.openNewWallet.bind(this);
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
 
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.setMaxListeners(1);
+    ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     if (session.wallet !== undefined) {
-      // FIX
       session.wallet.setMaxListeners(1);
       session.wallet.on('transaction', this.refreshListOnNewTransaction);
     }
@@ -73,6 +75,7 @@ export default class Home extends Component<Props> {
       transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
+    ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('openNewWallet', this.openNewWallet);
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
@@ -80,6 +83,12 @@ export default class Home extends Component<Props> {
     if (session.wallet !== undefined) {
       session.wallet.off('transaction', this.refreshListOnNewTransaction);
     }
+  }
+
+  handlePasswordChange() {
+    this.setState({
+      changePassword: true
+    })
   }
 
   handleLoginFailure() {
@@ -159,6 +168,10 @@ export default class Home extends Component<Props> {
   }
 
   render() {
+    if (this.state.changePassword === true) {
+      return <Redirect to="/changepassword" />
+    }
+
     if (this.state.importkey === true) {
       return <Redirect to="/importkey" />;
     }

@@ -39,17 +39,20 @@ export default class Send extends Component<Props> {
       importseed: false,
       nodeFee: session.daemon.feeAmount,
       transactionComplete: false,
-      paymentID: ''
+      paymentID: '',
+      changePassword: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
-    this.transactionComplete = this.transactionComplete.bind(this)
+    this.transactionComplete = this.transactionComplete.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
+    ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('transactionComplete', this.transactionComplete);
   }
 
@@ -57,7 +60,14 @@ export default class Send extends Component<Props> {
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
+    ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('transactionComplete', this.transactionComplete);
+  }
+
+  handlePasswordChange() {
+    this.setState({
+      changePassword: true
+    })
   }
 
   transactionComplete() {
@@ -174,6 +184,10 @@ export default class Send extends Component<Props> {
 
     if (this.state.transactionComplete === true) {
       return <Redirect to="/" />;
+    }
+
+    if (this.state.changePassword === true) {
+      return <Redirect to="/changepassword" />
     }
 
     return (

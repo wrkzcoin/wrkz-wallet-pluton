@@ -50,22 +50,32 @@ export default class Settings extends Component<Props> {
       importseed: false,
       nodeList: getNodeList(),
       connectednode: session.daemon.cacheBaseURL || session.daemon.daemonHost,
-      nodeFee: session.daemon.feeAmount
+      nodeFee: session.daemon.feeAmount,
+      changePassword: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
+    ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
+    ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
+  }
+
+  handlePasswordChange() {
+    this.setState({
+      changePassword: true
+    })
   }
 
   changeNode(event) {
@@ -116,6 +126,10 @@ export default class Settings extends Component<Props> {
 
     if (this.state.importseed === true) {
       return <Redirect to="/import" />;
+    }
+
+    if (this.state.changePassword === true) {
+      return <Redirect to="/changepassword" />
     }
 
     return (

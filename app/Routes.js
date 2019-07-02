@@ -10,6 +10,7 @@ import ImportPage from './containers/ImportPage';
 import ImportKeyPage from './containers/ImportKeyPage';
 import SettingsPage from './containers/SettingsPage';
 import LoginPage from './containers/LoginPage';
+import ChangePasswordPage from './containers/ChangePasswordPage';
 
 export default () => (
   <App>
@@ -22,6 +23,11 @@ export default () => (
       <Route exact path={routes.IMPORTKEY} component={ImportKeyPage} />
       <Route exact path={routes.SETTINGS} component={SettingsPage} />
       <Route exact path={routes.LOGIN} component={LoginPage} />
+      <Route
+        exact
+        path={routes.CHANGEPASSWORD}
+        component={ChangePasswordPage}
+      />
     </Switch>
   </App>
 );

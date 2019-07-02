@@ -35,22 +35,26 @@ export default class Receive extends Component<Props> {
       transactions: session.getTransactions(),
       importkey: false,
       importseed: false,
-      nodeFee: session.daemon.feeAmount
+      nodeFee: session.daemon.feeAmount,
+      changePassword: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
+    ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
+    ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
   }
 
   handleImportFromSeed(evt, route) {
@@ -74,6 +78,12 @@ export default class Receive extends Component<Props> {
     };
   }
 
+  handlePasswordChange() {
+    this.setState({
+      changePassword: true
+    })
+  }
+
   refresh() {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus(),
@@ -89,6 +99,10 @@ export default class Receive extends Component<Props> {
       counter,
       copyToClipboard
     } = this.props;
+
+    if (this.state.changePassword === true) {
+      return <Redirect to="/changepassword" />
+    }
 
     if (this.state.importkey === true) {
       return <Redirect to="/importkey" />;
