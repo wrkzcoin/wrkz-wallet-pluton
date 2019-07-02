@@ -59,6 +59,7 @@ export default class Home extends Component<Props> {
     }
     eventEmitter.on('openNewWallet', this.openNewWallet.bind(this));
     eventEmitter.on('gotNodeFee', this.refreshNodeFee.bind(this));
+    eventEmitter.on('loginFailed', this.handleLoginFailure.bind(this));
   }
 
   componentWillUnmount() {
@@ -77,6 +78,12 @@ export default class Home extends Component<Props> {
         this.refreshListOnNewTransaction.bind(this)
       );
     }
+  }
+
+  handleLoginFailure() {
+    this.setState({
+      loginFailed: true
+    });
   }
 
   refreshNodeFee() {
@@ -109,7 +116,7 @@ export default class Home extends Component<Props> {
       ),
       totalTransactionCount: session.getTransactions().length,
       unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance()
+      lockedBalance: session.getLockedBalance(),
     });
   }
 

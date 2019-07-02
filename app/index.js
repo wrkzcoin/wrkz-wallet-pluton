@@ -117,7 +117,7 @@ ipcRenderer.on('handleOpen', function(evt, route) {
     getPaths[0],
     ''
   );
-  if (error) {
+  if (error && error.errorCode !== 5) {
     log.debug(`Failed to open wallet: ${error.toString()}`);
     remote.dialog.showMessageBox(null, {
       type: 'error',
@@ -126,6 +126,10 @@ ipcRenderer.on('handleOpen', function(evt, route) {
       message: error.toString()
     });
     return;
+  }
+  if (error.errorCode === 5) {
+    log.debug('Login to wallet failed, firing event...')
+    eventEmitter.emit('loginFailed');
   }
   const selectedPath = getPaths[0];
   const savedSuccessfully = session.handleWalletOpen(selectedPath);
@@ -180,7 +184,8 @@ ipcRenderer.on('handleNew', function(evt, route) {
       type: 'info',
       buttons: ['OK'],
       title: 'Created!',
-      message: 'Your new wallet was created successfully. Go to Wallet > Password and add a password to the wallet if desired.'
+      message:
+        'Your new wallet was created successfully. Go to Wallet > Password and add a password to the wallet if desired.'
     });
     const savedSuccessfully = session.handleWalletOpen(savePath);
     if (savedSuccessfully === true) {
