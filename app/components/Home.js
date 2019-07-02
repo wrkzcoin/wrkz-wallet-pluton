@@ -46,7 +46,7 @@ export default class Home extends Component<Props> {
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(this);
-    this.openNewWalet = this.openNewWallet.bind(this);
+    this.openNewWallet = this.openNewWallet.bind(this);
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
 
   }
