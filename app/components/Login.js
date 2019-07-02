@@ -28,14 +28,9 @@ export default class Login extends Component<Props> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      syncStatus: session.getSyncStatus(),
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions(),
       importkey: false,
       importseed: false,
       importCompleted: false,
-      nodeFee: session.daemon.feeAmount
     };
   }
 
@@ -88,8 +83,7 @@ export default class Login extends Component<Props> {
     if (password === undefined) {
       return;
     }
-
-    log.debug(password);
+    eventEmitter.emit('initializeNewSession', password);
   }
 
   refresh() {

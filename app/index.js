@@ -145,9 +145,9 @@ ipcRenderer.on('handleOpen', function(evt, route) {
   return;
 });
 
-eventEmitter.on('initializeNewSession', function() {
+eventEmitter.on('initializeNewSession', function(password) {
   session = null;
-  session = new WalletSession();
+  session = new WalletSession(password);
   startWallet();
   eventEmitter.emit('openNewWallet');
 });
@@ -180,7 +180,7 @@ ipcRenderer.on('handleNew', function(evt, route) {
       type: 'info',
       buttons: ['OK'],
       title: 'Created!',
-      message: 'Your new wallet was created successfully. Press OK to open...'
+      message: 'Your new wallet was created successfully. Go to Wallet > Password and add a password to the wallet if desired.'
     });
     const savedSuccessfully = session.handleWalletOpen(savePath);
     if (savedSuccessfully === true) {

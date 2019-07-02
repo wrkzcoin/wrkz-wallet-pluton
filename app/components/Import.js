@@ -103,7 +103,7 @@ export default class Send extends Component<Props> {
         type: 'info',
         buttons: ['OK'],
         title: 'Wallet imported successfully!',
-        message: 'The wallet was imported successfully.'
+        message: 'The wallet was imported successfully. Go to Wallet > Password and add a password to the wallet if desired.'
       });
       const [programDirectory, logDirectory, walletDirectory] = directories;
       const modifyConfig = config;

@@ -10,9 +10,10 @@ import fs from 'fs';
 import { config, directories, eventEmitter } from '../index';
 
 export default class WalletSession {
-  constructor(opts) {
+  constructor(password) {
     this.loginFailed = false;
     const [programDirectory, logDirectory, walletDirectory] = directories;
+    this.walletPassword = password || '';
 
     // this.daemon = new ConventionalDaemon('trtl.sopinka.com', '11898');
     this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
@@ -20,14 +21,13 @@ export default class WalletSession {
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
       config.walletFile,
-      ''
+      this.walletPassword
     );
     if (error) {
       if (error.errorCode === 1) {
         log.debug("Didn't find default wallet file, creating...");
         openWallet = WalletBackend.createWallet(this.daemon);
       } else if (error.errorCode === 5) {
-        log.debug(error);
         this.loginFailed = true;
       }
     }
@@ -223,7 +223,7 @@ export default class WalletSession {
 
   saveWallet(filePath?: string) {
     if (filePath !== undefined) {
-      const saved = this.wallet.saveWalletToFile(`${filePath}`, '');
+      const saved = this.wallet.saveWalletToFile(`${filePath}`, this.walletPassword);
       if (!saved) {
         log.debug('Failed to save wallet.');
         return false;
