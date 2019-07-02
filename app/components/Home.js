@@ -38,7 +38,8 @@ export default class Home extends Component<Props> {
       totalTransactionCount: session.getTransactions().length,
       importkey: false,
       importseed: false,
-      nodeFee: session.daemon.feeAmount
+      nodeFee: session.daemon.feeAmount,
+      loginFailed: session.loginFailed
     };
   }
 
@@ -50,10 +51,12 @@ export default class Home extends Component<Props> {
     ipcRenderer.on('importKey', (evt, route) =>
       this.handleImportFromKey(evt, route)
     );
-    session.wallet.on(
-      'transaction',
-      this.refreshListOnNewTransaction.bind(this)
-    );
+    if (session.wallet !== undefined) {
+      session.wallet.on(
+        'transaction',
+        this.refreshListOnNewTransaction.bind(this)
+      );
+    }
     eventEmitter.on('openNewWallet', this.openNewWallet.bind(this));
     eventEmitter.on('gotNodeFee', this.refreshNodeFee.bind(this));
   }
@@ -68,10 +71,12 @@ export default class Home extends Component<Props> {
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('openNewWallet', this.openNewWallet.bind(this));
     eventEmitter.on('gotNodeFee', this.refreshNodeFee.bind(this));
-    session.wallet.off(
-      'transaction',
-      this.refreshListOnNewTransaction.bind(this)
-    );
+    if (session.wallet !== undefined) {
+      session.wallet.off(
+        'transaction',
+        this.refreshListOnNewTransaction.bind(this)
+      );
+    }
   }
 
   refreshNodeFee() {
@@ -153,6 +158,10 @@ export default class Home extends Component<Props> {
 
     if (this.state.importseed === true) {
       return <Redirect to="/import" />;
+    }
+
+    if (this.state.loginFailed === true) {
+      return <Redirect to="/login" />
     }
 
     return (

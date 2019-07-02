@@ -8,6 +8,7 @@ export default function navBar(activePage) {
   return (
     <React-Fragment>
       <div className="box has-background-grey-lighter headerbar">
+        {activePage !== 'login' && (
         <div className="columns">
           <div className="column is-three-fifths">
             <nav
@@ -100,6 +101,14 @@ export default function navBar(activePage) {
             </Link>
           </div>
         </div>
+        )}
+        {activePage === 'login' && (
+          <center>
+          <div class="tag is-danger is-large">
+            Authentication required. Please enter your wallet password...
+          </div>
+          </center>
+        )}
       </div>
     </React-Fragment>
   );

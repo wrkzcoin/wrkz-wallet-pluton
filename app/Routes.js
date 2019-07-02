@@ -9,6 +9,7 @@ import AddressesPage from './containers/AddressesPage';
 import ImportPage from './containers/ImportPage';
 import ImportKeyPage from './containers/ImportKeyPage';
 import SettingsPage from './containers/SettingsPage';
+import LoginPage from './containers/LoginPage';
 
 export default () => (
   <App>
@@ -20,6 +21,7 @@ export default () => (
       <Route exact path={routes.IMPORT} component={ImportPage} />
       <Route exact path={routes.IMPORTKEY} component={ImportKeyPage} />
       <Route exact path={routes.SETTINGS} component={SettingsPage} />
+      <Route exact path={routes.LOGIN} component={LoginPage} />
     </Switch>
   </App>
 );

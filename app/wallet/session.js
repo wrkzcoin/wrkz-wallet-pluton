@@ -11,8 +11,8 @@ import { config, directories, eventEmitter } from '../index';
 
 export default class WalletSession {
   constructor(opts) {
+    this.loginFailed = false;
     const [programDirectory, logDirectory, walletDirectory] = directories;
-    log.debug(programDirectory);
 
     // this.daemon = new ConventionalDaemon('trtl.sopinka.com', '11898');
     this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
@@ -28,31 +28,27 @@ export default class WalletSession {
         openWallet = WalletBackend.createWallet(this.daemon);
       } else if (error.errorCode === 5) {
         log.debug(error);
-        eventEmitter.emit('loginWithPassword');
-        remote.dialog.showMessageBox(null, {
-          type: 'warning',
-          buttons: ['OK'],
-          title: 'Authentication Required',
-          message: 'Authenticaton required, please enter your password...'
-        });
+        this.loginFailed = true;
       }
     }
-    log.debug(`Opened wallet file at ${config.walletFile}`);
-    this.wallet = openWallet;
-    this.syncStatus = this.getSyncStatus();
-    this.address = this.wallet.getPrimaryAddress();
+    if (!this.loginFailed) {
+      log.debug(`Opened wallet file at ${config.walletFile}`);
+      this.wallet = openWallet;
+      this.syncStatus = this.getSyncStatus();
+      this.address = this.wallet.getPrimaryAddress();
 
-    this.wallet.on('sync', (walletHeight, networkHeight) => {
-      log.debug(
-        `Wallet synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
-      );
-    });
+      this.wallet.on('sync', (walletHeight, networkHeight) => {
+        log.debug(
+          `Wallet synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
+        );
+      });
 
-    this.wallet.on('desync', (walletHeight, networkHeight) => {
-      log.debug(
-        `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
-      );
-    });
+      this.wallet.on('desync', (walletHeight, networkHeight) => {
+        log.debug(
+          `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
+        );
+      });
+    }
   }
 
   changeDaemon(
@@ -155,6 +151,9 @@ export default class WalletSession {
   }
 
   getTransactions(startIndex, numTransactions, includeFusions) {
+    if (this.loginFailed) {
+      return [];
+    }
     const rawTransactions = this.wallet.getTransactions(
       startIndex,
       numTransactions,
@@ -169,16 +168,25 @@ export default class WalletSession {
   }
 
   getUnlockedBalance(subwallets?: Array<string>) {
+    if (this.loginFailed) {
+      return 0;
+    }
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
     return unlockedBalance;
   }
 
   getLockedBalance(subwallets?: Array<string>) {
+    if (this.loginFailed) {
+      return 0;
+    }
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
     return lockedBalance;
   }
 
   getSyncStatus() {
+    if (this.loginFailed) {
+      return 0;
+    }
     let [
       walletHeight,
       localHeight,

@@ -65,9 +65,12 @@ directories.forEach(function(dir) {
 
 export let session = new WalletSession();
 
-startWallet();
-
-log.debug('Initialized wallet session ', session.address);
+if (!session.loginFailed) {
+  log.debug('Initialized wallet session ', session.address);
+  startWallet();
+} else {
+  log.debug('Login failed, redirecting to login...');
+}
 
 // eslint-disable-next-line func-names
 ipcRenderer.on('handleSave', function(evt, route) {
