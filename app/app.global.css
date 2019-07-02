@@ -13,6 +13,11 @@
   height: 80px;
 }
 
+.is-right {
+  position: relative;
+  right: 0;
+}
+
 .is-negative-transaction {
   position: relative;
   left: -1ch;
@@ -27,6 +32,7 @@
   top: 25%;
   left: 25%;
   width: 50%;
+  padding: 25px;
 }
 
 .headerbar {

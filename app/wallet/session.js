@@ -154,17 +154,21 @@ export default class WalletSession {
     if (this.loginFailed) {
       return [];
     }
+
     const rawTransactions = this.wallet.getTransactions(
       startIndex,
       numTransactions,
       includeFusions
     );
-    const formattedTransactions = rawTransactions.map(tx => [
-      tx.timestamp,
-      tx.hash,
-      tx.totalAmount()
-    ]);
-    return formattedTransactions;
+
+    let balance = parseInt(this.wallet.getBalance());
+    let balances = [];
+
+    for (const tx of rawTransactions) {
+      balance -= parseInt(tx.totalAmount());
+      balances.push([tx.timestamp, tx.hash, tx.totalAmount(), balance]);
+    }
+    return balances;
   }
 
   getUnlockedBalance(subwallets?: Array<string>) {

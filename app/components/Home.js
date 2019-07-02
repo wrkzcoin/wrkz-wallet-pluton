@@ -175,13 +175,13 @@ export default class Home extends Component<Props> {
       <div>
         {navBar('wallet')}
         <div className="maincontent has-background-light">
-          <table className=" txlist table has-background-light is-striped is-hoverable is-fullwidth is-narrow is-family-monospace">
+          <table className=" txlist table has-background-light is-striped is-bordered is-hoverable is-fullwidth is-narrow is-family-monospace">
             <thead>
               <tr>
                 <th>Date</th>
                 <th>Hash</th>
                 <th>Amount</th>
-                <th />
+                <th>Balance</th>
               </tr>
             </thead>
             <tbody>
@@ -207,7 +207,9 @@ export default class Home extends Component<Props> {
                         <p>{session.atomicToHuman(tx[2], true)}</p>
                       </td>
                     )}
-                    <td />
+                    <td>
+                      <p>{session.atomicToHuman(tx[3], true)}</p>
+                    </td>
                   </tr>
                 );
               })}
@@ -237,7 +239,7 @@ export default class Home extends Component<Props> {
             </form>
           )}
         </div>
-        <div className="box has-background-grey-lighter footerbar">
+        <div className="box has-background-grey-light footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             {this.state.nodeFee > 0 && (
               <div className="control statusicons">

@@ -152,7 +152,7 @@ export default class Receive extends Component<Props> {
             </div>
           </div>
         </div>
-        <div className="box has-background-grey-lighter footerbar">
+        <div className="box has-background-grey-light footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
           {this.state.nodeFee > 0 &&
             <div className="control statusicons">

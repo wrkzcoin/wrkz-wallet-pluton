@@ -1,6 +1,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable class-methods-use-this */
 // @flow
+import crypto from 'crypto';
 import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
@@ -37,7 +38,8 @@ export default class Send extends Component<Props> {
       importkey: false,
       importseed: false,
       nodeFee: session.daemon.feeAmount,
-      transactionComplete: false
+      transactionComplete: false,
+      paymentID: ''
     };
   }
 
@@ -147,13 +149,27 @@ export default class Send extends Component<Props> {
     });
   }
 
+  generatePaymentID() {
+    const paymentID = crypto.randomBytes(32).toString('hex');
+    log.debug('Generated paymentID: ' + paymentID);
+    this.setState({paymentID: paymentID});
+  }
+
   refresh() {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions()
+      transactions: session.getTransactions(),
     }));
+  }
+
+  handlePaymentIDChange(event) {
+    this.setState({paymentID: event.target.value});
+  }
+
+  resetPaymentID(event) {
+    this.setState({paymentID: ''});
   }
 
   render() {
@@ -202,14 +218,15 @@ export default class Send extends Component<Props> {
             </div>
             <div className="field">
               <label className="label" htmlFor="paymentid">
-                Payment ID (Optional)
+                Payment ID (Optional)&nbsp;&nbsp;&nbsp;<a onClick={this.generatePaymentID.bind(this)}>Generate Random Payment ID</a>
                 <div className="control">
                   <input
                     className="input is-large"
                     type="text"
                     placeholder="Enter a payment ID"
                     id="paymentid"
-                  />
+                    value={this.state.paymentID}
+                    onChange={this.handlePaymentIDChange.bind(this)} />
                 </div>
               </label>
             </div>
@@ -228,13 +245,13 @@ export default class Send extends Component<Props> {
                 </button>
               )}
 
-              <button type="reset" className="button is-large">
+              <button type="reset" className="button is-large" onClick={this.resetPaymentID.bind(this)}>
                 Clear
               </button>
             </div>
           </form>
         </div>
-        <div className="box has-background-grey-lighter footerbar">
+        <div className="box has-background-grey-light footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             {this.state.nodeFee > 0 && (
               <div className="control statusicons">

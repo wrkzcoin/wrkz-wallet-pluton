@@ -30,7 +30,7 @@ export default class Login extends Component<Props> {
     this.state = {
       importkey: false,
       importseed: false,
-      importCompleted: false,
+      importCompleted: false
     };
   }
 
@@ -78,7 +78,7 @@ export default class Login extends Component<Props> {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
 
-    let password = event.target[0].value
+    let password = event.target[0].value;
 
     if (password === undefined) {
       return;
@@ -106,31 +106,30 @@ export default class Login extends Component<Props> {
       <div>
         {navBar('login')}
         <div className="box has-background-light maincontent">
-          <div className="box loginbox">
-          <form onSubmit={this.handleSubmit}>
-            <div className="field">
-              <label className="label" htmlFor="scanheight">
-                Password
-                <div className="control">
-                  <input
-                    className="input is-large"
-                    type="password"
-                    placeholder="Enter your password..."
-                    id="scanheight"
-                  />
-                </div>
-              </label>
-            </div>
-            <div className="buttons">
-              <button type="submit" className="button is-success is-large">
-                Login
-              </button>
-            </div>
-          </form>
+          <div className="box loginbox has-background-grey-light">
+            <form onSubmit={this.handleSubmit}>
+              <div className="field">
+                <label className="label" htmlFor="scanheight">
+                  Password
+                  <div className="control">
+                    <input
+                      className="input is-large"
+                      type="password"
+                      placeholder="Enter your password..."
+                      id="scanheight"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="buttons is-right">
+                <button type="submit" className="button is-success is-large">
+                  Login
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-        <div className="box has-background-grey-lighter footerbar">
-        </div>
+        <div className="box has-background-grey-light footerbar" />
       </div>
     );
   }

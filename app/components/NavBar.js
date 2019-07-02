@@ -7,108 +7,108 @@ import { config } from '../index';
 export default function navBar(activePage) {
   return (
     <React-Fragment>
-      <div className="box has-background-grey-lighter headerbar">
+      <div className="box has-background-grey-light headerbar">
         {activePage !== 'login' && (
-        <div className="columns">
-          <div className="column is-three-fifths">
-            <nav
-              className="navbar has-background-grey-lighter"
-              role="navigation"
-              aria-label="main navigation"
-            >
-              <div className="navbar-brand">
-                {activePage === 'wallet' && (
-                  <Link to={routes.HOME}>
-                    <span className="navbar-item">
-                      <i className="fa fa-credit-card" />
-                      &nbsp;&nbsp;<strong>Wallet</strong>
-                    </span>
-                  </Link>
-                )}
-                {activePage !== 'wallet' && (
-                  <Link to={routes.HOME}>
-                    <span className="navbar-item">
-                      <i className="fa fa-credit-card" />
-                      &nbsp;&nbsp;Wallet
-                    </span>
-                  </Link>
-                )}
-                {activePage === 'send' && (
-                  <Link to={routes.SEND}>
-                    <span className="navbar-item">
-                      <i className="fa fa-paper-plane" />
-                      &nbsp;&nbsp;<strong>Send</strong>
-                    </span>
-                  </Link>
-                )}
-                {activePage !== 'send' && (
-                  <Link to={routes.SEND}>
-                    <span className="navbar-item">
-                      <i className="fa fa-paper-plane" />
-                      &nbsp;&nbsp;Send
-                    </span>
-                  </Link>
-                )}
-                {activePage === 'receive' && (
-                  <Link to={routes.COUNTER}>
-                    <span className="navbar-item">
-                      <i className="fa fa-arrow-circle-down" />
-                      &nbsp;&nbsp;<strong>Receive</strong>
-                    </span>
-                  </Link>
-                )}
-                {activePage !== 'receive' && (
-                  <Link to={routes.COUNTER}>
-                    <span className="navbar-item">
-                      <i className="fa fa-arrow-circle-down" />
-                      &nbsp;&nbsp;Receive
-                    </span>
-                  </Link>
-                )}
-                {activePage === 'bewbz' && (
-                  <Link to={routes.ADDRESSES}>
-                    <span className="navbar-item">
-                      <i className="fa fa-address-book" />
-                      &nbsp;&nbsp;<strong>Addresses</strong>
-                    </span>
-                  </Link>
-                )}
-                {activePage === 'bewbz2' && (
-                  <Link to={routes.IMPORTKEY}>
-                    <span className="navbar-item">
-                      <i className="fa fa-address-book" />
-                      &nbsp;&nbsp;Addresses
-                    </span>
-                  </Link>
-                )}
-                <Link to={routes.HOME} />
-              </div>
-            </nav>
+          <div className="columns">
+            <div className="column is-three-fifths">
+              <nav
+                className="navbar has-background-grey-light"
+                role="navigation"
+                aria-label="main navigation"
+              >
+                <div className="navbar-brand">
+                  {activePage === 'wallet' && (
+                    <Link to={routes.HOME}>
+                      <span className="navbar-item">
+                        <i className="fa fa-credit-card" />
+                        &nbsp;&nbsp;<strong>Wallet</strong>
+                      </span>
+                    </Link>
+                  )}
+                  {activePage !== 'wallet' && (
+                    <Link to={routes.HOME}>
+                      <span className="navbar-item">
+                        <i className="fa fa-credit-card" />
+                        &nbsp;&nbsp;Wallet
+                      </span>
+                    </Link>
+                  )}
+                  {activePage === 'send' && (
+                    <Link to={routes.SEND}>
+                      <span className="navbar-item">
+                        <i className="fa fa-paper-plane" />
+                        &nbsp;&nbsp;<strong>Send</strong>
+                      </span>
+                    </Link>
+                  )}
+                  {activePage !== 'send' && (
+                    <Link to={routes.SEND}>
+                      <span className="navbar-item">
+                        <i className="fa fa-paper-plane" />
+                        &nbsp;&nbsp;Send
+                      </span>
+                    </Link>
+                  )}
+                  {activePage === 'receive' && (
+                    <Link to={routes.COUNTER}>
+                      <span className="navbar-item">
+                        <i className="fa fa-arrow-circle-down" />
+                        &nbsp;&nbsp;<strong>Receive</strong>
+                      </span>
+                    </Link>
+                  )}
+                  {activePage !== 'receive' && (
+                    <Link to={routes.COUNTER}>
+                      <span className="navbar-item">
+                        <i className="fa fa-arrow-circle-down" />
+                        &nbsp;&nbsp;Receive
+                      </span>
+                    </Link>
+                  )}
+                  {activePage === 'bewbz' && (
+                    <Link to={routes.ADDRESSES}>
+                      <span className="navbar-item">
+                        <i className="fa fa-address-book" />
+                        &nbsp;&nbsp;<strong>Addresses</strong>
+                      </span>
+                    </Link>
+                  )}
+                  {activePage === 'bewbz2' && (
+                    <Link to={routes.IMPORTKEY}>
+                      <span className="navbar-item">
+                        <i className="fa fa-address-book" />
+                        &nbsp;&nbsp;Addresses
+                      </span>
+                    </Link>
+                  )}
+                  <Link to={routes.HOME} />
+                </div>
+              </nav>
+            </div>
+            <div className="column is-one-third">
+              <input
+                className="input searchbar"
+                type="text"
+                placeholder="Search..."
+              />
+            </div>
+            <div className="column">
+              <Link to={routes.SETTINGS}>
+                <span className="navbar-item settingscog">
+                  <i className="fa fa-cog" />
+                  &nbsp;
+                </span>
+              </Link>
+            </div>
           </div>
-          <div className="column is-one-third">
-            <input
-              className="input searchbar"
-              type="text"
-              placeholder="Search..."
-            />
-          </div>
-          <div className="column">
-            <Link to={routes.SETTINGS}>
-              <span className="navbar-item settingscog">
-                <i className="fa fa-cog" />
-                &nbsp;
-              </span>
-            </Link>
-          </div>
-        </div>
         )}
-        {activePage === 'login' && (
-          <center>
-          <div class="tag is-danger is-large">
-            Authentication required. Please enter your wallet password...
-          </div>
-          </center>
-        )}
+        <center>
+          {activePage === 'login' && (
+            <h1 className="title has-text-grey-darker">
+              Welcome to Proton Wallet!
+            </h1>
+          )}
+        </center>
       </div>
     </React-Fragment>
   );

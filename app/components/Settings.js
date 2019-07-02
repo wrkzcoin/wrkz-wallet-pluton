@@ -214,7 +214,7 @@ export default class Settings extends Component<Props> {
               </div>
               <br />
               <form onSubmit={this.changeNode}>
-                <label className="label has-text-grey-lighter">
+                <label className="label has-text-grey-light">
                   Change Node
                   <div className="field has-addons">
                     <div className="control">
@@ -236,7 +236,7 @@ export default class Settings extends Component<Props> {
             </div>
           </div>
         </div>
-        <div className="box has-background-grey-lighter footerbar">
+        <div className="box has-background-grey-light footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             {this.state.nodeFee > 0 && (
               <div className="control statusicons">
