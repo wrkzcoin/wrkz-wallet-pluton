@@ -41,27 +41,23 @@ export default class Send extends Component<Props> {
       transactionComplete: false,
       paymentID: ''
     };
+    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
+    this.handleImportFromKey = this.handleImportFromKey.bind(this);
+    this.transactionComplete = this.transactionComplete.bind(this)
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
-    ipcRenderer.on('importSeed', (evt, route) =>
-      this.handleImportFromSeed(evt, route)
-    );
-    ipcRenderer.on('importKey', (evt, route) =>
-      this.handleImportFromKey(evt, route)
-    );
-    eventEmitter.on('transactionComplete', this.transactionComplete.bind(this));
+    ipcRenderer.on('importSeed', this.handleImportFromSeed);
+    ipcRenderer.on('importKey', this.handleImportFromKey);
+    eventEmitter.on('transactionComplete', this.transactionComplete);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
-    eventEmitter.off(
-      'transactionComplete',
-      this.transactionComplete.bind(this)
-    );
+    eventEmitter.off('transactionComplete', this.transactionComplete);
   }
 
   transactionComplete() {
@@ -135,7 +131,6 @@ export default class Send extends Component<Props> {
 
   handleImportFromSeed(evt, route) {
     clearInterval(this.interval);
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
     this.setState({
       importseed: true
     });
@@ -143,7 +138,6 @@ export default class Send extends Component<Props> {
 
   handleImportFromKey(evt, route) {
     clearInterval(this.interval);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
     this.setState({
       importkey: true
     });
@@ -157,10 +151,7 @@ export default class Send extends Component<Props> {
 
   refresh() {
     this.setState(prevState => ({
-      syncStatus: session.getSyncStatus(),
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions(),
+      syncStatus: session.getSyncStatus()
     }));
   }
 

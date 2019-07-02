@@ -41,25 +41,29 @@ export default class Home extends Component<Props> {
       nodeFee: session.daemon.feeAmount,
       loginFailed: session.loginFailed
     };
+
+    this.handleLoginFailure = this.handleLoginFailure.bind(this);
+    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
+    this.handleImportFromKey = this.handleImportFromKey.bind(this);
+    this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(this);
+    this.openNewWalet = this.openNewWallet.bind(this);
+    this.refreshNodeFee = this.refreshNodeFee.bind(this);
+
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
-    ipcRenderer.on('importSeed', (evt, route) =>
-      this.handleImportFromSeed(evt, route)
-    );
-    ipcRenderer.on('importKey', (evt, route) =>
-      this.handleImportFromKey(evt, route)
-    );
+    ipcRenderer.setMaxListeners(1);
+    ipcRenderer.on('importSeed', this.handleImportFromSeed);
+    ipcRenderer.on('importKey', this.handleImportFromKey);
     if (session.wallet !== undefined) {
-      session.wallet.on(
-        'transaction',
-        this.refreshListOnNewTransaction.bind(this)
-      );
+      // FIX
+      session.wallet.setMaxListeners(1);
+      session.wallet.on('transaction', this.refreshListOnNewTransaction);
     }
-    eventEmitter.on('openNewWallet', this.openNewWallet.bind(this));
-    eventEmitter.on('gotNodeFee', this.refreshNodeFee.bind(this));
-    eventEmitter.on('loginFailed', this.handleLoginFailure.bind(this));
+    eventEmitter.on('openNewWallet', this.openNewWallet);
+    eventEmitter.on('gotNodeFee', this.refreshNodeFee);
+    eventEmitter.on('loginFailed', this.handleLoginFailure);
   }
 
   componentWillUnmount() {
@@ -70,13 +74,11 @@ export default class Home extends Component<Props> {
     });
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
-    eventEmitter.off('openNewWallet', this.openNewWallet.bind(this));
-    eventEmitter.on('gotNodeFee', this.refreshNodeFee.bind(this));
+    eventEmitter.off('openNewWallet', this.openNewWallet);
+    eventEmitter.off('gotNodeFee', this.refreshNodeFee);
+    eventEmitter.off('loginFailed', this.handleLoginFailure);
     if (session.wallet !== undefined) {
-      session.wallet.off(
-        'transaction',
-        this.refreshListOnNewTransaction.bind(this)
-      );
+      session.wallet.off('transaction', this.refreshListOnNewTransaction);
     }
   }
 
@@ -122,7 +124,6 @@ export default class Home extends Component<Props> {
 
   handleImportFromSeed(evt, route) {
     clearInterval(this.interval);
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
     this.setState({
       importseed: true
     });
@@ -130,7 +131,6 @@ export default class Home extends Component<Props> {
 
   handleImportFromKey(evt, route) {
     clearInterval(this.interval);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
     this.setState({
       importkey: true
     });

@@ -16,6 +16,8 @@ import WalletSession from './wallet/session';
 import iConfig from './constants/config';
 
 export const eventEmitter = new EventEmitter();
+// FIX
+eventEmitter.setMaxListeners(2);
 
 export let config = iConfig;
 

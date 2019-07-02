@@ -37,29 +37,27 @@ export default class Send extends Component<Props> {
       importCompleted: false,
       nodeFee: session.daemon.feeAmount
     };
+    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
+    this.handleImportFromKey = this.handleImportFromKey.bind(this);
+    this.handleInitialize = this.handleInitialize.bind(this);
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
-    ipcRenderer.on('importSeed', (evt, route) =>
-      this.handleImportFromSeed(evt, route)
-    );
-    ipcRenderer.on('importKey', (evt, route) =>
-      this.handleImportFromKey(evt, route)
-    );
-    eventEmitter.on('initializeNewSession', this.handleInitialize.bind(this));
+    ipcRenderer.on('importSeed', this.handleImportFromSeed);
+    ipcRenderer.on('importKey', this.handleImportFromKey);
+    eventEmitter.on('initializeNewSession', this.handleInitialize);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
-    eventEmitter.off('initializeNewSession', this.handleInitialize.bind(this));
+    eventEmitter.off('initializeNewSession', this.handleInitialize);
   }
 
   handleImportFromSeed(evt, route) {
     clearInterval(this.interval);
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
     this.setState({
       importseed: true
     });
@@ -67,7 +65,6 @@ export default class Send extends Component<Props> {
 
   handleImportFromKey(evt, route) {
     clearInterval(this.interval);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
     this.setState({
       importkey: true
     });
@@ -132,10 +129,7 @@ export default class Send extends Component<Props> {
 
   refresh() {
     this.setState(prevState => ({
-      syncStatus: session.getSyncStatus(),
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions()
+      syncStatus: session.getSyncStatus()
     }));
   }
 

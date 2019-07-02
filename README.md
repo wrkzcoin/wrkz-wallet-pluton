@@ -67,7 +67,6 @@ $ yarn package
 * add a splash screen
 * incoming transaction notification
 * make transaction hash on wallet page link to explorer
-* add balances for each tx to wallet screen
 * fix memory leaks
 
 ## License

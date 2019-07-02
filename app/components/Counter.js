@@ -37,16 +37,14 @@ export default class Receive extends Component<Props> {
       importseed: false,
       nodeFee: session.daemon.feeAmount
     };
+    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
+    this.handleImportFromKey = this.handleImportFromKey.bind(this);
   }
 
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
-    ipcRenderer.on('importSeed', (evt, route) =>
-      this.handleImportFromSeed(evt, route)
-    );
-    ipcRenderer.on('importKey', (evt, route) =>
-      this.handleImportFromKey(evt, route)
-    );
+    ipcRenderer.on('importSeed', this.handleImportFromSeed);
+    ipcRenderer.on('importKey', this.handleImportFromKey);
   }
 
   componentWillUnmount() {
@@ -57,7 +55,6 @@ export default class Receive extends Component<Props> {
 
   handleImportFromSeed(evt, route) {
     clearInterval(this.interval);
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
     this.setState({
       importseed: true
     });
@@ -65,7 +62,6 @@ export default class Receive extends Component<Props> {
 
   handleImportFromKey(evt, route) {
     clearInterval(this.interval);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
     this.setState({
       importkey: true
     });
@@ -81,9 +77,6 @@ export default class Receive extends Component<Props> {
   refresh() {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus(),
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions()
     }));
   }
 
