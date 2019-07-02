@@ -127,9 +127,11 @@ ipcRenderer.on('handleOpen', function(evt, route) {
     });
     return;
   }
-  if (error.errorCode === 5) {
-    log.debug('Login to wallet failed, firing event...')
-    eventEmitter.emit('loginFailed');
+  if (error !== undefined) {
+    if (error.errorCode === 5) {
+      log.debug('Login to wallet failed, firing event...');
+      eventEmitter.emit('loginFailed');
+    }
   }
   const selectedPath = getPaths[0];
   const savedSuccessfully = session.handleWalletOpen(selectedPath);
