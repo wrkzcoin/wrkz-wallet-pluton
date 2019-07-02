@@ -32,7 +32,7 @@ export default class Login extends Component<Props> {
       importseed: false,
       importCompleted: false
     };
-        this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
+    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
   }
@@ -75,7 +75,7 @@ export default class Login extends Component<Props> {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
 
-    let password = event.target[0].value;
+    const password = event.target[0].value;
 
     if (password === undefined) {
       return;
@@ -85,7 +85,7 @@ export default class Login extends Component<Props> {
 
   refresh() {
     this.setState(prevState => ({
-      syncStatus: session.getSyncStatus(),
+      syncStatus: session.getSyncStatus()
     }));
   }
 
@@ -100,7 +100,7 @@ export default class Login extends Component<Props> {
       <div>
         {navBar('login')}
         <div className="box has-background-light maincontent">
-          <div className="box loginbox has-background-grey-lighter">
+          <div className="box loginbox has-background-white">
             <form onSubmit={this.handleSubmit}>
               <div className="field">
                 <label className="label" htmlFor="scanheight">

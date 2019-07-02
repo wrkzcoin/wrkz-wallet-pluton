@@ -67,7 +67,7 @@ export default class Send extends Component<Props> {
   handlePasswordChange() {
     this.setState({
       changePassword: true
-    })
+    });
   }
 
   transactionComplete() {
@@ -155,8 +155,8 @@ export default class Send extends Component<Props> {
 
   generatePaymentID() {
     const paymentID = crypto.randomBytes(32).toString('hex');
-    log.debug('Generated paymentID: ' + paymentID);
-    this.setState({paymentID: paymentID});
+    log.debug(`Generated paymentID: ${paymentID}`);
+    this.setState({ paymentID });
   }
 
   refresh() {
@@ -166,11 +166,11 @@ export default class Send extends Component<Props> {
   }
 
   handlePaymentIDChange(event) {
-    this.setState({paymentID: event.target.value});
+    this.setState({ paymentID: event.target.value });
   }
 
   resetPaymentID(event) {
-    this.setState({paymentID: ''});
+    this.setState({ paymentID: '' });
   }
 
   render() {
@@ -187,7 +187,7 @@ export default class Send extends Component<Props> {
     }
 
     if (this.state.changePassword === true) {
-      return <Redirect to="/changepassword" />
+      return <Redirect to="/changepassword" />;
     }
 
     return (
@@ -223,7 +223,10 @@ export default class Send extends Component<Props> {
             </div>
             <div className="field">
               <label className="label" htmlFor="paymentid">
-                Payment ID (Optional)&nbsp;&nbsp;&nbsp;<a onClick={this.generatePaymentID.bind(this)}>Generate Random Payment ID</a>
+                Payment ID (Optional)&nbsp;&nbsp;&nbsp;
+                <a onClick={this.generatePaymentID.bind(this)}>
+                  Generate Random Payment ID
+                </a>
                 <div className="control">
                   <input
                     className="input is-large"
@@ -231,7 +234,8 @@ export default class Send extends Component<Props> {
                     placeholder="Enter a payment ID"
                     id="paymentid"
                     value={this.state.paymentID}
-                    onChange={this.handlePaymentIDChange.bind(this)} />
+                    onChange={this.handlePaymentIDChange.bind(this)}
+                  />
                 </div>
               </label>
             </div>
@@ -250,7 +254,11 @@ export default class Send extends Component<Props> {
                 </button>
               )}
 
-              <button type="reset" className="button is-large" onClick={this.resetPaymentID.bind(this)}>
+              <button
+                type="reset"
+                className="button is-large"
+                onClick={this.resetPaymentID.bind(this)}
+              >
                 Clear
               </button>
             </div>

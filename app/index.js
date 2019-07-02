@@ -150,7 +150,6 @@ ipcRenderer.on('handleOpen', function(evt, route) {
       message: 'The wallet was not opened successfully. Try again.'
     });
   }
-  return;
 });
 
 eventEmitter.on('initializeNewSession', function(password) {

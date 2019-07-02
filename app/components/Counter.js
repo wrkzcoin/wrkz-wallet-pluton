@@ -5,10 +5,10 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import QRCode from 'qrcode.react';
 import { Redirect, Link } from 'react-router-dom';
+import clipboardy from 'clipboardy';
 import { config, session } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
-import clipboardy from 'clipboardy';
 
 type Props = {
   increment: () => void,
@@ -81,12 +81,12 @@ export default class Receive extends Component<Props> {
   handlePasswordChange() {
     this.setState({
       changePassword: true
-    })
+    });
   }
 
   refresh() {
     this.setState(prevState => ({
-      syncStatus: session.getSyncStatus(),
+      syncStatus: session.getSyncStatus()
     }));
   }
 
@@ -101,7 +101,7 @@ export default class Receive extends Component<Props> {
     } = this.props;
 
     if (this.state.changePassword === true) {
-      return <Redirect to="/changepassword" />
+      return <Redirect to="/changepassword" />;
     }
 
     if (this.state.importkey === true) {
@@ -161,16 +161,16 @@ export default class Receive extends Component<Props> {
         </div>
         <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
-          {this.state.nodeFee > 0 &&
-            <div className="control statusicons">
-              <div className="tags has-addons">
-                <span className="tag is-dark is-large">Node Fee:</span>
+            {this.state.nodeFee > 0 && (
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-dark is-large">Node Fee:</span>
                   <span className="tag is-danger is-large">
-                  {session.atomicToHuman(this.state.nodeFee, true)} TRTL
-                </span>
+                    {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                  </span>
+                </div>
               </div>
-            </div>
-            }
+            )}
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>

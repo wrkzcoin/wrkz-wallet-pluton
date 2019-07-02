@@ -43,7 +43,7 @@
 .txlist {
   position: relative;
   left: -9px;
-  width: calc(100% + 9px)
+  width: calc(100% + 9px);
 }
 
 .searchbar {
@@ -97,12 +97,16 @@
   bottom: 0;
 }
 
-.settingscog {
-  float: right;
+.navbarlink:hover {
+  color: #121212;
 }
 
-.navigation {
-  color: #363636;
+.is-active {
+  color: #121212;
+}
+
+.settingscog {
+  float: right;
 }
 
 @font-face {

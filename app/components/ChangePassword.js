@@ -55,7 +55,6 @@ export default class ChangePassword extends Component<Props> {
     eventEmitter.off('loginFailed', this.handleLoginFailure);
   }
 
-
   handleLoginFailure() {
     this.setState({
       loginFailed: true
@@ -85,9 +84,9 @@ export default class ChangePassword extends Component<Props> {
   handleSubmit(event) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
-    let oldPassword = event.target[0].value
-    let newPassword = event.target[1].value;
-    let passwordConfirm = event.target[2].value;
+    const oldPassword = event.target[0].value;
+    const newPassword = event.target[1].value;
+    const passwordConfirm = event.target[2].value;
     if (oldPassword !== session.walletPassword) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
@@ -103,8 +102,7 @@ export default class ChangePassword extends Component<Props> {
         type: 'error',
         buttons: ['OK'],
         title: 'Passwords do not match!',
-        message:
-          'You did not enter the same password. Please try again.'
+        message: 'You did not enter the same password. Please try again.'
       });
       return;
     }
@@ -122,22 +120,20 @@ export default class ChangePassword extends Component<Props> {
         type: 'error',
         buttons: ['OK'],
         title: 'Error!',
-        message:
-          'The password was not changed successfully. Try again.'
+        message: 'The password was not changed successfully. Try again.'
       });
     }
   }
 
   refresh() {
     this.setState(prevState => ({
-      syncStatus: session.getSyncStatus(),
+      syncStatus: session.getSyncStatus()
     }));
   }
 
   render() {
-
     if (this.state.loginFailed === true) {
-      return <Redirect to="/login" />
+      return <Redirect to="/login" />;
     }
 
     if (this.state.importseed === true) {
@@ -153,37 +149,37 @@ export default class ChangePassword extends Component<Props> {
       <div>
         {navBar('changepassword')}
         <div className="box has-background-light maincontent">
-          <div className="box loginbox has-background-grey-lighter">
+          <div className="box loginbox has-background-white">
             <form onSubmit={this.handleSubmit}>
-            {session.walletPassword !== '' && (
-              <div className="field">
-                <label className="label" htmlFor="scanheight">
-                  Enter Current Password
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="password"
-                      placeholder="Enter your current password..."
-                    />
-                  </div>
-                </label>
-              </div>
-            )}
-            {session.walletPassword === '' && (
-              <div className="field">
-                <label className="label" htmlFor="scanheight">
-                  Enter Current Password
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="password"
-                      placeholder="This wallet doesn't have a password"
-                      disabled
-                    />
-                  </div>
-                </label>
-              </div>
-            )}
+              {session.walletPassword !== '' && (
+                <div className="field">
+                  <label className="label" htmlFor="scanheight">
+                    Enter Current Password
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type="password"
+                        placeholder="Enter your current password..."
+                      />
+                    </div>
+                  </label>
+                </div>
+              )}
+              {session.walletPassword === '' && (
+                <div className="field">
+                  <label className="label" htmlFor="scanheight">
+                    Enter Current Password
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type="password"
+                        placeholder="This wallet doesn't have a password"
+                        disabled
+                      />
+                    </div>
+                  </label>
+                </div>
+              )}
               <div className="field">
                 <label className="label" htmlFor="scanheight">
                   Enter New Password
@@ -197,17 +193,17 @@ export default class ChangePassword extends Component<Props> {
                 </label>
               </div>
               <div className="field">
-              <label className="label" htmlFor="scanheight">
-                Confirm Password
-                <div className="control">
-                  <input
-                    className="input is-large"
-                    type="password"
-                    placeholder="Enter your new password again to confirm..."
-                  />
-                </div>
-              </label>
-            </div>
+                <label className="label" htmlFor="scanheight">
+                  Confirm Password
+                  <div className="control">
+                    <input
+                      className="input is-large"
+                      type="password"
+                      placeholder="Enter your new password again to confirm..."
+                    />
+                  </div>
+                </label>
+              </div>
               <div className="buttons is-right">
                 <button type="submit" className="button is-success is-large">
                   Change

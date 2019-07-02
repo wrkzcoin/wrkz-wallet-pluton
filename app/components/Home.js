@@ -46,11 +46,12 @@ export default class Home extends Component<Props> {
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
-    this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(this);
+    this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
+      this
+    );
     this.openNewWallet = this.openNewWallet.bind(this);
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
-
   }
 
   componentDidMount() {
@@ -88,7 +89,7 @@ export default class Home extends Component<Props> {
   handlePasswordChange() {
     this.setState({
       changePassword: true
-    })
+    });
   }
 
   handleLoginFailure() {
@@ -127,7 +128,7 @@ export default class Home extends Component<Props> {
       ),
       totalTransactionCount: session.getTransactions().length,
       unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
+      lockedBalance: session.getLockedBalance()
     });
   }
 
@@ -169,7 +170,7 @@ export default class Home extends Component<Props> {
 
   render() {
     if (this.state.changePassword === true) {
-      return <Redirect to="/changepassword" />
+      return <Redirect to="/changepassword" />;
     }
 
     if (this.state.importkey === true) {
@@ -181,7 +182,7 @@ export default class Home extends Component<Props> {
     }
 
     if (this.state.loginFailed === true) {
-      return <Redirect to="/login" />
+      return <Redirect to="/login" />;
     }
 
     return (

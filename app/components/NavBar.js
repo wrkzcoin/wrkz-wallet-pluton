@@ -19,7 +19,7 @@ export default function navBar(activePage) {
                 <div className="navbar-brand">
                   {activePage === 'wallet' && (
                     <Link to={routes.HOME}>
-                      <span className="navbar-item">
+                      <span className="navbar-item navbarlink is-active">
                         <i className="fa fa-credit-card" />
                         &nbsp;&nbsp;<strong>Wallet</strong>
                       </span>
@@ -27,7 +27,7 @@ export default function navBar(activePage) {
                   )}
                   {activePage !== 'wallet' && (
                     <Link to={routes.HOME}>
-                      <span className="navbar-item">
+                      <span className="navbar-item navbarlink">
                         <i className="fa fa-credit-card" />
                         &nbsp;&nbsp;Wallet
                       </span>
@@ -35,7 +35,7 @@ export default function navBar(activePage) {
                   )}
                   {activePage === 'send' && (
                     <Link to={routes.SEND}>
-                      <span className="navbar-item">
+                      <span className="navbar-item navbarlink is-active">
                         <i className="fa fa-paper-plane" />
                         &nbsp;&nbsp;<strong>Send</strong>
                       </span>
@@ -43,7 +43,7 @@ export default function navBar(activePage) {
                   )}
                   {activePage !== 'send' && (
                     <Link to={routes.SEND}>
-                      <span className="navbar-item">
+                      <span className="navbar-item navbarlink">
                         <i className="fa fa-paper-plane" />
                         &nbsp;&nbsp;Send
                       </span>
@@ -51,7 +51,7 @@ export default function navBar(activePage) {
                   )}
                   {activePage === 'receive' && (
                     <Link to={routes.COUNTER}>
-                      <span className="navbar-item">
+                      <span className="navbar-item navbarlink is-active">
                         <i className="fa fa-arrow-circle-down" />
                         &nbsp;&nbsp;<strong>Receive</strong>
                       </span>
@@ -59,23 +59,23 @@ export default function navBar(activePage) {
                   )}
                   {activePage !== 'receive' && (
                     <Link to={routes.COUNTER}>
-                      <span className="navbar-item">
+                      <span className="navbar-item navbarlink">
                         <i className="fa fa-arrow-circle-down" />
                         &nbsp;&nbsp;Receive
                       </span>
                     </Link>
                   )}
-                  {activePage === 'bewbz' && (
+                  {activePage === 'donotshow' && (
                     <Link to={routes.ADDRESSES}>
-                      <span className="navbar-item">
+                      <span className="navbar-item navbarlink">
                         <i className="fa fa-address-book" />
                         &nbsp;&nbsp;<strong>Addresses</strong>
                       </span>
                     </Link>
                   )}
-                  {activePage === 'bewbz2' && (
+                  {activePage === 'donotshow' && (
                     <Link to={routes.IMPORTKEY}>
-                      <span className="navbar-item">
+                      <span className="navbar-item navbarlink">
                         <i className="fa fa-address-book" />
                         &nbsp;&nbsp;Addresses
                       </span>
@@ -86,18 +86,28 @@ export default function navBar(activePage) {
               </nav>
             </div>
             <div className="column is-one-third">
-              <input
-                className="input searchbar"
-                type="text"
-                placeholder="Search..."
-              />
+              {activePage === 'donotshow' && (
+                <input
+                  className="input searchbar"
+                  type="text"
+                  placeholder="Search..."
+                />
+              )}
             </div>
             <div className="column">
               <Link to={routes.SETTINGS}>
-                <span className="navbar-item settingscog">
-                  <i className="fa fa-cog" />
-                  &nbsp;
-                </span>
+                {activePage !== 'settings' && (
+                  <span className="navbar-item settingscog navbarlink">
+                    <i className="fa fa-cog" />
+                    &nbsp;
+                  </span>
+                )}
+                {activePage === 'settings' && (
+                  <span className="navbar-item settingscog navbarlink is-active">
+                    <i className="fa fa-cog" />
+                    &nbsp;
+                  </span>
+                )}
               </Link>
             </div>
           </div>

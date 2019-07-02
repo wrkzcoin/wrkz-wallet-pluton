@@ -162,7 +162,7 @@ export default class WalletSession {
     );
 
     let balance = parseInt(this.wallet.getBalance());
-    let balances = [];
+    const balances = [];
 
     for (const [index, tx] of rawTransactions.entries()) {
       balances.push([tx.timestamp, tx.hash, tx.totalAmount(), balance]);
@@ -227,7 +227,10 @@ export default class WalletSession {
 
   saveWallet(filePath?: string) {
     if (filePath !== undefined) {
-      const saved = this.wallet.saveWalletToFile(`${filePath}`, this.walletPassword);
+      const saved = this.wallet.saveWalletToFile(
+        `${filePath}`,
+        this.walletPassword
+      );
       if (!saved) {
         log.debug('Failed to save wallet.');
         return false;

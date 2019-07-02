@@ -75,7 +75,7 @@ export default class Settings extends Component<Props> {
   handlePasswordChange() {
     this.setState({
       changePassword: true
-    })
+    });
   }
 
   changeNode(event) {
@@ -129,7 +129,7 @@ export default class Settings extends Component<Props> {
     }
 
     if (this.state.changePassword === true) {
-      return <Redirect to="/changepassword" />
+      return <Redirect to="/changepassword" />;
     }
 
     return (
