@@ -164,9 +164,9 @@ export default class WalletSession {
     let balance = parseInt(this.wallet.getBalance());
     let balances = [];
 
-    for (const tx of rawTransactions) {
-      balance -= parseInt(tx.totalAmount());
+    for (const [index, tx] of rawTransactions.entries()) {
       balances.push([tx.timestamp, tx.hash, tx.totalAmount(), balance]);
+      balance -= parseInt(tx.totalAmount());
     }
     return balances;
   }

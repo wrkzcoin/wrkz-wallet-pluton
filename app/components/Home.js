@@ -175,7 +175,7 @@ export default class Home extends Component<Props> {
       <div>
         {navBar('wallet')}
         <div className="maincontent has-background-light">
-          <table className=" txlist table has-background-light is-striped is-bordered is-hoverable is-fullwidth is-narrow is-family-monospace">
+          <table className=" txlist table has-background-light is-striped is-hoverable is-fullwidth is-narrow is-family-monospace">
             <thead>
               <tr>
                 <th>Date</th>
