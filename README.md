@@ -36,7 +36,7 @@ Run the wallet.
 ```bash
 $ yarn start
 ```
-To run the wallet in dev mode, use this command instead.
+To run the wallet in dev mode, use this command instead. This will enable hot-reload and dev tool menu.
 
 ```bash
 $ yarn dev
@@ -67,7 +67,6 @@ $ yarn package
 * add a splash screen
 * incoming transaction notification
 * make transaction hash on wallet page link to explorer
-* fix memory leaks
 
 ## License
 
