@@ -7,12 +7,12 @@ import { config } from '../index';
 export default function navBar(activePage) {
   return (
     <React-Fragment>
-      <div className="box has-background-grey-light headerbar">
+      <div className="box has-background-grey-lighter headerbar">
         {activePage !== 'login' && (
           <div className="columns">
             <div className="column is-three-fifths">
               <nav
-                className="navbar has-background-grey-light"
+                className="navbar has-background-grey-lighter"
                 role="navigation"
                 aria-label="main navigation"
               >

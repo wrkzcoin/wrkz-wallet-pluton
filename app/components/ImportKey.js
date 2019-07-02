@@ -204,7 +204,7 @@ export default class Send extends Component<Props> {
             </div>
           </form>
         </div>
-        <div className="box has-background-grey-light footerbar">
+        <div className="box has-background-grey-lighter footerbar">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             {this.state.nodeFee > 0 && (
               <div className="control statusicons">

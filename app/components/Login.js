@@ -100,7 +100,7 @@ export default class Login extends Component<Props> {
       <div>
         {navBar('login')}
         <div className="box has-background-light maincontent">
-          <div className="box loginbox has-background-grey-light">
+          <div className="box loginbox has-background-grey-lighter">
             <form onSubmit={this.handleSubmit}>
               <div className="field">
                 <label className="label" htmlFor="scanheight">
@@ -123,7 +123,7 @@ export default class Login extends Component<Props> {
             </form>
           </div>
         </div>
-        <div className="box has-background-grey-light footerbar" />
+        <div className="box has-background-grey-lighter footerbar" />
       </div>
     );
   }
