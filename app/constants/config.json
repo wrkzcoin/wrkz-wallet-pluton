@@ -6,5 +6,7 @@
   "minimizeToTray": false,
   "logLevel": "DISABLED",
   "daemonHost": "turtle.mine.nu",
-  "daemonPort": 11898
+  "daemonPort": 11898,
+  "isCache": false,
+  "useSSL": false
 }

@@ -1,7 +1,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable class-methods-use-this */
 // @flow
-import request from 'request';
+import request from 'request-promise';
 import { ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
@@ -21,6 +21,49 @@ function getNodeList() {
     if (error) throw new Error(error);
     return body;
   });
+}
+
+async function checkIfCacheAPI(host, port) {
+  const requestOptions = {
+      method: 'GET',
+      uri: `http://${host}:${port}/info`,
+      headers: {},
+      json: true,
+      gzip: true
+  };
+  try {
+    const result = await request(requestOptions);
+    if (result.isCacheApi == null) {
+      log.debug(`${host} is a conventional daemon with no SSL.`)
+      return [false, false];
+    } else {
+      log.debug(`${host} is a cached API with no SSL.`)
+      return [true, false];
+    }
+  } catch (err) {
+    log.debug(`Requesting /info from node failed, retrying with SSL...`);
+    try {
+      const requestOptionsSSL = {
+        method: 'GET',
+        uri: `https://${host}:${port}/info`,
+        headers: {},
+        json: true,
+        gzip: true
+      };
+      const resultSSL = await request(requestOptionsSSL);
+      if (resultSSL.isCacheApi == null) {
+        log.debug(`${host} is a conventional daemon with SSL.`)
+        return [false, true];
+      } else {
+        log.debug(`${host} is a cached API with SSL.`)
+        return [true, true];
+      }
+    } catch(errSSL) {
+      log.debug(errSSL);
+      log.debug('Both requests failed, node is down.')
+      return [undefined, undefined];
+    }
+  }
 }
 
 type Props = {
@@ -49,8 +92,8 @@ export default class Settings extends Component<Props> {
       importkey: false,
       importseed: false,
       nodeList: getNodeList(),
-      connectednode: `${session.daemon.daemonHost}:${
-        session.daemon.daemonPort
+      connectednode: `${session.daemonHost}:${
+        session.daemonPort
       }`,
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
@@ -62,11 +105,12 @@ export default class Settings extends Component<Props> {
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
+    this.refreshNodeFee = this.refreshNodeFee.bind(this);
   }
 
   componentDidMount() {
-    log.debug(session.daemon);
     this.interval = setInterval(() => this.refresh(), 1000);
+    eventEmitter.on('gotNodeFee', this.refreshNodeFee);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
@@ -79,6 +123,13 @@ export default class Settings extends Component<Props> {
     ipcRenderer.off('importKey', this.handleImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('newNodeConnected', this.handleNewNode);
+    eventEmitter.off('gotNodeFee', this.refreshNodeFee);
+  }
+
+  refreshNodeFee() {
+    this.setState({
+      nodeFee: session.daemon.feeAmount
+    });
   }
 
   handleLoginFailure() {
@@ -88,7 +139,6 @@ export default class Settings extends Component<Props> {
   }
 
   handleNewNode() {
-    // something
     this.setState({
       connectednode: `${session.daemon.daemonHost}:${session.daemon.daemonPort}`
     });
@@ -104,16 +154,23 @@ export default class Settings extends Component<Props> {
     this.setState({ connectednode: event.target.value });
   }
 
-  changeNode(event) {
+  async changeNode(event) {
     event.preventDefault();
-    const connectionString = event.target[0].value;
-    const [host, port] = connectionString.split(':', 2);
+    // we're going to trim the whitespace, as well as trim any whitespace in the resulting string splits
+    // this is pretty hacky looking but works
+    const connectionString = event.target[0].value.trim();
+    const splitConnectionString = connectionString.split(':', 2);
+    const [host, port] = [
+      splitConnectionString[0].trim(),
+      splitConnectionString[1].trim()
+    ];
     // eslint-disable-next-line eqeqeq
     if (host == session.daemonHost && port == session.daemonPort) {
       return;
     }
-    log.debug(`Connecting to new node ${host}:${port}...`);
-    session.swapNode(host, port);
+    log.debug(`Checking if ${host} is a Cache API or Conventional Daemon...`);
+    const [isCache, useSSL] = await checkIfCacheAPI(host, port);
+    session.swapNode(host, port, isCache, useSSL);
     eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
   }
 

@@ -10,15 +10,25 @@ import fs from 'fs';
 import { config, directories, eventEmitter } from '../index';
 
 export default class WalletSession {
-  constructor(password, daemonHost, daemonPort) {
+  constructor(password, daemonHost, daemonPort, isCache, useSSL) {
     this.loginFailed = false;
     const [programDirectory, logDirectory, walletDirectory] = directories;
     this.walletPassword = password || '';
     this.daemonHost = daemonHost || config.daemonHost;
     this.daemonPort = daemonPort || config.daemonPort;
+    this.isCache = isCache || config.isCache;
+    this.useSSL = useSSL || config.useSSL;
 
-    this.daemon = new ConventionalDaemon(this.daemonHost, this.daemonPort);
-    // this.daemon = new BlockchainCacheApi(config.daemonHost, true);
+    if (this.isCache === true && this.useSSL === false) {
+      log.debug(`Starting new cached API with no SSL ${config.daemonHost}`);
+      this.daemon = new BlockchainCacheApi(config.daemonHost, false);
+    } else if (this.isCache === true && this.useSSL === true) {
+      log.debug(`Starting new cached API with SSL ${config.daemonHost}`);
+      this.daemon = new BlockchainCacheApi(config.daemonHost, true);
+    } else {
+      log.debug(`Starting new conventionial daemon ${config.daemonHost}`);
+      this.daemon = new ConventionalDaemon(this.daemonHost, this.daemonPort);
+    }
 
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,
@@ -50,21 +60,6 @@ export default class WalletSession {
           `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
         );
       });
-    }
-  }
-
-  changeDaemon(
-    connectionString: string,
-    port: string,
-    isBlockchainCacheAPI: boolean
-  ) {
-    this.saveWallet(config.walletFile);
-    this.wallet.stop();
-    this.daemon = null;
-    if (isBlockchainCacheAPI) {
-      this.daemon = new BlockchainCacheApi('connectionString', true);
-    } else {
-      this.daemon = new ConventionalDaemon(connectionString, port);
     }
   }
 
@@ -144,11 +139,13 @@ export default class WalletSession {
     return true;
   }
 
-  swapNode(daemonHost, daemonPort) {
+  swapNode(daemonHost, daemonPort, isCache, useSSL) {
     const [programDirectory, logDirectory, walletDirectory] = directories;
     const modifyConfig = config;
     modifyConfig.daemonHost = daemonHost;
     modifyConfig.daemonPort = daemonPort || 11898;
+    modifyConfig.isCache = isCache || false;
+    modifyConfig.useSSL = useSSL || false;
     fs.writeFileSync(
       `${programDirectory}/config.json`,
       JSON.stringify(config, null, 4),

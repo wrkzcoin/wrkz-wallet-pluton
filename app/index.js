@@ -157,7 +157,6 @@ eventEmitter.on('initializeNewNode', function(
   daemonHost,
   daemonPort
 ) {
-  log.debug(password, daemonHost, daemonPort);
   session = null;
   session = new WalletSession(password, daemonHost, daemonPort);
   startWallet();
