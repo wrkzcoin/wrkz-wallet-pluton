@@ -149,7 +149,7 @@ export default class ChangePassword extends Component<Props> {
       <div>
         {navBar('changepassword')}
         <div className="box has-background-light maincontent">
-          <div className="box loginbox has-background-white">
+          <div className="box changepasswordbox has-background-white">
             <form onSubmit={this.handleSubmit}>
               {session.walletPassword !== '' && (
                 <div className="field">

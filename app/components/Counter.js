@@ -6,7 +6,7 @@ import ReactLoading from 'react-loading';
 import QRCode from 'qrcode.react';
 import { Redirect, Link } from 'react-router-dom';
 import clipboardy from 'clipboardy';
-import { config, session } from '../index';
+import { config, session, eventEmitter } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
@@ -36,11 +36,14 @@ export default class Receive extends Component<Props> {
       importkey: false,
       importseed: false,
       nodeFee: session.daemon.feeAmount,
-      changePassword: false
+      changePassword: false,
+      loginFailed: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleLoginFailure = this.handleLoginFailure.bind(this);
+
   }
 
   componentDidMount() {
@@ -48,6 +51,8 @@ export default class Receive extends Component<Props> {
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
+    eventEmitter.on('loginFailed', this.handleLoginFailure);
+
   }
 
   componentWillUnmount() {
@@ -55,6 +60,14 @@ export default class Receive extends Component<Props> {
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
+    eventEmitter.off('loginFailed', this.handleLoginFailure);
+
+  }
+
+  handleLoginFailure() {
+    this.setState({
+      loginFailed: true
+    });
   }
 
   handleImportFromSeed(evt, route) {
@@ -68,6 +81,12 @@ export default class Receive extends Component<Props> {
     clearInterval(this.interval);
     this.setState({
       importkey: true
+    });
+  }
+
+  handleLoginFailure() {
+    this.setState({
+      loginFailed: true
     });
   }
 
@@ -110,6 +129,10 @@ export default class Receive extends Component<Props> {
 
     if (this.state.importseed === true) {
       return <Redirect to="/import" />;
+    }
+
+    if (this.state.loginFailed === true) {
+      return <Redirect to="/login" />;
     }
 
     return (

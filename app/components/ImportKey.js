@@ -36,12 +36,16 @@ export default class Send extends Component<Props> {
       importseed: false,
       importCompleted: false,
       nodeFee: session.daemon.feeAmount,
-      changePassword: false
+      changePassword: false,
+      loginFailed: false
+
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleLoginFailure = this.handleLoginFailure.bind(this);
+
   }
 
   componentDidMount() {
@@ -50,6 +54,7 @@ export default class Send extends Component<Props> {
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
+    eventEmitter.on('loginFailed', this.handleLoginFailure);
   }
 
   componentWillUnmount() {
@@ -58,7 +63,15 @@ export default class Send extends Component<Props> {
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
+    eventEmitter.off('loginFailed', this.handleLoginFailure);
   }
+
+  handleLoginFailure() {
+    this.setState({
+      loginFailed: true
+    });
+  }
+
 
   handlePasswordChange() {
     this.setState({
@@ -155,6 +168,10 @@ export default class Send extends Component<Props> {
   }
 
   render() {
+
+    if (this.state.loginFailed === true) {
+      return <Redirect to="/login" />;
+    }
     if (this.state.changePassword === true) {
       return <Redirect to="/changepassword" />;
     }

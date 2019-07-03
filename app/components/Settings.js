@@ -51,11 +51,14 @@ export default class Settings extends Component<Props> {
       nodeList: getNodeList(),
       connectednode: session.daemon.cacheBaseURL || session.daemon.daemonHost,
       nodeFee: session.daemon.feeAmount,
-      changePassword: false
+      changePassword: false,
+      loginFailed: false
+
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleLoginFailure = this.handleLoginFailure.bind(this);
   }
 
   componentDidMount() {
@@ -63,6 +66,7 @@ export default class Settings extends Component<Props> {
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
+    log.debug(session.daemon);
   }
 
   componentWillUnmount() {
@@ -72,17 +76,25 @@ export default class Settings extends Component<Props> {
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
   }
 
+  handleLoginFailure() {
+    this.setState({
+      loginFailed: true
+    });
+  }
+
+
   handlePasswordChange() {
     this.setState({
       changePassword: true
     });
   }
 
-  changeNode(event) {
-    event.preventDefault();
-    const [connectionString] = [event.target[0].value];
+  handleNodeInputChange(event) {
+    this.setState({ connectednode: event.target.value });
+  }
 
-    log.debug(connectionString);
+  changeNode() {
+    event.preventDefault();
   }
 
   async handleSubmit(event) {
@@ -132,94 +144,20 @@ export default class Settings extends Component<Props> {
       return <Redirect to="/changepassword" />;
     }
 
+    if (this.state.loginFailed === true) {
+      return <Redirect to="/login" />;
+    }
+
     return (
       <div>
         {navBar('settings')}
         <div className="box has-background-light maincontent">
           <div className="columns">
             <div className="column">
-              <h2 className="title">Configuration</h2>
-              <form onSubmit={this.handleSubmit}>
-                <div className="field">
-                  <input
-                    className="is-checkradio is-success"
-                    id="scanCoinbaseTransactions"
-                    type="checkbox"
-                    name="scanCoinbaseTransactions"
-                    checked={config.scanCoinbaseTransactions}
-                  />
-                  <label htmlFor="exampleCheckboxBackgroundColorDefault">
-                    Scan for solo mined blocks
-                  </label>
-                </div>
-                <div className="field">
-                  <input
-                    id="enableAutoOptimization"
-                    type="checkbox"
-                    className="is-checkradio is-success"
-                    name="enableAutoOptimization"
-                    checked={config.enableAutoOptimization}
-                  />
-                  <label htmlFor="auto_opt">
-                    Keep wallet optimized automatically
-                  </label>
-                </div>
-                <div className="field">
-                  <input
-                    id="minimizeToTray"
-                    type="checkbox"
-                    className="is-checkradio is-success"
-                    name="minimizeToTray"
-                    checked={config.minimizeToTray}
-                  />
-                  <label htmlFor="minimize_to_tray">
-                    Minimize to system tray
-                  </label>
-                </div>
-                <div className="field">
-                  <div className="control">
-                    <label className="label">
-                      Log Level
-                      <br />
-                      <div className="select" disabled>
-                        <select>
-                          <option>DISABLED</option>
-                          <option>DEBUG</option>
-                          <option>ERROR</option>
-                          <option>INFO</option>
-                          <option>WARNING</option>
-                        </select>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-                <br />
-                <div className="buttons">
-                  <button type="submit" className="button is-success is-large">
-                    Save
-                  </button>
-                  <button type="reset" className="button is-large">
-                    Discard
-                  </button>
-                </div>
-              </form>
             </div>
             <div className="is-divider-vertical" />
             <div className="column">
-              <h2 className="title">Node Settings</h2>
-              <div className="field">
-                <input
-                  className="is-checkradio is-success"
-                  id="autoSelectDaemon"
-                  type="checkbox"
-                  name="autoSelectDaemon"
-                  checked={config.autoSelectDaemon}
-                />
-                <label htmlFor="exampleCheckboxSuccess">
-                  Autoselect best node
-                </label>
-              </div>
-              <br />
+              <h2 className="subtitle">Node Settings</h2>
               <form onSubmit={this.changeNode}>
                 <label className="label has-text-grey-light">
                   Change Node
@@ -228,12 +166,12 @@ export default class Settings extends Component<Props> {
                       <input
                         className="input"
                         type="text"
-                        placeholder={this.state.connectednode}
-                        disabled
+                        value={this.state.connectednode}
+                        onChange={this.handleNodeInputChange.bind(this)}
                       />
                     </div>
                     <div className="control">
-                      <button className="button is-warning" disabled>
+                      <button className="button is-warning">
                         Connect to node...
                       </button>
                     </div>
