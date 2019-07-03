@@ -5,8 +5,8 @@
   "autoSelectDaemon": true,
   "minimizeToTray": false,
   "logLevel": "DISABLED",
-  "daemonHost": "turtle.mine.nu",
-  "daemonPort": 11898,
+  "daemonHost": "blockapi.turtlepay.io",
+  "daemonPort": 443,
   "isCache": false,
   "useSSL": false
 }

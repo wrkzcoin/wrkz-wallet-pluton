@@ -145,7 +145,7 @@ export default class Receive extends Component<Props> {
                     <textarea
                       className="textarea is-family-monospace is-large"
                       rows="6"
-                      placeholder={session.address}
+                      value={session.address}
                       id="receiveaddress"
                       readOnly
                     />

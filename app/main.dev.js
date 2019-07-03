@@ -10,10 +10,11 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import contextMenu from 'electron-context-menu';
 
 export default class AppUpdater {
   constructor() {
@@ -22,6 +23,8 @@ export default class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
+
+
 
 let mainWindow = null;
 
@@ -57,6 +60,16 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+contextMenu({
+  prepend: (defaultActions, params, mainWindow) => [
+    {
+      label: 'Rainbow',
+      // Only show it when right-clicking images
+      visible: params.mediaType === 'image'
+    }
+  ]
 });
 
 app.on('ready', async () => {

@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 // @flow
 import request from 'request-promise';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, remote } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
@@ -53,6 +53,13 @@ async function checkIfCacheAPI(host, port) {
       const resultSSL = await request(requestOptionsSSL);
       if (resultSSL.isCacheApi == null) {
         log.debug(`${host} is a conventional daemon with SSL.`)
+        remote.dialog.showMessageBox(null, {
+          type: 'error',
+          buttons: ['OK'],
+          title: 'Node Not Supported',
+          message:
+            'Unfortunately, proton wallet does not support conventional daemons with SSL at this time. Please select another node. See https://github.com/turtlecoin/turtlecoin-wallet-backend-js/issues/26 for details.'
+        });
         return [false, true];
       } else {
         log.debug(`${host} is a cached API with SSL.`)
@@ -61,6 +68,13 @@ async function checkIfCacheAPI(host, port) {
     } catch(errSSL) {
       log.debug(errSSL);
       log.debug('Both requests failed, node is down.')
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Node is Down',
+        message:
+          'The node you selected does not appear to be responding. Try selecting another node.'
+      });
       return [undefined, undefined];
     }
   }
@@ -107,6 +121,7 @@ export default class Settings extends Component<Props> {
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
     this.findNode = this.findNode.bind(this);
+    this.changeNode = this.changeNode.bind(this);
   }
 
   componentDidMount() {
@@ -129,7 +144,10 @@ export default class Settings extends Component<Props> {
 
   refreshNodeFee() {
     this.setState({
-      nodeFee: session.daemon.feeAmount
+      nodeFee: session.daemon.feeAmount,
+      connectednode: `${session.daemonHost}:${
+        session.daemonPort
+      }`
     });
   }
 
@@ -172,6 +190,9 @@ export default class Settings extends Component<Props> {
     log.debug(`Checking if ${host} is a Cache API or Conventional Daemon...`);
     const [isCache, useSSL] = await checkIfCacheAPI(host, port);
     session.swapNode(host, port, isCache, useSSL);
+    this.setState({
+      connectednode: connectionString
+    })
     eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
   }
 

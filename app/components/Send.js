@@ -48,6 +48,10 @@ export default class Send extends Component<Props> {
     this.transactionComplete = this.transactionComplete.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.generatePaymentID = this.generatePaymentID.bind(this)
+    this.resetPaymentID = this.resetPaymentID.bind(this);
+    this.handleTransactionInProgress = this.handleTransactionInProgress.bind(this)
+    this.handleTransactionCancel = this.handleTransactionCancel.bind(this);
   }
 
   componentDidMount() {
@@ -57,6 +61,9 @@ export default class Send extends Component<Props> {
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('transactionComplete', this.transactionComplete);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
+    eventEmitter.on('transactionInProgress', this.handleTransactionInProgress)
+    eventEmitter.on('transactionCancel', this.handleTransactionCancel)
+
   }
 
   componentWillUnmount() {
@@ -66,6 +73,9 @@ export default class Send extends Component<Props> {
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('transactionComplete', this.transactionComplete);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
+    eventEmitter.off('transactionInProgress', this.handleTransactionInProgress)
+    eventEmitter.off('transactionCancel', this.handleTransactionCancel)
+
   }
 
   handleLoginFailure() {
@@ -80,15 +90,30 @@ export default class Send extends Component<Props> {
     });
   }
 
+  handleTransactionInProgress() {
+    this.setState({
+      transactionInProgress: true
+    });
+  }
+
+  handleTransactionCancel() {
+    this.setState({
+      transactionInProgress: false
+    });
+  }
+
   transactionComplete() {
     this.setState({
-      transactionComplete: true
+      transactionComplete: true,
+      transactionInProgress: false
     });
   }
 
   async handleSubmit(event) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
+
+    eventEmitter.emit('transactionInProgress');
 
     const [sendToAddress, amount, paymentID, fee] = [
       event.target[0].value, // sendToAddress
@@ -97,10 +122,15 @@ export default class Send extends Component<Props> {
       event.target[3].value || 10 // fee
     ];
 
+    if (sendToAddress === '' || amount === '') {
+      eventEmitter.emit('transactionCancel');
+      return;
+    }
+
     let displayIfPaymentID;
 
     if (event.target[2].value !== '') {
-      displayIfPaymentID = ` with a transaction hash of ${
+      displayIfPaymentID = ` with a payment ID of ${
         event.target[2].value
       }`;
     } else {
@@ -237,9 +267,6 @@ export default class Send extends Component<Props> {
             <div className="field">
               <label className="label" htmlFor="paymentid">
                 Payment ID (Optional)&nbsp;&nbsp;&nbsp;
-                <a onClick={this.generatePaymentID.bind(this)}>
-                  Generate Random Payment ID
-                </a>
                 <div className="control">
                   <input
                     className="input is-large"
@@ -247,8 +274,11 @@ export default class Send extends Component<Props> {
                     placeholder="Enter a payment ID"
                     id="paymentid"
                     value={this.state.paymentID}
-                    onChange={this.handlePaymentIDChange.bind(this)}
+                    onChange={this.handlePaymentIDChange}
                   />
+                  <label className="help"><a onClick={this.generatePaymentID}>
+                  Generate Random Payment ID
+                </a></label>
                 </div>
               </label>
             </div>
@@ -270,7 +300,7 @@ export default class Send extends Component<Props> {
               <button
                 type="reset"
                 className="button is-large"
-                onClick={this.resetPaymentID.bind(this)}
+                onClick={this.resetPaymentID}
               >
                 Clear
               </button>
