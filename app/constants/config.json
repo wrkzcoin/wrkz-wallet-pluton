@@ -4,5 +4,7 @@
   "scanCoinbaseTransactions": false,
   "autoSelectDaemon": true,
   "minimizeToTray": false,
-  "logLevel": "DISABLED"
+  "logLevel": "DISABLED",
+  "daemonHost": "turtle.mine.nu",
+  "daemonPort": 11898
 }

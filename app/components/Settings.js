@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
-import { config, session } from '../index';
+import { config, session, eventEmitter } from '../index';
 import navBar from './NavBar';
 
 function getNodeList() {
@@ -49,7 +49,7 @@ export default class Settings extends Component<Props> {
       importkey: false,
       importseed: false,
       nodeList: getNodeList(),
-      connectednode: session.daemon.cacheBaseURL || session.daemon.daemonHost,
+      connectednode: `${session.daemon.daemonHost}:${session.daemon.daemonPort}`,
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
       loginFailed: false
@@ -59,6 +59,7 @@ export default class Settings extends Component<Props> {
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
+    this.handleNewNode = this.handleNewNode.bind(this);
   }
 
   componentDidMount() {
@@ -66,7 +67,7 @@ export default class Settings extends Component<Props> {
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
-    log.debug(session.daemon);
+    eventEmitter.on('newNodeConnected', this.handleNewNode);
   }
 
   componentWillUnmount() {
@@ -74,12 +75,20 @@ export default class Settings extends Component<Props> {
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
+    eventEmitter.off('newNodeConnected', this.handleNewNode);
   }
 
   handleLoginFailure() {
     this.setState({
       loginFailed: true
     });
+  }
+
+  handleNewNode() {
+    // something
+    this.setState({
+      connectednode: `${session.daemon.daemonHost}:${session.daemon.daemonPort}`
+    })
   }
 
 
@@ -93,8 +102,17 @@ export default class Settings extends Component<Props> {
     this.setState({ connectednode: event.target.value });
   }
 
-  changeNode() {
+  changeNode(event) {
     event.preventDefault();
+    const connectionString = event.target[0].value;
+    const [host, port] = connectionString.split(':', 2);
+    log.debug(host, port);
+    // eslint-disable-next-line eqeqeq
+    if (host == session.daemonHost && port == session.daemonPort) {
+      return;
+    }
+    log.debug(session.walletPassword);
+    eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
   }
 
   async handleSubmit(event) {
@@ -153,9 +171,6 @@ export default class Settings extends Component<Props> {
         {navBar('settings')}
         <div className="box has-background-light maincontent">
           <div className="columns">
-            <div className="column">
-            </div>
-            <div className="is-divider-vertical" />
             <div className="column">
               <h2 className="subtitle">Node Settings</h2>
               <form onSubmit={this.changeNode}>

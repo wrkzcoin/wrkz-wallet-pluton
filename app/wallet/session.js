@@ -10,13 +10,15 @@ import fs from 'fs';
 import { config, directories, eventEmitter } from '../index';
 
 export default class WalletSession {
-  constructor(password) {
+  constructor(password, daemonHost, daemonPort) {
     this.loginFailed = false;
     const [programDirectory, logDirectory, walletDirectory] = directories;
     this.walletPassword = password || '';
+    this.daemonHost = daemonHost || config.daemonHost;
+    this.daemonPort = daemonPort || config.daemonPort;
 
-    // this.daemon = new ConventionalDaemon('trtl.sopinka.com', '11898');
-    this.daemon = new BlockchainCacheApi('blockapi.turtlepay.io', true);
+    this.daemon = new ConventionalDaemon(this.daemonHost, this.daemonPort);
+    // this.daemon = new BlockchainCacheApi(config.daemonHost, true);
 
     let [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,

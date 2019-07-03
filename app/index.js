@@ -152,6 +152,18 @@ ipcRenderer.on('handleOpen', function(evt, route) {
   }
 });
 
+eventEmitter.on('initializeNewNode', function(
+  password,
+  daemonHost,
+  daemonPort
+) {
+  log.debug(password, daemonHost, daemonPort);
+  session = null;
+  session = new WalletSession(password, daemonHost, daemonPort);
+  startWallet();
+  eventEmitter.emit('newNodeConnected');
+});
+
 eventEmitter.on('initializeNewSession', function(password) {
   session = null;
   session = new WalletSession(password);
