@@ -106,6 +106,7 @@ export default class Settings extends Component<Props> {
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
+    this.findNode = this.findNode.bind(this);
   }
 
   componentDidMount() {
@@ -202,6 +203,30 @@ export default class Settings extends Component<Props> {
     });
   }
 
+  async findNode(evt, route) {
+    const requestOptions = {
+      method: 'GET',
+      uri: `https://trtl.nodes.pub/api/getNodes`,
+      headers: {},
+      json: true,
+      gzip: true
+    };
+    try {
+      const result = await request(requestOptions);
+      const selectedNode = result[Math.floor(Math.random() * result.length)];
+
+      const connectionString = `${selectedNode.url}:${selectedNode.port}`;
+      log.debug(`Found new node: ` + connectionString);
+      this.setState({
+        connectednode: connectionString
+      })
+      return;
+    } catch (err) {
+      log.debug(err);
+      return;
+    }
+  }
+
   refresh() {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus()
@@ -233,7 +258,7 @@ export default class Settings extends Component<Props> {
             <div className="column">
               <form onSubmit={this.changeNode}>
                 <label className="label has-text-grey-light">
-                  Connected Node &nbsp;&nbsp;(node:port)
+                  Connected Node (node:port)
                   <div className="field has-addons">
                     <div className="control">
                       <input
@@ -242,6 +267,7 @@ export default class Settings extends Component<Props> {
                         value={this.state.connectednode}
                         onChange={this.handleNodeInputChange}
                       />
+                      <label className="help"><a onClick={this.findNode}>Find node...</a></label>
                     </div>
                     <div className="control">
                       <button className="button is-warning">Connect</button>
