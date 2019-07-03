@@ -49,20 +49,23 @@ export default class Settings extends Component<Props> {
       importkey: false,
       importseed: false,
       nodeList: getNodeList(),
-      connectednode: `${session.daemon.daemonHost}:${session.daemon.daemonPort}`,
+      connectednode: `${session.daemon.daemonHost}:${
+        session.daemon.daemonPort
+      }`,
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
       loginFailed: false
-
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);
+    this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
   }
 
   componentDidMount() {
+    log.debug(session.daemon);
     this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
@@ -88,9 +91,8 @@ export default class Settings extends Component<Props> {
     // something
     this.setState({
       connectednode: `${session.daemon.daemonHost}:${session.daemon.daemonPort}`
-    })
+    });
   }
-
 
   handlePasswordChange() {
     this.setState({
@@ -106,12 +108,12 @@ export default class Settings extends Component<Props> {
     event.preventDefault();
     const connectionString = event.target[0].value;
     const [host, port] = connectionString.split(':', 2);
-    log.debug(host, port);
     // eslint-disable-next-line eqeqeq
     if (host == session.daemonHost && port == session.daemonPort) {
       return;
     }
-    log.debug(session.walletPassword);
+    log.debug(`Connecting to new node ${host}:${port}...`);
+    session.swapNode(host, port);
     eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
   }
 
@@ -172,23 +174,20 @@ export default class Settings extends Component<Props> {
         <div className="box has-background-light maincontent">
           <div className="columns">
             <div className="column">
-              <h2 className="subtitle">Node Settings</h2>
               <form onSubmit={this.changeNode}>
                 <label className="label has-text-grey-light">
-                  Change Node
+                  Connected Node &nbsp;&nbsp;(node:port)
                   <div className="field has-addons">
                     <div className="control">
                       <input
                         className="input"
                         type="text"
                         value={this.state.connectednode}
-                        onChange={this.handleNodeInputChange.bind(this)}
+                        onChange={this.handleNodeInputChange}
                       />
                     </div>
                     <div className="control">
-                      <button className="button is-warning">
-                        Connect to node...
-                      </button>
+                      <button className="button is-warning">Connect</button>
                     </div>
                   </div>
                 </label>
@@ -211,21 +210,26 @@ export default class Settings extends Component<Props> {
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>
-                {this.state.syncStatus < 100 && (
-                  <span className="tag is-warning is-large">
-                    {this.state.syncStatus}%
-                    <ReactLoading
-                      type="bubbles"
-                      color="#363636"
-                      height={30}
-                      width={30}
-                    />
-                  </span>
-                )}
-                {this.state.syncStatus === 100 && (
-                  <span className="tag is-success is-large">
-                    {this.state.syncStatus}%
-                  </span>
+                {this.state.syncStatus < 100 &&
+                  session.daemon.networkBlockCount !== 0 && (
+                    <span className="tag is-warning is-large">
+                      {this.state.syncStatus}%
+                      <ReactLoading
+                        type="bubbles"
+                        color="#363636"
+                        height={30}
+                        width={30}
+                      />
+                    </span>
+                  )}
+                {this.state.syncStatus === 100 &&
+                  session.daemon.networkBlockCount !== 0 && (
+                    <span className="tag is-success is-large">
+                      {this.state.syncStatus}%
+                    </span>
+                  )}
+                {session.daemon.networkBlockCount === 0 && (
+                  <span className="tag is-danger is-large">Node Offline</span>
                 )}
               </div>
             </div>

@@ -30,14 +30,12 @@ export default class Login extends Component<Props> {
     this.state = {
       importkey: false,
       importseed: false,
-      importCompleted: false,
-
+      importCompleted: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
-
   }
 
   componentDidMount() {
@@ -45,7 +43,6 @@ export default class Login extends Component<Props> {
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
-
   }
 
   componentWillUnmount() {
@@ -100,7 +97,6 @@ export default class Login extends Component<Props> {
   }
 
   render() {
-
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
     }

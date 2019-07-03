@@ -38,14 +38,12 @@ export default class Send extends Component<Props> {
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
       loginFailed: false
-
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
-
   }
 
   componentDidMount() {
@@ -71,7 +69,6 @@ export default class Send extends Component<Props> {
       loginFailed: true
     });
   }
-
 
   handlePasswordChange() {
     this.setState({
@@ -168,7 +165,6 @@ export default class Send extends Component<Props> {
   }
 
   render() {
-
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
     }

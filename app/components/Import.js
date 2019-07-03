@@ -38,7 +38,6 @@ export default class Send extends Component<Props> {
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
       loginFailed: false
-
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -54,7 +53,6 @@ export default class Send extends Component<Props> {
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
-
   }
 
   componentWillUnmount() {
@@ -64,7 +62,6 @@ export default class Send extends Component<Props> {
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
-
   }
 
   handleLoginFailure() {
@@ -72,7 +69,6 @@ export default class Send extends Component<Props> {
       loginFailed: true
     });
   }
-
 
   handleImportFromSeed(evt, route) {
     clearInterval(this.interval);
@@ -165,7 +161,6 @@ export default class Send extends Component<Props> {
   }
 
   render() {
-
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
     }

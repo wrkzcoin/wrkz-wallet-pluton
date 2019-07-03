@@ -42,7 +42,6 @@ export default class Send extends Component<Props> {
       paymentID: '',
       changePassword: false,
       loginFailed: false
-
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -58,7 +57,6 @@ export default class Send extends Component<Props> {
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('transactionComplete', this.transactionComplete);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
-
   }
 
   componentWillUnmount() {
@@ -68,7 +66,6 @@ export default class Send extends Component<Props> {
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('transactionComplete', this.transactionComplete);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
-
   }
 
   handleLoginFailure() {
@@ -76,7 +73,6 @@ export default class Send extends Component<Props> {
       loginFailed: true
     });
   }
-
 
   handlePasswordChange() {
     this.setState({
@@ -188,7 +184,6 @@ export default class Send extends Component<Props> {
   }
 
   render() {
-
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
     }
@@ -297,21 +292,26 @@ export default class Send extends Component<Props> {
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>
-                {this.state.syncStatus < 100 && (
-                  <span className="tag is-warning is-large">
-                    {this.state.syncStatus}%
-                    <ReactLoading
-                      type="bubbles"
-                      color="#363636"
-                      height={30}
-                      width={30}
-                    />
-                  </span>
-                )}
-                {this.state.syncStatus === 100 && (
-                  <span className="tag is-success is-large">
-                    {this.state.syncStatus}%
-                  </span>
+                {this.state.syncStatus < 100 &&
+                  session.daemon.networkBlockCount !== 0 && (
+                    <span className="tag is-warning is-large">
+                      {this.state.syncStatus}%
+                      <ReactLoading
+                        type="bubbles"
+                        color="#363636"
+                        height={30}
+                        width={30}
+                      />
+                    </span>
+                  )}
+                {this.state.syncStatus === 100 &&
+                  session.daemon.networkBlockCount !== 0 && (
+                    <span className="tag is-success is-large">
+                      {this.state.syncStatus}%
+                    </span>
+                  )}
+                {session.daemon.networkBlockCount === 0 && (
+                  <span className="tag is-danger is-large">Node Offline</span>
                 )}
               </div>
             </div>

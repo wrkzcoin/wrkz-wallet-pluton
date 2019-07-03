@@ -43,7 +43,6 @@ export default class Receive extends Component<Props> {
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
-
   }
 
   componentDidMount() {
@@ -52,7 +51,6 @@ export default class Receive extends Component<Props> {
     ipcRenderer.on('importKey', this.handleImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
-
   }
 
   componentWillUnmount() {
@@ -61,7 +59,6 @@ export default class Receive extends Component<Props> {
     ipcRenderer.off('importKey', this.handleImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
-
   }
 
   handleLoginFailure() {
@@ -197,21 +194,26 @@ export default class Receive extends Component<Props> {
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className="tag is-dark is-large">Sync:</span>
-                {this.state.syncStatus < 100 && (
-                  <span className="tag is-warning is-large">
-                    {this.state.syncStatus}%
-                    <ReactLoading
-                      type="bubbles"
-                      color="#363636"
-                      height={30}
-                      width={30}
-                    />
-                  </span>
-                )}
-                {this.state.syncStatus === 100 && (
-                  <span className="tag is-success is-large">
-                    {this.state.syncStatus}%
-                  </span>
+                {this.state.syncStatus < 100 &&
+                  session.daemon.networkBlockCount !== 0 && (
+                    <span className="tag is-warning is-large">
+                      {this.state.syncStatus}%
+                      <ReactLoading
+                        type="bubbles"
+                        color="#363636"
+                        height={30}
+                        width={30}
+                      />
+                    </span>
+                  )}
+                {this.state.syncStatus === 100 &&
+                  session.daemon.networkBlockCount !== 0 && (
+                    <span className="tag is-success is-large">
+                      {this.state.syncStatus}%
+                    </span>
+                  )}
+                {session.daemon.networkBlockCount === 0 && (
+                  <span className="tag is-danger is-large">Node Offline</span>
                 )}
               </div>
             </div>

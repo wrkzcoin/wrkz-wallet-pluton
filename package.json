@@ -56,8 +56,8 @@
   },
   "main": "./app/main.prod.js",
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "proton-wallet",
+    "appId": "wallet.proton.extra",
     "files": [
       "app/dist/",
       "app/app.html",
@@ -141,7 +141,7 @@
     "hot",
     "reload"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/ExtraHash/proton-wallet#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
