@@ -61,13 +61,6 @@ To package apps for the local platform
 ```bash
 $ yarn package
 ```
-
-## Todo
-
-* add a splash screen
-* incoming transaction notification
-* make transaction hash on wallet page link to explorer
-
 ## License
 
 MIT © [ExtraHash](https://github.com/ExtraHash)

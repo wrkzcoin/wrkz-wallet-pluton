@@ -115,7 +115,7 @@ export default function navBar(activePage) {
         <center>
           {activePage === 'login' && (
             <h1 className="title has-text-grey-darker">
-              Welcome to Proton Wallet!
+
             </h1>
           )}
         </center>

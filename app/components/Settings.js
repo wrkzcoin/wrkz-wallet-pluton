@@ -29,7 +29,8 @@ async function checkIfCacheAPI(host, port) {
       uri: `http://${host}:${port}/info`,
       headers: {},
       json: true,
-      gzip: true
+      gzip: true,
+      timeout: 5000
   };
   try {
     const result = await request(requestOptions);
@@ -48,7 +49,8 @@ async function checkIfCacheAPI(host, port) {
         uri: `https://${host}:${port}/info`,
         headers: {},
         json: true,
-        gzip: true
+        gzip: true,
+        timeout: 5000
       };
       const resultSSL = await request(requestOptionsSSL);
       if (resultSSL.isCacheApi == null) {
@@ -111,7 +113,8 @@ export default class Settings extends Component<Props> {
       }`,
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
-      loginFailed: false
+      loginFailed: false,
+      nodeChangeInProgress: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -122,6 +125,7 @@ export default class Settings extends Component<Props> {
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
     this.findNode = this.findNode.bind(this);
     this.changeNode = this.changeNode.bind(this);
+    this.handleNodeChangeInProgress = this.handleNodeChangeInProgress.bind(this);
   }
 
   componentDidMount() {
@@ -131,6 +135,7 @@ export default class Settings extends Component<Props> {
     ipcRenderer.on('importKey', this.handleImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('newNodeConnected', this.handleNewNode);
+    eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
   }
 
   componentWillUnmount() {
@@ -140,6 +145,7 @@ export default class Settings extends Component<Props> {
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('newNodeConnected', this.handleNewNode);
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
+    eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
   }
 
   refreshNodeFee() {
@@ -147,7 +153,14 @@ export default class Settings extends Component<Props> {
       nodeFee: session.daemon.feeAmount,
       connectednode: `${session.daemonHost}:${
         session.daemonPort
-      }`
+      }`,
+      nodeChangeInProgress: false
+    });
+  }
+
+  handleNodeChangeInProgress() {
+    this.setState({
+      nodeChangeInProgress: true
     });
   }
 
@@ -187,8 +200,13 @@ export default class Settings extends Component<Props> {
     if (host == session.daemonHost && port == session.daemonPort) {
       return;
     }
+    eventEmitter.emit('nodeChangeInProgress');
     log.debug(`Checking if ${host} is a Cache API or Conventional Daemon...`);
     const [isCache, useSSL] = await checkIfCacheAPI(host, port);
+    if (isCache === undefined || useSSL === undefined) {
+      this.refreshNodeFee();
+      return;
+    }
     session.swapNode(host, port, isCache, useSSL);
     this.setState({
       connectednode: connectionString
@@ -230,7 +248,8 @@ export default class Settings extends Component<Props> {
       uri: `https://trtl.nodes.pub/api/getNodes`,
       headers: {},
       json: true,
-      gzip: true
+      gzip: true,
+      timeout: 5000
     };
     try {
       const result = await request(requestOptions);
@@ -280,7 +299,7 @@ export default class Settings extends Component<Props> {
               <form onSubmit={this.changeNode}>
                 <label className="label has-text-grey-light">
                   Connected Node (node:port)
-                  <div className="field has-addons">
+                  <div className="field has-addons is-expanded">
                     <div className="control">
                       <input
                         className="input"
@@ -290,13 +309,21 @@ export default class Settings extends Component<Props> {
                       />
                       <label className="help"><a onClick={this.findNode}>Find node...</a></label>
                     </div>
+                    {this.state.nodeChangeInProgress === true && (
+                      <div className="control">
+                        <button className="button is-warning is-loading">Connect</button>
+                      </div>
+                      )}
+                    {this.state.nodeChangeInProgress === false && (
                     <div className="control">
                       <button className="button is-warning">Connect</button>
                     </div>
+                    )}
                   </div>
                 </label>
               </form>
             </div>
+            <div className="column" />
           </div>
         </div>
         <div className="box has-background-grey-lighter footerbar">

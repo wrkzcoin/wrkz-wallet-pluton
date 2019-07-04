@@ -64,11 +64,6 @@ app.on('window-all-closed', () => {
 
 contextMenu({
   prepend: (defaultActions, params, mainWindow) => [
-    {
-      label: 'Rainbow',
-      // Only show it when right-clicking images
-      visible: params.mediaType === 'image'
-    }
   ]
 });
 

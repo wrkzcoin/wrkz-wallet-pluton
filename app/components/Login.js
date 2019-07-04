@@ -11,6 +11,7 @@ import { config, session, directories, eventEmitter } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
+
 // import styles from './Send.css';
 
 type Props = {
@@ -30,12 +31,14 @@ export default class Login extends Component<Props> {
     this.state = {
       importkey: false,
       importseed: false,
-      importCompleted: false
+      importCompleted: false,
+      loginInProgress: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
+    this.handleLoginInProgress = this.handleLoginInProgress.bind(this);
   }
 
   componentDidMount() {
@@ -43,6 +46,7 @@ export default class Login extends Component<Props> {
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
+    eventEmitter.on('loginInProgress', this.handleLoginInProgress);
   }
 
   componentWillUnmount() {
@@ -52,9 +56,17 @@ export default class Login extends Component<Props> {
     eventEmitter.off('initializeNewSession', this.handleInitialize);
   }
 
+  handleLoginInProgress() {
+    log.debug('Login in proress...');
+    this.setState({
+      loginInProgress: true
+    });
+  }
+
   handleLoginFailure() {
     this.setState({
-      loginFailed: true
+      loginFailed: true,
+      loginInProgress: false
     });
   }
 
@@ -78,7 +90,9 @@ export default class Login extends Component<Props> {
     });
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
+    eventEmitter.emit('loginInProgress');
+
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
 
@@ -110,6 +124,7 @@ export default class Login extends Component<Props> {
       <div>
         {navBar('login')}
         <div className="box has-background-light maincontent">
+          {this.state.loginInProgress === false && (
           <div className="box loginbox has-background-white">
             <form onSubmit={this.handleSubmit}>
               <div className="field">
@@ -132,6 +147,16 @@ export default class Login extends Component<Props> {
               </div>
             </form>
           </div>
+          )}
+          {this.state.loginInProgress === true && (
+            <ReactLoading
+            type="spin"
+            color="#363636"
+            height="25%"
+            width="25%"
+            className="loginspinner"
+            />
+            )}
         </div>
         <div className="box has-background-grey-lighter footerbar" />
       </div>

@@ -27,6 +27,12 @@
   box-sizing: border-box;
 }
 
+.loginspinner {
+  position: relative;
+  left: 40%;
+  top: 10%;
+}
+
 .passwordchangebox {
   position: relative;
   width: 60%;
