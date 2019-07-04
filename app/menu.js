@@ -351,9 +351,12 @@ export default class MenuBuilder {
         label: 'Help',
         submenu: [
           {
+            label: 'Proton v0.0.4-beta'
+          },
+          {
             label: 'About',
             click() {
-              shell.openExternal('http://github.com/ExtraHash/proton');
+              shell.openExternal('http://github.com/ExtraHash/proton#readme');
             }
           },
           {
