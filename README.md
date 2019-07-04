@@ -19,13 +19,13 @@ https://yarnpkg.com/en/
 First, clone the repo via git:
 
 ```bash
-git clone https://github.com/ExtraHash/nova.git
+git clone https://github.com/ExtraHash/proton.git
 ```
 
 And then install the dependencies with yarn.
 
 ```bash
-$ cd nova
+$ cd proton
 $ yarn
 ```
 
@@ -33,11 +33,6 @@ Run the wallet.
 
 ```bash
 $ yarn start
-```
-To run the wallet in dev mode, use this command instead. This will enable hot-reload and dev tool menu.
-
-```bash
-$ yarn dev
 ```
 
 ## Starting Development
@@ -54,7 +49,7 @@ First make sure you have the needed dependency `rpmbuild`. For example, on arch.
 
 `yay -s rpm`
 
-To package apps for the local platform
+Then, to package apps for the local platform:
 
 ```bash
 $ yarn package
