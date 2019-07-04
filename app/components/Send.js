@@ -48,9 +48,11 @@ export default class Send extends Component<Props> {
     this.transactionComplete = this.transactionComplete.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.generatePaymentID = this.generatePaymentID.bind(this)
+    this.generatePaymentID = this.generatePaymentID.bind(this);
     this.resetPaymentID = this.resetPaymentID.bind(this);
-    this.handleTransactionInProgress = this.handleTransactionInProgress.bind(this)
+    this.handleTransactionInProgress = this.handleTransactionInProgress.bind(
+      this
+    );
     this.handleTransactionCancel = this.handleTransactionCancel.bind(this);
   }
 
@@ -61,9 +63,8 @@ export default class Send extends Component<Props> {
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('transactionComplete', this.transactionComplete);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
-    eventEmitter.on('transactionInProgress', this.handleTransactionInProgress)
-    eventEmitter.on('transactionCancel', this.handleTransactionCancel)
-
+    eventEmitter.on('transactionInProgress', this.handleTransactionInProgress);
+    eventEmitter.on('transactionCancel', this.handleTransactionCancel);
   }
 
   componentWillUnmount() {
@@ -73,9 +74,8 @@ export default class Send extends Component<Props> {
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('transactionComplete', this.transactionComplete);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
-    eventEmitter.off('transactionInProgress', this.handleTransactionInProgress)
-    eventEmitter.off('transactionCancel', this.handleTransactionCancel)
-
+    eventEmitter.off('transactionInProgress', this.handleTransactionInProgress);
+    eventEmitter.off('transactionCancel', this.handleTransactionCancel);
   }
 
   handleLoginFailure() {
@@ -116,10 +116,9 @@ export default class Send extends Component<Props> {
     eventEmitter.emit('transactionInProgress');
 
     const [sendToAddress, amount, paymentID, fee] = [
-      event.target[0].value, // sendToAddress
-      event.target[1].value || 0, // amount
-      event.target[2].value || undefined, // paymentID
-      event.target[3].value || 10 // fee
+      event.target[0].value.trim(), // sendToAddress
+      session.humanToAtomic(event.target[1].value) || 0, // amount
+      event.target[2].value || undefined // paymentID
     ];
 
     if (sendToAddress === '' || amount === '') {
@@ -129,10 +128,8 @@ export default class Send extends Component<Props> {
 
     let displayIfPaymentID;
 
-    if (event.target[2].value !== '') {
-      displayIfPaymentID = ` with a payment ID of ${
-        event.target[2].value
-      }`;
+    if (paymentID !== '' && paymentID !== undefined) {
+      displayIfPaymentID = ` with a payment ID of ${paymentID}`;
     } else {
       displayIfPaymentID = '';
     }
@@ -140,25 +137,27 @@ export default class Send extends Component<Props> {
     let displayIfNodeFee;
 
     if (session.daemon.feeAmount > 0) {
-      displayIfNodeFee = ` and a node fee of ${session.daemon.feeAmount} TRTL`;
+      displayIfNodeFee = ` and a node fee of ${session.atomicToHuman(
+        session.daemon.feeAmount
+      )} TRTL`;
     } else {
       displayIfNodeFee = '';
     }
 
-    const totalTransactionAmount =
-      parseInt(amount, 10) +
-      parseInt(fee, 10) +
-      parseInt(session.daemon.feeAmount, 10);
+    const totalTransactionAmount = session.atomicToHuman(
+      parseInt(amount, 10) + 10 + parseInt(session.daemon.feeAmount, 10)
+    );
 
     const userSelection = remote.dialog.showMessageBox(null, {
       type: 'warning',
       buttons: ['Cancel', 'OK'],
       title: 'Please Confirm Transaction',
-      message: `You are about to send ${totalTransactionAmount} TRTL to ${sendToAddress}${displayIfPaymentID} which includes a network fee of ${fee} TRTL${displayIfNodeFee}. Do you wish to proceed?`
+      message: `You are about to send ${totalTransactionAmount} TRTL to ${sendToAddress}${displayIfPaymentID} which includes a network fee of 0.10 TRTL${displayIfNodeFee}. Do you wish to proceed?`
     });
 
     if (userSelection !== 1) {
       log.debug('Transaction cancelled by user.');
+      eventEmitter.emit('transactionCancel');
       return;
     }
 
@@ -276,9 +275,11 @@ export default class Send extends Component<Props> {
                     value={this.state.paymentID}
                     onChange={this.handlePaymentIDChange}
                   />
-                  <label className="help"><a onClick={this.generatePaymentID}>
-                  Generate Random Payment ID
-                </a></label>
+                  <label className="help">
+                    <a onClick={this.generatePaymentID}>
+                      Generate Random Payment ID
+                    </a>
+                  </label>
                 </div>
               </label>
             </div>

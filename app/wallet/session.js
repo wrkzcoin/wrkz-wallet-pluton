@@ -295,6 +295,10 @@ export default class WalletSession {
     return x / 100;
   }
 
+  humanToAtomic(x: number) {
+    return x * 100;
+  }
+
   convertTimestamp(timestamp: Date) {
     const d = new Date(timestamp * 1000); // Convert the passed timestamp to milliseconds
     const yyyy = d.getFullYear();
