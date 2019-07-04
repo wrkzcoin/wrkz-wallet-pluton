@@ -1,7 +1,7 @@
 {
   "name": "proton-wallet",
   "productName": "Proton",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "TurtleCoin wallet based on React, React Router, Webpack, and React Hot Loader",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -258,7 +258,6 @@
     "@fortawesome/fontawesome-free": "^5.8.1",
     "bulma": "^0.7.5",
     "bulma-extensions": "^6.2.7",
-    "clipboardy": "^2.0.0",
     "connected-react-router": "^6.3.2",
     "core-js": "2",
     "devtron": "^1.4.0",

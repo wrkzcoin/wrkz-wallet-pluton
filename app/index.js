@@ -5,9 +5,8 @@ import fs from 'fs';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, remote, clipboard } from 'electron';
 import { WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
-import clipboardy from 'clipboardy';
 import EventEmitter from 'events';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
@@ -245,7 +244,7 @@ ipcRenderer.on('handleBackup', function(evt, route) {
     message: msg
   });
   if (userSelection === 0) {
-    clipboardy.writeSync(msg);
+    clipboard.writeText(msg);
   }
 });
 

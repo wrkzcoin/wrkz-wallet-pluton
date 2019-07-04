@@ -1,11 +1,10 @@
 // @flow
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, clipboard } from 'electron';
 import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import QRCode from 'qrcode.react';
 import { Redirect, Link } from 'react-router-dom';
-import clipboardy from 'clipboardy';
 import { config, session, eventEmitter } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
@@ -90,7 +89,7 @@ export default class Receive extends Component<Props> {
   handleCopyAddressToClipboard(text: string = session.address) {
     return (dispatch: Dispatch) => {
       log.debug(`Address copied to clipboard ${text}`);
-      clipboardy.writeSync(text);
+      clipboard.writeText(text);
     };
   }
 
