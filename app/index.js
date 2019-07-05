@@ -62,7 +62,7 @@ directories.forEach(function(dir) {
 
 export let session = new WalletSession();
 
-if (!session.loginFailed) {
+if (!session.loginFailed && !session.firstStartup) {
   log.debug('Initialized wallet session ', session.address);
   startWallet();
 } else {
@@ -137,6 +137,7 @@ function handleOpen() {
     session = new WalletSession();
     startWallet();
     eventEmitter.emit('openNewWallet');
+
   } else {
     remote.dialog.showMessageBox(null, {
       type: 'error',
@@ -168,16 +169,7 @@ eventEmitter.on('initializeNewSession', function(password) {
   eventEmitter.emit('openNewWallet');
 });
 
-ipcRenderer.on('handleNew', function(evt, route) {
-  const userSelection = remote.dialog.showMessageBox(null, {
-    type: 'question',
-    buttons: ['Cancel', 'OK'],
-    title: 'New Wallet',
-    message: 'Press OK and select a location for your new wallet.'
-  });
-  if (userSelection !== 1) {
-    return;
-  }
+function handleNew() {
   const savePath = remote.dialog.showSaveDialog();
   if (savePath === undefined) {
     return;
@@ -214,7 +206,10 @@ ipcRenderer.on('handleNew', function(evt, route) {
       });
     }
   }
-});
+}
+
+ipcRenderer.on('handleNew', handleNew);
+eventEmitter.on('handleNew', handleNew);
 
 ipcRenderer.on('handleBackup', function(evt, route) {
   const publicAddress = session.wallet.getPrimaryAddress();

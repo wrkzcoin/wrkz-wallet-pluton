@@ -129,7 +129,7 @@ export default class Home extends Component<Props> {
       ),
       totalTransactionCount: session.getTransactions().length,
       unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance()
+      lockedBalance: session.getLockedBalance(),
     });
   }
 
@@ -174,6 +174,7 @@ export default class Home extends Component<Props> {
     if (this.state.firstStartup === true) {
       return <Redirect to="/firststartup" />
     }
+
     if (this.state.changePassword === true) {
       return <Redirect to="/changepassword" />;
     }
