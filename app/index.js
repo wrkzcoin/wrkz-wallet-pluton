@@ -5,7 +5,7 @@ import fs from 'fs';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { ipcRenderer, remote, clipboard } from 'electron';
+import { ipcRenderer, remote, clipboard, ipcMain } from 'electron';
 import { WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
 import EventEmitter from 'events';
 import Root from './containers/Root';
@@ -104,7 +104,7 @@ ipcRenderer.on('handleSaveAs', function(evt, route) {
   });
 });
 
-ipcRenderer.on('handleOpen', function(evt, route) {
+function handleOpen() {
   const getPaths = remote.dialog.showOpenDialog();
   if (getPaths === undefined) {
     return;
@@ -145,7 +145,10 @@ ipcRenderer.on('handleOpen', function(evt, route) {
       message: 'The wallet was not opened successfully. Try again.'
     });
   }
-});
+}
+
+ipcRenderer.on('handleOpen', handleOpen);
+eventEmitter.on('handleOpen', handleOpen);
 
 eventEmitter.on('initializeNewNode', function(
   password,
@@ -170,7 +173,7 @@ ipcRenderer.on('handleNew', function(evt, route) {
     type: 'question',
     buttons: ['Cancel', 'OK'],
     title: 'New Wallet',
-    message: 'Press OK to select a location for your new wallet.'
+    message: 'Press OK and select a location for your new wallet.'
   });
   if (userSelection !== 1) {
     return;

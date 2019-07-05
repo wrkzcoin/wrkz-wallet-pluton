@@ -37,6 +37,7 @@ export default class FirstStartup extends Component<Props> {
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
+    this.openExisting = this.openExisting.bind(this);
   }
 
   componentDidMount() {
@@ -125,6 +126,20 @@ export default class FirstStartup extends Component<Props> {
     }
   }
 
+  openExisting() {
+    log.debug('User selected to open an existing wallet.');
+    eventEmitter.emit('handleOpen');
+  }
+
+  createNew() {
+    log.debug('User selected to create a new wallet.');
+    eventEmitter.emit('handleNew');
+  }
+
+  importFromKeysOrSeed() {
+    log.debug('User selected to import wallet.');
+  }
+
   refresh() {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus()
@@ -151,11 +166,26 @@ export default class FirstStartup extends Component<Props> {
         <div className="box has-background-light maincontent">
           <div className="box changepasswordbox has-background-white passwordchangebox">
             <h1 className="title has-text-centered">Welcome to Proton!</h1>
-            <button className="button is-large is-fullwidth">Open an Existing Wallet</button>
+            <button
+              className="button is-large is-fullwidth"
+              onClick={this.openExisting}
+            >
+              Open an Existing Wallet
+            </button>
             <br />
-            <button className="button is-large is-fullwidth">Create a New Wallet</button>
+            <button
+              className="button is-large is-fullwidth is-grey"
+              onClick={this.createNew}
+            >
+              Create a New Wallet
+            </button>
             <br />
-            <button className="button is-large is-fullwidth">Import from Keys or Seed</button>
+            <button
+              className="button is-large is-fullwidth is-grey"
+              onClick={this.importFromKeysOrSeed}
+            >
+              Import from Keys or Seed
+            </button>
           </div>
         </div>
         <div className="box has-background-grey-lighter footerbar" />

@@ -356,13 +356,17 @@ export default class MenuBuilder {
           {
             label: 'About',
             click() {
-              shell.openExternal('http://github.com/ExtraHash/proton#readme');
+              shell.openExternal(
+                'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+              );
             }
           },
           {
             label: 'Report Bug',
             click() {
-              shell.openExternal('https://github.com/ExtraHash/proton/issues');
+              shell.openExternal(
+                'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+              );
             }
           }
         ]
