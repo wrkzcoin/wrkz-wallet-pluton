@@ -11,7 +11,6 @@ import { config, session, directories, eventEmitter } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
-
 // import styles from './Send.css';
 
 type Props = {
@@ -23,7 +22,7 @@ type Props = {
   transactionInProgress: boolean
 };
 
-export default class Login extends Component<Props> {
+export default class FirstStartup extends Component<Props> {
   props: Props;
 
   constructor(props?: Props) {
@@ -32,13 +31,12 @@ export default class Login extends Component<Props> {
       importkey: false,
       importseed: false,
       importCompleted: false,
-      loginInProgress: false
+      loginFailed: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
-    this.handleLoginInProgress = this.handleLoginInProgress.bind(this);
   }
 
   componentDidMount() {
@@ -46,7 +44,7 @@ export default class Login extends Component<Props> {
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
-    eventEmitter.on('loginInProgress', this.handleLoginInProgress);
+    eventEmitter.on('loginFailed', this.handleLoginFailure);
   }
 
   componentWillUnmount() {
@@ -54,19 +52,12 @@ export default class Login extends Component<Props> {
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
-  }
-
-  handleLoginInProgress() {
-    log.debug('Login in progress...');
-    this.setState({
-      loginInProgress: true
-    });
+    eventEmitter.off('loginFailed', this.handleLoginFailure);
   }
 
   handleLoginFailure() {
     this.setState({
-      loginFailed: true,
-      loginInProgress: false
+      loginFailed: true
     });
   }
 
@@ -90,18 +81,48 @@ export default class Login extends Component<Props> {
     });
   }
 
-  async handleSubmit(event) {
-    eventEmitter.emit('loginInProgress');
-
+  handleSubmit(event) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
-
-    const password = event.target[0].value;
-
-    if (password === undefined) {
+    const oldPassword = event.target[0].value;
+    const newPassword = event.target[1].value;
+    const passwordConfirm = event.target[2].value;
+    if (oldPassword !== session.walletPassword) {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Password incorrect!',
+        message:
+          'You did not enter your current password correctly. Please try again.'
+      });
       return;
     }
-    eventEmitter.emit('initializeNewSession', password);
+    if (newPassword !== passwordConfirm) {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Passwords do not match!',
+        message: 'You did not enter the same password. Please try again.'
+      });
+      return;
+    }
+    session.walletPassword = newPassword;
+    const saved = session.saveWallet(config.walletFile);
+    if (saved) {
+      remote.dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: ['OK'],
+        title: 'Saved!',
+        message: 'The password was changed successfully.'
+      });
+    } else {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Error!',
+        message: 'The password was not changed successfully. Try again.'
+      });
+    }
   }
 
   refresh() {
@@ -114,49 +135,28 @@ export default class Login extends Component<Props> {
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
     }
+
     if (this.state.importseed === true) {
       return <Redirect to="/import" />;
+    }
+    if (this.state.importkey === true) {
+      return <Redirect to="/importkey" />;
     }
     if (this.state.importCompleted === true) {
       return <Redirect to="/" />;
     }
     return (
       <div>
-        {navBar('login')}
+        {navBar('changepassword')}
         <div className="box has-background-light maincontent">
-          {this.state.loginInProgress === false && (
-          <div className="box loginbox has-background-white">
-            <form onSubmit={this.handleSubmit}>
-              <div className="field">
-                <label className="label" htmlFor="scanheight">
-                  Password
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="password"
-                      placeholder="Enter your password..."
-                      id="scanheight"
-                    />
-                  </div>
-                </label>
-              </div>
-              <div className="buttons is-right">
-                <button type="submit" className="button is-success is-large">
-                  Login
-                </button>
-              </div>
-            </form>
+          <div className="box changepasswordbox has-background-white">
+            <h2 className="title">Welcome to Proton!</h2>
+            <div className="buttons are-large">
+            <button className="button">Open</button>
+            <button className="button">Create</button>
+            <button className="button">Import</button>
+            </div>
           </div>
-          )}
-          {this.state.loginInProgress === true && (
-            <ReactLoading
-            type="spin"
-            color="#363636"
-            height="25%"
-            width="25%"
-            className="loginspinner"
-            />
-            )}
         </div>
         <div className="box has-background-grey-lighter footerbar" />
       </div>
