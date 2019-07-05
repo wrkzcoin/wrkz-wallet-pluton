@@ -147,15 +147,15 @@ export default class FirstStartup extends Component<Props> {
     }
     return (
       <div>
-        {navBar('changepassword')}
+        {navBar('login')}
         <div className="box has-background-light maincontent">
-          <div className="box changepasswordbox has-background-white">
-            <h2 className="title">Welcome to Proton!</h2>
-            <div className="buttons are-large">
-            <button className="button">Open</button>
-            <button className="button">Create</button>
-            <button className="button">Import</button>
-            </div>
+          <div className="box changepasswordbox has-background-white passwordchangebox">
+            <h1 className="title has-text-centered">Welcome to Proton!</h1>
+            <button className="button is-large is-fullwidth">Open an Existing Wallet</button>
+            <br />
+            <button className="button is-large is-fullwidth">Create a New Wallet</button>
+            <br />
+            <button className="button is-large is-fullwidth">Import from Keys or Seed</button>
           </div>
         </div>
         <div className="box has-background-grey-lighter footerbar" />

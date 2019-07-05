@@ -32,10 +32,6 @@ export const directories = [
 
 const [programDirectory, logDirectory, walletDirectory] = directories;
 
-if (config.walletFile === '') {
-  config.walletFile = `${walletDirectory}/default.wallet`;
-}
-
 if (!fs.existsSync(`${programDirectory}/config.json`)) {
   fs.writeFile(
     `${programDirectory}/config.json`,
