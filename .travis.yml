@@ -49,6 +49,7 @@ cache:
     - $HOME/.cache/electron-builder
 
 before_install:
+   - yarn install --network-timeout 1000000
    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX="g++-8"; fi
    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CC="gcc-8"; fi
 
