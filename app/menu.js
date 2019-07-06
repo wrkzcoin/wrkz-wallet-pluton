@@ -372,6 +372,14 @@ export default class MenuBuilder {
                 'https://github.com/turtlecoin/turtle-wallet-proton/issues'
               );
             }
+          },
+          {
+            label: 'Feature Request',
+            click() {
+              shell.openExternal(
+                'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+              );
+            }
           }
         ]
       }

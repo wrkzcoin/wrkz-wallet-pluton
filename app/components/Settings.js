@@ -25,22 +25,21 @@ function getNodeList() {
 
 async function checkIfCacheAPI(host, port) {
   const requestOptions = {
-      method: 'GET',
-      uri: `http://${host}:${port}/info`,
-      headers: {},
-      json: true,
-      gzip: true,
-      timeout: 5000
+    method: 'GET',
+    uri: `http://${host}:${port}/info`,
+    headers: {},
+    json: true,
+    gzip: true,
+    timeout: 5000
   };
   try {
     const result = await request(requestOptions);
     if (result.isCacheApi == null) {
-      log.debug(`${host} is a conventional daemon with no SSL.`)
+      log.debug(`${host} is a conventional daemon with no SSL.`);
       return [false, false];
-    } else {
-      log.debug(`${host} is a cached API with no SSL.`)
-      return [true, false];
     }
+    log.debug(`${host} is a cached API with no SSL.`);
+    return [true, false];
   } catch (err) {
     log.debug(`Requesting /info from node failed, retrying with SSL...`);
     try {
@@ -54,7 +53,7 @@ async function checkIfCacheAPI(host, port) {
       };
       const resultSSL = await request(requestOptionsSSL);
       if (resultSSL.isCacheApi == null) {
-        log.debug(`${host} is a conventional daemon with SSL.`)
+        log.debug(`${host} is a conventional daemon with SSL.`);
         remote.dialog.showMessageBox(null, {
           type: 'error',
           buttons: ['OK'],
@@ -63,13 +62,12 @@ async function checkIfCacheAPI(host, port) {
             'Unfortunately, proton wallet does not support conventional daemons with SSL at this time. Please select another node. See https://github.com/turtlecoin/turtlecoin-wallet-backend-js/issues/26 for details.'
         });
         return [false, true];
-      } else {
-        log.debug(`${host} is a cached API with SSL.`)
-        return [true, true];
       }
-    } catch(errSSL) {
+      log.debug(`${host} is a cached API with SSL.`);
+      return [true, true];
+    } catch (errSSL) {
       log.debug(errSSL);
-      log.debug('Both requests failed, node is down.')
+      log.debug('Both requests failed, node is down.');
       remote.dialog.showMessageBox(null, {
         type: 'error',
         buttons: ['OK'],
@@ -103,14 +101,11 @@ export default class Settings extends Component<Props> {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions(),
       transactionInProgress: false,
       importkey: false,
       importseed: false,
       nodeList: getNodeList(),
-      connectednode: `${session.daemonHost}:${
-        session.daemonPort
-      }`,
+      connectednode: `${session.daemonHost}:${session.daemonPort}`,
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
       loginFailed: false,
@@ -125,10 +120,19 @@ export default class Settings extends Component<Props> {
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
     this.findNode = this.findNode.bind(this);
     this.changeNode = this.changeNode.bind(this);
-    this.handleNodeChangeInProgress = this.handleNodeChangeInProgress.bind(this);
+    this.handleNodeChangeInProgress = this.handleNodeChangeInProgress.bind(
+      this
+    );
+    this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
+      this
+    );
   }
 
   componentDidMount() {
+    if (session.wallet !== undefined) {
+      session.wallet.setMaxListeners(1);
+      session.wallet.on('transaction', this.refreshBalanceOnNewTransaction);
+    }
     this.interval = setInterval(() => this.refresh(), 1000);
     eventEmitter.on('gotNodeFee', this.refreshNodeFee);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
@@ -139,6 +143,10 @@ export default class Settings extends Component<Props> {
   }
 
   componentWillUnmount() {
+    if (session.wallet !== undefined) {
+      session.wallet.setMaxListeners(1);
+      session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
+    }
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
@@ -148,12 +156,18 @@ export default class Settings extends Component<Props> {
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
   }
 
+  refreshBalanceOnNewTransaction() {
+    log.debug('Transaction found, refreshing balance...');
+    this.setState({
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance()
+    });
+  }
+
   refreshNodeFee() {
     this.setState({
       nodeFee: session.daemon.feeAmount,
-      connectednode: `${session.daemonHost}:${
-        session.daemonPort
-      }`,
+      connectednode: `${session.daemonHost}:${session.daemonPort}`,
       nodeChangeInProgress: false
     });
   }
@@ -192,15 +206,15 @@ export default class Settings extends Component<Props> {
     // this is pretty hacky looking but works
     const connectionString = event.target[0].value.trim();
     const splitConnectionString = connectionString.split(':', 2);
-    let [host, port] = [
-      splitConnectionString[0],
-      splitConnectionString[1]
-    ];
+    let [host, port] = [splitConnectionString[0], splitConnectionString[1]];
     if (port === undefined) {
       port = '11898';
     }
     // eslint-disable-next-line eqeqeq
-    if (host.trim() == session.daemonHost && port.trim() == session.daemonPort) {
+    if (
+      host.trim() == session.daemonHost &&
+      port.trim() == session.daemonPort
+    ) {
       return;
     }
     eventEmitter.emit('nodeChangeInProgress');
@@ -213,7 +227,7 @@ export default class Settings extends Component<Props> {
     session.swapNode(host, port, isCache, useSSL);
     this.setState({
       connectednode: connectionString
-    })
+    });
     eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
   }
 
@@ -262,11 +276,11 @@ export default class Settings extends Component<Props> {
       log.debug(`Found new node: ` + connectionString);
       this.setState({
         connectednode: connectionString
-      })
+      });
       return;
     } catch (err) {
       log.debug(err);
-      return;
+
     }
   }
 
@@ -310,17 +324,21 @@ export default class Settings extends Component<Props> {
                         value={this.state.connectednode}
                         onChange={this.handleNodeInputChange}
                       />
-                      <label className="help"><a onClick={this.findNode}>Find node...</a></label>
+                      <label className="help">
+                        <a onClick={this.findNode}>Find node...</a>
+                      </label>
                     </div>
                     {this.state.nodeChangeInProgress === true && (
                       <div className="control">
-                        <button className="button is-warning is-loading">Connect</button>
+                        <button className="button is-warning is-loading">
+                          Connect
+                        </button>
                       </div>
-                      )}
+                    )}
                     {this.state.nodeChangeInProgress === false && (
-                    <div className="control">
-                      <button className="button is-warning">Connect</button>
-                    </div>
+                      <div className="control">
+                        <button className="button is-warning">Connect</button>
+                      </div>
                     )}
                   </div>
                 </label>

@@ -31,7 +31,6 @@ export default class Receive extends Component<Props> {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions(),
       importkey: false,
       importseed: false,
       nodeFee: session.daemon.feeAmount,
@@ -42,9 +41,16 @@ export default class Receive extends Component<Props> {
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
+    this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
+      this
+    );
   }
 
   componentDidMount() {
+    if (session.wallet !== undefined) {
+      session.wallet.setMaxListeners(1);
+      session.wallet.on('transaction', this.refreshBalanceOnNewTransaction);
+    }
     this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
@@ -53,11 +59,23 @@ export default class Receive extends Component<Props> {
   }
 
   componentWillUnmount() {
+    if (session.wallet !== undefined) {
+      session.wallet.setMaxListeners(1);
+      session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
+    }
     clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
+  }
+
+  refreshBalanceOnNewTransaction() {
+    log.debug('Transaction found, refreshing balance...');
+    this.setState({
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance()
+    });
   }
 
   handleLoginFailure() {
