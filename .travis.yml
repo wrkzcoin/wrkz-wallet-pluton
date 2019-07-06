@@ -28,7 +28,6 @@ matrix:
             - xz-utils
             - xorriso
             - rpm
-
     - os: windows
       language: node_js
       node_js:
@@ -71,4 +70,4 @@ install:
     fi
 
 script:
-  - yarn package-ci
+  - yarn package
