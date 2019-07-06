@@ -42,11 +42,7 @@ before_cache:
 cache:
   yarn: true
   directories:
-    - node_modules
-    - $(npm config get prefix)/lib/node_modules
-    - flow-typed
-    - $HOME/.cache/electron
-    - $HOME/.cache/electron-builder
+    - release
 
 before_install:
    - yarn install --network-timeout 1000000
