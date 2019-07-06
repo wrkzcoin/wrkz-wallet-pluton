@@ -3,7 +3,10 @@
 // @flow
 import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
 import log from 'electron-log';
+import npmPackage from '../package.json'
 // import { session, config } from './index';
+
+const currentVersion = npmPackage.version
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -351,7 +354,7 @@ export default class MenuBuilder {
         label: 'Help',
         submenu: [
           {
-            label: 'Proton v0.0.4-beta'
+            label:  `${currentVersion}`
           },
           {
             label: 'About',

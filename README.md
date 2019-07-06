@@ -54,7 +54,13 @@ Then, to package apps for the local platform:
 ```bash
 $ yarn package
 ```
+
+## Changelog
+
+v0.0.5-beta: implement a splash screen when there's not a wallet defined to give the user a choice on what to do on startup rather than auto-creating a wallet
+
 ## License
 
 MIT © [ExtraHash](https://github.com/ExtraHash)
+
 MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate)
