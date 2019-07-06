@@ -5,7 +5,7 @@ matrix:
     - os: osx
       language: node_js
       node_js:
-        - node
+        - "lts/*"
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
@@ -13,13 +13,14 @@ matrix:
     - os: linux
       language: node_js
       node_js:
-        - node
+        - "lts/*"
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - gcc-multilib
+            - gcc-8
             - g++-8
             - g++-multilib
             - icnsutils
@@ -50,6 +51,7 @@ cache:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX="g++-8"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CC="gcc-8"; fi
 
 install:
   - yarn --ignore-engines
