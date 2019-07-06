@@ -157,23 +157,23 @@ export default class WalletSession {
   async swapNode(daemonHost, daemonPort, isCache, useSSL) {
     const saved = await this.saveWallet(this.walletFile, this.walletPassword);
     if (saved) {
-    const [programDirectory, logDirectory, walletDirectory] = directories;
-    const modifyConfig = config;
-    modifyConfig.daemonHost = daemonHost;
-    modifyConfig.daemonPort = daemonPort || 11898;
-    modifyConfig.isCache = isCache || false;
-    modifyConfig.useSSL = useSSL || false;
-    fs.writeFileSync(
-      `${programDirectory}/config.json`,
-      JSON.stringify(config, null, 4),
-      err => {
-        if (err) throw err;
-        log.debug(err);
-        return false;
-      }
-    );
-    log.debug('Wrote config file to disk.');
-    return true;
+      const [programDirectory, logDirectory, walletDirectory] = directories;
+      const modifyConfig = config;
+      modifyConfig.daemonHost = daemonHost;
+      modifyConfig.daemonPort = daemonPort || 11898;
+      modifyConfig.isCache = isCache || false;
+      modifyConfig.useSSL = useSSL || false;
+      fs.writeFileSync(
+        `${programDirectory}/config.json`,
+        JSON.stringify(config, null, 4),
+        err => {
+          if (err) throw err;
+          log.debug(err);
+          return false;
+        }
+      );
+      log.debug('Wrote config file to disk.');
+      return true;
     } else {
       return false;
     }
@@ -264,21 +264,23 @@ export default class WalletSession {
 
   saveWallet(filePath?: string) {
     if (filePath !== undefined) {
-      const saved = this.wallet.saveWalletToFile(
-        `${filePath}`,
-        this.walletPassword
-      );
-      if (!saved) {
-        log.debug('Failed to save wallet.');
+      if (this.firstStartup !== true) {
+        const saved = this.wallet.saveWalletToFile(
+          `${filePath}`,
+          this.walletPassword
+        );
+        if (!saved) {
+          log.debug('Failed to save wallet.');
+          return false;
+        }
+        if (saved) {
+          log.debug(`Wallet saved at ${filePath}`);
+          return true;
+        }
+      } else {
+        log.debug('No path provided!');
         return false;
       }
-      if (saved) {
-        log.debug(`Wallet saved at ${filePath}`);
-        return true;
-      }
-    } else {
-      log.debug('No path provided!');
-      return false;
     }
   }
 
