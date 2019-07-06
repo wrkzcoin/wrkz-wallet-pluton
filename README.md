@@ -6,11 +6,12 @@
 
 ## Installing Proton 
 
-Proton is available as a snap package...
+Download the .exe (Windows installer) or the .AppImage (Linux binary file) files from the [releases](https://github.com/turtlecoin/turtle-wallet-proton/releases) page, and run it.
+
+
+Proton is also available as a snap package...
 
 ```sudo snap install proton-wallet```
-
-Alternatively, you can download the .exe (windows) or the .AppImage (Linux) files from the [releases](https://github.com/turtlecoin/turtle-wallet-proton/releases) page.
 
 ## Development Setup
 
