@@ -50,9 +50,8 @@ cache:
     - $HOME/.cache/electron-builder
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      export CXX="g++-8" \
-      export CC="gcc-8" ; fi
+   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX="g++-8"; fi
+   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CC="gcc-8"; fi
 
 install:
   - yarn --ignore-engines
