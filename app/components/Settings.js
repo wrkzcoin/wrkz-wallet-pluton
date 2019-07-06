@@ -192,12 +192,15 @@ export default class Settings extends Component<Props> {
     // this is pretty hacky looking but works
     const connectionString = event.target[0].value.trim();
     const splitConnectionString = connectionString.split(':', 2);
-    const [host, port] = [
-      splitConnectionString[0].trim(),
-      splitConnectionString[1].trim()
+    let [host, port] = [
+      splitConnectionString[0],
+      splitConnectionString[1]
     ];
+    if (port === undefined) {
+      port = '11898';
+    }
     // eslint-disable-next-line eqeqeq
-    if (host == session.daemonHost && port == session.daemonPort) {
+    if (host.trim() == session.daemonHost && port.trim() == session.daemonPort) {
       return;
     }
     eventEmitter.emit('nodeChangeInProgress');

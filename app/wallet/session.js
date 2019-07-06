@@ -57,7 +57,7 @@ export default class WalletSession {
       }
     }
     if (!this.loginFailed && !this.firstStartup) {
-      log.debug(`Opened wallet file at ${config.walletFile}`);
+      log.debug(`Opened wallet file at ${this.walletFile}`);
       this.wallet = openWallet;
       this.syncStatus = this.getSyncStatus();
       this.address = this.wallet.getPrimaryAddress();
@@ -90,7 +90,6 @@ export default class WalletSession {
       return false;
     }
     importedWallet.saveWalletToFile(filePath, '');
-
     log.debug('Wrote config file to disk.');
     return true;
   }
@@ -155,7 +154,9 @@ export default class WalletSession {
     return true;
   }
 
-  swapNode(daemonHost, daemonPort, isCache, useSSL) {
+  async swapNode(daemonHost, daemonPort, isCache, useSSL) {
+    const saved = await this.saveWallet(this.walletFile, this.walletPassword);
+    if (saved) {
     const [programDirectory, logDirectory, walletDirectory] = directories;
     const modifyConfig = config;
     modifyConfig.daemonHost = daemonHost;
@@ -173,6 +174,9 @@ export default class WalletSession {
     );
     log.debug('Wrote config file to disk.');
     return true;
+    } else {
+      return false;
+    }
   }
 
   addAddress() {
