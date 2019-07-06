@@ -61,6 +61,7 @@ export default class Send extends Component<Props> {
     this.handleAmountChange = this.handleAmountChange.bind(this);
     this.handleTotalAmountChange = this.handleTotalAmountChange.bind(this);
     this.sendAll = this.sendAll.bind(this);
+    this.handlePaymentIDChange = this.handlePaymentIDChange.bind(this);
   }
 
   componentDidMount() {
