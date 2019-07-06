@@ -55,12 +55,6 @@ Then, to package apps for the local platform:
 $ yarn package
 ```
 
-## Changelog
-
-v0.0.5-beta: implement a splash screen when there's not a wallet defined to give the user a choice on what to do on startup rather than auto-creating a wallet
-
-v0.0.6-beta: add some autosave logic, the wallet now saves to file any time you open a new wallet or close the application automatically
-
 ## License
 
 MIT © [ExtraHash](https://github.com/ExtraHash)
