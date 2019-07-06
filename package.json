@@ -81,16 +81,13 @@
     },
     "win": {
       "target": [
-        "nsis",
-        "msi"
+        "nsis"
       ]
     },
     "linux": {
       "target": [
-        "deb",
-        "rpm",
-        "snap",
-        "AppImage"
+        "AppImage",
+        "snap"
       ],
       "category": "Development"
     },

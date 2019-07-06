@@ -6,7 +6,8 @@ import log from 'electron-log';
 import npmPackage from '../package.json'
 // import { session, config } from './index';
 
-const currentVersion = npmPackage.version
+const currentVersion = npmPackage.version;
+const productName = npmPackage.productName;
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -52,17 +53,19 @@ export default class MenuBuilder {
 
   buildDarwinTemplate() {
     const subMenuAbout = {
-      label: 'Electron',
+      label: `${productName}`,
       submenu: [
         {
-          label: 'About ElectronReact',
-          selector: 'orderFrontStandardAboutPanel:'
+          label: `About ${productName}`,
+          click: () => {
+            shell.openExternal(
+              'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+            );
+          }
         },
         { type: 'separator' },
-        { label: 'Services', submenu: [] },
-        { type: 'separator' },
         {
-          label: 'Hide ElectronReact',
+          label: `Hide ${productName}`,
           accelerator: 'Command+H',
           selector: 'hide:'
         },
@@ -83,18 +86,47 @@ export default class MenuBuilder {
       ]
     };
     const subMenuEdit = {
-      label: 'Edit',
+      label: 'File',
       submenu: [
-        { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-        { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
-        { type: 'separator' },
-        { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-        { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-        { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
         {
-          label: 'Select All',
-          accelerator: 'Command+A',
-          selector: 'selectAll:'
+          label: 'Open',
+          accelerator: 'Command+O',
+          click: () => {
+            this.handleOpen();
+          }
+        },
+        {
+          label: 'New',
+          accelerator: 'Command+N',
+          click: () => {
+            this.handleNew();
+          }
+        },
+        {
+          label: 'Restore',
+          click: () => {
+            this.handleRestore();
+          }
+        },
+        {
+          label: 'Save',
+          accelerator: 'Command+S',
+          click: () => {
+            this.handleSave();
+          }
+        },
+        {
+          label: 'Save a Copy',
+          click: () => {
+            this.handleSaveAs();
+          }
+        },
+        {
+          label: 'Close',
+          accelerator: 'Command+W',
+          click: () => {
+            this.mainWindow.close();
+          }
         }
       ]
     };
@@ -136,6 +168,23 @@ export default class MenuBuilder {
         }
       ]
     };
+    const subMenuWallet = {
+      label: 'Wallet',
+      submenu: [
+        {
+          label: 'Password',
+          click: () => {
+            this.handlePasswordChange();
+          }
+        },
+        {
+          label: 'Backup',
+          click: () => {
+            this.handleBackup();
+          }
+        }
+      ]
+    };
     const subMenuWindow = {
       label: 'Window',
       submenu: [
@@ -153,29 +202,22 @@ export default class MenuBuilder {
       label: 'Help',
       submenu: [
         {
-          label: 'Learn More',
-          click() {
-            shell.openExternal('http://electron.atom.io');
-          }
+          label:  `${currentVersion}`
         },
         {
-          label: 'Documentation',
+          label: 'Report Bug',
           click() {
             shell.openExternal(
-              'https://github.com/atom/electron/tree/master/docs#readme'
+              'https://github.com/turtlecoin/turtle-wallet-proton/issues'
             );
           }
         },
         {
-          label: 'Community Discussions',
+          label: 'Feature Request',
           click() {
-            shell.openExternal('https://discuss.atom.io/c/electron');
-          }
-        },
-        {
-          label: 'Search Issues',
-          click() {
-            shell.openExternal('https://github.com/atom/electron/issues');
+            shell.openExternal(
+              'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+            );
           }
         }
       ]
@@ -184,7 +226,7 @@ export default class MenuBuilder {
     const subMenuView =
       process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
 
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return [subMenuAbout, subMenuEdit, subMenuWallet, subMenuView, subMenuWindow, subMenuHelp];
   }
 
   handleSave() {
