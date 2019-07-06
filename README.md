@@ -1,3 +1,5 @@
+[![proton-wallet](https://snapcraft.io/proton-wallet/badge.svg)](https://snapcraft.io/proton-wallet)
+
 # Proton Wallet - a TurtleCoin Wallet
 
 <p>
