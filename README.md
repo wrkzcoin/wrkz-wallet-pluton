@@ -4,7 +4,17 @@
   Proton Wallet is a TurtleCoin wallet that uses <a href="http://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/turtlecoin/turtlecoin-wallet-backend-js">Turtlecoin-Wallet-Backend-JS</a>, <a href="https://github.com/reactjs/redux">Redux</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="http://webpack.github.io/docs/">Webpack</a> and <a href="https://github.com/gaearon/react-hot-loader">React Hot Loader</a>.
 </p>
 
-## Dependencies
+## Installing Proton 
+
+Proton is available as a snap package...
+
+```sudo snap install proton-wallet```
+
+Alternatively, you can download the .exe (windows) or the .AppImage (Linux) files from the [releases](https://github.com/turtlecoin/turtle-wallet-proton/releases page.
+
+## Development Setup
+
+Make sure you have:
 
 * Node.JS installed 
 
@@ -13,8 +23,6 @@ https://nodejs.org/
 * Yarn installed
 
 https://yarnpkg.com/en/
-
-## Install
 
 First, clone the repo via git:
 
@@ -35,7 +43,7 @@ Run the wallet.
 $ yarn start
 ```
 
-## Starting Development
+### Starting Development
 
 Start the app in the `dev` environment. This starts the renderer process in [**hot-module-replacement**](https://webpack.js.org/guides/hmr-react/) mode and starts a webpack dev server that sends hot updates to the renderer process:
 
@@ -43,7 +51,7 @@ Start the app in the `dev` environment. This starts the renderer process in [**h
 $ yarn dev
 ```
 
-## Packaging for Production
+### Packaging for Production
 
 First make sure you have the needed dependency `rpmbuild`. For example, on arch...
 
