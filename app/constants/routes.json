@@ -7,5 +7,6 @@
   "IMPORTKEY": "/importkey",
   "SETTINGS": "/settings",
   "LOGIN": "/login",
-  "CHANGEPASSWORD": "/changepassword"
+  "CHANGEPASSWORD": "/changepassword",
+  "FIRSTSTARTUP": "/firststartup"
 }

@@ -12,12 +12,14 @@ import { config, directories, eventEmitter } from '../index';
 export default class WalletSession {
   constructor(password, daemonHost, daemonPort, isCache, useSSL) {
     this.loginFailed = false;
+    this.firstStartup = false;
     const [programDirectory, logDirectory, walletDirectory] = directories;
     this.walletPassword = password || '';
     this.daemonHost = daemonHost || config.daemonHost;
     this.daemonPort = daemonPort || config.daemonPort;
     this.isCache = isCache || config.isCache;
     this.useSSL = useSSL || config.useSSL;
+    this.walletFile = config.walletFile;
 
     if (this.isCache === true && this.useSSL === false) {
       log.debug(`Starting new cached API with no SSL ${config.daemonHost}`);
@@ -30,11 +32,22 @@ export default class WalletSession {
       this.daemon = new ConventionalDaemon(this.daemonHost, this.daemonPort);
     }
 
-    let [openWallet, error] = WalletBackend.openWalletFromFile(
-      this.daemon,
-      config.walletFile,
-      this.walletPassword
-    );
+    if (this.walletFile === '') {
+      this.firstStartup = true;
+      log.debug('Initial startup detected.');
+    }
+
+    let openWallet;
+    let error;
+
+    if (!this.firstStartup) {
+      [openWallet, error] = WalletBackend.openWalletFromFile(
+        this.daemon,
+        this.walletFile,
+        this.walletPassword
+      );
+    }
+
     if (error) {
       if (error.errorCode === 1) {
         log.debug("Didn't find default wallet file, creating...");
@@ -43,8 +56,8 @@ export default class WalletSession {
         this.loginFailed = true;
       }
     }
-    if (!this.loginFailed) {
-      log.debug(`Opened wallet file at ${config.walletFile}`);
+    if (!this.loginFailed && !this.firstStartup) {
+      log.debug(`Opened wallet file at ${this.walletFile}`);
       this.wallet = openWallet;
       this.syncStatus = this.getSyncStatus();
       this.address = this.wallet.getPrimaryAddress();
@@ -60,6 +73,9 @@ export default class WalletSession {
           `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
         );
       });
+    } else {
+      this.address = '';
+      this.syncStatus = 0;
     }
   }
 
@@ -74,7 +90,6 @@ export default class WalletSession {
       return false;
     }
     importedWallet.saveWalletToFile(filePath, '');
-
     log.debug('Wrote config file to disk.');
     return true;
   }
@@ -117,9 +132,9 @@ export default class WalletSession {
   }
 
   handleWalletOpen(selectedPath: string) {
-    this.wallet.stop();
-
-    // this.wallet = undefined;
+    if (!this.firstStartup) {
+      this.wallet.stop();
+    }
     const [programDirectory, logDirectory, walletDirectory] = directories;
     const modifyConfig = config;
     modifyConfig.walletFile = selectedPath;
@@ -139,7 +154,9 @@ export default class WalletSession {
     return true;
   }
 
-  swapNode(daemonHost, daemonPort, isCache, useSSL) {
+  async swapNode(daemonHost, daemonPort, isCache, useSSL) {
+    const saved = await this.saveWallet(this.walletFile, this.walletPassword);
+    if (saved) {
     const [programDirectory, logDirectory, walletDirectory] = directories;
     const modifyConfig = config;
     modifyConfig.daemonHost = daemonHost;
@@ -157,6 +174,9 @@ export default class WalletSession {
     );
     log.debug('Wrote config file to disk.');
     return true;
+    } else {
+      return false;
+    }
   }
 
   addAddress() {
@@ -168,7 +188,7 @@ export default class WalletSession {
   }
 
   getTransactions(startIndex, numTransactions, includeFusions) {
-    if (this.loginFailed) {
+    if (this.loginFailed || this.firstStartup) {
       return [];
     }
 
@@ -189,7 +209,7 @@ export default class WalletSession {
   }
 
   getUnlockedBalance(subwallets?: Array<string>) {
-    if (this.loginFailed) {
+    if (this.loginFailed || this.firstStartup) {
       return 0;
     }
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
@@ -197,7 +217,7 @@ export default class WalletSession {
   }
 
   getLockedBalance(subwallets?: Array<string>) {
-    if (this.loginFailed) {
+    if (this.loginFailed || this.firstStartup) {
       return 0;
     }
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
@@ -205,7 +225,7 @@ export default class WalletSession {
   }
 
   getSyncStatus() {
-    if (this.loginFailed) {
+    if (this.loginFailed || this.firstStartup) {
       return 0;
     }
     let [

@@ -5,7 +5,7 @@ import fs from 'fs';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { ipcRenderer, remote, clipboard } from 'electron';
+import { ipcRenderer, remote, clipboard, ipcMain } from 'electron';
 import { WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
 import EventEmitter from 'events';
 import Root from './containers/Root';
@@ -31,10 +31,6 @@ export const directories = [
 ];
 
 const [programDirectory, logDirectory, walletDirectory] = directories;
-
-if (config.walletFile === '') {
-  config.walletFile = `${walletDirectory}/default.wallet`;
-}
 
 if (!fs.existsSync(`${programDirectory}/config.json`)) {
   fs.writeFile(
@@ -66,16 +62,22 @@ directories.forEach(function(dir) {
 
 export let session = new WalletSession();
 
-if (!session.loginFailed) {
+if (!session.loginFailed && !session.firstStartup) {
   log.debug('Initialized wallet session ', session.address);
   startWallet();
 } else {
   log.debug('Login failed, redirecting to login...');
 }
 
+ipcRenderer.on('handleClose', function(evt, route) {
+  if (!session.loginFailed && !session.firstStartup) {
+    const saved = session.saveWallet(session.walletFile);
+  }
+});
+
 // eslint-disable-next-line func-names
 ipcRenderer.on('handleSave', function(evt, route) {
-  const saved = session.saveWallet(config.walletFile);
+  const saved = session.saveWallet(session.walletFile);
   if (saved) {
     remote.dialog.showMessageBox(null, {
       type: 'info',
@@ -108,7 +110,8 @@ ipcRenderer.on('handleSaveAs', function(evt, route) {
   });
 });
 
-ipcRenderer.on('handleOpen', function(evt, route) {
+function handleOpen() {
+  session.saveWallet(session.walletFile);
   const getPaths = remote.dialog.showOpenDialog();
   if (getPaths === undefined) {
     return;
@@ -141,6 +144,7 @@ ipcRenderer.on('handleOpen', function(evt, route) {
     session = new WalletSession();
     startWallet();
     eventEmitter.emit('openNewWallet');
+
   } else {
     remote.dialog.showMessageBox(null, {
       type: 'error',
@@ -149,7 +153,10 @@ ipcRenderer.on('handleOpen', function(evt, route) {
       message: 'The wallet was not opened successfully. Try again.'
     });
   }
-});
+}
+
+ipcRenderer.on('handleOpen', handleOpen);
+eventEmitter.on('handleOpen', handleOpen);
 
 eventEmitter.on('initializeNewNode', function(
   password,
@@ -169,16 +176,7 @@ eventEmitter.on('initializeNewSession', function(password) {
   eventEmitter.emit('openNewWallet');
 });
 
-ipcRenderer.on('handleNew', function(evt, route) {
-  const userSelection = remote.dialog.showMessageBox(null, {
-    type: 'question',
-    buttons: ['Cancel', 'OK'],
-    title: 'New Wallet',
-    message: 'Press OK to select a location for your new wallet.'
-  });
-  if (userSelection !== 1) {
-    return;
-  }
+function handleNew() {
   const savePath = remote.dialog.showSaveDialog();
   if (savePath === undefined) {
     return;
@@ -215,7 +213,10 @@ ipcRenderer.on('handleNew', function(evt, route) {
       });
     }
   }
-});
+}
+
+ipcRenderer.on('handleNew', handleNew);
+eventEmitter.on('handleNew', handleNew);
 
 ipcRenderer.on('handleBackup', function(evt, route) {
   const publicAddress = session.wallet.getPrimaryAddress();

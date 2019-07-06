@@ -1,9 +1,12 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-undef */
 // @flow
-import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
+import { app, Menu, shell, BrowserWindow, dialog, ipcRenderer } from 'electron';
 import log from 'electron-log';
+import npmPackage from '../package.json'
 // import { session, config } from './index';
+
+const currentVersion = npmPackage.version
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -209,6 +212,7 @@ export default class MenuBuilder {
   }
 
   handleRestore() {
+    this.mainWindow.webContents.send('handleClose');
     log.debug('Import menu selected.');
     // seed will be 0, keys will be 1
     const userSelection = dialog.showMessageBox(null, {
@@ -351,18 +355,22 @@ export default class MenuBuilder {
         label: 'Help',
         submenu: [
           {
-            label: 'Proton v0.0.4-beta'
+            label:  `${currentVersion}`
           },
           {
             label: 'About',
             click() {
-              shell.openExternal('http://github.com/ExtraHash/proton#readme');
+              shell.openExternal(
+                'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+              );
             }
           },
           {
             label: 'Report Bug',
             click() {
-              shell.openExternal('https://github.com/ExtraHash/proton/issues');
+              shell.openExternal(
+                'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+              );
             }
           }
         ]

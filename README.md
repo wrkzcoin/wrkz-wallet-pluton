@@ -54,7 +54,9 @@ Then, to package apps for the local platform:
 ```bash
 $ yarn package
 ```
+
 ## License
 
 MIT © [ExtraHash](https://github.com/ExtraHash)
+
 MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate)

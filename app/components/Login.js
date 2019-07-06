@@ -57,7 +57,7 @@ export default class Login extends Component<Props> {
   }
 
   handleLoginInProgress() {
-    log.debug('Login in proress...');
+    log.debug('Login in progress...');
     this.setState({
       loginInProgress: true
     });

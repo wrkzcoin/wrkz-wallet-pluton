@@ -40,7 +40,8 @@ export default class Home extends Component<Props> {
       importseed: false,
       nodeFee: session.daemon.feeAmount,
       loginFailed: session.loginFailed,
-      changePassword: false
+      changePassword: false,
+      firstStartup: session.firstStartup
     };
 
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
@@ -128,7 +129,7 @@ export default class Home extends Component<Props> {
       ),
       totalTransactionCount: session.getTransactions().length,
       unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance()
+      lockedBalance: session.getLockedBalance(),
     });
   }
 
@@ -169,6 +170,11 @@ export default class Home extends Component<Props> {
   }
 
   render() {
+
+    if (this.state.firstStartup === true) {
+      return <Redirect to="/firststartup" />
+    }
+
     if (this.state.changePassword === true) {
       return <Redirect to="/changepassword" />;
     }

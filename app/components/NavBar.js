@@ -112,13 +112,7 @@ export default function navBar(activePage) {
             </div>
           </div>
         )}
-        <center>
-          {activePage === 'login' && (
-            <h1 className="title has-text-grey-darker">
-
-            </h1>
-          )}
-        </center>
+        <center>{activePage === 'login' && <h1 />}</center>
       </div>
     </React-Fragment>
   );
