@@ -4,21 +4,10 @@ about: You're having technical issues.
 labels: 'bug'
 ---
 
-<!-- Please use the following issue template or your issue will be closed. -->
+<!-- Please use the following issue template. -->
 
 <!--- Provide a general summary of the issue in the Title above -->
 
-## Prerequisites
-
-<!-- If the following boxes are not ALL checked, your issue is likely to be closed. -->
-
-- [ ] Using yarn
-- [ ] Using node 10.x
-- [ ] Using an up-to-date [`master` branch](https://github.com/electron-react-boilerplate/electron-react-boilerplate/tree/master)
-- [ ] Using latest version of devtools. See [wiki for howto update](https://github.com/electron-react-boilerplate/electron-react-boilerplate/wiki/DevTools)
-- [ ] Link to stacktrace in a Gist (for bugs)
-- [ ] For issue in production release, devtools output of `DEBUG_PROD=true yarn build && yarn start`
-- [ ] Tried solutions mentioned in [#400](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/400)
 
 ## Expected Behavior
 
@@ -48,17 +37,9 @@ labels: 'bug'
 
 4.
 
-## Context
-
-<!--- How has this issue affected you? What are you trying to accomplish? -->
-<!--- Did you make any changes to the boilerplate after cloning it? -->
-<!--- Providing context helps us come up with a solution that is most useful in the real world -->
-
 ## Your Environment
 
 <!--- Include as many relevant details about the environment you experienced the bug in -->
 
-- Node version :
-- Version or Branch used :
+- Version used :
 - Operating System and version :
-- Link to your project :
