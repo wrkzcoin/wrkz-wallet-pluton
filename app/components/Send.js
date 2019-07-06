@@ -36,11 +36,13 @@ export default class Send extends Component<Props> {
       transactionInProgress: false,
       importkey: false,
       importseed: false,
-      nodeFee: session.daemon.feeAmount,
+      nodeFee: session.daemon.feeAmount || 0,
       transactionComplete: false,
       paymentID: '',
       changePassword: false,
-      loginFailed: false
+      loginFailed: false,
+      enteredAmount: '',
+      totalAmount: ''
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -56,6 +58,10 @@ export default class Send extends Component<Props> {
     this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
       this
     );
+    this.handleAmountChange = this.handleAmountChange.bind(this);
+    this.handleTotalAmountChange = this.handleTotalAmountChange.bind(this);
+    this.sendAll = this.sendAll.bind(this);
+    this.handlePaymentIDChange = this.handlePaymentIDChange.bind(this);
   }
 
   componentDidMount() {
@@ -127,6 +133,44 @@ export default class Send extends Component<Props> {
     });
   }
 
+  handleAmountChange(event) {
+    const amount = event.target.value;
+    if (amount === '') {
+      this.setState({
+        enteredAmount: amount,
+        totalAmount: amount
+      });
+      return;
+    }
+    const totalAmount =
+      Number(amount) +
+      0.1 +
+      Number(session.atomicToHuman(session.daemon.feeAmount, false));
+    this.setState({
+      enteredAmount: amount,
+      totalAmount
+    });
+  }
+
+  handleTotalAmountChange(event) {
+    const totalAmount = event.target.value;
+    if (totalAmount === '') {
+      this.setState({
+        enteredAmount: '',
+        totalAmount: ''
+      });
+      return;
+    }
+    const amount =
+      Number(totalAmount) -
+      0.1 -
+      Number(session.atomicToHuman(session.daemon.feeAmount, false));
+    this.setState({
+      enteredAmount: amount,
+      totalAmount
+    });
+  }
+
   async handleSubmit(event) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
@@ -136,7 +180,7 @@ export default class Send extends Component<Props> {
     const [sendToAddress, amount, paymentID, fee] = [
       event.target[0].value.trim(), // sendToAddress
       session.humanToAtomic(event.target[1].value) || 0, // amount
-      event.target[2].value || undefined // paymentID
+      event.target[3].value || undefined // paymentID
     ];
 
     if (sendToAddress === '' || amount === '') {
@@ -227,7 +271,15 @@ export default class Send extends Component<Props> {
   }
 
   resetPaymentID(event) {
-    this.setState({ paymentID: '' });
+    this.setState({ paymentID: '', enteredAmount: '', totalAmount: '' });
+  }
+
+  sendAll() {
+    this.setState({
+      enteredAmount: session.atomicToHuman((this.state.unlockedBalance - 10), false),
+      totalAmount:
+        session.atomicToHuman(this.state.unlockedBalance, false)
+    });
   }
 
   render() {
@@ -269,17 +321,39 @@ export default class Send extends Component<Props> {
               </label>
             </div>
             <div className="field">
-              <label className="label" htmlFor="amount">
-                Amount
-                <div className="control">
-                  <input
-                    className="input is-large"
-                    type="text"
-                    placeholder="How much TRTL to send (eg. 100)"
-                    id="amount"
-                  />
+              <div className="control">
+                <div className="columns">
+                  <div className="column">
+                    <label className="label" htmlFor="amount">
+                      Amount to Send
+                      <input
+                        className="input is-large"
+                        type="text"
+                        placeholder="How much TRTL to send (eg. 100)"
+                        id="amount"
+                        value={this.state.enteredAmount}
+                        onChange={this.handleAmountChange}
+                      />
+                      <label className="help">
+                        <a onClick={this.sendAll}>Send All</a>
+                      </label>
+                    </label>
+                  </div>
+                  <div className="column">
+                    <label className="label" htmlFor="totalamount">
+                      Total with Fees
+                      <input
+                        className="input is-large"
+                        type="text"
+                        placeholder="The total amount including fees"
+                        id="totalamount"
+                        value={this.state.totalAmount}
+                        onChange={this.handleTotalAmountChange}
+                      />
+                    </label>
+                  </div>
                 </div>
-              </label>
+              </div>
             </div>
             <div className="field">
               <label className="label" htmlFor="paymentid">
