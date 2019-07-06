@@ -5,7 +5,7 @@ matrix:
     - os: osx
       language: node_js
       node_js:
-        - node
+        - "lts/*"
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
@@ -13,13 +13,14 @@ matrix:
     - os: linux
       language: node_js
       node_js:
-        - node
+        - "lts/*"
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
             - gcc-multilib
+            - gcc-8
             - g++-8
             - g++-multilib
             - icnsutils
@@ -27,29 +28,18 @@ matrix:
             - xz-utils
             - xorriso
             - rpm
-
     - os: windows
       language: node_js
       node_js:
-        - node
+        - "lts/*"
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
-before_cache:
-  - rm -rf $HOME/.cache/electron-builder/wine
-
-cache:
-  yarn: true
-  directories:
-    - node_modules
-    - $(npm config get prefix)/lib/node_modules
-    - flow-typed
-    - $HOME/.cache/electron
-    - $HOME/.cache/electron-builder
-
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX="g++-8"; fi
+   - yarn install --network-timeout 1000000
+   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX="g++-8"; fi
+   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CC="gcc-8"; fi
 
 install:
   - yarn --ignore-engines
@@ -68,17 +58,5 @@ install:
       :
     fi
 
-before_script:
-  # On Linux, create a "virtual display". This allows browsers to work properly
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export DISPLAY=:99.0; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sh -e /etc/init.d/xvfb start; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sleep 3; fi
-
 script:
-  - yarn package-ci
-  - yarn lint
-  - yarn flow
-  # HACK: Temporarily ignore `yarn test` on linux
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn test; fi
-  - yarn build-e2e
-  - yarn test-e2e
+  - yarn package
