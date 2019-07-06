@@ -69,9 +69,15 @@ if (!session.loginFailed && !session.firstStartup) {
   log.debug('Login failed, redirecting to login...');
 }
 
+ipcRenderer.on('handleClose', function(evt, route) {
+  if (!session.loginFailed && !session.firstStartup) {
+    const saved = session.saveWallet(session.walletFile);
+  }
+});
+
 // eslint-disable-next-line func-names
 ipcRenderer.on('handleSave', function(evt, route) {
-  const saved = session.saveWallet(config.walletFile);
+  const saved = session.saveWallet(session.walletFile);
   if (saved) {
     remote.dialog.showMessageBox(null, {
       type: 'info',
@@ -105,6 +111,7 @@ ipcRenderer.on('handleSaveAs', function(evt, route) {
 });
 
 function handleOpen() {
+  session.saveWallet(session.walletFile);
   const getPaths = remote.dialog.showOpenDialog();
   if (getPaths === undefined) {
     return;

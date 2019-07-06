@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-undef */
 // @flow
-import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
+import { app, Menu, shell, BrowserWindow, dialog, ipcRenderer } from 'electron';
 import log from 'electron-log';
 import npmPackage from '../package.json'
 // import { session, config } from './index';
@@ -212,6 +212,7 @@ export default class MenuBuilder {
   }
 
   handleRestore() {
+    this.mainWindow.webContents.send('handleClose');
     log.debug('Import menu selected.');
     // seed will be 0, keys will be 1
     const userSelection = dialog.showMessageBox(null, {
