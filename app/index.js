@@ -15,7 +15,7 @@ import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 import WalletSession from './wallet/session';
 import iConfig from './constants/config';
-import npmPackage from '../package.json'
+import npmPackage from '../package.json';
 import AutoUpdater from './wallet/autoUpdater';
 export let config = iConfig;
 
@@ -24,8 +24,6 @@ eventEmitter.setMaxListeners(2);
 
 export const updater = new AutoUpdater();
 updater.getLatestVersion();
-
-
 
 log.debug(`Proton wallet started...`);
 
@@ -91,11 +89,10 @@ eventEmitter.on('updateRequired', function(updateFile) {
       "There's an update to Proton wallet. Would you like to download it?"
   });
   if (userResponse === 1) {
-    remote.shell.openExternal(
-      updateFile
-    );
+    remote.shell.openExternal(updateFile);
+    remote.app.exit();
   }
-})
+});
 
 // eslint-disable-next-line func-names
 ipcRenderer.on('handleSave', function(evt, route) {
