@@ -1,7 +1,9 @@
 /* eslint-disable func-names */
 import log from 'electron-log';
+import request from 'request-promise';
 import os from 'os';
 import fs from 'fs';
+import download from 'download';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
@@ -13,12 +15,17 @@ import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 import WalletSession from './wallet/session';
 import iConfig from './constants/config';
+import npmPackage from '../package.json'
+import AutoUpdater from './wallet/autoUpdater';
+export let config = iConfig;
 
 export const eventEmitter = new EventEmitter();
-// FIX
 eventEmitter.setMaxListeners(2);
 
-export let config = iConfig;
+export const updater = new AutoUpdater();
+updater.getLatestVersion();
+
+
 
 log.debug(`Proton wallet started...`);
 
@@ -74,6 +81,21 @@ ipcRenderer.on('handleClose', function(evt, route) {
     const saved = session.saveWallet(session.walletFile);
   }
 });
+
+eventEmitter.on('updateRequired', function(updateFile) {
+  const userResponse = remote.dialog.showMessageBox(null, {
+    type: 'info',
+    buttons: ['Cancel', 'OK'],
+    title: 'Update Required!',
+    message:
+      "There's an update to Proton wallet. Would you like to download it?"
+  });
+  if (userResponse === 1) {
+    remote.shell.openExternal(
+      updateFile
+    );
+  }
+})
 
 // eslint-disable-next-line func-names
 ipcRenderer.on('handleSave', function(evt, route) {
@@ -144,7 +166,6 @@ function handleOpen() {
     session = new WalletSession();
     startWallet();
     eventEmitter.emit('openNewWallet');
-
   } else {
     remote.dialog.showMessageBox(null, {
       type: 'error',
