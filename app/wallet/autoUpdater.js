@@ -7,36 +7,32 @@ import os from 'os';
 import { eventEmitter } from '../index';
 import npmPackage from '../../package.json';
 
+const currentVersion = npmPackage.version;
 const operatingSystem = os.platform();
 
 export default class AutoUpdater {
   getLatestVersion() {
+    log.debug('Checking for updates...');
     const options = {
       method: 'GET',
-      url: 'http://68.183.53.229:3000/latest',
+      url: `http://68.183.53.229:3000/latest/${operatingSystem}/${currentVersion}`,
       json: true
     };
     request(options, function(error, response, body) {
-      if (error) throw new Error(error);
+      if (error) {
+        log.debug('Error when contacting update server...');
+        return;
+      }
       if (semver.gt(body.latestVersion, npmPackage.version)) {
         log.debug(
           `Update required! Local version: ${
             npmPackage.version
           }, latest version: ${body.latestVersion}`
         );
-        let updateFile;
-        if (operatingSystem === 'linux') {
-          updateFile = body.downloadLinux;
-        } else if (operatingSystem === 'win32') {
-          updateFile = body.downloadWindows;
-        } else if (operatingSystem === 'darwin') {
-          updateFile = body.downloadMac;
-        } else {
-          log.debug(
-            'Unsupported operating system for automatic updates. Please see build instructions at https://github.com/turtlecoin/turtle-wallet-proton#readme'
-          );
-        }
+        const updateFile = body.downloadPath;
         eventEmitter.emit('updateRequired', updateFile);
+      } else {
+        log.debug('No update found.');
       }
       return body;
     });
