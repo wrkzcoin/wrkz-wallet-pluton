@@ -9,10 +9,10 @@ import npmPackage from '../../package.json';
 
 const currentVersion = npmPackage.version;
 const operatingSystem = os.platform();
-log.debug(operatingSystem);
 
 export default class AutoUpdater {
   getLatestVersion() {
+    log.debug('Checking for updates...');
     const options = {
       method: 'GET',
       url: `http://68.183.53.229:3000/latest/${operatingSystem}/${currentVersion}`,
@@ -23,7 +23,6 @@ export default class AutoUpdater {
         log.debug('Error when contacting update server...');
         return;
       }
-      log.debug(body);
       if (semver.gt(body.latestVersion, npmPackage.version)) {
         log.debug(
           `Update required! Local version: ${
@@ -32,6 +31,8 @@ export default class AutoUpdater {
         );
         const updateFile = body.downloadPath;
         eventEmitter.emit('updateRequired', updateFile);
+      } else {
+        log.debug('No update found.');
       }
       return body;
     });
