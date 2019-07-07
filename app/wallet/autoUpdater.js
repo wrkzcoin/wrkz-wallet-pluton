@@ -31,19 +31,6 @@ export default class AutoUpdater {
           }, latest version: ${body.latestVersion}`
         );
         const updateFile = body.downloadPath;
-        /*
-        if (operatingSystem === 'linux') {
-          updateFile = body.downloadLinux;
-        } else if (operatingSystem === 'win32') {
-          updateFile = body.downloadWindows;
-        } else if (operatingSystem === 'darwin') {
-          updateFile = body.downloadMac;
-        } else {
-          log.debug(
-            'Unsupported operating system for automatic updates. Please see build instructions at https://github.com/turtlecoin/turtle-wallet-proton#readme'
-          );
-        }
-        */
         eventEmitter.emit('updateRequired', updateFile);
       }
       return body;
