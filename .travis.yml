@@ -9,7 +9,6 @@ matrix:
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
-        - YARN_GPG=no
 
     - os: linux
       language: node_js
@@ -36,6 +35,7 @@ matrix:
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+        - YARN_GPG=no
 
 before_install:
    - yarn install --network-timeout 1000000
