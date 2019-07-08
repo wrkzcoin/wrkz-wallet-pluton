@@ -1,63 +1,66 @@
 matrix:
   allow_failures:
-    - os: windows
+  - os: windows
   include:
-    - os: osx
-      language: node_js
-      node_js:
-        - "lts/*"
-      env:
-        - ELECTRON_CACHE=$HOME/.cache/electron
-        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
-
-    - os: linux
-      language: node_js
-      node_js:
-        - "lts/*"
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-multilib
-            - gcc-8
-            - g++-8
-            - g++-multilib
-            - icnsutils
-            - graphicsmagick
-            - xz-utils
-            - xorriso
-            - rpm
-    - os: windows
-      language: node_js
-      node_js:
-        - "lts/*"
-      env:
-        - ELECTRON_CACHE=$HOME/.cache/electron
-        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
-        - YARN_GPG=no
-
+  - os: osx
+    language: node_js
+    node_js:
+    - lts/*
+    env:
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+  - os: linux
+    language: node_js
+    node_js:
+    - lts/*
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - gcc-multilib
+        - gcc-8
+        - g++-8
+        - g++-multilib
+        - icnsutils
+        - graphicsmagick
+        - xz-utils
+        - xorriso
+        - rpm
+  - os: windows
+    language: node_js
+    node_js:
+    - lts/*
+    env:
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+    - YARN_GPG=no
 before_install:
-   - yarn install --network-timeout 1000000
-   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX="g++-8"; fi
-   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CC="gcc-8"; fi
-
+- yarn install --network-timeout 1000000
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX="g++-8"; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CC="gcc-8"; fi
 install:
-  - yarn --ignore-engines
-  # On Linux, initialize "virtual display". See before_script
-  - |
-    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-      /sbin/start-stop-daemon \
-      --start \
-      --quiet \
-      --pidfile /tmp/custom_xvfb_99.pid \
-      --make-pidfile \
-      --background \
-      --exec /usr/bin/Xvfb \
-      -- :99 -ac -screen 0 1280x1024x16
-    else
-      :
-    fi
-
+- yarn --ignore-engines
+- |
+  if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+    /sbin/start-stop-daemon \
+    --start \
+    --quiet \
+    --pidfile /tmp/custom_xvfb_99.pid \
+    --make-pidfile \
+    --background \
+    --exec /usr/bin/Xvfb \
+    -- :99 -ac -screen 0 1280x1024x16
+  else
+    :
+  fi
 script:
-  - yarn package
+- yarn package
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: hQ3DG8OxIVUw6UttiZwm9vP4ZPlZLCUKDx//2AatgwjdS33Y8Vm4OK4R/Nhom8LXL+kyYyXQVPE+HkQeYy3FXiuyYZCOvoorL6X5NzwsffufzS8hKDW98VBOgNLn+sS3Qx548nIk2ZuebvWpOyJzADIRo1AKDbNsX9C69dzHmxGdYKxIy6t5yrgdmT3h8q3ya76jxcEyO4epV1jrg0Df+dbaFVESPbcVzO8YQa46e4vdjpjSOplK67Q0ONPBoP75SIihgdyQn/CjSCQV3tZ7hXgPOyfkct3DBPVh/5Ld33SexUg649hVDcMoobdL2AjTopf0HF0WU9v66wc48XIqERx9VnjDBxZ6QSfFBm7m8oSPKb5Ne0KOSNDAwr/yrRkJ9tKoofxWfV6SCN8muG4OSdXlrIi+rge8Jn472KosS+31ABhMK7oYg71ySPegjo5hidTNSIekmYw+mzJ47xO31FgaATNxThuKFwRMy2bPaHtWl6a1MwN/YqV0/l9Gv/EV8Rm2iWFp2Oj4aUVFLWymKoFiZljO9h8SFyi/UqEr1kJzNq0xlCXfBf4uL+5YqxclQnWK4oWVOBTyl/LocZ669ey3X24Y/x8xgx+cRzL5HvW/SMki+X+XGnukM/j6NRvX6bo8UhQUPJv0uEbLrkFoDTRtg1B9LyuXxTjFL0ZYU6A=
+  file: "../release/proton-wallet*"
+  on:
+    repo: ExtraHash/turtle-wallet-proton
