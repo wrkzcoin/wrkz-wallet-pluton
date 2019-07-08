@@ -56,6 +56,7 @@ script:
 - yarn package
 before_deploy:
   - rm -rf ./release/*.blockmap
+  - rm -rf ./release/*.zip
 deploy:
   provider: releases
   api_key:
