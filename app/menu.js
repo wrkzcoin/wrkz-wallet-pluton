@@ -202,7 +202,13 @@ export default class MenuBuilder {
       label: 'Help',
       submenu: [
         {
-          label:  `${currentVersion}`
+          label: `${currentVersion}`
+        },
+        {
+          label: 'Support',
+          click() {
+            shell.openExternal('https://discord.gg/P7urHQs');
+          }
         },
         {
           label: 'Report Bug',
@@ -397,7 +403,13 @@ export default class MenuBuilder {
         label: 'Help',
         submenu: [
           {
-            label:  `${currentVersion}`
+            label: `${currentVersion}`
+          },
+          {
+            label: 'Support',
+            click() {
+              shell.openExternal('https://discord.gg/P7urHQs');
+            }
           },
           {
             label: 'About',
