@@ -1,31 +1,41 @@
-[![Build Status](https://travis-ci.org/ExtraHash/proton.svg?branch=development)](https://travis-ci.org/ExtraHash/proton) [![proton-wallet](https://snapcraft.io/proton-wallet/badge.svg)](https://snapcraft.io/proton-wallet)
-
 # Proton Wallet - a TurtleCoin Wallet
+
+#### Master Build Status
+[![Build Status](https://travis-ci.org/turtlecoin/turtle-wallet-proton.svg?branch=master)](https://travis-ci.org/turtlecoin/turtle-wallet-proton)
+
+#### Development Build Status
+[![Build Status](https://travis-ci.org/turtlecoin/turtle-wallet-proton.svg?branch=development)](https://travis-ci.org/turtlecoin/turtle-wallet-proton)
 
 <p>
   Proton Wallet is a TurtleCoin wallet that uses <a href="http://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/turtlecoin/turtlecoin-wallet-backend-js">Turtlecoin-Wallet-Backend-JS</a>, <a href="https://github.com/reactjs/redux">Redux</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="http://webpack.github.io/docs/">Webpack</a> and <a href="https://github.com/gaearon/react-hot-loader">React Hot Loader</a>.
 </p>
 
-## Installing Proton 
+
+### Installing 
 
 Download the .exe (Windows installer) or the .AppImage (Linux binary file) files from the [releases](https://github.com/turtlecoin/turtle-wallet-proton/releases) page, and run it.
 
-
-Proton is also available as a snap package...
+Alternatively, if you are on a snap-enabled linux distribution or have snap installed on your PC, you can install it from the snap store or with the snap command line.
 
 ```sudo snap install proton-wallet```
 
-## Development Setup
+If you would like to package the release yourself, read on.
 
-Make sure you have:
+### Development Setup (All Platforms)
 
-* Node.JS installed 
+#### Dependencies
+
+* Node.JS (latest LTS version)
 
 https://nodejs.org/
 
-* Yarn installed
+* Yarn
 
 https://yarnpkg.com/en/
+
+* Git
+
+https://git-scm.com/downloads
 
 First, clone the repo via git:
 
@@ -54,13 +64,9 @@ Start the app in the `dev` environment. This starts the renderer process in [**h
 $ yarn dev
 ```
 
-### Packaging for Production
+### Packaging 
 
-First make sure you have the needed dependency `rpmbuild`. For example, on arch...
-
-`yay -s rpm`
-
-Then, to package apps for the local platform:
+To package apps for the local platform:
 
 ```bash
 $ yarn package
@@ -69,5 +75,3 @@ $ yarn package
 ## License
 
 MIT © [ExtraHash](https://github.com/ExtraHash)
-
-MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate)
