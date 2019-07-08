@@ -63,15 +63,13 @@ dist: xenial
 
 deploy:
   - provider: releases
-    api_key:
-      secure: $GITHUB_API
+    api_key: $GITHUB_TOKEN
     file_glob: true
     file: "release/proton-wallet*"
     skip_cleanup: true
     on:
       tags: true
   - provider: snap
-    provider: snap
     snap: ./release/proton*.snap
     channel: stable
     skip_cleanup: true
