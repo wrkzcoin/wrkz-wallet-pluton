@@ -71,7 +71,6 @@ deploy:
     on:
       tags: true
   - provider: snap
-    provider: snap
     snap: ./release/proton*.snap
     channel: stable
     skip_cleanup: true
