@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/turtlecoin/turtle-wallet-proton.svg?branch=development)](https://travis-ci.org/turtlecoin/turtle-wallet-proton) [![proton-wallet](https://snapcraft.io/proton-wallet/badge.svg)](https://snapcraft.io/proton-wallet)
+[![Build Status](https://travis-ci.org/ExtraHash/proton.svg?branch=development)](https://travis-ci.org/ExtraHash/proton) [![proton-wallet](https://snapcraft.io/proton-wallet/badge.svg)](https://snapcraft.io/proton-wallet)
 
 # Proton Wallet - a TurtleCoin Wallet
 
