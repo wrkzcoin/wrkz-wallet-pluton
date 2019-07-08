@@ -64,7 +64,7 @@ dist: xenial
 deploy:
   - provider: releases
     api_key:
-      secure: hQ3DG8OxIVUw6UttiZwm9vP4ZPlZLCUKDx//2AatgwjdS33Y8Vm4OK4R/Nhom8LXL+kyYyXQVPE+HkQeYy3FXiuyYZCOvoorL6X5NzwsffufzS8hKDW98VBOgNLn+sS3Qx548nIk2ZuebvWpOyJzADIRo1AKDbNsX9C69dzHmxGdYKxIy6t5yrgdmT3h8q3ya76jxcEyO4epV1jrg0Df+dbaFVESPbcVzO8YQa46e4vdjpjSOplK67Q0ONPBoP75SIihgdyQn/CjSCQV3tZ7hXgPOyfkct3DBPVh/5Ld33SexUg649hVDcMoobdL2AjTopf0HF0WU9v66wc48XIqERx9VnjDBxZ6QSfFBm7m8oSPKb5Ne0KOSNDAwr/yrRkJ9tKoofxWfV6SCN8muG4OSdXlrIi+rge8Jn472KosS+31ABhMK7oYg71ySPegjo5hidTNSIekmYw+mzJ47xO31FgaATNxThuKFwRMy2bPaHtWl6a1MwN/YqV0/l9Gv/EV8Rm2iWFp2Oj4aUVFLWymKoFiZljO9h8SFyi/UqEr1kJzNq0xlCXfBf4uL+5YqxclQnWK4oWVOBTyl/LocZ669ey3X24Y/x8xgx+cRzL5HvW/SMki+X+XGnukM/j6NRvX6bo8UhQUPJv0uEbLrkFoDTRtg1B9LyuXxTjFL0ZYU6A=
+    secure: suOncJ1SU/67WRY1OvlISjtwgeP8+DNI6u775W2JHLCWjlNsqUfu4iLfFupd8XJOvn8x9ktZ7VWUtlnz6jvHOVmO7qA+/jsSo4hxrrPCLzOuMS6jPlp/7i0/72uhRQLNClS7yJx45cVFwrxCbr/qm3Eq59XUxyPdedjcdtwTDUR>
     file_glob: true
     file: "release/proton-wallet*"
     skip_cleanup: true
