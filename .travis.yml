@@ -37,6 +37,8 @@ before_install:
 - yarn install --network-timeout 1000000
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX="g++-8"; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CC="gcc-8"; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export DEPLOY_SNAP=true; fi
+
 install:
 - yarn --ignore-engines
 - |
@@ -75,3 +77,4 @@ deploy:
     skip_cleanup: true
     on:
       tags: true
+      condition: $DEPLOY_SNAP = true
