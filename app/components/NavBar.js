@@ -4,7 +4,9 @@ import log from 'electron-log';
 import routes from '../constants/routes';
 import { config } from '../index';
 
+
 export default function navBar(activePage) {
+
   return (
     <React-Fragment>
       <div className="box has-background-grey-lighter headerbar">

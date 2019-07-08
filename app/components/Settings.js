@@ -109,7 +109,8 @@ export default class Settings extends Component<Props> {
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
       loginFailed: false,
-      nodeChangeInProgress: false
+      nodeChangeInProgress: false,
+      scanHeight: ''
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -126,6 +127,8 @@ export default class Settings extends Component<Props> {
     this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
       this
     );
+    this.handleScanHeightChange = this.handleScanHeightChange.bind(this);
+    this.rescanWallet = this.rescanWallet.bind(this);
   }
 
   componentDidMount() {
@@ -197,14 +200,14 @@ export default class Settings extends Component<Props> {
   }
 
   handleNodeInputChange(event) {
-    this.setState({ connectednode: event.target.value });
+    this.setState({ connectednode: event.target.value.trim() });
   }
 
   async changeNode(event) {
     event.preventDefault();
     // we're going to trim the whitespace, as well as trim any whitespace in the resulting string splits
     // this is pretty hacky looking but works
-    const connectionString = event.target[0].value.trim();
+    const connectionString = event.target[0].value;
     const splitConnectionString = connectionString.split(':', 2);
     let [host, port] = [splitConnectionString[0], splitConnectionString[1]];
     if (port === undefined) {
@@ -229,20 +232,6 @@ export default class Settings extends Component<Props> {
       connectednode: connectionString
     });
     eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
-  }
-
-  async handleSubmit(event) {
-    // We're preventing the default refresh of the page that occurs on form submit
-    event.preventDefault();
-    const [coinbaseScan, autoOptimize] = [
-      event.target[0].value, // whether or not to scan coinbase transactions
-      event.target[1].value // whether or not to keep wallet auto-optimized
-    ];
-
-    log.debug(
-      `coinbaseScan = ${coinbaseScan}`,
-      `\nautoOptimize = ${autoOptimize}`
-    );
   }
 
   handleImportFromSeed(evt, route) {
@@ -273,15 +262,62 @@ export default class Settings extends Component<Props> {
       const selectedNode = result[Math.floor(Math.random() * result.length)];
 
       const connectionString = `${selectedNode.url}:${selectedNode.port}`;
-      log.debug(`Found new node: ` + connectionString);
+      log.debug(`Found new node: ${connectionString}`);
       this.setState({
         connectednode: connectionString
       });
       return;
     } catch (err) {
       log.debug(err);
-
     }
+  }
+
+  async rescanWallet(event) {
+    event.preventDefault();
+    let scanHeight = event.target[0].value;
+    if (scanHeight === '') {
+      scanHeight = 0;
+      log.debug(scanHeight);
+    } else {
+      scanHeight = parseInt(event.target[0].value, 10);
+    }
+    if (isNaN(scanHeight)) {
+      log.debug('User provided invalid height.');
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Not a valid number',
+        message: `Please input a valid block height.`
+      });
+      this.setState({
+        scanHeight: ''
+      });
+      return;
+    }
+    const userConfirm = remote.dialog.showMessageBox(null, {
+      type: 'warning',
+      buttons: ['Cancel', 'OK'],
+      title: 'This could take a while...',
+      message: `You are about to rescan your wallet from block ${scanHeight}. Are you sure you want to do this? Rescanning can take a very long time.`
+    });
+    if (userConfirm !== 1) {
+      return;
+    }
+    log.debug(`Resetting wallet from block ${scanHeight}`);
+    this.setState({
+      scanHeight: ''
+    });
+    await session.wallet.reset(scanHeight)
+    remote.dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['OK'],
+      title: 'Reset completed successfully.',
+      message: `Your wallet is now syncing again from block ${scanHeight}.`
+    });
+  }
+
+  handleScanHeightChange(event) {
+    this.setState({ scanHeight: event.target.value.trim() });
   }
 
   refresh() {
@@ -314,10 +350,10 @@ export default class Settings extends Component<Props> {
           <div className="columns">
             <div className="column">
               <form onSubmit={this.changeNode}>
-                <label className="label has-text-grey-light">
+                <label className="label">
                   Connected Node (node:port)
                   <div className="field has-addons is-expanded">
-                    <div className="control">
+                    <div className="control is-expanded">
                       <input
                         className="input"
                         type="text"
@@ -343,7 +379,29 @@ export default class Settings extends Component<Props> {
                   </div>
                 </label>
               </form>
+              <div className="is-divider" />
+              <form onSubmit={this.rescanWallet}>
+                <label className="label">
+                  Rescan Wallet
+                  <div className="field has-addons">
+                    <div className="control is-expanded">
+                      <input
+                        className="input"
+                        type="text"
+                        placeholder="Enter a height to scan from..."
+                        value={this.state.scanHeight}
+                        onChange={this.handleScanHeightChange}
+                      />
+                      <p className="help">Defaults to 0</p>
+                    </div>
+                    <div className="control">
+                      <button className="button is-danger">Rescan</button>
+                    </div>
+                  </div>
+                </label>
+              </form>
             </div>
+            <div className="column" />
             <div className="column" />
           </div>
         </div>
