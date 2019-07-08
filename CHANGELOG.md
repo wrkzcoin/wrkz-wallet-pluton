@@ -1,5 +1,7 @@
 ## Changelog
 
+**v0.0.12:** this version brings automatic release building and deployment to both github releases and the snap store. also, it's the first non-beta release.
+
 **v0.0.11-beta:** adds a rescan wallet item to settings, allowing users to rescan their wallet from a desired block height
 
 **v0.0.10-beta:** checks on startup to see if there's an updated version and if so prompts to download it
