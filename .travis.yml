@@ -54,6 +54,8 @@ install:
   fi
 script:
 - yarn package
+before_deploy:
+  - rm -rf ./release/*.blockmap
 deploy:
   provider: releases
   api_key:
