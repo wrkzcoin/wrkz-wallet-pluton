@@ -23,63 +23,6 @@ function getNodeList() {
   });
 }
 
-async function checkIfCacheAPI(host, port) {
-  const requestOptions = {
-    method: 'GET',
-    uri: `http://${host}:${port}/info`,
-    headers: {},
-    json: true,
-    gzip: true,
-    timeout: 5000
-  };
-  try {
-    const result = await request(requestOptions);
-    if (result.isCacheApi == null) {
-      log.debug(`${host} is a conventional daemon with no SSL.`);
-      return [false, false];
-    }
-    log.debug(`${host} is a cached API with no SSL.`);
-    return [true, false];
-  } catch (err) {
-    log.debug(`Requesting /info from node failed, retrying with SSL...`);
-    try {
-      const requestOptionsSSL = {
-        method: 'GET',
-        uri: `https://${host}:${port}/info`,
-        headers: {},
-        json: true,
-        gzip: true,
-        timeout: 5000
-      };
-      const resultSSL = await request(requestOptionsSSL);
-      if (resultSSL.isCacheApi == null) {
-        log.debug(`${host} is a conventional daemon with SSL.`);
-        remote.dialog.showMessageBox(null, {
-          type: 'error',
-          buttons: ['OK'],
-          title: 'Node Not Supported',
-          message:
-            'Unfortunately, proton wallet does not support conventional daemons with SSL at this time. Please select another node. See https://github.com/turtlecoin/turtlecoin-wallet-backend-js/issues/26 for details.'
-        });
-        return [false, true];
-      }
-      log.debug(`${host} is a cached API with SSL.`);
-      return [true, true];
-    } catch (errSSL) {
-      log.debug(errSSL);
-      log.debug('Both requests failed, node is down.');
-      remote.dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: ['OK'],
-        title: 'Node is Down',
-        message:
-          'The node you selected does not appear to be responding. Try selecting another node.'
-      });
-      return [undefined, undefined];
-    }
-  }
-}
-
 type Props = {
   syncStatus: number,
   unlockedBalance: number,
@@ -110,7 +53,8 @@ export default class Settings extends Component<Props> {
       changePassword: false,
       loginFailed: false,
       nodeChangeInProgress: false,
-      scanHeight: ''
+      scanHeight: '',
+      ssl: session.daemon.ssl
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -171,13 +115,15 @@ export default class Settings extends Component<Props> {
     this.setState({
       nodeFee: session.daemon.feeAmount,
       connectednode: `${session.daemonHost}:${session.daemonPort}`,
-      nodeChangeInProgress: false
+      nodeChangeInProgress: false,
+      ssl: session.daemon.ssl
     });
   }
 
   handleNodeChangeInProgress() {
     this.setState({
-      nodeChangeInProgress: true
+      nodeChangeInProgress: true,
+      ssl: undefined
     });
   }
 
@@ -205,32 +151,25 @@ export default class Settings extends Component<Props> {
 
   async changeNode(event) {
     event.preventDefault();
-    // we're going to trim the whitespace, as well as trim any whitespace in the resulting string splits
-    // this is pretty hacky looking but works
+    this.setState({
+      connectednode: event.target[0].value
+    });
     const connectionString = event.target[0].value;
     const splitConnectionString = connectionString.split(':', 2);
     let [host, port] = [splitConnectionString[0], splitConnectionString[1]];
     if (port === undefined) {
       port = '11898';
     }
-    // eslint-disable-next-line eqeqeq
     if (
+      // eslint-disable-next-line eqeqeq
       host.trim() == session.daemonHost &&
+      // eslint-disable-next-line eqeqeq
       port.trim() == session.daemonPort
     ) {
       return;
     }
     eventEmitter.emit('nodeChangeInProgress');
-    log.debug(`Checking if ${host} is a Cache API or Conventional Daemon...`);
-    const [isCache, useSSL] = await checkIfCacheAPI(host, port);
-    if (isCache === undefined || useSSL === undefined) {
-      this.refreshNodeFee();
-      return;
-    }
-    session.swapNode(host, port, isCache, useSSL);
-    this.setState({
-      connectednode: connectionString
-    });
+    session.swapNode(host, port);
     eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
   }
 
@@ -307,7 +246,7 @@ export default class Settings extends Component<Props> {
     this.setState({
       scanHeight: ''
     });
-    await session.wallet.reset(scanHeight)
+    await session.wallet.reset(scanHeight);
     remote.dialog.showMessageBox(null, {
       type: 'info',
       buttons: ['OK'],
@@ -353,13 +292,38 @@ export default class Settings extends Component<Props> {
                 <label className="label">
                   Connected Node (node:port)
                   <div className="field has-addons is-expanded">
-                    <div className="control is-expanded">
-                      <input
-                        className="input"
-                        type="text"
-                        value={this.state.connectednode}
-                        onChange={this.handleNodeInputChange}
-                      />
+                    <div className="control is-expanded has-icons-left">
+                      {this.state.nodeChangeInProgress === false && (
+                        <input
+                          className="input has-icons-left"
+                          type="text"
+                          value={this.state.connectednode}
+                          onChange={this.handleNodeInputChange}
+                        />
+                      )}
+                      {this.state.ssl === true && (
+                        <span className="icon is-small is-left">
+                          <i className="fas fa-lock" />
+                        </span>
+                      )}
+                      {this.state.ssl === false && (
+                        <span className="icon is-small is-left">
+                          <i className="fas fa-unlock" />
+                        </span>
+                      )}
+                      {this.state.nodeChangeInProgress === true && (
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="connecting..."
+                          onChange={this.handleNodeInputChange}
+                        />
+                      )}
+                      {this.state.nodeChangeInProgress === true && (
+                      <span className="icon is-small is-left">
+                        <i className="fas fa-sync fa-spin"></i>
+                      </span>
+                      )}
                       <label className="help">
                         <a onClick={this.findNode}>Find node...</a>
                       </label>
@@ -392,7 +356,9 @@ export default class Settings extends Component<Props> {
                         value={this.state.scanHeight}
                         onChange={this.handleScanHeightChange}
                       />
-                      <p className="help">Defaults to 0</p>
+                      <p className="help">
+                        Defaults to the wallet creation block
+                      </p>
                     </div>
                     <div className="control">
                       <button className="button is-danger">Rescan</button>

@@ -2,7 +2,8 @@
 import {
   WalletBackend,
   BlockchainCacheApi,
-  ConventionalDaemon
+  ConventionalDaemon,
+  Daemon
 } from 'turtlecoin-wallet-backend';
 import app, { dialog, remote } from 'electron';
 import log from 'electron-log';
@@ -16,21 +17,13 @@ export default class WalletSession {
     const [programDirectory, logDirectory, walletDirectory] = directories;
     this.walletPassword = password || '';
     this.daemonHost = daemonHost || config.daemonHost;
-    this.daemonPort = daemonPort || config.daemonPort;
+    this.daemonPort =
+      parseInt(daemonPort, 10) || parseInt(config.daemonPort, 10);
     this.isCache = isCache || config.isCache;
     this.useSSL = useSSL || config.useSSL;
     this.walletFile = config.walletFile;
 
-    if (this.isCache === true && this.useSSL === false) {
-      log.debug(`Starting new cached API with no SSL ${config.daemonHost}`);
-      this.daemon = new BlockchainCacheApi(config.daemonHost, false);
-    } else if (this.isCache === true && this.useSSL === true) {
-      log.debug(`Starting new cached API with SSL ${config.daemonHost}`);
-      this.daemon = new BlockchainCacheApi(config.daemonHost, true);
-    } else {
-      log.debug(`Starting new conventionial daemon ${config.daemonHost}`);
-      this.daemon = new ConventionalDaemon(this.daemonHost, this.daemonPort);
-    }
+    this.daemon = new Daemon(this.daemonHost, this.daemonPort);
 
     if (this.walletFile === '') {
       this.firstStartup = true;
@@ -154,15 +147,13 @@ export default class WalletSession {
     return true;
   }
 
-  async swapNode(daemonHost, daemonPort, isCache, useSSL) {
+  async swapNode(daemonHost, daemonPort) {
     const saved = await this.saveWallet(this.walletFile, this.walletPassword);
     if (saved) {
       const [programDirectory, logDirectory, walletDirectory] = directories;
       const modifyConfig = config;
       modifyConfig.daemonHost = daemonHost;
-      modifyConfig.daemonPort = daemonPort || 11898;
-      modifyConfig.isCache = isCache || false;
-      modifyConfig.useSSL = useSSL || false;
+      modifyConfig.daemonPort = parseInt(daemonPort, 10);
       fs.writeFileSync(
         `${programDirectory}/config.json`,
         JSON.stringify(config, null, 4),
@@ -172,11 +163,15 @@ export default class WalletSession {
           return false;
         }
       );
-      log.debug('Wrote config file to disk.');
+      log.debug('Wrote config file to disk. Swapping daemon...');
+      this.daemon = new Daemon(
+        modifyConfig.daemonHost,
+        modifyConfig.daemonPort
+      );
+      await this.wallet.swapNode(this.daemon);
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 
   addAddress() {
