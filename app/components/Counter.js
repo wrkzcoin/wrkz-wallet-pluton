@@ -35,7 +35,8 @@ export default class Receive extends Component<Props> {
       importseed: false,
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
-      loginFailed: false
+      loginFailed: false,
+      gohome: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -44,6 +45,7 @@ export default class Receive extends Component<Props> {
     this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
       this
     );
+    this.handleInitialize = this.handleInitialize.bind(this);
   }
 
   componentDidMount() {
@@ -56,6 +58,8 @@ export default class Receive extends Component<Props> {
     ipcRenderer.on('importKey', this.handleImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
+    eventEmitter.on('openNewWallet', this.handleInitialize);
+
   }
 
   componentWillUnmount() {
@@ -68,6 +72,13 @@ export default class Receive extends Component<Props> {
     ipcRenderer.off('importKey', this.handleImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
+    eventEmitter.off('openNewWallet', this.handleInitialize);
+  }
+
+  handleInitialize() {
+    this.setState({
+      gohome: true
+    })
   }
 
   refreshBalanceOnNewTransaction() {
@@ -132,21 +143,20 @@ export default class Receive extends Component<Props> {
       counter,
       copyToClipboard
     } = this.props;
-
     if (this.state.changePassword === true) {
       return <Redirect to="/changepassword" />;
     }
-
     if (this.state.importkey === true) {
       return <Redirect to="/importkey" />;
     }
-
     if (this.state.importseed === true) {
       return <Redirect to="/import" />;
     }
-
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
+    }
+    if (this.state.gohome === true) {
+      return <Redirect to="/" />;
     }
 
     return (

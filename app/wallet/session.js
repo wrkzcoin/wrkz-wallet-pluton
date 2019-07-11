@@ -1,20 +1,14 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable class-methods-use-this */
-import {
-  WalletBackend,
-  BlockchainCacheApi,
-  ConventionalDaemon,
-  Daemon
-} from 'turtlecoin-wallet-backend';
-import app, { dialog, remote } from 'electron';
+import { WalletBackend, Daemon, LogLevel } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
-import { config, directories, eventEmitter } from '../index';
+import { config, directories } from '../index';
 
 export default class WalletSession {
   constructor(password, daemonHost, daemonPort, isCache, useSSL) {
     this.loginFailed = false;
     this.firstStartup = false;
-    const [programDirectory, logDirectory, walletDirectory] = directories;
     this.walletPassword = password || '';
     this.daemonHost = daemonHost || config.daemonHost;
     this.daemonPort =
@@ -54,6 +48,21 @@ export default class WalletSession {
       this.wallet = openWallet;
       this.syncStatus = this.getSyncStatus();
       this.address = this.wallet.getPrimaryAddress();
+
+      if (config.logLevel === 'DEBUG') {
+        this.wallet.setLogLevel(LogLevel.DEBUG);
+        this.wallet.setLoggerCallback(
+          (prettyMessage, message, level, categories) => {
+            const logStream = fs.createWriteStream(
+              `${directories[1]}/protonwallet.log`,
+              {
+                flags: 'a'
+              }
+            );
+            logStream.write(`${prettyMessage}\n`);
+          }
+        );
+      }
 
       this.wallet.on('sync', (walletHeight, networkHeight) => {
         log.debug(
@@ -119,16 +128,16 @@ export default class WalletSession {
   }
 
   readConfigFromDisk() {
-    const [programDirectory, logDirectory, walletDirectory] = directories;
+    const programDirectory = directories[0];
     const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
     return JSON.parse(rawUserConfig);
   }
 
   handleWalletOpen(selectedPath: string) {
-    if (!this.firstStartup) {
+    if (!this.firstStartup && this.wallet !== undefined) {
       this.wallet.stop();
     }
-    const [programDirectory, logDirectory, walletDirectory] = directories;
+    const programDirectory = directories[0];
     const modifyConfig = config;
     modifyConfig.walletFile = selectedPath;
     log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
@@ -150,7 +159,7 @@ export default class WalletSession {
   async swapNode(daemonHost, daemonPort) {
     const saved = await this.saveWallet(this.walletFile, this.walletPassword);
     if (saved) {
-      const [programDirectory, logDirectory, walletDirectory] = directories;
+      const programDirectory = directories[0];
       const modifyConfig = config;
       modifyConfig.daemonHost = daemonHost;
       modifyConfig.daemonPort = parseInt(daemonPort, 10);
@@ -193,12 +202,12 @@ export default class WalletSession {
       includeFusions
     );
 
-    let balance = parseInt(this.wallet.getBalance());
+    let balance = parseInt(this.wallet.getBalance(), 10);
     const balances = [];
 
     for (const [index, tx] of rawTransactions.entries()) {
       balances.push([tx.timestamp, tx.hash, tx.totalAmount(), balance]);
-      balance -= parseInt(tx.totalAmount());
+      balance -= parseInt(tx.totalAmount(), 10);
     }
     return balances;
   }
@@ -207,6 +216,7 @@ export default class WalletSession {
     if (this.loginFailed || this.firstStartup) {
       return 0;
     }
+    // eslint-disable-next-line no-unused-vars
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
     return unlockedBalance;
   }
@@ -215,6 +225,7 @@ export default class WalletSession {
     if (this.loginFailed || this.firstStartup) {
       return 0;
     }
+    // eslint-disable-next-line no-unused-vars
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
     return lockedBalance;
   }
@@ -259,7 +270,7 @@ export default class WalletSession {
 
   saveWallet(filePath?: string) {
     if (filePath !== undefined) {
-      if (this.firstStartup !== true) {
+      if (this.firstStartup !== true && this.wallet !== undefined) {
         const saved = this.wallet.saveWalletToFile(
           `${filePath}`,
           this.walletPassword

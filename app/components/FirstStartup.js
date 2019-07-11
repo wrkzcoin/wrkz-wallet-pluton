@@ -52,7 +52,6 @@ export default class FirstStartup extends Component<Props> {
     eventEmitter.on('openNewWallet', this.openNewWallet);
     eventEmitter.on('importSeed', this.handleImportFromSeed);
     eventEmitter.on('importKey', this.handleImportFromKey);
-
   }
 
   componentWillUnmount() {

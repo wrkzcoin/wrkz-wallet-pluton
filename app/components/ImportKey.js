@@ -53,6 +53,7 @@ export default class Send extends Component<Props> {
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
+    eventEmitter.on('openNewWallet', this.handleInitialize);
   }
 
   componentWillUnmount() {
@@ -62,6 +63,7 @@ export default class Send extends Component<Props> {
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
+    eventEmitter.off('openNewWallet', this.handleInitialize);
   }
 
   handleLoginFailure() {

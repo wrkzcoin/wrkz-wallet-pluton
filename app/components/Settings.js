@@ -54,7 +54,9 @@ export default class Settings extends Component<Props> {
       loginFailed: false,
       nodeChangeInProgress: false,
       scanHeight: '',
-      ssl: session.daemon.ssl
+      ssl: session.daemon.ssl,
+      wallet: session.wallet,
+      gohome: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -73,6 +75,7 @@ export default class Settings extends Component<Props> {
     );
     this.handleScanHeightChange = this.handleScanHeightChange.bind(this);
     this.rescanWallet = this.rescanWallet.bind(this);
+    this.handleInitialize = this.handleInitialize.bind(this);
   }
 
   componentDidMount() {
@@ -87,6 +90,8 @@ export default class Settings extends Component<Props> {
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('newNodeConnected', this.handleNewNode);
     eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
+    eventEmitter.on('openNewWallet', this.handleInitialize);
+
   }
 
   componentWillUnmount() {
@@ -101,6 +106,14 @@ export default class Settings extends Component<Props> {
     eventEmitter.off('newNodeConnected', this.handleNewNode);
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
+    eventEmitter.off('openNewWallet', this.handleInitialize);
+
+  }
+
+  handleInitialize() {
+    this.setState({
+      gohome: true
+    })
   }
 
   refreshBalanceOnNewTransaction() {
@@ -269,19 +282,18 @@ export default class Settings extends Component<Props> {
     if (this.state.importkey === true) {
       return <Redirect to="/importkey" />;
     }
-
     if (this.state.importseed === true) {
       return <Redirect to="/import" />;
     }
-
     if (this.state.changePassword === true) {
       return <Redirect to="/changepassword" />;
     }
-
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
     }
-
+    if (this.state.gohome === true) {
+      return <Redirect to="/" />;
+    }
     return (
       <div>
         {navBar('settings')}
@@ -320,12 +332,14 @@ export default class Settings extends Component<Props> {
                         />
                       )}
                       {this.state.nodeChangeInProgress === true && (
-                      <span className="icon is-small is-left">
-                        <i className="fas fa-sync fa-spin"></i>
-                      </span>
+                        <span className="icon is-small is-left">
+                          <i className="fas fa-sync fa-spin" />
+                        </span>
                       )}
                       <label className="help">
-                        <a onClick={this.findNode}>Find node...</a>
+                        <p>
+                          <a onClick={this.findNode}>Find node...</a>
+                        </p>
                       </label>
                     </div>
                     {this.state.nodeChangeInProgress === true && (
@@ -344,28 +358,29 @@ export default class Settings extends Component<Props> {
                 </label>
               </form>
               <div className="is-divider" />
-              <form onSubmit={this.rescanWallet}>
-                <label className="label">
-                  Rescan Wallet
-                  <div className="field has-addons">
-                    <div className="control is-expanded">
-                      <input
-                        className="input"
-                        type="text"
-                        placeholder="Enter a height to scan from..."
-                        value={this.state.scanHeight}
-                        onChange={this.handleScanHeightChange}
-                      />
-                      <p className="help">
-                        Defaults to the wallet creation block
-                      </p>
+
+              {this.state.wallet && (
+                <form onSubmit={this.rescanWallet}>
+                  <label className="label">
+                    Rescan Wallet
+                    <div className="field has-addons">
+                      <div className="control is-expanded">
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="Enter a height to scan from..."
+                          value={this.state.scanHeight}
+                          onChange={this.handleScanHeightChange}
+                        />
+                        <p className="help">Defaults to 0</p>
+                      </div>
+                      <div className="control">
+                        <button className="button is-danger">Rescan</button>
+                      </div>
                     </div>
-                    <div className="control">
-                      <button className="button is-danger">Rescan</button>
-                    </div>
-                  </div>
-                </label>
-              </form>
+                  </label>
+                </form>
+              )}
             </div>
             <div className="column" />
             <div className="column" />
@@ -404,8 +419,12 @@ export default class Settings extends Component<Props> {
                       {this.state.syncStatus}%
                     </span>
                   )}
-                {session.daemon.networkBlockCount === 0 && (
-                  <span className="tag is-danger is-large">Node Offline</span>
+                {session.daemon.networkBlockCount === 0 &&
+                  session.wallet !== undefined && (
+                    <span className="tag is-danger is-large">Node Offline</span>
+                  )}
+                {session.wallet === undefined && (
+                  <span className="tag is-danger is-large">No Wallet Open</span>
                 )}
               </div>
             </div>

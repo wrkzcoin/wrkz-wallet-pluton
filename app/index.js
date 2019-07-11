@@ -47,9 +47,7 @@ if (!fs.existsSync(`${programDirectory}/config.json`)) {
     }
   );
 } else {
-  log.debug(
-    "Config file found in user's home directory, defaulting to local config..."
-  );
+  log.debug("Config file found in user's home directory, using it...");
   const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
   config = JSON.parse(rawUserConfig);
 }
@@ -76,7 +74,7 @@ if (!session.loginFailed && !session.firstStartup) {
 
 ipcRenderer.on('handleClose', function(evt, route) {
   if (!session.loginFailed && !session.firstStartup) {
-    const saved = session.saveWallet(session.walletFile);
+    session.saveWallet(session.walletFile);
   }
 });
 
@@ -162,6 +160,7 @@ function handleOpen() {
     session = null;
     session = new WalletSession();
     startWallet();
+    eventEmitter.emit('refreshLogin');
     eventEmitter.emit('openNewWallet');
   } else {
     remote.dialog.showMessageBox(null, {
@@ -221,6 +220,7 @@ function handleNew() {
       session = null;
       session = new WalletSession();
       startWallet();
+      eventEmitter.emit('refreshLogin');
       eventEmitter.emit('openNewWallet');
     } else {
       remote.dialog.showMessageBox(null, {
@@ -267,27 +267,16 @@ ipcRenderer.on('handleBackup', function(evt, route) {
   }
 });
 
-if (config.logLevel === 'DEBUG') {
-  session.wallet.setLogLevel(LogLevel.DEBUG);
-  session.wallet.setLoggerCallback(
-    (prettyMessage, message, level, categories) => {
-      const logStream = fs.createWriteStream(
-        `${logDirectory}/protonwallet.log`,
-        {
-          flags: 'a'
-        }
-      );
-      logStream.write(`${prettyMessage}\n`);
-    }
-  );
-}
-
 const store = configureStore();
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
 async function startWallet() {
-  await session.wallet.start();
+  try {
+    await session.wallet.start();
+  } catch {
+    log.debug('Password required, redirecting to login...');
+  }
   eventEmitter.emit('gotNodeFee');
 }
 

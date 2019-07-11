@@ -42,7 +42,8 @@ export default class Send extends Component<Props> {
       changePassword: false,
       loginFailed: false,
       enteredAmount: '',
-      totalAmount: ''
+      totalAmount: '',
+      gohome: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -77,6 +78,7 @@ export default class Send extends Component<Props> {
     eventEmitter.on('loginFailed', this.handleLoginFailure);
     eventEmitter.on('transactionInProgress', this.handleTransactionInProgress);
     eventEmitter.on('transactionCancel', this.handleTransactionCancel);
+    eventEmitter.on('openNewWallet', this.transactionComplete);
   }
 
   componentWillUnmount() {
@@ -92,7 +94,10 @@ export default class Send extends Component<Props> {
     eventEmitter.off('loginFailed', this.handleLoginFailure);
     eventEmitter.off('transactionInProgress', this.handleTransactionInProgress);
     eventEmitter.off('transactionCancel', this.handleTransactionCancel);
+    eventEmitter.off('openNewWallet', this.transactionComplete);
   }
+
+
 
   refreshBalanceOnNewTransaction() {
     log.debug('Transaction found, refreshing balance...');

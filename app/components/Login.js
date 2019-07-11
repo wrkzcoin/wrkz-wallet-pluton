@@ -32,13 +32,15 @@ export default class Login extends Component<Props> {
       importkey: false,
       importseed: false,
       importCompleted: false,
-      loginInProgress: false
+      loginInProgress: false,
+      userOpenedDifferentWallet: false,
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleLoginInProgress = this.handleLoginInProgress.bind(this);
+    this.refreshLogin = this.refreshLogin.bind(this);
   }
 
   componentDidMount() {
@@ -47,6 +49,7 @@ export default class Login extends Component<Props> {
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
     eventEmitter.on('loginInProgress', this.handleLoginInProgress);
+    eventEmitter.on('refreshLogin', this.refreshLogin);
   }
 
   componentWillUnmount() {
@@ -54,6 +57,9 @@ export default class Login extends Component<Props> {
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
+    eventEmitter.off('loginInProgress', this.handleLoginInProgress);
+    eventEmitter.off('refreshLogin', this.refreshLogin);
+
   }
 
   handleLoginInProgress() {
@@ -67,6 +73,12 @@ export default class Login extends Component<Props> {
     this.setState({
       loginFailed: true,
       loginInProgress: false
+    });
+  }
+
+  refreshLogin() {
+    this.setState({
+      userOpenedDifferentWallet: true
     });
   }
 
@@ -111,6 +123,9 @@ export default class Login extends Component<Props> {
   }
 
   render() {
+    if (this.state.userOpenedDifferentWallet) {
+      return <Redirect to ="/" />;
+    }
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
     }
@@ -122,7 +137,7 @@ export default class Login extends Component<Props> {
     }
     return (
       <div>
-        {navBar('login')}
+        {navBar('home')}
         <div className="box has-background-light maincontent">
           {this.state.loginInProgress === false && (
           <div className="box loginbox has-background-white">
