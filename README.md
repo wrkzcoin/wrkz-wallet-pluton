@@ -42,7 +42,7 @@ https://git-scm.com/downloads
 First, clone the repo via git:
 
 ```bash
-git clone https://github.com/ExtraHash/proton.git
+git clone https://github.com/turtlecoin/turtle-wallet-proton.git
 ```
 
 And then install the dependencies with yarn.
