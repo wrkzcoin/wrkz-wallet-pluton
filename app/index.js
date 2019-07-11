@@ -127,6 +127,21 @@ ipcRenderer.on('handleSaveAs', function(evt, route) {
   });
 });
 
+ipcRenderer.on('exportToCSV', function(evt, route) {
+  const savePath = remote.dialog.showSaveDialog();
+  if (savePath === undefined) {
+    return;
+  }
+  log.debug(`Exporting transactions to csv file at ${savePath}...`);
+  session.exportToCSV(savePath);
+  remote.dialog.showMessageBox(null, {
+    type: 'info',
+    buttons: ['OK'],
+    title: 'Saved!',
+    message: `Your transactions were successfully exported to ${savePath}.`
+  });
+});
+
 function handleOpen() {
   session.saveWallet(session.walletFile);
   const getPaths = remote.dialog.showOpenDialog();

@@ -257,6 +257,7 @@
     "bulma-extensions": "^6.2.7",
     "connected-react-router": "^6.3.2",
     "core-js": "2",
+    "csv-writer": "^1.4.0",
     "devtron": "^1.4.0",
     "download": "^7.1.0",
     "electron-context-menu": "^0.13.0",

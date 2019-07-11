@@ -4362,6 +4362,11 @@ cssstyle@^1.0.0:
   dependencies:
     cssom "0.3.x"
 
+csv-writer@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/csv-writer/-/csv-writer-1.4.0.tgz#4a574e22376f9c889c6356aca02dfabb628e7ce6"
+  integrity sha512-kJtUxRR3slfhPvMVI8ZPy1FPQcN5BogUg/qIF+wOYmZ3oDUwfQvVOZ91mQzNRbkyaieyN1IX6suqXlNYM1MCCA==
+
 currently-unhandled@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/currently-unhandled/-/currently-unhandled-0.4.1.tgz#988df33feab191ef799a61369dd76c17adf957ea"

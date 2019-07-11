@@ -259,6 +259,10 @@ export default class MenuBuilder {
     this.mainWindow.webContents.send('handlePasswordChange');
   }
 
+  handleExportToCsv() {
+    this.mainWindow.webContents.send('exportToCSV');
+  }
+
   handleRestore() {
     this.mainWindow.webContents.send('handleClose');
     log.debug('Import menu selected.');
@@ -383,22 +387,17 @@ export default class MenuBuilder {
                 }
               ]
       },
-      /*
       {
         label: '&Tools',
         submenu: [
           {
-            label: '&Preferences'
-          },
-          {
-            label: '&Pay to Many'
-          },
-          {
-            label: '&Load Offline Transaction'
+            label: '&Export to CSV',
+            click: () => {
+              this.handleExportToCsv();
+            }
           }
         ]
       },
-      */
       {
         label: 'Help',
         submenu: [

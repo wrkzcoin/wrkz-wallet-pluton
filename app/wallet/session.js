@@ -4,6 +4,7 @@ import { WalletBackend, Daemon, LogLevel } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
 import { config, directories } from '../index';
+import { createObjectCsvWriter } from 'csv-writer';
 
 export default class WalletSession {
   constructor(password, daemonHost, daemonPort, isCache, useSSL) {
@@ -79,6 +80,29 @@ export default class WalletSession {
       this.address = '';
       this.syncStatus = 0;
     }
+  }
+
+  exportToCSV(savePath) {
+    const rawTransactions = this.getTransactions();
+    const csvWriter = createObjectCsvWriter({
+      path: savePath,
+      header: [
+          { id: 'date', title: 'Date' },
+          { id: 'transactionHash', title: 'Transaction Hash' },
+          { id: 'amount', title: 'Amount' },
+          { id: 'bal', title: 'balance' },
+      ]
+    });
+    const csvData = rawTransactions.map((item) => {
+      return {
+        date: item[0],
+        transactionHash: item[1],
+        amount: item[2],
+        bal: item[3]
+      }
+    });
+    log.debug(csvData);
+    csvWriter.writeRecords(csvData);
   }
 
   handleImportFromSeed(seed: string, filePath: string, height?: number) {
