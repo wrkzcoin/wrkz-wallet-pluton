@@ -3,7 +3,6 @@ import log from 'electron-log';
 import request from 'request-promise';
 import os from 'os';
 import fs from 'fs';
-import download from 'download';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';

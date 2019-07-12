@@ -88,7 +88,9 @@ export default class WalletSession {
       path: savePath,
       header: [
           { id: 'date', title: 'Date' },
+          { id: 'blockHeight', title: 'Block Height' },
           { id: 'transactionHash', title: 'Transaction Hash' },
+          { id: 'pid', title: 'Payment ID' },
           { id: 'amount', title: 'Amount' },
           { id: 'bal', title: 'balance' },
       ]
@@ -96,7 +98,9 @@ export default class WalletSession {
     const csvData = rawTransactions.map((item) => {
       return {
         date: item[0],
+        blockHeight: item[4],
         transactionHash: item[1],
+        pid: item[5],
         amount: item[2],
         bal: item[3]
       }
@@ -230,7 +234,7 @@ export default class WalletSession {
     const balances = [];
 
     for (const [index, tx] of rawTransactions.entries()) {
-      balances.push([tx.timestamp, tx.hash, tx.totalAmount(), balance]);
+      balances.push([tx.timestamp, tx.hash, tx.totalAmount(), balance, tx.blockHeight, tx.paymentID]);
       balance -= parseInt(tx.totalAmount(), 10);
     }
     return balances;
