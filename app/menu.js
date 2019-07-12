@@ -3,7 +3,7 @@
 // @flow
 import { app, Menu, shell, BrowserWindow, dialog, ipcRenderer } from 'electron';
 import log from 'electron-log';
-import npmPackage from '../package.json'
+import npmPackage from '../package.json';
 // import { session, config } from './index';
 
 const currentVersion = npmPackage.version;
@@ -198,6 +198,22 @@ export default class MenuBuilder {
         { label: 'Bring All to Front', selector: 'arrangeInFront:' }
       ]
     };
+    const subMenuTools = {
+      label: 'Tools',
+      submenu: [
+        {
+          label: '&Tools',
+          submenu: [
+            {
+              label: '&Export to CSV',
+              click: () => {
+                this.handleExportToCsv();
+              }
+            }
+          ]
+        }
+      ]
+    };
     const subMenuHelp = {
       label: 'Help',
       submenu: [
@@ -232,7 +248,15 @@ export default class MenuBuilder {
     const subMenuView =
       process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
 
-    return [subMenuAbout, subMenuEdit, subMenuWallet, subMenuView, subMenuWindow, subMenuHelp];
+    return [
+      subMenuAbout,
+      subMenuEdit,
+      subMenuWallet,
+      subMenuView,
+      subMenuWindow,
+      subMenuTools,
+      subMenuHelp
+    ];
   }
 
   handleSave() {
