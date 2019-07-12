@@ -97,12 +97,12 @@ export default class WalletSession {
     });
     const csvData = rawTransactions.map((item) => {
       return {
-        date: item[0],
+        date: this.convertTimestamp(item[0]),
         blockHeight: item[4],
         transactionHash: item[1],
         pid: item[5],
-        amount: item[2],
-        bal: item[3]
+        amount: this.atomicToHuman(item[2], true),
+        bal: this.atomicToHuman(item[3])
       }
     });
     csvWriter.writeRecords(csvData);
