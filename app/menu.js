@@ -202,15 +202,10 @@ export default class MenuBuilder {
       label: 'Tools',
       submenu: [
         {
-          label: '&Tools',
-          submenu: [
-            {
-              label: '&Export to CSV',
-              click: () => {
-                this.handleExportToCsv();
-              }
-            }
-          ]
+          label: '&Export to CSV',
+          click: () => {
+            this.handleExportToCsv();
+          }
         }
       ]
     };
