@@ -24,8 +24,6 @@ export default class AppUpdater {
   }
 }
 
-
-
 let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
@@ -53,6 +51,21 @@ const installExtensions = async () => {
 /**
  * Add event listeners...
  */
+
+const isSingleInstance = app.requestSingleInstanceLock();
+
+if (!isSingleInstance) {
+  log.debug("There's an instance of the application already locked, terminating...");
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus();
+    }
+  })
+}
 
 app.on('window-all-closed', () => {
     app.quit();
