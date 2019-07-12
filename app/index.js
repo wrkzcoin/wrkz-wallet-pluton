@@ -131,13 +131,13 @@ ipcRenderer.on('exportToCSV', function(evt, route) {
   if (savePath === undefined) {
     return;
   }
-  log.debug(`Exporting transactions to csv file at ${savePath}...`);
+  log.debug(`Exporting transactions to csv file at ${savePath}.csv...`);
   session.exportToCSV(savePath);
   remote.dialog.showMessageBox(null, {
     type: 'info',
     buttons: ['OK'],
     title: 'Saved!',
-    message: `Your transactions were successfully exported to ${savePath}.`
+    message: `Your transactions were successfully exported to ${savePath}.csv`
   });
 });
 

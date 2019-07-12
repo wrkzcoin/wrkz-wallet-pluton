@@ -85,7 +85,7 @@ export default class WalletSession {
   exportToCSV(savePath) {
     const rawTransactions = this.getTransactions();
     const csvWriter = createObjectCsvWriter({
-      path: savePath,
+      path: savePath + '.csv',
       header: [
           { id: 'date', title: 'Date' },
           { id: 'blockHeight', title: 'Block Height' },
@@ -105,7 +105,6 @@ export default class WalletSession {
         bal: item[3]
       }
     });
-    log.debug(csvData);
     csvWriter.writeRecords(csvData);
   }
 

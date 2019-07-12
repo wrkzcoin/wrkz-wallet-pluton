@@ -2,6 +2,7 @@
 logs
 *.log
 
+**/*.csv
 **/*.wallet
 
 # Runtime data
