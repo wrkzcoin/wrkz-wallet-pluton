@@ -13,6 +13,11 @@
   height: 80px;
 }
 
+.darkmodetoggle {
+  position: relative;
+  left: -30px;
+}
+
 .is-right {
   position: relative;
   right: 0;

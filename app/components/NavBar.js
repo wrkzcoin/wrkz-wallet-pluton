@@ -87,15 +87,6 @@ export default function navBar(activePage) {
                 </nav>
               )}
             </div>
-            <div className="column is-one-third">
-              {activePage === 'donotshow' && (
-                <input
-                  className="input searchbar"
-                  type="text"
-                  placeholder="Search..."
-                />
-              )}
-            </div>
             <div className="column">
               {session.wallet && (
                 <Link to={routes.SETTINGS}>

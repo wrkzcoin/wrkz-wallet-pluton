@@ -56,7 +56,8 @@ export default class Settings extends Component<Props> {
       scanHeight: '',
       ssl: session.daemon.ssl,
       wallet: session.wallet,
-      gohome: false
+      gohome: false,
+      darkmode: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -91,7 +92,6 @@ export default class Settings extends Component<Props> {
     eventEmitter.on('newNodeConnected', this.handleNewNode);
     eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.on('openNewWallet', this.handleInitialize);
-
   }
 
   componentWillUnmount() {
@@ -107,13 +107,12 @@ export default class Settings extends Component<Props> {
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.off('openNewWallet', this.handleInitialize);
-
   }
 
   handleInitialize() {
     this.setState({
       gohome: true
-    })
+    });
   }
 
   refreshBalanceOnNewTransaction() {
@@ -272,6 +271,12 @@ export default class Settings extends Component<Props> {
     this.setState({ scanHeight: event.target.value.trim() });
   }
 
+  darkModeOn() {
+    this.setState({
+      darkmode: true
+    })
+  }
+
   refresh() {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus()
@@ -382,7 +387,19 @@ export default class Settings extends Component<Props> {
                 </form>
               )}
             </div>
-            <div className="column" />
+            <div className="column">
+              <br />
+              <p className="buttons is-right has-text-bold">
+                <span>
+                Enable dark mode &nbsp;&nbsp;
+                  <a className="button  is-dark" onClick={this.darkModeOn}>
+                    <span className="icon is-large">
+                      <i className="fas fa-moon" />
+                    </span>
+                  </a>
+                </span>
+              </p>
+            </div>
             <div className="column" />
           </div>
         </div>
