@@ -1,5 +1,20 @@
 ## Changelog
 
+**v0.0.16:**
+* This adds exporting to .csv which was a user requested feature to a new Tools menu
+* also only allows one wallet to be open at a time until I can experiment with the behavior
+
+
+**v0.0.15:**
+* bumps turtlecoin-wallet-backend-js dependency to latest version
+* hides the navigation when no wallet is open
+* redirects to the main Wallet page any time after opening a new wallet
+* various bug fixes
+
+**v0.0.14:** This refactors the code to use the new Daemon() constructor in the wallet-backend library, as well as simplifies the node swapping behavior and adding some pretty little icons to the node selection textbox as well, one of which is animated. 
+
+**v0.0.13:** upgrade the turtlecoin-wallet-backend dependency to fix a bug that was caused by a batch of blocks in the ~200k range, also no longer checks for an update in development mode
+
 **v0.0.12:** this version brings automatic release building and deployment to both github releases and the snap store. also, it's the first non-beta release.
 
 **v0.0.11-beta:** adds a rescan wallet item to settings, allowing users to rescan their wallet from a desired block height

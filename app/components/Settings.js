@@ -77,6 +77,8 @@ export default class Settings extends Component<Props> {
     this.handleScanHeightChange = this.handleScanHeightChange.bind(this);
     this.rescanWallet = this.rescanWallet.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
+    this.darkModeOn = this.darkModeOn.bind(this);
+    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
   componentDidMount() {
@@ -274,7 +276,13 @@ export default class Settings extends Component<Props> {
   darkModeOn() {
     this.setState({
       darkmode: true
-    })
+    });
+  }
+
+  darkModeOff() {
+    this.setState({
+      darkmode: false
+    });
   }
 
   refresh() {
@@ -389,16 +397,30 @@ export default class Settings extends Component<Props> {
             </div>
             <div className="column">
               <br />
-              <p className="buttons is-right has-text-bold">
-                <span>
-                Enable dark mode &nbsp;&nbsp;
-                  <a className="button  is-dark" onClick={this.darkModeOn}>
-                    <span className="icon is-large">
-                      <i className="fas fa-moon" />
-                    </span>
-                  </a>
-                </span>
-              </p>
+              {this.state.darkmode === false && (
+                <p className="buttons is-right">
+                  <span>
+                    Enable dark mode &nbsp;&nbsp;
+                    <a className="button  is-dark" onClick={this.darkModeOn}>
+                      <span className="icon is-large">
+                        <i className="fas fa-moon" />
+                      </span>
+                    </a>
+                  </span>
+                </p>
+              )}
+              {this.state.darkmode === true && (
+                <p className="buttons is-right">
+                  <span>
+                    Enable light mode &nbsp;&nbsp;
+                    <a className="button  is-info" onClick={this.darkModeOff}>
+                      <span className="icon is-large has-text-warning">
+                        <i className="fas fa-sun" />
+                      </span>
+                    </a>
+                  </span>
+                </p>
+              )}
             </div>
             <div className="column" />
           </div>
