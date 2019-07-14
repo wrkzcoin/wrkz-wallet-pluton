@@ -96,12 +96,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ExtraHash/proton.git"
+    "url": "git+https://github.com/turtlecoin/turtle-wallet-proton.git"
   },
   "author": {
     "name": "ExtraHash",
     "email": "extrahash@protonmail.com",
-    "url": "https://extra.trtl"
+    "url": "http://getproton.org"
   },
   "contributors": [
     {
@@ -117,7 +117,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ExtraHash/proton/issues"
+    "url": "https://github.com/turtlecoin/turtle-wallet-proton/issues"
   },
   "keywords": [
     "turtlecoin",
@@ -125,7 +125,7 @@
     "electron",
     "proton"
   ],
-  "homepage": "https://github.com/ExtraHash/proton-wallet#readme",
+  "homepage": "https://github.com/turtlecoin/turtle-wallet-proton#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
