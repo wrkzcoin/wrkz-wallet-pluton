@@ -50,7 +50,7 @@ git clone https://github.com/turtlecoin/turtle-wallet-proton.git
 And then install the dependencies with yarn.
 
 ```bash
-$ cd proton
+$ cd turtle-wallet-proton
 $ yarn
 ```
 
