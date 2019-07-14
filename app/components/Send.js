@@ -309,8 +309,8 @@ export default class Send extends Component<Props> {
 
     return (
       <div>
-        {navBar('send')}
-        <div className="box has-background-light maincontent">
+        {navBar('send', false)}
+        <div className="maincontent">
           <form onSubmit={this.handleSubmit}>
             <div className="field">
               <label className="label" htmlFor="address">
@@ -405,12 +405,12 @@ export default class Send extends Component<Props> {
             </div>
           </form>
         </div>
-        <div className="box has-background-grey-lighter footerbar">
+        <div className="footerbar has-background-light">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             {this.state.nodeFee > 0 && (
               <div className="control statusicons">
                 <div className="tags has-addons">
-                  <span className="tag is-dark is-large">Node Fee:</span>
+                  <span className="tag is-large">Node Fee:</span>
                   <span className="tag is-danger is-large">
                     {session.atomicToHuman(this.state.nodeFee, true)} TRTL
                   </span>
@@ -419,7 +419,7 @@ export default class Send extends Component<Props> {
             )}
             <div className="control statusicons">
               <div className="tags has-addons">
-                <span className="tag is-dark is-large">Sync:</span>
+                <span className="tag is-large is-white">Sync:</span>
                 {this.state.syncStatus < 100 &&
                   session.daemon.networkBlockCount !== 0 && (
                     <span className="tag is-warning is-large">
@@ -445,7 +445,7 @@ export default class Send extends Component<Props> {
             </div>
             <div className="control statusicons">
               <div className="tags has-addons">
-                <span className="tag is-dark is-large">Balance:</span>
+                <span className="tag is-large is-white">Balance:</span>
                 <span className="tag is-info is-large">
                   {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
                 </span>

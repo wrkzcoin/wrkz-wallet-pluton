@@ -4,110 +4,90 @@ import log from 'electron-log';
 import routes from '../constants/routes';
 import { config, session } from '../index';
 
-export default function navBar(activePage) {
+export default function navBar(activePage, isDarkMode) {
   return (
     <React-Fragment>
-      <div className="box has-background-grey-lighter headerbar">
-        {activePage !== 'login' && (
-          <div className="columns">
-            <div className="column is-three-fifths">
-              {session.wallet && (
-                <nav
-                  className="navbar has-background-grey-lighter"
-                  role="navigation"
-                  aria-label="main navigation"
-                >
-                  <div className="navbar-brand">
-                    {activePage === 'wallet' && (
-                      <Link to={routes.HOME}>
-                        <span className="navbar-item navbarlink is-active">
-                          <i className="fa fa-credit-card" />
-                          &nbsp;&nbsp;<strong>Wallet</strong>
-                        </span>
-                      </Link>
-                    )}
-                    {activePage !== 'wallet' && (
-                      <Link to={routes.HOME}>
-                        <span className="navbar-item navbarlink">
-                          <i className="fa fa-credit-card" />
-                          &nbsp;&nbsp;Wallet
-                        </span>
-                      </Link>
-                    )}
-                    {activePage === 'send' && (
-                      <Link to={routes.SEND}>
-                        <span className="navbar-item navbarlink is-active">
-                          <i className="fa fa-paper-plane" />
-                          &nbsp;&nbsp;<strong>Send</strong>
-                        </span>
-                      </Link>
-                    )}
-                    {activePage !== 'send' && (
-                      <Link to={routes.SEND}>
-                        <span className="navbar-item navbarlink">
-                          <i className="fa fa-paper-plane" />
-                          &nbsp;&nbsp;Send
-                        </span>
-                      </Link>
-                    )}
-                    {activePage === 'receive' && (
-                      <Link to={routes.COUNTER}>
-                        <span className="navbar-item navbarlink is-active">
-                          <i className="fa fa-arrow-circle-down" />
-                          &nbsp;&nbsp;<strong>Receive</strong>
-                        </span>
-                      </Link>
-                    )}
-                    {activePage !== 'receive' && (
-                      <Link to={routes.COUNTER}>
-                        <span className="navbar-item navbarlink">
-                          <i className="fa fa-arrow-circle-down" />
-                          &nbsp;&nbsp;Receive
-                        </span>
-                      </Link>
-                    )}
-                    {activePage === 'donotshow' && (
-                      <Link to={routes.ADDRESSES}>
-                        <span className="navbar-item navbarlink">
-                          <i className="fa fa-address-book" />
-                          &nbsp;&nbsp;<strong>Addresses</strong>
-                        </span>
-                      </Link>
-                    )}
-                    {activePage === 'donotshow' && (
-                      <Link to={routes.IMPORTKEY}>
-                        <span className="navbar-item navbarlink">
-                          <i className="fa fa-address-book" />
-                          &nbsp;&nbsp;Addresses
-                        </span>
-                      </Link>
-                    )}
-                    <Link to={routes.HOME} />
-                  </div>
-                </nav>
-              )}
-            </div>
-            <div className="column">
-              {session.wallet && (
-                <Link to={routes.SETTINGS}>
-                  {activePage !== 'settings' && (
-                    <span className="navbar-item settingscog navbarlink">
-                      <i className="fa fa-cog" />
-                      &nbsp;
-                    </span>
-                  )}
-                  {activePage === 'settings' && (
-                    <span className="navbar-item settingscog navbarlink is-active">
-                      <i className="fa fa-cog" />
-                      &nbsp;
-                    </span>
-                  )}
-                </Link>
-              )}
+    <div>
+      {isDarkMode === false && (
+      <div className="headerbar has-background-light">
+      <nav className="navbar is-light" role="navigation" aria-label="main navigation">
+      <div id="navbarBasicExample" className="navbar-menu">
+        <div className="navbar-start">
+          <Link className="navbar-item" to={routes.HOME}>
+          <i className="fa fa-credit-card" />
+            {activePage === 'wallet' && <strong>&nbsp;&nbsp;Wallet</strong>}
+            {activePage !== 'wallet' && <p>&nbsp;&nbsp;Wallet</p>}
+
+          </Link>
+
+          <Link className="navbar-item" to={routes.SEND}>
+          <i className="fa fa-paper-plane" />
+          {activePage === 'send' && <strong>&nbsp;&nbsp;Send</strong>}
+          {activePage !== 'send' && <p>&nbsp;&nbsp;Send</p>}
+
+          </Link>
+
+          <Link className="navbar-item" to={routes.COUNTER}>
+          <i className="fa fa-arrow-circle-down" />
+          {activePage === 'receive' && <strong>&nbsp;&nbsp;Receive</strong>}
+          {activePage !== 'receive' && <p>&nbsp;&nbsp;Receive</p>}
+          </Link>
+
+        </div>
+
+        <div className="navbar-end">
+          <div className="navbar-item">
+            <Link className="buttons" to={routes.SETTINGS}>
+              <div className="button">
+                <i className="fa fa-cog" />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </nav>
+      </div>
+      )}
+      {isDarkMode === true && (
+        <div className="headerbar has-background-black">
+        <nav className="navbar is-black" role="navigation" aria-label="main navigation">
+        <div id="navbarBasicExample" className="navbar-menu">
+          <div className="navbar-start">
+            <Link className="navbar-item" to={routes.HOME}>
+            <i className="fa fa-credit-card" />
+              {activePage === 'wallet' && <strong>&nbsp;&nbsp;Wallet</strong>}
+              {activePage !== 'wallet' && <p>&nbsp;&nbsp;Wallet</p>}
+
+            </Link>
+
+            <Link className="navbar-item" to={routes.SEND}>
+            <i className="fa fa-paper-plane" />
+            {activePage === 'send' && <strong>&nbsp;&nbsp;Send</strong>}
+            {activePage !== 'send' && <p>&nbsp;&nbsp;Send</p>}
+
+            </Link>
+
+            <Link className="navbar-item" to={routes.COUNTER}>
+            <i className="fa fa-arrow-circle-down" />
+            {activePage === 'receive' && <strong>&nbsp;&nbsp;Receive</strong>}
+            {activePage !== 'receive' && <p>&nbsp;&nbsp;Receive</p>}
+            </Link>
+
+          </div>
+
+          <div className="navbar-end">
+            <div className="navbar-item">
+              <Link className="buttons" to={routes.SETTINGS}>
+                <div className="button is-dark">
+                  <i className="fa fa-cog" />
+                </div>
+              </Link>
             </div>
           </div>
+        </div>
+      </nav>
+        </div>
         )}
-        <center>{activePage === 'login' && <h1 />}</center>
       </div>
     </React-Fragment>
   );

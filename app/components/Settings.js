@@ -57,7 +57,7 @@ export default class Settings extends Component<Props> {
       ssl: session.daemon.ssl,
       wallet: session.wallet,
       gohome: false,
-      darkmode: false
+      darkmode: session.darkmode
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -277,12 +277,16 @@ export default class Settings extends Component<Props> {
     this.setState({
       darkmode: true
     });
+    session.darkmode = true;
+    session.toggleDarkMode(true);
   }
 
   darkModeOff() {
     this.setState({
       darkmode: false
     });
+    session.darkmode = false;
+    session.toggleDarkMode(false);
   }
 
   refresh() {
@@ -309,8 +313,10 @@ export default class Settings extends Component<Props> {
     }
     return (
       <div>
-        {navBar('settings')}
-        <div className="box has-background-light maincontent">
+      {this.state.darkmode === false && (
+      <div>
+        {navBar('settings', false)}
+        <div className="maincontent">
           <div className="columns">
             <div className="column">
               <form onSubmit={this.changeNode}>
@@ -371,7 +377,6 @@ export default class Settings extends Component<Props> {
                 </label>
               </form>
               <div className="is-divider" />
-
               {this.state.wallet && (
                 <form onSubmit={this.rescanWallet}>
                   <label className="label">
@@ -395,42 +400,28 @@ export default class Settings extends Component<Props> {
                 </form>
               )}
             </div>
-            <div className="column">
-              <br />
-              {this.state.darkmode === false && (
-                <p className="buttons is-right">
-                  <span>
-                    Enable dark mode &nbsp;&nbsp;
-                    <a className="button  is-dark" onClick={this.darkModeOn}>
-                      <span className="icon is-large">
-                        <i className="fas fa-moon" />
-                      </span>
-                    </a>
-                  </span>
-                </p>
-              )}
-              {this.state.darkmode === true && (
-                <p className="buttons is-right">
-                  <span>
-                    Enable light mode &nbsp;&nbsp;
-                    <a className="button  is-info" onClick={this.darkModeOff}>
-                      <span className="icon is-large has-text-warning">
-                        <i className="fas fa-sun" />
-                      </span>
-                    </a>
-                  </span>
-                </p>
-              )}
-            </div>
             <div className="column" />
+            <div className="column">
+            <br />
+              <p className="buttons is-right">
+                <span>
+                  Enable dark mode &nbsp;&nbsp;
+                  <a className="button is-dark" onClick={this.darkModeOn}>
+                    <span className="icon is-large">
+                      <i className="fas fa-moon" />
+                    </span>
+                  </a>
+                </span>
+              </p>
+            </div>
           </div>
         </div>
-        <div className="box has-background-grey-lighter footerbar">
+        <div className="footerbar has-background-light">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             {this.state.nodeFee > 0 && (
               <div className="control statusicons">
                 <div className="tags has-addons">
-                  <span className="tag is-dark is-large">Node Fee:</span>
+                  <span className="tag   is-large">Node Fee:</span>
                   <span className="tag is-danger is-large">
                     {session.atomicToHuman(this.state.nodeFee, true)} TRTL
                   </span>
@@ -439,7 +430,7 @@ export default class Settings extends Component<Props> {
             )}
             <div className="control statusicons">
               <div className="tags has-addons">
-                <span className="tag is-dark is-large">Sync:</span>
+                <span className="tag is-white is-large">Sync:</span>
                 {this.state.syncStatus < 100 &&
                   session.daemon.networkBlockCount !== 0 && (
                     <span className="tag is-warning is-large">
@@ -469,7 +460,7 @@ export default class Settings extends Component<Props> {
             </div>
             <div className="control statusicons">
               <div className="tags has-addons">
-                <span className="tag is-dark is-large">Balance:</span>
+                <span className="tag is-large is-white">Balance:</span>
                 <span className="tag is-info is-large">
                   {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
                 </span>
@@ -477,6 +468,166 @@ export default class Settings extends Component<Props> {
             </div>
           </div>
         </div>
+      </div>
+      )}
+      {this.state.darkmode === true && (
+        <div>
+          {navBar('settings', true)}
+          <div className="maincontent has-background-dark">
+            <div className="columns">
+              <div className="column">
+                <form onSubmit={this.changeNode}>
+                  <label className="label has-text-white">
+                    Connected Node (node:port)
+                    <div className="field has-addons is-expanded">
+                      <div className="control is-expanded has-icons-left">
+                        {this.state.nodeChangeInProgress === false && (
+                          <input
+                            className="input has-icons-left"
+                            type="text"
+                            value={this.state.connectednode}
+                            onChange={this.handleNodeInputChange}
+                          />
+                        )}
+                        {this.state.ssl === true && (
+                          <span className="icon is-small is-left">
+                            <i className="fas fa-lock" />
+                          </span>
+                        )}
+                        {this.state.ssl === false && (
+                          <span className="icon is-small is-left">
+                            <i className="fas fa-unlock" />
+                          </span>
+                        )}
+                        {this.state.nodeChangeInProgress === true && (
+                          <input
+                            className="input"
+                            type="text"
+                            placeholder="connecting..."
+                            onChange={this.handleNodeInputChange}
+                          />
+                        )}
+                        {this.state.nodeChangeInProgress === true && (
+                          <span className="icon is-small is-left">
+                            <i className="fas fa-sync fa-spin" />
+                          </span>
+                        )}
+                        <label className="help has-text-white">
+                          <p>
+                            <a onClick={this.findNode}>Find node...</a>
+                          </p>
+                        </label>
+                      </div>
+                      {this.state.nodeChangeInProgress === true && (
+                        <div className="control">
+                          <button className="button is-warning is-loading">
+                            Connect
+                          </button>
+                        </div>
+                      )}
+                      {this.state.nodeChangeInProgress === false && (
+                        <div className="control">
+                          <button className="button is-warning">Connect</button>
+                        </div>
+                      )}
+                    </div>
+                  </label>
+                </form>
+                <div className="is-divider" />
+
+                {this.state.wallet && (
+                  <form onSubmit={this.rescanWallet}>
+                    <label className="label has-text-white">
+                      Rescan Wallet
+                      <div className="field has-addons">
+                        <div className="control is-expanded">
+                          <input
+                            className="input"
+                            type="text"
+                            placeholder="Enter a height to scan from..."
+                            value={this.state.scanHeight}
+                            onChange={this.handleScanHeightChange}
+                          />
+                          <p className="help">Defaults to 0</p>
+                        </div>
+                        <div className="control">
+                          <button className="button is-danger">Rescan</button>
+                        </div>
+                      </div>
+                    </label>
+                  </form>
+                )}
+              </div>
+              <div className="column" />
+              <div className="column">
+              <br />
+                <p className="buttons is-right">
+                  <span className="has-text-white">
+                    Enable light mode &nbsp;&nbsp;
+                    <a className="button  is-info" onClick={this.darkModeOff}>
+                      <span className="icon is-large has-text-warning">
+                        <i className="fas fa-sun" />
+                      </span>
+                    </a>
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="footerbar has-background-black">
+            <div className="field is-grouped is-grouped-multiline is-grouped-right">
+              {this.state.nodeFee > 0 && (
+                <div className="control statusicons">
+                  <div className="tags has-addons">
+                    <span className="tag is-dark is-large">Node Fee:</span>
+                    <span className="tag is-danger is-large">
+                      {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                    </span>
+                  </div>
+                </div>
+              )}
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-dark is-large">Sync:</span>
+                  {this.state.syncStatus < 100 &&
+                    session.daemon.networkBlockCount !== 0 && (
+                      <span className="tag is-warning is-large">
+                        {this.state.syncStatus}%
+                        <ReactLoading
+                          type="bubbles"
+                          color="#363636"
+                          height={30}
+                          width={30}
+                        />
+                      </span>
+                    )}
+                  {this.state.syncStatus === 100 &&
+                    session.daemon.networkBlockCount !== 0 && (
+                      <span className="tag is-success is-large">
+                        {this.state.syncStatus}%
+                      </span>
+                    )}
+                  {session.daemon.networkBlockCount === 0 &&
+                    session.wallet !== undefined && (
+                      <span className="tag is-danger is-large">Node Offline</span>
+                    )}
+                  {session.wallet === undefined && (
+                    <span className="tag is-danger is-large">No Wallet Open</span>
+                  )}
+                </div>
+              </div>
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-large is-dark">Balance:</span>
+                  <span className="tag is-info is-large">
+                    {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        )}
       </div>
     );
   }

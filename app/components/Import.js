@@ -180,8 +180,8 @@ export default class Send extends Component<Props> {
 
     return (
       <div>
-        {navBar('import')}
-        <div className="box has-background-light maincontent">
+        {navBar('import', false)}
+        <div className="maincontent">
           <form onSubmit={this.handleSubmit}>
             <div className="field">
               <label className="label" htmlFor="seed">
@@ -216,7 +216,7 @@ export default class Send extends Component<Props> {
             </div>
           </form>
         </div>
-        <div className="box has-background-grey-lighter footerbar" />
+        <div className="footerbar has-background-light" />
       </div>
     );
   }

@@ -17,6 +17,7 @@ export default class WalletSession {
     this.isCache = isCache || config.isCache;
     this.useSSL = useSSL || config.useSSL;
     this.walletFile = config.walletFile;
+    this.darkmode = config.darkmode || false;
 
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
 
@@ -80,6 +81,24 @@ export default class WalletSession {
       this.address = '';
       this.syncStatus = 0;
     }
+  }
+
+  toggleDarkMode(status) {
+    const programDirectory = directories[0];
+    const modifyConfig = config;
+    modifyConfig.darkMode = status;
+    log.debug(`Dark mode changed to ${status}`);
+    config.darkMode = status;
+    fs.writeFileSync(
+      `${programDirectory}/config.json`,
+      JSON.stringify(config, null, 4),
+      err => {
+        if (err) throw err;
+        log.debug(err);
+        return false;
+      }
+    );
+    log.debug('Wrote config file to disk.');
   }
 
   exportToCSV(savePath) {

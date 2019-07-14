@@ -11,7 +11,6 @@ import { config, session, directories, eventEmitter } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
-
 // import styles from './Send.css';
 
 type Props = {
@@ -33,7 +32,7 @@ export default class Login extends Component<Props> {
       importseed: false,
       importCompleted: false,
       loginInProgress: false,
-      userOpenedDifferentWallet: false,
+      userOpenedDifferentWallet: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -59,7 +58,6 @@ export default class Login extends Component<Props> {
     eventEmitter.off('initializeNewSession', this.handleInitialize);
     eventEmitter.off('loginInProgress', this.handleLoginInProgress);
     eventEmitter.off('refreshLogin', this.refreshLogin);
-
   }
 
   handleLoginInProgress() {
@@ -124,7 +122,7 @@ export default class Login extends Component<Props> {
 
   render() {
     if (this.state.userOpenedDifferentWallet) {
-      return <Redirect to ="/" />;
+      return <Redirect to="/" />;
     }
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
@@ -136,11 +134,9 @@ export default class Login extends Component<Props> {
       return <Redirect to="/" />;
     }
     return (
-      <div>
-        {navBar('home')}
-        <div className="box has-background-light maincontent">
-          {this.state.loginInProgress === false && (
-          <div className="box loginbox has-background-white">
+      <div className="maincontent">
+        {this.state.loginInProgress === false && (
+          <div className="box loginbox has-background-light">
             <form onSubmit={this.handleSubmit}>
               <div className="field">
                 <label className="label" htmlFor="scanheight">
@@ -162,18 +158,16 @@ export default class Login extends Component<Props> {
               </div>
             </form>
           </div>
-          )}
-          {this.state.loginInProgress === true && (
-            <ReactLoading
+        )}
+        {this.state.loginInProgress === true && (
+          <ReactLoading
             type="spin"
             color="#363636"
             height="25%"
             width="25%"
             className="loginspinner"
-            />
-            )}
-        </div>
-        <div className="box has-background-grey-lighter footerbar" />
+          />
+        )}
       </div>
     );
   }

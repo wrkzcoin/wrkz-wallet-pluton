@@ -199,9 +199,8 @@ export default class FirstStartup extends Component<Props> {
 
     return (
       <div>
-        {navBar('login')}
-        <div className="box has-background-light maincontent">
-          <div className="box changepasswordbox has-background-white passwordchangebox">
+        <div className="maincontent">
+          <div className="box changepasswordbox has-background-light passwordchangebox">
             <h1 className="title has-text-centered">Welcome to Proton!</h1>
             <button
               className="button is-large is-fullwidth"
@@ -211,21 +210,20 @@ export default class FirstStartup extends Component<Props> {
             </button>
             <br />
             <button
-              className="button is-large is-fullwidth is-grey"
+              className="button is-large is-fullwidth"
               onClick={this.createNew}
             >
               Create a New Wallet
             </button>
             <br />
             <button
-              className="button is-large is-fullwidth is-grey"
+              className="button is-large is-fullwidth"
               onClick={this.importFromKeysOrSeed}
             >
               Import from Keys or Seed
             </button>
           </div>
         </div>
-        <div className="box has-background-grey-lighter footerbar" />
       </div>
     );
   }

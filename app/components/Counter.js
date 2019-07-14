@@ -59,7 +59,6 @@ export default class Receive extends Component<Props> {
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
     eventEmitter.on('openNewWallet', this.handleInitialize);
-
   }
 
   componentWillUnmount() {
@@ -78,7 +77,7 @@ export default class Receive extends Component<Props> {
   handleInitialize() {
     this.setState({
       gohome: true
-    })
+    });
   }
 
   refreshBalanceOnNewTransaction() {
@@ -161,8 +160,8 @@ export default class Receive extends Component<Props> {
 
     return (
       <div>
-        {navBar('receive')}
-        <div className="notification width maincontent">
+        {navBar('receive', false)}
+        <div className="maincontent">
           <div className="columns">
             <div className="column is-three-quarters">
               <form>
@@ -171,7 +170,7 @@ export default class Receive extends Component<Props> {
                     Receiving Address
                     <textarea
                       className="textarea is-family-monospace is-large"
-                      rows="6"
+                      rows="7"
                       value={session.address}
                       id="receiveaddress"
                       readOnly
@@ -193,25 +192,27 @@ export default class Receive extends Component<Props> {
             </div>
             <div className="column">
               <br />
-              <center>
-                <span>
-                  <QRCode
-                    value={session.address}
-                    renderAs="svg"
-                    bgColor="#f5f5f5"
-                    size={248}
-                  />
-                </span>
-              </center>
+              <div className="box has-background-light">
+                <center>
+                  <span>
+                    <QRCode
+                      value={session.address}
+                      renderAs="svg"
+                      bgColor="#f5f5f5"
+                      size={236}
+                    />
+                  </span>
+                </center>
+              </div>
             </div>
           </div>
         </div>
-        <div className="box has-background-grey-lighter footerbar">
+        <div className="footerbar has-background-light">
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             {this.state.nodeFee > 0 && (
               <div className="control statusicons">
                 <div className="tags has-addons">
-                  <span className="tag is-dark is-large">Node Fee:</span>
+                  <span className="tag   is-large">Node Fee:</span>
                   <span className="tag is-danger is-large">
                     {session.atomicToHuman(this.state.nodeFee, true)} TRTL
                   </span>
@@ -220,7 +221,7 @@ export default class Receive extends Component<Props> {
             )}
             <div className="control statusicons">
               <div className="tags has-addons">
-                <span className="tag is-dark is-large">Sync:</span>
+                <span className="tag is-white is-large">Sync:</span>
                 {this.state.syncStatus < 100 &&
                   session.daemon.networkBlockCount !== 0 && (
                     <span className="tag is-warning is-large">
@@ -246,7 +247,7 @@ export default class Receive extends Component<Props> {
             </div>
             <div className="control statusicons">
               <div className="tags has-addons">
-                <span className="tag is-dark is-large">Balance:</span>
+                <span className="tag is-white is-large">Balance:</span>
                 <span className="tag is-info is-large">
                   {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
                 </span>
