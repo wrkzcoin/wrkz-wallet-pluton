@@ -168,15 +168,6 @@ export default class Login extends Component<Props> {
                 </div>
               </div>
             )}
-            {this.state.loginInProgress === true && (
-              <ReactLoading
-                type="spin"
-                color="#363636"
-                height="25%"
-                width="25%"
-                className="loginspinner"
-              />
-            )}
           </div>
         )}
         {this.state.darkMode === true && (
@@ -218,15 +209,6 @@ export default class Login extends Component<Props> {
                   </form>
                 </div>
               </div>
-            )}
-            {this.state.loginInProgress === true && (
-              <ReactLoading
-                type="spin"
-                color="#363636"
-                height="25%"
-                width="25%"
-                className="loginspinner"
-              />
             )}
           </div>
         )}
