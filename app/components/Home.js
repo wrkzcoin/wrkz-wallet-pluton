@@ -117,7 +117,7 @@ export default class Home extends Component<Props> {
       ),
       totalTransactionCount: session.getTransactions().length,
       unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
+      lockedBalance: session.getLockedBalance()
     });
   }
 
@@ -132,7 +132,7 @@ export default class Home extends Component<Props> {
       ),
       totalTransactionCount: session.getTransactions().length,
       unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
+      lockedBalance: session.getLockedBalance()
     });
   }
 
@@ -173,9 +173,8 @@ export default class Home extends Component<Props> {
   }
 
   render() {
-
     if (this.state.firstStartup === true) {
-      return <Redirect to="/firststartup" />
+      return <Redirect to="/firststartup" />;
     }
 
     if (this.state.changePassword === true) {
@@ -196,241 +195,251 @@ export default class Home extends Component<Props> {
 
     return (
       <div>
-      {this.state.darkmode === false && (
-      <div>
-        {navBar('wallet', false)}
-        <div className="maincontent-homescreen">
-          <table className="table is-striped is-hoverable is-fullwidth is-family-monospace">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Hash</th>
-                <th>Amount</th>
-                <th>Balance</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.transactions.map((tx, index) => {
-                return (
-                  <tr key={index}>
-                    <td>
-                      {tx[0] === 0 && (
-                        <p className="has-text-danger">Unconfirmed</p>
-                      )}
-                      {tx[0] > 0 && <p>{session.convertTimestamp(tx[0])}</p>}
-                    </td>
-                    <td>{tx[1]}</td>
-                    {tx[2] < 0 && (
-                      <td>
-                        <p className="has-text-danger is-negative-transaction">
-                          {session.atomicToHuman(tx[2], true)}
-                        </p>
-                      </td>
-                    )}
-                    {tx[2] > 0 && (
-                      <td>
-                        <p>{session.atomicToHuman(tx[2], true)}</p>
-                      </td>
-                    )}
-                    <td>
-                      <p>{session.atomicToHuman(tx[3], true)}</p>
-                    </td>
+        {this.state.darkmode === false && (
+          <div>
+            {navBar('wallet', false)}
+            <div className="maincontent-homescreen">
+              <table className="table is-striped is-hoverable is-fullwidth is-family-monospace">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Hash</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {this.state.transactions.length <
-            this.state.totalTransactionCount && (
-            <form>
-              <div className="field">
-                <div className="buttons">
-                  <button
-                    type="submit"
-                    className="button is-warning"
-                    onClick={this.handleLoadMore.bind(this)}
-                  >
-                    Load more...
-                  </button>
-                  <button
-                    type="submit"
-                    className="button is-danger"
-                    onClick={this.resetDefault.bind(this)}
-                  >
-                    Reset
-                  </button>
-                </div>
-              </div>
-            </form>
-          )}
-        </div>
-        <div className="footerbar has-background-light">
-          <div className="field is-grouped is-grouped-multiline is-grouped-right">
-            {this.state.nodeFee > 0 && (
-              <div className="control statusicons">
-                <div className="tags has-addons">
-                  <span className="tag is-large">Node Fee:</span>
-                  <span className="tag is-danger is-large">
-                    {session.atomicToHuman(this.state.nodeFee, true)} TRTL
-                  </span>
-                </div>
-              </div>
-            )}
-            <div className="control statusicons">
-              <div className="tags has-addons">
-                <span className="tag is-white is-large">Sync:</span>
-                {this.state.syncStatus < 100 &&
-                  session.daemon.networkBlockCount !== 0 && (
-                    <span className="tag is-warning is-large">
-                      {this.state.syncStatus}%
-                      <ReactLoading
-                        type="bubbles"
-                        color="#363636"
-                        height={30}
-                        width={30}
-                      />
-                    </span>
-                  )}
-                {this.state.syncStatus === 100 &&
-                  session.daemon.networkBlockCount !== 0 && (
-                    <span className="tag is-success is-large">
-                      {this.state.syncStatus}%
-                    </span>
-                  )}
-                {session.daemon.networkBlockCount === 0 && (
-                  <span className="tag is-danger is-large">Node Offline</span>
-                )}
-              </div>
-            </div>
-            <div className="control statusicons">
-              <div className="tags has-addons">
-                <span className="tag is-white is-large">Balance:</span>
-                <span className="tag is-info is-large">
-                  {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      )}
-      {this.state.darkmode === true && (
-        <div>
-          {navBar('wallet', true)}
-          <div className="maincontent-homescreen has-background-dark">
-            <table className="table is-striped is-hoverable is-fullwidth is-family-monospace table-darkmode">
-              <thead>
-                <tr>
-                  <th className="has-text-white">Date</th>
-                  <th className="has-text-white">Hash</th>
-                  <th className="has-text-white">Amount</th>
-                  <th className="has-text-white">Balance</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.transactions.map((tx, index) => {
-                  return (
-                    <tr key={index}>
-                      <td>
-                        {tx[0] === 0 && (
-                          <p className="has-text-danger">Unconfirmed</p>
+                </thead>
+                <tbody>
+                  {this.state.transactions.map((tx, index) => {
+                    return (
+                      <tr key={index}>
+                        <td>
+                          {tx[0] === 0 && (
+                            <p className="has-text-danger">Unconfirmed</p>
+                          )}
+                          {tx[0] > 0 && (
+                            <p>{session.convertTimestamp(tx[0])}</p>
+                          )}
+                        </td>
+                        <td>{tx[1]}</td>
+                        {tx[2] < 0 && (
+                          <td>
+                            <p className="has-text-danger is-negative-transaction">
+                              {session.atomicToHuman(tx[2], true)}
+                            </p>
+                          </td>
                         )}
-                        {tx[0] > 0 && <p>{session.convertTimestamp(tx[0])}</p>}
-                      </td>
-                      <td>{tx[1]}</td>
-                      {tx[2] < 0 && (
+                        {tx[2] > 0 && (
+                          <td>
+                            <p>{session.atomicToHuman(tx[2], true)}</p>
+                          </td>
+                        )}
                         <td>
-                          <p className="has-text-danger is-negative-transaction">
-                            {session.atomicToHuman(tx[2], true)}
-                          </p>
+                          <p>{session.atomicToHuman(tx[3], true)}</p>
                         </td>
-                      )}
-                      {tx[2] > 0 && (
-                        <td>
-                          <p>{session.atomicToHuman(tx[2], true)}</p>
-                        </td>
-                      )}
-                      <td>
-                        <p>{session.atomicToHuman(tx[3], true)}</p>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            {this.state.transactions.length <
-              this.state.totalTransactionCount && (
-              <form>
-                <div className="field">
-                  <div className="buttons">
-                    <button
-                      type="submit"
-                      className="button is-warning"
-                      onClick={this.handleLoadMore.bind(this)}
-                    >
-                      Load more...
-                    </button>
-                    <button
-                      type="submit"
-                      className="button is-danger"
-                      onClick={this.resetDefault.bind(this)}
-                    >
-                      Reset
-                    </button>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {this.state.transactions.length <
+                this.state.totalTransactionCount && (
+                <form>
+                  <div className="field">
+                    <div className="buttons">
+                      <button
+                        type="submit"
+                        className="button is-warning"
+                        onClick={this.handleLoadMore.bind(this)}
+                      >
+                        Load more...
+                      </button>
+                      <button
+                        type="submit"
+                        className="button is-danger"
+                        onClick={this.resetDefault.bind(this)}
+                      >
+                        Reset
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </form>
-            )}
-          </div>
-          <div className="footerbar has-background-black">
-            <div className="field is-grouped is-grouped-multiline is-grouped-right">
-              {this.state.nodeFee > 0 && (
+                </form>
+              )}
+            </div>
+            <div className="footerbar has-background-light">
+              <div className="field is-grouped is-grouped-multiline is-grouped-right">
+                {this.state.nodeFee > 0 && (
+                  <div className="control statusicons">
+                    <div className="tags has-addons">
+                      <span className="tag is-large">Node Fee:</span>
+                      <span className="tag is-danger is-large">
+                        {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                      </span>
+                    </div>
+                  </div>
+                )}
                 <div className="control statusicons">
                   <div className="tags has-addons">
-                    <span className="tag is-dark is-large">Node Fee:</span>
-                    <span className="tag is-danger is-large">
-                      {session.atomicToHuman(this.state.nodeFee, true)} TRTL
-                    </span>
+                    <span className="tag is-white is-large">Sync:</span>
+                    {this.state.syncStatus < 100 &&
+                      session.daemon.networkBlockCount !== 0 && (
+                        <span className="tag is-warning is-large">
+                          {this.state.syncStatus}%
+                          <ReactLoading
+                            type="bubbles"
+                            color="#363636"
+                            height={30}
+                            width={30}
+                          />
+                        </span>
+                      )}
+                    {this.state.syncStatus === 100 &&
+                      session.daemon.networkBlockCount !== 0 && (
+                        <span className="tag is-success is-large">
+                          {this.state.syncStatus}%
+                        </span>
+                      )}
+                    {session.daemon.networkBlockCount === 0 && (
+                      <span className="tag is-danger is-large">
+                        Node Offline
+                      </span>
+                    )}
                   </div>
                 </div>
-              )}
-              <div className="control statusicons">
-                <div className="tags has-addons">
-                  <span className="tag is-dark is-large">Sync:</span>
-                  {this.state.syncStatus < 100 &&
-                    session.daemon.networkBlockCount !== 0 && (
-                      <span className="tag is-warning is-large">
-                        {this.state.syncStatus}%
-                        <ReactLoading
-                          type="bubbles"
-                          color="#363636"
-                          height={30}
-                          width={30}
-                        />
-                      </span>
-                    )}
-                  {this.state.syncStatus === 100 &&
-                    session.daemon.networkBlockCount !== 0 && (
-                      <span className="tag is-success is-large">
-                        {this.state.syncStatus}%
-                      </span>
-                    )}
-                  {session.daemon.networkBlockCount === 0 && (
-                    <span className="tag is-danger is-large">Node Offline</span>
-                  )}
-                </div>
-              </div>
-              <div className="control statusicons">
-                <div className="tags has-addons">
-                  <span className="tag is-dark is-large">Balance:</span>
-                  <span className="tag is-info is-large">
-                    {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
-                  </span>
+                <div className="control statusicons">
+                  <div className="tags has-addons">
+                    <span className="tag is-white is-large">Balance:</span>
+                    <span className="tag is-info is-large">
+                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
+                      TRTL
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
+        {this.state.darkmode === true && (
+          <div>
+            {navBar('wallet', true)}
+            <div className="maincontent-homescreen has-background-dark">
+              <table className="table is-striped is-hoverable is-fullwidth is-family-monospace table-darkmode">
+                <thead>
+                  <tr>
+                    <th className="has-text-white">Date</th>
+                    <th className="has-text-white">Hash</th>
+                    <th className="has-text-white">Amount</th>
+                    <th className="has-text-white">Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.transactions.map((tx, index) => {
+                    return (
+                      <tr key={index}>
+                        <td>
+                          {tx[0] === 0 && (
+                            <p className="has-text-danger">Unconfirmed</p>
+                          )}
+                          {tx[0] > 0 && (
+                            <p>{session.convertTimestamp(tx[0])}</p>
+                          )}
+                        </td>
+                        <td>{tx[1]}</td>
+                        {tx[2] < 0 && (
+                          <td>
+                            <p className="has-text-danger is-negative-transaction">
+                              {session.atomicToHuman(tx[2], true)}
+                            </p>
+                          </td>
+                        )}
+                        {tx[2] > 0 && (
+                          <td>
+                            <p>{session.atomicToHuman(tx[2], true)}</p>
+                          </td>
+                        )}
+                        <td>
+                          <p>{session.atomicToHuman(tx[3], true)}</p>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {this.state.transactions.length <
+                this.state.totalTransactionCount && (
+                <form>
+                  <div className="field">
+                    <div className="buttons">
+                      <button
+                        type="submit"
+                        className="button is-warning"
+                        onClick={this.handleLoadMore.bind(this)}
+                      >
+                        Load more...
+                      </button>
+                      <button
+                        type="submit"
+                        className="button is-danger"
+                        onClick={this.resetDefault.bind(this)}
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
+            </div>
+            <div className="footerbar has-background-black">
+              <div className="field is-grouped is-grouped-multiline is-grouped-right">
+                {this.state.nodeFee > 0 && (
+                  <div className="control statusicons">
+                    <div className="tags has-addons">
+                      <span className="tag is-dark is-large">Node Fee:</span>
+                      <span className="tag is-danger is-large">
+                        {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                      </span>
+                    </div>
+                  </div>
+                )}
+                <div className="control statusicons">
+                  <div className="tags has-addons">
+                    <span className="tag is-dark is-large">Sync:</span>
+                    {this.state.syncStatus < 100 &&
+                      session.daemon.networkBlockCount !== 0 && (
+                        <span className="tag is-warning is-large">
+                          {this.state.syncStatus}%
+                          <ReactLoading
+                            type="bubbles"
+                            color="#363636"
+                            height={30}
+                            width={30}
+                          />
+                        </span>
+                      )}
+                    {this.state.syncStatus === 100 &&
+                      session.daemon.networkBlockCount !== 0 && (
+                        <span className="tag is-success is-large">
+                          {this.state.syncStatus}%
+                        </span>
+                      )}
+                    {session.daemon.networkBlockCount === 0 && (
+                      <span className="tag is-danger is-large">
+                        Node Offline
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="control statusicons">
+                  <div className="tags has-addons">
+                    <span className="tag is-dark is-large">Balance:</span>
+                    <span className="tag is-info is-large">
+                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
+                      TRTL
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     );

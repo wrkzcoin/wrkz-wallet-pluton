@@ -150,141 +150,147 @@ export default class ChangePassword extends Component<Props> {
     }
     return (
       <div>
-      {this.state.darkMode === false && (
-      <div>
-        {navBar('changepassword', false)}
-        <div className="maincontent">
-          <form onSubmit={this.handleSubmit}>
-            {session.walletPassword !== '' && (
-              <div className="field">
-                <label className="label" htmlFor="scanheight">
-                  Enter Current Password
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="password"
-                      placeholder="Enter your current password..."
-                    />
+        {this.state.darkMode === false && (
+          <div>
+            {navBar('changepassword', false)}
+            <div className="maincontent">
+              <form onSubmit={this.handleSubmit}>
+                {session.walletPassword !== '' && (
+                  <div className="field">
+                    <label className="label" htmlFor="scanheight">
+                      Enter Current Password
+                      <div className="control">
+                        <input
+                          className="input is-large"
+                          type="password"
+                          placeholder="Enter your current password..."
+                        />
+                      </div>
+                    </label>
                   </div>
-                </label>
-              </div>
-            )}
-            {session.walletPassword === '' && (
-              <div className="field">
-                <label className="label" htmlFor="scanheight">
-                  Enter Current Password
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="password"
-                      placeholder="This wallet doesn't have a password"
-                      disabled
-                    />
+                )}
+                {session.walletPassword === '' && (
+                  <div className="field">
+                    <label className="label" htmlFor="scanheight">
+                      Enter Current Password
+                      <div className="control">
+                        <input
+                          className="input is-large"
+                          type="password"
+                          placeholder="This wallet doesn't have a password"
+                          disabled
+                        />
+                      </div>
+                    </label>
                   </div>
-                </label>
-              </div>
-            )}
-            <div className="field">
-              <label className="label" htmlFor="scanheight">
-                Enter New Password
-                <div className="control">
-                  <input
-                    className="input is-large"
-                    type="password"
-                    placeholder="Enter your new password..."
-                  />
-                </div>
-              </label>
-            </div>
-            <div className="field">
-              <label className="label" htmlFor="scanheight">
-                Confirm Password
-                <div className="control">
-                  <input
-                    className="input is-large"
-                    type="password"
-                    placeholder="Enter your new password again to confirm..."
-                  />
-                </div>
-              </label>
-            </div>
-            <div className="buttons is-right">
-              <button type="submit" className="button is-success is-large">
-                Change
-              </button>
-            </div>
-          </form>
-        </div>
-        <div className="footerbar has-background-light" />
-      </div>
-      )}
-      {this.state.darkMode === true && (
-        <div>
-          {navBar('changepassword', true)}
-          <div className="maincontent has-background-dark ">
-            <form onSubmit={this.handleSubmit}>
-              {session.walletPassword !== '' && (
+                )}
                 <div className="field">
-                  <label className="label has-text-white" htmlFor="scanheight">
-                    Enter Current Password
+                  <label className="label" htmlFor="scanheight">
+                    Enter New Password
                     <div className="control">
                       <input
                         className="input is-large"
                         type="password"
-                        placeholder="Enter your current password..."
+                        placeholder="Enter your new password..."
                       />
                     </div>
                   </label>
                 </div>
-              )}
-              {session.walletPassword === '' && (
                 <div className="field">
-                  <label className="label has-text-white" htmlFor="scanheight">
-                    Enter Current Password
+                  <label className="label" htmlFor="scanheight">
+                    Confirm Password
                     <div className="control">
                       <input
                         className="input is-large"
                         type="password"
-                        placeholder="This wallet doesn't have a password"
-                        disabled
+                        placeholder="Enter your new password again to confirm..."
                       />
                     </div>
                   </label>
                 </div>
-              )}
-              <div className="field">
-                <label className="label has-text-white" htmlFor="scanheight">
-                  Enter New Password
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="password"
-                      placeholder="Enter your new password..."
-                    />
-                  </div>
-                </label>
-              </div>
-              <div className="field">
-                <label className="label has-text-white" htmlFor="scanheight">
-                  Confirm Password
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="password"
-                      placeholder="Enter your new password again to confirm..."
-                    />
-                  </div>
-                </label>
-              </div>
-              <div className="buttons is-right">
-                <button type="submit" className="button is-success is-large">
-                  Change
-                </button>
-              </div>
-            </form>
+                <div className="buttons is-right">
+                  <button type="submit" className="button is-success is-large">
+                    Change
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="footerbar has-background-light" />
           </div>
-          <div className="footerbar has-background-black" />
-        </div>
+        )}
+        {this.state.darkMode === true && (
+          <div>
+            {navBar('changepassword', true)}
+            <div className="maincontent has-background-dark ">
+              <form onSubmit={this.handleSubmit}>
+                {session.walletPassword !== '' && (
+                  <div className="field">
+                    <label
+                      className="label has-text-white"
+                      htmlFor="scanheight"
+                    >
+                      Enter Current Password
+                      <div className="control">
+                        <input
+                          className="input is-large"
+                          type="password"
+                          placeholder="Enter your current password..."
+                        />
+                      </div>
+                    </label>
+                  </div>
+                )}
+                {session.walletPassword === '' && (
+                  <div className="field">
+                    <label
+                      className="label has-text-white"
+                      htmlFor="scanheight"
+                    >
+                      Enter Current Password
+                      <div className="control">
+                        <input
+                          className="input is-large"
+                          type="password"
+                          placeholder="This wallet doesn't have a password"
+                          disabled
+                        />
+                      </div>
+                    </label>
+                  </div>
+                )}
+                <div className="field">
+                  <label className="label has-text-white" htmlFor="scanheight">
+                    Enter New Password
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type="password"
+                        placeholder="Enter your new password..."
+                      />
+                    </div>
+                  </label>
+                </div>
+                <div className="field">
+                  <label className="label has-text-white" htmlFor="scanheight">
+                    Confirm Password
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type="password"
+                        placeholder="Enter your new password again to confirm..."
+                      />
+                    </div>
+                  </label>
+                </div>
+                <div className="buttons is-right">
+                  <button type="submit" className="button is-success is-large">
+                    Change
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="footerbar has-background-black" />
+          </div>
         )}
       </div>
     );

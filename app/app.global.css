@@ -6,7 +6,7 @@
 
  */
 
- @import '~bulma/css/bulma.min.css';
+@import '~bulma/css/bulma.min.css';
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma-extensions/dist/css/bulma-extensions.min.css';
 
@@ -15,9 +15,9 @@
   bottom: 0;
   width: 100%;
   height: 64px;
-  padding-top:12px;
-  padding-left:16px;
-  padding-right:16px;
+  padding-top: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 .is-right {
@@ -52,19 +52,25 @@
   color: #fff;
 }
 .table-darkmode.is-striped tbody tr:not(.is-selected):nth-child(even) {
-  background-color: #242424; }
-  .table-darkmode.is-hoverable tbody tr:not(.is-selected):hover {
-    background-color: #232323; }
-  .table-darkmode.is-hoverable.is-striped tbody tr:not(.is-selected):hover {
-    background-color: #474747; }
-    .table-darkmode.is-hoverable.is-striped tbody tr:not(.is-selected):hover:nth-child(even) {
-      background-color: #353535; }
+  background-color: #242424;
+}
+.table-darkmode.is-hoverable tbody tr:not(.is-selected):hover {
+  background-color: #232323;
+}
+.table-darkmode.is-hoverable.is-striped tbody tr:not(.is-selected):hover {
+  background-color: #474747;
+}
+.table-darkmode.is-hoverable.is-striped
+  tbody
+  tr:not(.is-selected):hover:nth-child(even) {
+  background-color: #353535;
+}
 
 .headerbar {
   position: absolute;
   top: 0;
-  padding-right:20px;
-  padding-left:17px;
+  padding-right: 20px;
+  padding-left: 17px;
   width: 100%;
   height: 64px;
 }
@@ -97,9 +103,9 @@
 
 .fullwindow {
   position: absolute;
-  padding-top:110px;
-  padding-left:36px;
-  padding-right:36px;
+  padding-top: 110px;
+  padding-left: 36px;
+  padding-right: 36px;
   width: 100%;
   height: 100%;
   box-sizing: border-box;

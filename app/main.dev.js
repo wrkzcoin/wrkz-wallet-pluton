@@ -55,25 +55,26 @@ const installExtensions = async () => {
 const isSingleInstance = app.requestSingleInstanceLock();
 
 if (!isSingleInstance) {
-  log.debug("There's an instance of the application already locked, terminating...");
-  app.quit()
+  log.debug(
+    "There's an instance of the application already locked, terminating..."
+  );
+  app.quit();
 } else {
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore()
+      if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
     }
-  })
+  });
 }
 
 app.on('window-all-closed', () => {
-    app.quit();
+  app.quit();
 });
 
 contextMenu({
-  prepend: (defaultActions, params, mainWindow) => [
-  ]
+  prepend: (defaultActions, params, mainWindow) => []
 });
 
 app.on('ready', async () => {
@@ -97,7 +98,6 @@ app.on('ready', async () => {
 
   mainWindow.webContents.send('handleSave');
 
-
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
@@ -112,10 +112,10 @@ app.on('ready', async () => {
     }
   });
 
-  mainWindow.on('close', (event) => {
-      log.debug('Detected close of app.');
-      mainWindow.webContents.send('handleClose');
-  })
+  mainWindow.on('close', event => {
+    log.debug('Detected close of app.');
+    mainWindow.webContents.send('handleClose');
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;

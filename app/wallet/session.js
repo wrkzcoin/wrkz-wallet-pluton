@@ -106,15 +106,15 @@ export default class WalletSession {
     const csvWriter = createObjectCsvWriter({
       path: savePath + '.csv',
       header: [
-          { id: 'date', title: 'Date' },
-          { id: 'blockHeight', title: 'Block Height' },
-          { id: 'transactionHash', title: 'Transaction Hash' },
-          { id: 'pid', title: 'Payment ID' },
-          { id: 'amount', title: 'Amount' },
-          { id: 'bal', title: 'balance' },
+        { id: 'date', title: 'Date' },
+        { id: 'blockHeight', title: 'Block Height' },
+        { id: 'transactionHash', title: 'Transaction Hash' },
+        { id: 'pid', title: 'Payment ID' },
+        { id: 'amount', title: 'Amount' },
+        { id: 'bal', title: 'balance' }
       ]
     });
-    const csvData = rawTransactions.map((item) => {
+    const csvData = rawTransactions.map(item => {
       return {
         date: this.convertTimestamp(item[0]),
         blockHeight: item[4],
@@ -122,7 +122,7 @@ export default class WalletSession {
         pid: item[5],
         amount: this.atomicToHuman(item[2], true),
         bal: this.atomicToHuman(item[3])
-      }
+      };
     });
     csvWriter.writeRecords(csvData);
   }
@@ -252,7 +252,14 @@ export default class WalletSession {
     const balances = [];
 
     for (const [index, tx] of rawTransactions.entries()) {
-      balances.push([tx.timestamp, tx.hash, tx.totalAmount(), balance, tx.blockHeight, tx.paymentID]);
+      balances.push([
+        tx.timestamp,
+        tx.hash,
+        tx.totalAmount(),
+        balance,
+        tx.blockHeight,
+        tx.paymentID
+      ]);
       balance -= parseInt(tx.totalAmount(), 10);
     }
     return balances;

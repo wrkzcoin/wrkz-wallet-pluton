@@ -36,6 +36,17 @@ export const directories = [
 
 const [programDirectory, logDirectory, walletDirectory] = directories;
 
+log.debug('Checking if program directories are present...');
+// eslint-disable-next-line func-names
+directories.forEach(function(dir) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+    log.debug(`${dir} directories not detected, creating...`);
+  } else if (dir === programDirectory) {
+    log.debug('Directories found. Initializing wallet session...');
+  }
+});
+
 if (!fs.existsSync(`${programDirectory}/config.json`)) {
   fs.writeFile(
     `${programDirectory}/config.json`,
@@ -50,17 +61,6 @@ if (!fs.existsSync(`${programDirectory}/config.json`)) {
   const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
   config = JSON.parse(rawUserConfig);
 }
-
-log.debug('Checking if program directories are present...');
-// eslint-disable-next-line func-names
-directories.forEach(function(dir) {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-    log.debug(`${dir} directories not detected, creating...`);
-  } else if (dir === programDirectory) {
-    log.debug('Directories found. Initializing wallet session...');
-  }
-});
 
 export let session = new WalletSession();
 
