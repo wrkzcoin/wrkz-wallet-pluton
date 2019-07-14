@@ -36,7 +36,8 @@ export default class Receive extends Component<Props> {
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
       loginFailed: false,
-      gohome: false
+      gohome: false,
+      darkMode: session.darkMode
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -160,6 +161,8 @@ export default class Receive extends Component<Props> {
 
     return (
       <div>
+      {this.state.darkMode === false && (
+      <div>
         {navBar('receive', false)}
         <div className="maincontent">
           <div className="columns">
@@ -255,6 +258,111 @@ export default class Receive extends Component<Props> {
             </div>
           </div>
         </div>
+      </div>
+      )}
+      {this.state.darkMode === true && (
+        <div>
+          {navBar('receive', true)}
+          <div className="maincontent has-background-dark">
+            <div className="columns">
+              <div className="column is-three-quarters">
+                <form>
+                  <div className="field">
+                    <label className="label has-text-white" htmlFor="receiveaddress">
+                      Receiving Address
+                      <textarea
+                        className="textarea is-family-monospace is-large"
+                        rows="7"
+                        value={session.address}
+                        id="receiveaddress"
+                        readOnly
+                      />
+                    </label>
+                  </div>
+                  <div className="field">
+                    <div className="buttons">
+                      <button
+                        type="button"
+                        className="button is-success is-large"
+                        onClick={() => copyToClipboard(session.address)}
+                      >
+                        Copy to Clipboard
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div className="column">
+              <div className="field">
+                <label className="label has-text-white">
+                QR Code
+                <div className="box has-background-light">
+                  <center>
+                    <span>
+                      <QRCode
+                        value={session.address}
+                        renderAs="svg"
+                        bgColor="#f5f5f5"
+                        size={236}
+                      />
+                    </span>
+                  </center>
+                </div>
+                </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="footerbar has-background-black">
+            <div className="field is-grouped is-grouped-multiline is-grouped-right">
+              {this.state.nodeFee > 0 && (
+                <div className="control statusicons">
+                  <div className="tags has-addons">
+                    <span className="tag is-large is-dark">Node Fee:</span>
+                    <span className="tag is-danger is-large">
+                      {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                    </span>
+                  </div>
+                </div>
+              )}
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-dark is-large">Sync:</span>
+                  {this.state.syncStatus < 100 &&
+                    session.daemon.networkBlockCount !== 0 && (
+                      <span className="tag is-warning is-large">
+                        {this.state.syncStatus}%
+                        <ReactLoading
+                          type="bubbles"
+                          color="#363636"
+                          height={30}
+                          width={30}
+                        />
+                      </span>
+                    )}
+                  {this.state.syncStatus === 100 &&
+                    session.daemon.networkBlockCount !== 0 && (
+                      <span className="tag is-success is-large">
+                        {this.state.syncStatus}%
+                      </span>
+                    )}
+                  {session.daemon.networkBlockCount === 0 && (
+                    <span className="tag is-danger is-large">Node Offline</span>
+                  )}
+                </div>
+              </div>
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-dark is-large">Balance:</span>
+                  <span className="tag is-info is-large">
+                    {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        )}
       </div>
     );
   }

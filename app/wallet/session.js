@@ -17,7 +17,7 @@ export default class WalletSession {
     this.isCache = isCache || config.isCache;
     this.useSSL = useSSL || config.useSSL;
     this.walletFile = config.walletFile;
-    this.darkmode = config.darkmode || false;
+    this.darkMode = config.darkMode || false;
 
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
 

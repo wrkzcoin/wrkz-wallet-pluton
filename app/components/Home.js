@@ -42,7 +42,7 @@ export default class Home extends Component<Props> {
       loginFailed: session.loginFailed,
       changePassword: false,
       firstStartup: session.firstStartup,
-      darkmode: session.darkmode
+      darkmode: session.darkMode
     };
 
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
@@ -318,13 +318,13 @@ export default class Home extends Component<Props> {
         <div>
           {navBar('wallet', true)}
           <div className="maincontent-homescreen has-background-dark">
-            <table className="table is-striped is-hoverable is-fullwidth is-family-monospace">
+            <table className="table is-striped is-hoverable is-fullwidth is-family-monospace table-darkmode">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Hash</th>
-                  <th>Amount</th>
-                  <th>Balance</th>
+                  <th className="has-text-white">Date</th>
+                  <th className="has-text-white">Hash</th>
+                  <th className="has-text-white">Amount</th>
+                  <th className="has-text-white">Balance</th>
                 </tr>
               </thead>
               <tbody>

@@ -43,7 +43,8 @@ export default class Send extends Component<Props> {
       loginFailed: false,
       enteredAmount: '',
       totalAmount: '',
-      gohome: false
+      gohome: false,
+      darkMode: session.darkMode
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -309,6 +310,8 @@ export default class Send extends Component<Props> {
 
     return (
       <div>
+      {this.state.darkMode === false && (
+      <div>
         {navBar('send', false)}
         <div className="maincontent">
           <form onSubmit={this.handleSubmit}>
@@ -453,6 +456,156 @@ export default class Send extends Component<Props> {
             </div>
           </div>
         </div>
+      </div>
+      )}
+      {this.state.darkMode === true && (
+        <div>
+          {navBar('send', true)}
+          <div className="maincontent has-background-dark">
+            <form onSubmit={this.handleSubmit}>
+              <div className="field">
+                <label className="label has-text-white" htmlFor="address">
+                  Send to Address
+                  <div className="control">
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder="Enter a TurtleCoin address to send funds to."
+                      id="label"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="field">
+                <div className="control">
+                  <div className="columns">
+                    <div className="column">
+                      <label className="label has-text-white" htmlFor="amount">
+                        Amount to Send
+                        <input
+                          className="input is-large"
+                          type="text"
+                          placeholder="How much TRTL to send (eg. 100)"
+                          id="amount"
+                          value={this.state.enteredAmount}
+                          onChange={this.handleAmountChange}
+                        />
+                        <label className="help">
+                          <a onClick={this.sendAll}>Send All</a>
+                        </label>
+                      </label>
+                    </div>
+                    <div className="column">
+                      <label className="label has-text-white" htmlFor="totalamount">
+                        Total with Fees
+                        <input
+                          className="input is-large"
+                          type="text"
+                          placeholder="The total amount including fees"
+                          id="totalamount"
+                          value={this.state.totalAmount}
+                          onChange={this.handleTotalAmountChange}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="field">
+                <label className="label has-text-white" htmlFor="paymentid">
+                  Payment ID (Optional)&nbsp;&nbsp;&nbsp;
+                  <div className="control">
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder="Enter a payment ID"
+                      id="paymentid"
+                      value={this.state.paymentID}
+                      onChange={this.handlePaymentIDChange}
+                    />
+                    <label className="help">
+                      <a onClick={this.generatePaymentID}>
+                        Generate Random Payment ID
+                      </a>
+                    </label>
+                  </div>
+                </label>
+              </div>
+              <div className="buttons">
+                {!this.state.transactionInProgress && (
+                  <button type="submit" className="button is-success is-large ">
+                    Send
+                  </button>
+                )}
+                {this.state.transactionInProgress && (
+                  <button
+                    type="submit"
+                    className="button is-success is-large is-loading is-disabled"
+                  >
+                    Send
+                  </button>
+                )}
+
+                <button
+                  type="reset"
+                  className="button is-large is-black"
+                  onClick={this.resetPaymentID}
+                >
+                  Clear
+                </button>
+              </div>
+            </form>
+          </div>
+          <div className="footerbar has-background-black">
+            <div className="field is-grouped is-grouped-multiline is-grouped-right">
+              {this.state.nodeFee > 0 && (
+                <div className="control statusicons">
+                  <div className="tags has-addons">
+                    <span className="tag is-large is-dark">Node Fee:</span>
+                    <span className="tag is-danger is-large">
+                      {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                    </span>
+                  </div>
+                </div>
+              )}
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-large is-dark">Sync:</span>
+                  {this.state.syncStatus < 100 &&
+                    session.daemon.networkBlockCount !== 0 && (
+                      <span className="tag is-warning is-large">
+                        {this.state.syncStatus}%
+                        <ReactLoading
+                          type="bubbles"
+                          color="#363636"
+                          height={30}
+                          width={30}
+                        />
+                      </span>
+                    )}
+                  {this.state.syncStatus === 100 &&
+                    session.daemon.networkBlockCount !== 0 && (
+                      <span className="tag is-success is-large">
+                        {this.state.syncStatus}%
+                      </span>
+                    )}
+                  {session.daemon.networkBlockCount === 0 && (
+                    <span className="tag is-danger is-large">Node Offline</span>
+                  )}
+                </div>
+              </div>
+              <div className="control statusicons">
+                <div className="tags has-addons">
+                  <span className="tag is-large is-dark">Balance:</span>
+                  <span className="tag is-info is-large">
+                    {session.atomicToHuman(this.state.unlockedBalance, true)} TRTL
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        )}
       </div>
     );
   }

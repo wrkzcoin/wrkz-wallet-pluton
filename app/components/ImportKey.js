@@ -37,7 +37,8 @@ export default class Send extends Component<Props> {
       importCompleted: false,
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
-      loginFailed: false
+      loginFailed: false,
+      darkMode: session.darkMode
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -181,6 +182,8 @@ export default class Send extends Component<Props> {
     }
     return (
       <div>
+      {this.state.darkMode === false && (
+      <div>
         {navBar('import', false)}
         <div className="maincontent">
           <form onSubmit={this.handleSubmit}>
@@ -234,6 +237,65 @@ export default class Send extends Component<Props> {
           </form>
         </div>
         <div className="footerbar has-background-light" />
+        </div>
+        )}
+        {this.state.darkMode === true && (
+          <div>
+            {navBar('import', true)}
+            <div className="maincontent has-background-dark">
+              <form onSubmit={this.handleSubmit}>
+                <div className="field">
+                  <label className="label has-text-white" htmlFor="scanheight">
+                    Private Spend Key
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type="text"
+                        placeholder="Enter your private view key..."
+                        id="scanheight"
+                      />
+                    </div>
+                  </label>
+                </div>
+                <div className="field">
+                  <label className="label has-text-white" htmlFor="scanheight">
+                    Private View Key
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type="text"
+                        placeholder="Enter your private spend key..."
+                        id="scanheight"
+                      />
+                    </div>
+                  </label>
+                </div>
+                <div className="field">
+                  <label className="label has-text-white" htmlFor="scanheight">
+                    Scan Height (Optional)
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type="text"
+                        placeholder="Block height to start scanning from. Defaults to 0."
+                        id="scanheight"
+                      />
+                    </div>
+                  </label>
+                </div>
+                <div className="buttons">
+                  <button type="submit" className="button is-success is-large ">
+                    Import
+                  </button>
+                  <button type="reset" className="button is-large is-black">
+                    Clear
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div className="footerbar has-background-black" />
+            </div>
+            )}
       </div>
     );
   }

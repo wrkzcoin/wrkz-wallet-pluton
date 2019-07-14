@@ -38,9 +38,9 @@ export default function navBar(activePage, isDarkMode) {
         <div className="navbar-end">
           <div className="navbar-item">
             <Link className="buttons" to={routes.SETTINGS}>
-              <div className="button">
+              <span className="button icon is-large">
                 <i className="fa fa-cog" />
-              </div>
+              </span>
             </Link>
           </div>
         </div>
@@ -78,9 +78,9 @@ export default function navBar(activePage, isDarkMode) {
           <div className="navbar-end">
             <div className="navbar-item">
               <Link className="buttons" to={routes.SETTINGS}>
-                <div className="button is-dark">
+              <span className="button icon is-large is-dark">
                   <i className="fa fa-cog" />
-                </div>
+                </span>
               </Link>
             </div>
           </div>

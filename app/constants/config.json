@@ -8,5 +8,6 @@
   "daemonHost": "blockapi.turtlepay.io",
   "daemonPort": 443,
   "isCache": true,
-  "useSSL": true
+  "useSSL": true,
+  "darkMode": false
 }

@@ -57,7 +57,7 @@ export default class Settings extends Component<Props> {
       ssl: session.daemon.ssl,
       wallet: session.wallet,
       gohome: false,
-      darkmode: session.darkmode
+      darkMode: session.darkMode
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -275,17 +275,17 @@ export default class Settings extends Component<Props> {
 
   darkModeOn() {
     this.setState({
-      darkmode: true
+      darkMode: true
     });
-    session.darkmode = true;
+    session.darkMode = true;
     session.toggleDarkMode(true);
   }
 
   darkModeOff() {
     this.setState({
-      darkmode: false
+      darkMode: false
     });
-    session.darkmode = false;
+    session.darkMode = false;
     session.toggleDarkMode(false);
   }
 
@@ -313,7 +313,7 @@ export default class Settings extends Component<Props> {
     }
     return (
       <div>
-      {this.state.darkmode === false && (
+      {this.state.darkMode === false && (
       <div>
         {navBar('settings', false)}
         <div className="maincontent">
@@ -470,7 +470,7 @@ export default class Settings extends Component<Props> {
         </div>
       </div>
       )}
-      {this.state.darkmode === true && (
+      {this.state.darkMode === true && (
         <div>
           {navBar('settings', true)}
           <div className="maincontent has-background-dark">

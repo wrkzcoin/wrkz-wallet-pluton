@@ -32,7 +32,8 @@ export default class FirstStartup extends Component<Props> {
       importseed: false,
       importCompleted: false,
       loginFailed: false,
-      loginInProgress: false
+      loginInProgress: false,
+      darkMode: session.darkMode
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -199,7 +200,8 @@ export default class FirstStartup extends Component<Props> {
 
     return (
       <div>
-        <div className="maincontent">
+      {this.state.darkMode === true && (
+        <div className="fullwindow">
           <div className="box changepasswordbox has-background-light passwordchangebox">
             <h1 className="title has-text-centered">Welcome to Proton!</h1>
             <button
@@ -224,6 +226,34 @@ export default class FirstStartup extends Component<Props> {
             </button>
           </div>
         </div>
+        )}
+        {this.state.darkMode === true && (
+          <div className="fullwindow has-background-dark">
+            <div className="box changepasswordbox has-background-black passwordchangebox">
+              <h1 className="title has-text-centered has-text-danger">Welcome to Proton!</h1>
+              <button
+                className="button is-large is-fullwidth is-dark"
+                onClick={this.openExisting}
+              >
+                Open an Existing Wallet
+              </button>
+              <br />
+              <button
+                className="button is-large is-fullwidth is-dark"
+                onClick={this.createNew}
+              >
+                Create a New Wallet
+              </button>
+              <br />
+              <button
+                className="button is-large is-fullwidth is-dark"
+                onClick={this.importFromKeysOrSeed}
+              >
+                Import from Keys or Seed
+              </button>
+            </div>
+          </div>
+          )}
       </div>
     );
   }
