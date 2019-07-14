@@ -202,57 +202,61 @@ export default class FirstStartup extends Component<Props> {
       <div>
         {this.state.darkMode === false && (
           <div className="fullwindow">
-            <div className="box changepasswordbox has-background-light passwordchangebox">
-              <h1 className="title has-text-centered">Welcome to Proton!</h1>
-              <button
-                className="button is-large is-fullwidth"
-                onClick={this.openExisting}
-              >
-                Open an Existing Wallet
-              </button>
-              <br />
-              <button
-                className="button is-large is-fullwidth"
-                onClick={this.createNew}
-              >
-                Create a New Wallet
-              </button>
-              <br />
-              <button
-                className="button is-large is-fullwidth"
-                onClick={this.importFromKeysOrSeed}
-              >
-                Import from Keys or Seed
-              </button>
+            <div className="mid-div">
+              <div className="box changepasswordbox has-background-light passwordchangebox">
+                <h1 className="title has-text-centered">Welcome to Proton!</h1>
+                <button
+                  className="button is-large is-fullwidth"
+                  onClick={this.openExisting}
+                >
+                  Open an Existing Wallet
+                </button>
+                <br />
+                <button
+                  className="button is-large is-fullwidth"
+                  onClick={this.createNew}
+                >
+                  Create a New Wallet
+                </button>
+                <br />
+                <button
+                  className="button is-large is-fullwidth"
+                  onClick={this.importFromKeysOrSeed}
+                >
+                  Import from Keys or Seed
+                </button>
+              </div>
             </div>
           </div>
         )}
         {this.state.darkMode === true && (
           <div className="fullwindow has-background-dark">
-            <div className="box changepasswordbox has-background-black passwordchangebox">
-              <h1 className="title has-text-centered has-text-danger">
-                Welcome to Proton!
-              </h1>
-              <button
-                className="button is-large is-fullwidth is-dark"
-                onClick={this.openExisting}
-              >
-                Open an Existing Wallet
-              </button>
-              <br />
-              <button
-                className="button is-large is-fullwidth is-dark"
-                onClick={this.createNew}
-              >
-                Create a New Wallet
-              </button>
-              <br />
-              <button
-                className="button is-large is-fullwidth is-dark"
-                onClick={this.importFromKeysOrSeed}
-              >
-                Import from Keys or Seed
-              </button>
+            <div className="mid-div">
+              <div className="box loginbox has-background-black passwordchangebox">
+                <h1 className="title has-text-centered has-text-danger">
+                  Welcome to Proton!
+                </h1>
+                <button
+                  className="button is-large is-fullwidth is-dark"
+                  onClick={this.openExisting}
+                >
+                  Open an Existing Wallet
+                </button>
+                <br />
+                <button
+                  className="button is-large is-fullwidth is-dark"
+                  onClick={this.createNew}
+                >
+                  Create a New Wallet
+                </button>
+                <br />
+                <button
+                  className="button is-large is-fullwidth is-dark"
+                  onClick={this.importFromKeysOrSeed}
+                >
+                  Import from Keys or Seed
+                </button>
+              </div>
             </div>
           </div>
         )}

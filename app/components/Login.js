@@ -33,7 +33,8 @@ export default class Login extends Component<Props> {
       importCompleted: false,
       loginInProgress: false,
       userOpenedDifferentWallet: false,
-      darkMode: session.darkMode || false
+      darkMode: session.darkMode || false,
+      walletFile: session.walletFile
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -139,30 +140,32 @@ export default class Login extends Component<Props> {
         {this.state.darkMode === false && (
           <div className="fullwindow">
             {this.state.loginInProgress === false && (
-              <div className="box loginbox has-background-light">
-                <form onSubmit={this.handleSubmit}>
-                  <div className="field">
-                    <label className="label" htmlFor="scanheight">
-                      Password
-                      <div className="control">
-                        <input
-                          className="input is-large"
-                          type="password"
-                          placeholder="Enter your password..."
-                          id="scanheight"
-                        />
-                      </div>
-                    </label>
-                  </div>
-                  <div className="buttons is-right">
-                    <button
-                      type="submit"
-                      className="button is-success is-large"
-                    >
-                      Login
-                    </button>
-                  </div>
-                </form>
+              <div className="mid-div">
+                <div className="box loginbox has-background-light inner-div">
+                  <form onSubmit={this.handleSubmit}>
+                    <div className="field">
+                      <label className="label" htmlFor="scanheight">
+                        Password
+                        <div className="control">
+                          <input
+                            className="input is-large"
+                            type="password"
+                            placeholder="Enter your password..."
+                            id="scanheight"
+                          />
+                        </div>
+                      </label>
+                    </div>
+                    <div className="buttons is-right">
+                      <button
+                        type="submit"
+                        className="button is-success is-large"
+                      >
+                        Login
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             )}
             {this.state.loginInProgress === true && (
@@ -177,35 +180,43 @@ export default class Login extends Component<Props> {
           </div>
         )}
         {this.state.darkMode === true && (
-          <div className="fullwindow has-background-dark">
+          <div className="fullwindow has-background-dark outer-div">
             {this.state.loginInProgress === false && (
-              <div className="box loginbox has-background-black">
-                <form onSubmit={this.handleSubmit}>
-                  <div className="field">
-                    <label
-                      className="label has-text-white"
-                      htmlFor="scanheight"
-                    >
-                      Password
-                      <div className="control">
-                        <input
-                          className="input is-large"
-                          type="password"
-                          placeholder="Enter your password..."
-                          id="scanheight"
-                        />
-                      </div>
-                    </label>
-                  </div>
-                  <div className="buttons is-right">
-                    <button
-                      type="submit"
-                      className="button is-success is-large"
-                    >
-                      Login
-                    </button>
-                  </div>
-                </form>
+              <div className="mid-div">
+                <div className="box loginbox has-background-black inner-div">
+                  <form onSubmit={this.handleSubmit}>
+                    <div className="field">
+                      <label
+                        className="label has-text-white"
+                        htmlFor="scanheight"
+                      >
+                        Password
+                        <div className="control">
+                          <input
+                            className="input is-large"
+                            type="password"
+                            placeholder="Enter your wallet password..."
+                            id="scanheight"
+                          />
+                        </div>
+                      </label>
+                      <label
+                        className="help has-text-white"
+                        htmlFor="scanheight"
+                      >
+                        attempting login to {this.state.walletFile}
+                      </label>
+                    </div>
+                    <div className="buttons is-right">
+                      <button
+                        type="submit"
+                        className="button is-success is-large"
+                      >
+                        Login
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             )}
             {this.state.loginInProgress === true && (
