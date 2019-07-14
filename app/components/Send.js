@@ -149,9 +149,10 @@ export default class Send extends Component<Props> {
       return;
     }
     const totalAmount =
+    session.roundToNearestHundredth(
       Number(amount) +
       0.1 +
-      Number(session.atomicToHuman(session.daemon.feeAmount, false));
+      Number(session.atomicToHuman(session.daemon.feeAmount, false)));
     this.setState({
       enteredAmount: amount,
       totalAmount
@@ -168,9 +169,10 @@ export default class Send extends Component<Props> {
       return;
     }
     const amount =
+    session.roundToNearestHundredth(
       Number(totalAmount) -
       0.1 -
-      Number(session.atomicToHuman(session.daemon.feeAmount, false));
+      Number(session.atomicToHuman(session.daemon.feeAmount, false)));
     this.setState({
       enteredAmount: amount,
       totalAmount
