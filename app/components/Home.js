@@ -222,8 +222,8 @@ export default class Home extends Component<Props> {
                   <tr>
                     <th>Date</th>
                     <th>Hash</th>
-                    <th>Amount</th>
-                    <th>Balance</th>
+                    <th className="has-text-right">Amount</th>
+                    <th className="has-text-right">Balance</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -241,18 +241,22 @@ export default class Home extends Component<Props> {
                         <td>{tx[1]}</td>
                         {tx[2] < 0 && (
                           <td>
-                            <p className="has-text-danger is-negative-transaction">
+                            <p className="has-text-danger has-text-right">
                               {session.atomicToHuman(tx[2], true)}
                             </p>
                           </td>
                         )}
                         {tx[2] > 0 && (
                           <td>
-                            <p>{session.atomicToHuman(tx[2], true)}</p>
+                            <p className="has-text-right">
+                              {session.atomicToHuman(tx[2], true)}
+                            </p>
                           </td>
                         )}
                         <td>
-                          <p>{session.atomicToHuman(tx[3], true)}</p>
+                          <p className="has-text-right">
+                            {session.atomicToHuman(tx[3], true)}
+                          </p>
                         </td>
                       </tr>
                     );
@@ -359,8 +363,8 @@ export default class Home extends Component<Props> {
                   <tr>
                     <th className="has-text-white">Date</th>
                     <th className="has-text-white">Hash</th>
-                    <th className="has-text-white">Amount</th>
-                    <th className="has-text-white">Balance</th>
+                    <th className="has-text-white has-text-right">Amount</th>
+                    <th className="has-text-white has-text-right">Balance</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -378,18 +382,22 @@ export default class Home extends Component<Props> {
                         <td>{tx[1]}</td>
                         {tx[2] < 0 && (
                           <td>
-                            <p className="has-text-danger is-negative-transaction">
+                            <p className="has-text-danger has-text-right">
                               {session.atomicToHuman(tx[2], true)}
                             </p>
                           </td>
                         )}
                         {tx[2] > 0 && (
                           <td>
-                            <p>{session.atomicToHuman(tx[2], true)}</p>
+                            <p className="has-text-right">
+                              {session.atomicToHuman(tx[2], true)}
+                            </p>
                           </td>
                         )}
                         <td>
-                          <p>{session.atomicToHuman(tx[3], true)}</p>
+                          <p className="has-text-right">
+                            {session.atomicToHuman(tx[3], true)}
+                          </p>
                         </td>
                       </tr>
                     );
