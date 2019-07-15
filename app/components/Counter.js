@@ -208,7 +208,7 @@ export default class Receive extends Component<Props> {
                 </div>
                 <div className="column">
                   <br />
-                  <div className="box has-background-light">
+                  <div className="box has-background-light is-qrcode">
                     <center>
                       <span>
                         <QRCode
