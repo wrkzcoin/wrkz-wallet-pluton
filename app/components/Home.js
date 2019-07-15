@@ -98,7 +98,6 @@ export default class Home extends Component<Props> {
   async switchOffAnimation() {
     await sleep(1000);
     session.firstLoadOnLogin = false;
-    log.debug('Nailed it!');
   }
 
   handlePasswordChange() {
@@ -284,7 +283,14 @@ export default class Home extends Component<Props> {
                 </form>
               )}
             </div>
-            <div className="footerbar has-background-light">
+            <div
+              className={
+                session.firstLoadOnLogin
+                  ? 'footerbar-slideup has-background-light'
+                  : 'footerbar has-background-light'
+              }
+            >
+              {' '}
               <div className="field is-grouped is-grouped-multiline is-grouped-right">
                 {this.state.nodeFee > 0 && (
                   <div className="control statusicons">
