@@ -151,7 +151,7 @@ export default class ChangePassword extends Component<Props> {
     return (
       <div>
         {this.state.darkMode === false && (
-          <div>
+          <div className="wholescreen">
             {navBar('changepassword', false)}
             <div className="maincontent">
               <form onSubmit={this.handleSubmit}>
@@ -219,7 +219,7 @@ export default class ChangePassword extends Component<Props> {
           </div>
         )}
         {this.state.darkMode === true && (
-          <div>
+          <div className="wholescreen has-background-dark">
             {navBar('changepassword', true)}
             <div className="maincontent has-background-dark ">
               <form onSubmit={this.handleSubmit}>

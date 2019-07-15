@@ -183,7 +183,7 @@ export default class Send extends Component<Props> {
     return (
       <div>
         {this.state.darkMode === false && (
-          <div>
+          <div className="wholescreen">
             {navBar('import', false)}
             <div className="maincontent">
               <form onSubmit={this.handleSubmit}>
@@ -240,7 +240,7 @@ export default class Send extends Component<Props> {
           </div>
         )}
         {this.state.darkMode === true && (
-          <div>
+          <div className="wholescreen has-background-dark">
             {navBar('import', true)}
             <div className="maincontent has-background-dark">
               <form onSubmit={this.handleSubmit}>

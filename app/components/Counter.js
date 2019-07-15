@@ -9,6 +9,10 @@ import { config, session, eventEmitter } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 type Props = {
   increment: () => void,
   incrementIfOdd: () => void,
@@ -37,7 +41,8 @@ export default class Receive extends Component<Props> {
       changePassword: false,
       loginFailed: false,
       gohome: false,
-      darkMode: session.darkMode
+      darkMode: session.darkMode,
+      firstLoad: session.firstLoadOnLogin
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -60,6 +65,7 @@ export default class Receive extends Component<Props> {
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
     eventEmitter.on('openNewWallet', this.handleInitialize);
+    this.turnOffFirstLoad();
   }
 
   componentWillUnmount() {
@@ -78,6 +84,13 @@ export default class Receive extends Component<Props> {
   handleInitialize() {
     this.setState({
       gohome: true
+    });
+  }
+
+  async turnOffFirstLoad() {
+    session.firstLoadOnLogin = false;
+    this.setState({
+      firstLoad: false
     });
   }
 
@@ -162,7 +175,7 @@ export default class Receive extends Component<Props> {
     return (
       <div>
         {this.state.darkMode === false && (
-          <div>
+          <div className="wholescreen">
             {navBar('receive', false)}
             <div className="maincontent">
               <div className="columns">
@@ -264,7 +277,7 @@ export default class Receive extends Component<Props> {
           </div>
         )}
         {this.state.darkMode === true && (
-          <div>
+          <div className="wholescreen has-background-dark">
             {navBar('receive', true)}
             <div className="maincontent has-background-dark">
               <div className="columns">

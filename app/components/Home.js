@@ -9,6 +9,10 @@ import { config, session } from '../index';
 import navBar from './NavBar';
 import { eventEmitter } from '../index';
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 let displayedTransactionCount = 50;
 
 type Props = {
@@ -69,6 +73,9 @@ export default class Home extends Component<Props> {
     eventEmitter.on('openNewWallet', this.openNewWallet);
     eventEmitter.on('gotNodeFee', this.refreshNodeFee);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
+    if (session.firstLoadOnLogin && this.state.loginFailed === false) {
+      this.switchOffAnimation();
+    }
   }
 
   componentWillUnmount() {
@@ -86,6 +93,12 @@ export default class Home extends Component<Props> {
     if (session.wallet !== undefined) {
       session.wallet.off('transaction', this.refreshListOnNewTransaction);
     }
+  }
+
+  async switchOffAnimation() {
+    await sleep(1000);
+    session.firstLoadOnLogin = false;
+    log.debug('Nailed it!');
   }
 
   handlePasswordChange() {
@@ -194,11 +207,17 @@ export default class Home extends Component<Props> {
     }
 
     return (
-      <div className="has-background-dark">
+      <div>
         {this.state.darkmode === false && (
-          <div>
+          <div className="wholescreen">
             {navBar('wallet', false)}
-            <div className="maincontent-homescreen has-background-light">
+            <div
+              className={
+                session.firstLoadOnLogin
+                  ? 'maincontent-homescreen-fadein'
+                  : 'maincontent-homescreen'
+              }
+            >
               <table className="table is-striped is-hoverable is-fullwidth is-family-monospace">
                 <thead>
                   <tr>
@@ -319,9 +338,16 @@ export default class Home extends Component<Props> {
           </div>
         )}
         {this.state.darkmode === true && (
-          <div>
+          <div className="wholescreen has-background-dark">
             {navBar('wallet', true)}
-            <div className="maincontent-homescreen has-background-dark">
+            <div
+              className={
+                session.firstLoadOnLogin
+                  ? 'maincontent-homescreen-fadein has-background-dark'
+                  : 'maincontent-homescreen has-background-dark'
+              }
+            >
+              {' '}
               <table className="table is-striped is-hoverable is-fullwidth is-family-monospace table-darkmode">
                 <thead>
                   <tr>
@@ -388,7 +414,14 @@ export default class Home extends Component<Props> {
                 </form>
               )}
             </div>
-            <div className="footerbar has-background-black">
+            <div
+              className={
+                session.firstLoadOnLogin
+                  ? 'footerbar-slideup has-background-black'
+                  : 'footerbar has-background-black'
+              }
+            >
+              {' '}
               <div className="field is-grouped is-grouped-multiline is-grouped-right">
                 {this.state.nodeFee > 0 && (
                   <div className="control statusicons">

@@ -9,7 +9,13 @@ export default function navBar(activePage, isDarkMode) {
     <React-Fragment>
       <div>
         {isDarkMode === false && (
-          <div className="headerbar has-background-light">
+          <div
+            className={
+              session.firstLoadOnLogin
+                ? 'headerbar-slidedown has-background-light'
+                : 'headerbar has-background-light'
+            }
+          >
             <nav
               className="navbar is-light"
               role="navigation"
@@ -54,8 +60,13 @@ export default function navBar(activePage, isDarkMode) {
           </div>
         )}
         {isDarkMode === true && (
-          <div className="headerbar has-background-black">
-            <nav
+          <div
+            className={
+              session.firstLoadOnLogin
+                ? 'headerbar-slidedown has-background-black'
+                : 'headerbar has-background-black'
+            }
+          >            <nav
               className="navbar is-black"
               role="navigation"
               aria-label="main navigation"

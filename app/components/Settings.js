@@ -315,7 +315,7 @@ export default class Settings extends Component<Props> {
     return (
       <div>
         {this.state.darkMode === false && (
-          <div>
+          <div className="wholescreen">
             {navBar('settings', false)}
             <div className="maincontent">
               <div className="columns">
@@ -479,7 +479,7 @@ export default class Settings extends Component<Props> {
           </div>
         )}
         {this.state.darkMode === true && (
-          <div>
+          <div className="wholescreen has-background-dark">
             {navBar('settings', true)}
             <div className="maincontent has-background-dark">
               <div className="columns">
