@@ -91,7 +91,8 @@ app.on('ready', async () => {
     height: 600,
     minWidth: 1200,
     minHeight: 600,
-    nodeIntegration: true
+    nodeIntegration: true,
+    backgroundColor: '#00853d'
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);

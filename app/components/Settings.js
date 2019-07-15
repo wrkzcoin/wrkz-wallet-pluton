@@ -287,6 +287,7 @@ export default class Settings extends Component<Props> {
     });
     session.darkMode = false;
     session.toggleDarkMode(false);
+
   }
 
   refresh() {

@@ -194,11 +194,11 @@ export default class Home extends Component<Props> {
     }
 
     return (
-      <div>
+      <div className="has-background-dark">
         {this.state.darkmode === false && (
           <div>
             {navBar('wallet', false)}
-            <div className="maincontent-homescreen">
+            <div className="maincontent-homescreen has-background-light">
               <table className="table is-striped is-hoverable is-fullwidth is-family-monospace">
                 <thead>
                   <tr>

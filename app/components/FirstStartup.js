@@ -203,7 +203,7 @@ export default class FirstStartup extends Component<Props> {
         {this.state.darkMode === false && (
           <div className="fullwindow">
             <div className="mid-div">
-              <div className="box changepasswordbox has-background-light passwordchangebox">
+              <div className="box loginbox has-background-light passwordchangebox">
                 <h1 className="title has-text-centered">Welcome to Proton!</h1>
                 <button
                   className="button is-large is-fullwidth"
