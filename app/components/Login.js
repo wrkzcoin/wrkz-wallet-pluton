@@ -148,6 +148,7 @@ export default class Login extends Component<Props> {
                         Password
                         <div className="control">
                           <input
+                            ref={input => input && input.focus()}
                             className="input is-large"
                             type="password"
                             placeholder="Enter your password..."
@@ -184,6 +185,7 @@ export default class Login extends Component<Props> {
                         Password
                         <div className="control">
                           <input
+                            ref={input => input && input.focus()}
                             className="input is-large"
                             type="password"
                             placeholder="Enter your wallet password..."
