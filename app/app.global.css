@@ -32,6 +32,11 @@
    vertical-align: middle;
  }
 
+ .is-qrcode {
+   position: relative;
+   left: -10px;
+ }
+
 
  .is-right {
    position: relative;
@@ -96,7 +101,7 @@
  .headerbar {
    position: absolute;
    top: 0px;
-   padding-right: 26px;
+   padding-right: 30px;
    padding-left: 17px;
    width: 100%;
    height: 64px;
@@ -106,7 +111,7 @@
   position: absolute;
   animation-name: slidedown;
   animation-duration: .5s;
-  padding-right: 20px;
+  padding-right: 30px;
   padding-left: 17px;
   width: 100%;
   height: 64px;
@@ -169,7 +174,7 @@
  .maincontent {
    position: absolute;
    padding-left: 28px;
-   padding-right: 20px;
+   padding-right: 22px;
    padding-top: 15px;
    margin-top: 64px;
    width: 100%;
@@ -183,7 +188,7 @@
  .maincontent-homescreen {
    position: absolute;
    padding-left: 16px;
-   padding-right: 18px;
+   padding-right: 22px;
    padding-top: 8px;
    margin-top: 64px;
    width: 100%;
@@ -250,7 +255,6 @@
  ::-webkit-scrollbar {
    display: block;
    width: 10;
-   background: #363636;
  }
  ::-webkit-scrollbar-thumb {
   background-color: darkgrey;
