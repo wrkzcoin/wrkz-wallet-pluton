@@ -6,111 +6,120 @@
 
  */
 
- @import '~bulma/css/bulma.min.css';
- @import '~@fortawesome/fontawesome-free/css/all.css';
- @import '~bulma-extensions/dist/css/bulma-extensions.min.css';
+@import '~bulma/css/bulma.min.css';
+@import '~@fortawesome/fontawesome-free/css/all.css';
+@import '~bulma-extensions/dist/css/bulma-extensions.min.css';
 
+.fullwindow {
+  position: absolute;
+  display: table;
+  padding: 30px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
 
-
- .fullwindow {
-   position: absolute;
-   display: table;
-   padding: 30px;
-   width: 100%;
-   height: 100%;
-   box-sizing: border-box;
- }
-
- .wholescreen {
+.wholescreen {
   position: absolute;
   width: 100%;
   height: 100%;
- }
-
- .mid-div {
-   display: table-cell;
-   vertical-align: middle;
- }
-
- .is-qrcode {
-   position: relative;
-   left: -10px;
- }
-
-
- .is-right {
-   position: relative;
-   right: 0;
- }
-
- .is-negative-transaction {
-   position: relative;
-   left: -1ch;
- }
-
- * {
-   box-sizing: border-box;
- }
-
- .loginspinner {
-   position: relative;
-   left: 40%;
-   top: 10%;
- }
-
- @keyframes fadein {
-   from { opacity: 0; }
-   to   { opacity: 1; }
- }
-
- @keyframes slidedown {
-   from { top: -60px; }
-   to   { top: 0px; }
- }
-
- @keyframes slideup {
-  from { bottom: -60px; }
-  to   { bottom: 0px; }
 }
 
- .loginbox {
-   margin: 0 auto;
-   width: 67%;
-   animation: fadein 1s;
- }
+.mid-div {
+  display: table-cell;
+  vertical-align: middle;
+}
 
- .table-darkmode {
-   background-color: #363636;
-   color: #fff;
- }
- .table-darkmode.is-striped tbody tr:not(.is-selected):nth-child(even) {
-   background-color: #242424;
- }
- .table-darkmode.is-hoverable tbody tr:not(.is-selected):hover {
-   background-color: #232323;
- }
- .table-darkmode.is-hoverable.is-striped tbody tr:not(.is-selected):hover {
-   background-color: #474747;
- }
- .table-darkmode.is-hoverable.is-striped
-   tbody
-   tr:not(.is-selected):hover:nth-child(even) {
-   background-color: #353535;
- }
+.is-qrcode {
+  position: relative;
+  left: -10px;
+}
 
- .headerbar {
-   position: absolute;
-   top: 0px;
-   padding-right: 30px;
-   padding-left: 17px;
-   width: 100%;
-   height: 64px;
- }
+.is-right {
+  position: relative;
+  right: 0;
+}
 
- .headerbar-slidedown {
+.is-negative-transaction {
+  position: relative;
+  left: -1ch;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.loginspinner {
+  position: relative;
+  left: 40%;
+  top: 10%;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slidedown {
+  from {
+    top: -60px;
+  }
+  to {
+    top: 0px;
+  }
+}
+
+@keyframes slideup {
+  from {
+    bottom: -60px;
+  }
+  to {
+    bottom: 0px;
+  }
+}
+
+.loginbox {
+  margin: 0 auto;
+  width: 67%;
+  animation: fadein 1s;
+}
+
+.table-darkmode {
+  background-color: #363636;
+  color: #fff;
+}
+.table-darkmode.is-striped tbody tr:not(.is-selected):nth-child(even) {
+  background-color: #242424;
+}
+.table-darkmode.is-hoverable tbody tr:not(.is-selected):hover {
+  background-color: #232323;
+}
+.table-darkmode.is-hoverable.is-striped tbody tr:not(.is-selected):hover {
+  background-color: #474747;
+}
+.table-darkmode.is-hoverable.is-striped
+  tbody
+  tr:not(.is-selected):hover:nth-child(even) {
+  background-color: #353535;
+}
+
+.headerbar {
+  position: absolute;
+  top: 0px;
+  padding-right: 30px;
+  padding-left: 17px;
+  width: 100%;
+  height: 64px;
+}
+
+.headerbar-slidedown {
   position: absolute;
   animation-name: slidedown;
-  animation-duration: .5s;
+  animation-duration: 0.5s;
   padding-right: 30px;
   padding-left: 17px;
   width: 100%;
@@ -120,7 +129,7 @@
 .footerbar-slideup {
   position: absolute;
   animation-name: slideup;
-  animation-duration: .5s;
+  animation-duration: 0.5s;
   bottom: 0;
   width: 100%;
   height: 64px;
@@ -139,67 +148,65 @@
   padding-right: 16px;
 }
 
+.txlist {
+  position: relative;
+  left: -9px;
+  width: calc(100% + 9px);
+}
 
+.searchbar {
+  left: 15px;
+  bottom: -2px;
+}
 
- .txlist {
-   position: relative;
-   left: -9px;
-   width: calc(100% + 9px);
- }
+.statusicons {
+  left: -18px;
+}
 
- .searchbar {
-   left: 15px;
-   bottom: -2px;
- }
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
- .statusicons {
-   left: -18px;
- }
+.is-family-monospace {
+  font-family: monospace !important;
+}
 
- .modal {
-   position: absolute;
-   top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%);
- }
+.fades-in {
+  animation: fadein 1s;
+}
 
- .is-family-monospace {
-   font-family: monospace !important;
- }
+.maincontent {
+  position: absolute;
+  padding-left: 28px;
+  padding-right: 22px;
+  padding-top: 15px;
+  margin-top: 64px;
+  width: 100%;
+  height: calc(100% - 128px);
+  overflow-y: scroll;
+  box-sizing: border-box;
+  animation-name: fadein;
+  animation-duration: 0.25s;
+}
 
- .fades-in {
-   animation: fadein 1s;
- }
+.maincontent-homescreen {
+  position: absolute;
+  padding-left: 16px;
+  padding-right: 22px;
+  padding-top: 8px;
+  margin-top: 64px;
+  width: 100%;
+  height: calc(100% - 128px);
+  overflow-y: scroll;
+  box-sizing: border-box;
+  animation-name: fadein;
+  animation-duration: 0.25s;
+}
 
- .maincontent {
-   position: absolute;
-   padding-left: 28px;
-   padding-right: 22px;
-   padding-top: 15px;
-   margin-top: 64px;
-   width: 100%;
-   height: calc(100% - 128px);
-   overflow-y: scroll;
-   box-sizing: border-box;
-   animation-name: fadein;
-   animation-duration: .25s;
- }
-
- .maincontent-homescreen {
-   position: absolute;
-   padding-left: 16px;
-   padding-right: 22px;
-   padding-top: 8px;
-   margin-top: 64px;
-   width: 100%;
-   height: calc(100% - 128px);
-   overflow-y: scroll;
-   box-sizing: border-box;
-   animation-name: fadein;
-   animation-duration: .25s;
- }
-
- .maincontent-homescreen-fadein {
+.maincontent-homescreen-fadein {
   position: absolute;
   padding-left: 16px;
   padding-right: 22px;
@@ -213,50 +220,50 @@
   animation-duration: 1s;
 }
 
- .slightpadding {
-   padding: 5px 5px 5px 5px;
- }
+.slightpadding {
+  padding: 5px 5px 5px 5px;
+}
 
- .position-relative {
-   position: relative;
- }
+.position-relative {
+  position: relative;
+}
 
- .container {
-   justify-content: space-between;
-   flex-direction: column;
-   height: 100vh;
-   display: flex;
- }
- .container .btn-holder {
-   justify-content: flex-end;
-   display: flex;
- }
+.container {
+  justify-content: space-between;
+  flex-direction: column;
+  height: 100vh;
+  display: flex;
+}
+.container .btn-holder {
+  justify-content: flex-end;
+  display: flex;
+}
 
- .bottombuttons {
-   position: absolute;
-   bottom: 0;
- }
+.bottombuttons {
+  position: absolute;
+  bottom: 0;
+}
 
- .settingscog {
-   float: right;
- }
+.settingscog {
+  float: right;
+}
 
- @font-face {
-   font-family: 'Source Code Pro';
-   src: local('Source Code Pro'),
-     url(../node_modules/source-code-pro/WOFF/TTF/SourceCodePro-Regular.ttf.woff)
-       format('woff');
- }
+@font-face {
+  font-family: 'Source Code Pro';
+  src: local('Source Code Pro'),
+    url(../node_modules/source-code-pro/WOFF/TTF/SourceCodePro-Regular.ttf.woff)
+      format('woff');
+}
 
- html {
-   overflow: hidden;
-   overflow-x: visible;
- }
- ::-webkit-scrollbar {
-   display: block;
-   width: 10;
- }
- ::-webkit-scrollbar-thumb {
+html {
+  overflow: hidden;
+  overflow-x: visible;
+}
+::-webkit-scrollbar {
+  display: block;
+  width: 10;
+}
+::-webkit-scrollbar-thumb {
   background-color: darkgrey;
   outline: 1px solid slategrey;
 }

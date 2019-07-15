@@ -66,7 +66,9 @@ export default function navBar(activePage, isDarkMode) {
                 ? 'headerbar-slidedown has-background-black'
                 : 'headerbar has-background-black'
             }
-          >            <nav
+          >
+            {' '}
+            <nav
               className="navbar is-black"
               role="navigation"
               aria-label="main navigation"
