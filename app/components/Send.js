@@ -448,7 +448,7 @@ export default class Send extends Component<Props> {
                       )}
                     {session.daemon.networkBlockCount === 0 && (
                       <span className="tag is-danger is-large">
-                        Node Offline
+                                                <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
                       </span>
                     )}
                   </div>
@@ -608,7 +608,7 @@ export default class Send extends Component<Props> {
                       )}
                     {session.daemon.networkBlockCount === 0 && (
                       <span className="tag is-danger is-large">
-                        Node Offline
+                                                <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
                       </span>
                     )}
                   </div>

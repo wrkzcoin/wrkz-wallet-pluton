@@ -6,16 +6,16 @@ import fs from 'fs';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { ipcRenderer, remote, clipboard, ipcMain } from 'electron';
-import { WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
+import { ipcRenderer, remote, clipboard } from 'electron';
+import { WalletBackend } from 'turtlecoin-wallet-backend';
 import EventEmitter from 'events';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 import './app.global.css';
 import WalletSession from './wallet/session';
 import iConfig from './constants/config';
-import npmPackage from '../package.json';
 import AutoUpdater from './wallet/autoUpdater';
+
 export let config = iConfig;
 
 export const eventEmitter = new EventEmitter();
@@ -73,7 +73,12 @@ if (!session.loginFailed && !session.firstStartup) {
 
 ipcRenderer.on('handleClose', function(evt, route) {
   if (!session.loginFailed && !session.firstStartup) {
-    session.saveWallet(session.walletFile);
+    const saved = session.saveWallet(session.walletFile);
+    if (saved) {
+      remote.app.exit();
+    }
+  } else {
+    remote.app.exit();
   }
 });
 
@@ -207,6 +212,7 @@ eventEmitter.on('initializeNewNode', function(
   session = new WalletSession(password, daemonHost, daemonPort);
   startWallet();
   eventEmitter.emit('newNodeConnected');
+  session.firstLoadOnLogin = false;
 });
 
 eventEmitter.on('initializeNewSession', function(password) {

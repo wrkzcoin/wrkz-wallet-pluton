@@ -454,7 +454,7 @@ export default class Settings extends Component<Props> {
                     {session.daemon.networkBlockCount === 0 &&
                       session.wallet !== undefined && (
                         <span className="tag is-danger is-large">
-                          Node Offline
+                                                  <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
                         </span>
                       )}
                     {session.wallet === undefined && (
@@ -619,7 +619,7 @@ export default class Settings extends Component<Props> {
                     {session.daemon.networkBlockCount === 0 &&
                       session.wallet !== undefined && (
                         <span className="tag is-danger is-large">
-                          Node Offline
+                                                  <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
                         </span>
                       )}
                     {session.wallet === undefined && (

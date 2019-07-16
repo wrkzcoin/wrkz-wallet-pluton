@@ -103,28 +103,31 @@ app.on('ready', async () => {
     backgroundColor: '#121212'
   });
 
-  const tray = new Tray(path.join(__dirname, '../resources/icon.png'));
+  // const tray = new Tray(path.join(__dirname, 'images/icon.png'));
 
-
-  tray.setContextMenu(Menu.buildFromTemplate([
-    {
-      label: 'Show App', click: function () {
-        mainWindow.show();
+  /*
+  tray.setContextMenu(
+    Menu.buildFromTemplate([
+      {
+        label: 'Show App',
+        click() {
+          mainWindow.show();
+        }
+      },
+      {
+        label: 'Quit',
+        click() {
+          isQuitting = true;
+          app.quit();
+        }
       }
-    },
-    {
-      label: 'Quit', click: function () {
-        isQuitting = true;
-        app.quit();
-      }
-    }
-  ]));
+    ])
+  );
+  */
 
-  tray.on('click', () => mainWindow.show())
+  // tray.on('click', () => mainWindow.show());
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
-
-  mainWindow.webContents.send('handleSave');
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -141,20 +144,23 @@ app.on('ready', async () => {
   });
 
   mainWindow.on('close', event => {
+    event.preventDefault();
     log.debug('Detected close of app.');
-    if (!isQuitting) {
-      event.preventDefault();
-      mainWindow.hide();
-      event.returnValue = false;
-    }
-    mainWindow.webContents.send('handleClose');
+    // if (!isQuitting) {
+    //  mainWindow.hide();
+    //  event.returnValue = false;
+    // } else {
+      mainWindow.webContents.send('handleClose');
+    // }
   });
 
+  /*
   mainWindow.on('minimize', event => {
     event.preventDefault();
     mainWindow.hide();
     event.returnValue = false;
   });
+  */
 
   mainWindow.on('closed', () => {
     mainWindow = null;
