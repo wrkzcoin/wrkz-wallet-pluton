@@ -150,6 +150,12 @@ app.on('ready', async () => {
     mainWindow.webContents.send('handleClose');
   });
 
+  mainWindow.on('minimize', event => {
+    event.preventDefault();
+    mainWindow.hide();
+    event.returnValue = false;
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
