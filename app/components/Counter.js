@@ -186,7 +186,7 @@ export default class Receive extends Component<Props> {
                         Receiving Address
                         <textarea
                           className="textarea is-family-monospace is-large"
-                          rows="7"
+                          rows="6"
                           value={session.address}
                           id="receiveaddress"
                           readOnly
@@ -207,19 +207,23 @@ export default class Receive extends Component<Props> {
                   </form>
                 </div>
                 <div className="column">
-                  <br />
-                  <div className="box has-background-light is-qrcode">
-                    <center>
-                      <span>
-                        <QRCode
-                          value={session.address}
-                          renderAs="svg"
-                          bgColor="#f5f5f5"
-                          size={236}
-                        />
-                      </span>
-                    </center>
-                  </div>
+                <div className="field">
+                    <label className="label">
+                      QR Code
+                      <div className="box has-background-light">
+                        <center>
+                          <span>
+                            <QRCode
+                              value={session.address}
+                              renderAs="svg"
+                              bgColor="#f5f5f5"
+                              size={200}
+                            />
+                          </span>
+                        </center>
+                      </div>
+                    </label>
+                  </div>   
                 </div>
               </div>
             </div>
@@ -291,7 +295,7 @@ export default class Receive extends Component<Props> {
                         Receiving Address
                         <textarea
                           className="textarea is-family-monospace is-large"
-                          rows="7"
+                          rows="6"
                           value={session.address}
                           id="receiveaddress"
                           readOnly
@@ -322,7 +326,7 @@ export default class Receive extends Component<Props> {
                               value={session.address}
                               renderAs="svg"
                               bgColor="#f5f5f5"
-                              size={236}
+                              size={200}
                             />
                           </span>
                         </center>
