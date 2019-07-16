@@ -3,7 +3,7 @@
 import { WalletBackend, Daemon, LogLevel } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
-import { config, directories } from '../index';
+import { config, directories, eventEmitter } from '../index';
 import { createObjectCsvWriter } from 'csv-writer';
 
 export default class WalletSession {
@@ -74,12 +74,15 @@ export default class WalletSession {
           `Wallet synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
         );
       });
-
       this.wallet.on('desync', (walletHeight, networkHeight) => {
         log.debug(
           `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
         );
       });
+      this.wallet.on('incomingtx', (transaction) => {
+        eventEmitter.emit('sendNotification', this.atomicToHuman(transaction.totalAmount(), true));
+      })
+
     } else {
       this.address = '';
       this.syncStatus = 0;
