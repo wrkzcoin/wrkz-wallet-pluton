@@ -67,6 +67,8 @@ export default class WalletSession {
         );
       }
 
+      setInterval(() => this.startAutoSave(), 1000 * 60 * 5);
+
       this.wallet.on('sync', (walletHeight, networkHeight) => {
         log.debug(
           `Wallet synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
@@ -82,6 +84,10 @@ export default class WalletSession {
       this.address = '';
       this.syncStatus = 0;
     }
+  }
+
+  async startAutoSave() {
+    await this.saveWallet(this.walletFile);
   }
 
   toggleDarkMode(status) {
@@ -338,7 +344,7 @@ export default class WalletSession {
           return true;
         }
       } else {
-        log.debug('No path provided!');
+        log.debug('No path provided, or no wallet initialized');
         return false;
       }
     }
