@@ -1,13 +1,13 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-undef */
 // @flow
-import { app, Menu, shell, BrowserWindow, dialog, ipcRenderer } from 'electron';
+import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
 import log from 'electron-log';
 import npmPackage from '../package.json';
 // import { session, config } from './index';
 
-const currentVersion = npmPackage.version;
-const productName = npmPackage.productName;
+const { version: currentVersion } = npmPackage;
+const { productName } = npmPackage;
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;

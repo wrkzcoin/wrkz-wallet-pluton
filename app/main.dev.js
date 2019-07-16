@@ -10,12 +10,15 @@
  *
  * @flow
  */
-import { app, BrowserWindow, electron } from 'electron';
+import { app, BrowserWindow, Tray, Menu } from 'electron';
 import fs from 'fs';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
+import path from 'path';
+
+let isQuitting;
 
 export default class AppUpdater {
   constructor() {
@@ -70,6 +73,10 @@ if (!isSingleInstance) {
   });
 }
 
+app.on('before-quit', () => {
+  isQuitting = true;
+});
+
 app.on('window-all-closed', () => {
   app.quit();
 });
@@ -96,6 +103,25 @@ app.on('ready', async () => {
     backgroundColor: '#121212'
   });
 
+  const tray = new Tray(path.join(__dirname, '../resources/icon.png'));
+
+
+  tray.setContextMenu(Menu.buildFromTemplate([
+    {
+      label: 'Show App', click: function () {
+        mainWindow.show();
+      }
+    },
+    {
+      label: 'Quit', click: function () {
+        isQuitting = true;
+        app.quit();
+      }
+    }
+  ]));
+
+  tray.on('click', () => mainWindow.show())
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.send('handleSave');
@@ -116,6 +142,11 @@ app.on('ready', async () => {
 
   mainWindow.on('close', event => {
     log.debug('Detected close of app.');
+    if (!isQuitting) {
+      event.preventDefault();
+      mainWindow.hide();
+      event.returnValue = false;
+    }
     mainWindow.webContents.send('handleClose');
   });
 
