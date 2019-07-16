@@ -96,6 +96,12 @@ eventEmitter.on('updateRequired', function(updateFile) {
   }
 });
 
+ipcRenderer.on('handleSaveSilent', function(evt, route) {
+  if (!session.loginFailed && !session.firstStartup) {
+    const saved = session.saveWallet(session.walletFile);
+  }
+});
+
 // eslint-disable-next-line func-names
 ipcRenderer.on('handleSave', function(evt, route) {
   const saved = session.saveWallet(session.walletFile);

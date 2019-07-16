@@ -300,7 +300,7 @@ export default class MenuBuilder {
   }
 
   handleRestore() {
-    this.mainWindow.webContents.send('handleClose');
+    this.mainWindow.webContents.send('handleSaveSilent');
     log.debug('Import menu selected.');
     // seed will be 0, keys will be 1
     const userSelection = dialog.showMessageBox(null, {
