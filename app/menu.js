@@ -85,7 +85,7 @@ export default class MenuBuilder {
         }
       ]
     };
-    const subMenuEdit = {
+    const subMenuFile = {
       label: 'File',
       submenu: [
         {
@@ -127,6 +127,22 @@ export default class MenuBuilder {
           click: () => {
             this.mainWindow.close();
           }
+        }
+      ]
+    };
+    const subMenuEdit = {
+      label: 'Edit',
+      submenu: [
+        { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
+        { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
+        { type: 'separator' },
+        { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
+        { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
+        { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
+        {
+          label: 'Select All',
+          accelerator: 'Command+A',
+          selector: 'selectAll:'
         }
       ]
     };
@@ -245,6 +261,7 @@ export default class MenuBuilder {
 
     return [
       subMenuAbout,
+      subMenuFile,
       subMenuEdit,
       subMenuWallet,
       subMenuView,
