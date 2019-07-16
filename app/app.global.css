@@ -188,8 +188,6 @@
   height: calc(100% - 128px);
   overflow-y: scroll;
   box-sizing: border-box;
-  animation-name: fadein;
-  animation-duration: 0.25s;
 }
 
 .maincontent-homescreen {
@@ -202,8 +200,6 @@
   height: calc(100% - 128px);
   overflow-y: scroll;
   box-sizing: border-box;
-  animation-name: fadein;
-  animation-duration: 0.25s;
 }
 
 .maincontent-homescreen-fadein {

@@ -423,7 +423,7 @@ export default class Settings extends Component<Props> {
                 {this.state.nodeFee > 0 && (
                   <div className="control statusicons">
                     <div className="tags has-addons">
-                      <span className="tag   is-large">Node Fee:</span>
+                      <span className="tag  is-white is-large">Node Fee:</span>
                       <span className="tag is-danger is-large">
                         {session.atomicToHuman(this.state.nodeFee, true)} TRTL
                       </span>

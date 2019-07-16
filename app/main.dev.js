@@ -10,11 +10,12 @@
  *
  * @flow
  */
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, electron } from 'electron';
+import fs from 'fs';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
 import contextMenu from 'electron-context-menu';
+import MenuBuilder from './menu';
 
 export default class AppUpdater {
   constructor() {
@@ -120,6 +121,13 @@ app.on('ready', async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+
+  electron.powerMonitor.on('shutdown', () => {
+    const filePath = './itworked';
+    const fd = fs.openSync(filePath, 'w')
+    log.debug('System poweroff detected. Saving wallet...');
+    mainWindow.webContents.send('handleClose');
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
