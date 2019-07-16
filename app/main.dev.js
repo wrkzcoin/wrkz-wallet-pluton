@@ -123,13 +123,6 @@ app.on('ready', async () => {
     mainWindow = null;
   });
 
-  electron.powerMonitor.on('shutdown', () => {
-    const filePath = './itworked';
-    const fd = fs.openSync(filePath, 'w')
-    log.debug('System poweroff detected. Saving wallet...');
-    mainWindow.webContents.send('handleClose');
-  });
-
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
