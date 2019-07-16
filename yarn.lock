@@ -13220,10 +13220,10 @@ turtlecoin-crypto@^3.0.3:
     bindings "^1.5.0"
     nan "^2.14.0"
 
-turtlecoin-rpc@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/turtlecoin-rpc/-/turtlecoin-rpc-1.0.0.tgz#1225153fd1a77b2ea95ac621a3a8b726ea4fe989"
-  integrity sha512-w1Sm19vfPSCglpMFG6L1abTRNJhwHCbl4MxTQLYjSN9SFYS6n9JWk5840+1zV9UGc7lwQ1xh+OFk5tVjqp8ysw==
+turtlecoin-rpc@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/turtlecoin-rpc/-/turtlecoin-rpc-1.0.1.tgz#d41a3ff904ed8437cf8f67b1c10fb9e27ae0b932"
+  integrity sha512-3U0FDbbM3+Es/Asd6QwQY/WWrVWknhyxEFfFuuBYd2KBncfqdQXoxzjLMGIOSSiCSl4PdFIxhxEaKY/EfQGKmw==
   dependencies:
     request "^2.88.0"
     request-promise-native "^1.0.7"
@@ -13241,15 +13241,15 @@ turtlecoin-utils@^1.0.2:
   optionalDependencies:
     turtlecoin-crypto "^3.0.3"
 
-turtlecoin-wallet-backend@^3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.1.tgz#71ba1ceb4560d122342696b809b11c6ca719cebb"
-  integrity sha512-dMPCO9kHakEUN6vhR+QBP722sVqAu2y4XxvtT129BHXiuWsHZX5bIbxXuEpopU+87GhgsDQnnBYi2CA5P3d1Uw==
+turtlecoin-wallet-backend@^3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.2.tgz#84f85d6e22ca1a2661b2836bad46cb15416435f5"
+  integrity sha512-D6JDT62f1MaWUvuqqPHaN+jblrLHT7PsOyf59inca50bM9ApVDjMLrqi/49hYlTGVQ/GHJda+mrHyCjpS27pjQ==
   dependencies:
     lodash "^4.17.14"
     object-sizeof "^1.4.0"
     pbkdf2 "^3.0.17"
-    turtlecoin-rpc "^1.0.0"
+    turtlecoin-rpc "^1.0.1"
     turtlecoin-utils "^1.0.2"
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
