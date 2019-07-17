@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/button-has-type */
 /* eslint-disable class-methods-use-this */
 // @flow
@@ -115,8 +116,10 @@ export default class Send extends Component<Props> {
     if (height === '') {
       height = '0';
     }
-
-    const savePath = remote.dialog.showSaveDialog();
+    const options = {
+      defaultPath: remote.app.getPath('documents')
+    };
+    const savePath = remote.dialog.showSaveDialog(null, options);
     if (savePath === undefined) {
       return;
     }

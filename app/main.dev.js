@@ -104,34 +104,6 @@ app.on('ready', async () => {
     backgroundColor: '#121212'
   });
 
-  const tray = new Tray(path.join(__dirname, 'images/icon.png'));
-
-  tray.setContextMenu(
-    Menu.buildFromTemplate([
-      {
-        label: 'Show App',
-        click() {
-          if (mainWindow !== null) {
-            mainWindow.show();
-          }
-        }
-      },
-      {
-        label: 'Quit',
-        click() {
-          isQuitting = true;
-          app.quit();
-        }
-      }
-    ])
-  );
-
-  tray.on('click', () => {
-    if (mainWindow) {
-      mainWindow.show();
-    }
-  });
-
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // @TODO: Use 'ready-to-show' event
@@ -151,20 +123,8 @@ app.on('ready', async () => {
   mainWindow.on('close', event => {
     event.preventDefault();
     log.debug('Detected close of app.');
-    if (!isQuitting && mainWindow !== null) {
-      mainWindow.hide();
-      event.returnValue = false;
-    } else if (mainWindow !== null) {
-      mainWindow.webContents.send('handleClose');
-    }
-  });
-
-  mainWindow.on('minimize', event => {
-    event.preventDefault();
-    if (mainWindow !== null) {
-      mainWindow.hide();
-    }
     event.returnValue = false;
+    mainWindow.webContents.send('handleClose');
   });
 
   mainWindow.on('closed', () => {

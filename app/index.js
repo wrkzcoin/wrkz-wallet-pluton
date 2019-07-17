@@ -18,6 +18,10 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 
+const installationDirectory = remote.app.getAppPath();
+
+log.debug(installationDirectory);
+
 export let config = iConfig;
 
 export const eventEmitter = new EventEmitter();
@@ -128,7 +132,10 @@ ipcRenderer.on('handleSave', function(evt, route) {
 });
 
 ipcRenderer.on('handleSaveAs', function(evt, route) {
-  const savePath = remote.dialog.showSaveDialog();
+  const options = {
+    defaultPath: remote.app.getPath('documents')
+  };
+  const savePath = remote.dialog.showSaveDialog(null, options);
   if (savePath === undefined) {
     return;
   }
@@ -142,7 +149,10 @@ ipcRenderer.on('handleSaveAs', function(evt, route) {
 });
 
 ipcRenderer.on('exportToCSV', function(evt, route) {
-  const savePath = remote.dialog.showSaveDialog();
+  const options = {
+    defaultPath: remote.app.getPath('documents')
+  };
+  const savePath = remote.dialog.showSaveDialog(null, options);
   if (savePath === undefined) {
     return;
   }
@@ -158,7 +168,10 @@ ipcRenderer.on('exportToCSV', function(evt, route) {
 
 function handleOpen() {
   session.saveWallet(session.walletFile);
-  const getPaths = remote.dialog.showOpenDialog();
+  const options = {
+    defaultPath: remote.app.getPath('documents')
+  };
+  const getPaths = remote.dialog.showOpenDialog(null, options);
   if (getPaths === undefined) {
     return;
   }
@@ -231,7 +244,10 @@ eventEmitter.on('initializeNewSession', function(password) {
 });
 
 function handleNew() {
-  const savePath = remote.dialog.showSaveDialog();
+  const options = {
+    defaultPath: remote.app.getPath('documents')
+  };
+  const savePath = remote.dialog.showSaveDialog(null, options);
   if (savePath === undefined) {
     return;
   }
