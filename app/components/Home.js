@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
 import request from 'request';
-import { config, session } from '../index';
+import { config, session, loginCounter } from '../index';
 import navBar from './NavBar';
 import { eventEmitter } from '../index';
 
@@ -75,6 +75,9 @@ export default class Home extends Component<Props> {
     eventEmitter.on('loginFailed', this.handleLoginFailure);
     if (session.firstLoadOnLogin && this.state.loginFailed === false) {
       this.switchOffAnimation();
+    }
+    if (!this.state.loginFailed) {
+      loginCounter.userLoginAttempted = false;
     }
   }
 

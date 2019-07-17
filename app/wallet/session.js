@@ -1,21 +1,20 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable class-methods-use-this */
 import { WalletBackend, Daemon, LogLevel } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
-import { config, directories, eventEmitter } from '../index';
 import { createObjectCsvWriter } from 'csv-writer';
+import { config, directories, eventEmitter } from '../index';
 
 export default class WalletSession {
-  constructor(password, daemonHost, daemonPort, isCache, useSSL) {
+  constructor(password, daemonHost, daemonPort) {
     this.loginFailed = false;
     this.firstStartup = false;
     this.walletPassword = password || '';
     this.daemonHost = daemonHost || config.daemonHost;
     this.daemonPort =
       parseInt(daemonPort, 10) || parseInt(config.daemonPort, 10);
-    this.isCache = isCache || config.isCache;
-    this.useSSL = useSSL || config.useSSL;
     this.walletFile = config.walletFile;
     this.darkMode = config.darkMode || false;
     this.firstLoadOnLogin = true;
@@ -54,17 +53,15 @@ export default class WalletSession {
 
       if (config.logLevel === 'DEBUG') {
         this.wallet.setLogLevel(LogLevel.DEBUG);
-        this.wallet.setLoggerCallback(
-          (prettyMessage, message, level, categories) => {
-            const logStream = fs.createWriteStream(
-              `${directories[1]}/protonwallet.log`,
-              {
-                flags: 'a'
-              }
-            );
-            logStream.write(`${prettyMessage}\n`);
-          }
-        );
+        this.wallet.setLoggerCallback(prettyMessage => {
+          const logStream = fs.createWriteStream(
+            `${directories[1]}/protonwallet.log`,
+            {
+              flags: 'a'
+            }
+          );
+          logStream.write(`${prettyMessage}\n`);
+        });
       }
 
       setInterval(() => this.startAutoSave(), 1000 * 60 * 5);
@@ -79,10 +76,12 @@ export default class WalletSession {
           `Wallet is no longer synced! Wallet height: ${walletHeight}, Network height: ${networkHeight}`
         );
       });
-      this.wallet.on('incomingtx', (transaction) => {
-        eventEmitter.emit('sendNotification', this.atomicToHuman(transaction.totalAmount(), true));
-      })
-
+      this.wallet.on('incomingtx', transaction => {
+        eventEmitter.emit(
+          'sendNotification',
+          this.atomicToHuman(transaction.totalAmount(), true)
+        );
+      });
     } else {
       this.address = '';
       this.syncStatus = 0;
@@ -114,7 +113,7 @@ export default class WalletSession {
   exportToCSV(savePath) {
     const rawTransactions = this.getTransactions();
     const csvWriter = createObjectCsvWriter({
-      path: savePath + '.csv',
+      path: `${savePath}.csv`,
       header: [
         { id: 'date', title: 'Date' },
         { id: 'blockHeight', title: 'Block Height' },
@@ -279,7 +278,6 @@ export default class WalletSession {
     if (this.loginFailed || this.firstStartup) {
       return 0;
     }
-    // eslint-disable-next-line no-unused-vars
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
     return unlockedBalance;
   }
@@ -288,7 +286,6 @@ export default class WalletSession {
     if (this.loginFailed || this.firstStartup) {
       return 0;
     }
-    // eslint-disable-next-line no-unused-vars
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
     return lockedBalance;
   }
@@ -298,12 +295,14 @@ export default class WalletSession {
       return 0;
     }
     let [
+      // eslint-disable-next-line prefer-const
       walletHeight,
+      // eslint-disable-next-line prefer-const
       localHeight,
       networkHeight
     ] = this.wallet.getSyncStatus();
     /* Since we update the network height in intervals, and we update wallet
-        height by syncing, occasionaly wallet height is > network height.
+        height by syncing, occasionally wallet height is > network height.
         Fix that here. */
     if (
       walletHeight > networkHeight &&

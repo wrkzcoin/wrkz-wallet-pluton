@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/no-mutable-exports */
 /* eslint-disable func-names */
 import log from 'electron-log';
-import request from 'request-promise';
 import os from 'os';
 import fs from 'fs';
 import React, { Fragment } from 'react';
@@ -15,6 +16,7 @@ import './app.global.css';
 import WalletSession from './wallet/session';
 import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
+import LoginCounter from './wallet/loginCounter';
 
 export let config = iConfig;
 
@@ -23,6 +25,8 @@ eventEmitter.setMaxListeners(2);
 
 export const updater = new AutoUpdater();
 updater.getLatestVersion();
+
+export const loginCounter = new LoginCounter();
 
 log.debug(`Proton wallet started...`);
 
@@ -197,13 +201,11 @@ function handleOpen() {
   }
 }
 
-
-
 eventEmitter.on('sendNotification', function sendNotification(amount) {
   const notif = new window.Notification('Transaction Received!', {
     body: `You've just received ${amount} TRTL`,
     silent: true // We'll play our own sound
-  })
+  });
 });
 
 ipcRenderer.on('handleOpen', handleOpen);

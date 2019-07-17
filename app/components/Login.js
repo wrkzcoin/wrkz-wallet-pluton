@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
-import { config, session, directories, eventEmitter } from '../index';
+import { config, session, directories, eventEmitter, loginCounter } from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
@@ -34,7 +34,8 @@ export default class Login extends Component<Props> {
       loginInProgress: false,
       userOpenedDifferentWallet: false,
       darkMode: session.darkMode || false,
-      walletFile: session.walletFile
+      walletFile: session.walletFile,
+      wrongPassword: loginCounter.userLoginAttempted
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -103,13 +104,11 @@ export default class Login extends Component<Props> {
   }
 
   async handleSubmit(event) {
-    eventEmitter.emit('loginInProgress');
-
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
-
+    loginCounter.userLoginAttempted = true;
+    eventEmitter.emit('loginInProgress');
     const password = event.target[0].value;
-
     if (password === undefined) {
       return;
     }
@@ -142,6 +141,13 @@ export default class Login extends Component<Props> {
             {this.state.loginInProgress === false && (
               <div className="mid-div">
                 <div className="box loginbox has-background-light inner-div">
+                  {this.state.wrongPassword && (
+                    <center>
+                      <span className="tag is-danger is-large">
+                        Password incorrect, please try again
+                      </span>
+                    </center>
+                  )}
                   <form onSubmit={this.handleSubmit}>
                     <div className="field">
                       <label className="label" htmlFor="scanheight">
@@ -156,6 +162,12 @@ export default class Login extends Component<Props> {
                           />
                         </div>
                       </label>
+                      <label
+                      className="help"
+                      htmlFor="scanheight"
+                    >
+                      attempting login to {this.state.walletFile}
+                    </label>
                     </div>
                     <div className="buttons is-right">
                       <button
@@ -176,6 +188,13 @@ export default class Login extends Component<Props> {
             {this.state.loginInProgress === false && (
               <div className="mid-div">
                 <div className="box loginbox has-background-black inner-div">
+                {this.state.wrongPassword && (
+                  <center>
+                    <span className="tag is-danger is-large">
+                      Password incorrect, please try again
+                    </span>
+                  </center>
+                )}
                   <form onSubmit={this.handleSubmit}>
                     <div className="field">
                       <label

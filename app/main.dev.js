@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-param-reassign */
 /* eslint global-require: off */
 
 /**
@@ -11,12 +13,11 @@
  * @flow
  */
 import { app, BrowserWindow, Tray, Menu } from 'electron';
-import fs from 'fs';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
-import MenuBuilder from './menu';
 import path from 'path';
+import MenuBuilder from './menu';
 
 let isQuitting;
 
@@ -82,7 +83,7 @@ app.on('window-all-closed', () => {
 });
 
 contextMenu({
-  prepend: (defaultActions, params, mainWindow) => []
+  prepend: (defaultActions, params) => []
 });
 
 app.on('ready', async () => {
@@ -103,15 +104,16 @@ app.on('ready', async () => {
     backgroundColor: '#121212'
   });
 
-  // const tray = new Tray(path.join(__dirname, 'images/icon.png'));
+  const tray = new Tray(path.join(__dirname, 'images/icon.png'));
 
-  /*
   tray.setContextMenu(
     Menu.buildFromTemplate([
       {
         label: 'Show App',
         click() {
-          mainWindow.show();
+          if (mainWindow !== null) {
+            mainWindow.show();
+          }
         }
       },
       {
@@ -123,9 +125,12 @@ app.on('ready', async () => {
       }
     ])
   );
-  */
 
-  // tray.on('click', () => mainWindow.show());
+  tray.on('click', () => {
+    if (mainWindow) {
+      mainWindow.show();
+    }
+  });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
@@ -146,21 +151,21 @@ app.on('ready', async () => {
   mainWindow.on('close', event => {
     event.preventDefault();
     log.debug('Detected close of app.');
-    // if (!isQuitting) {
-    //  mainWindow.hide();
-    //  event.returnValue = false;
-    // } else {
+    if (!isQuitting && mainWindow !== null) {
+      mainWindow.hide();
+      event.returnValue = false;
+    } else if (mainWindow !== null) {
       mainWindow.webContents.send('handleClose');
-    // }
+    }
   });
 
-  /*
   mainWindow.on('minimize', event => {
     event.preventDefault();
-    mainWindow.hide();
+    if (mainWindow !== null) {
+      mainWindow.hide();
+    }
     event.returnValue = false;
   });
-  */
 
   mainWindow.on('closed', () => {
     mainWindow = null;
