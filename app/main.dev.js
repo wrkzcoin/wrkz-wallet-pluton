@@ -103,9 +103,8 @@ app.on('ready', async () => {
     backgroundColor: '#121212'
   });
 
-  // const tray = new Tray(path.join(__dirname, 'images/icon.png'));
+  const tray = new Tray(path.join(__dirname, 'images/icon.png'));
 
-  /*
   tray.setContextMenu(
     Menu.buildFromTemplate([
       {
@@ -123,9 +122,8 @@ app.on('ready', async () => {
       }
     ])
   );
-  */
 
-  // tray.on('click', () => mainWindow.show());
+  tray.on('click', () => mainWindow.show());
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
@@ -146,21 +144,19 @@ app.on('ready', async () => {
   mainWindow.on('close', event => {
     event.preventDefault();
     log.debug('Detected close of app.');
-    // if (!isQuitting) {
-    //  mainWindow.hide();
-    //  event.returnValue = false;
-    // } else {
+    if (!isQuitting) {
+      mainWindow.hide();
+      event.returnValue = false;
+    } else {
       mainWindow.webContents.send('handleClose');
-    // }
+    }
   });
 
-  /*
   mainWindow.on('minimize', event => {
     event.preventDefault();
     mainWindow.hide();
     event.returnValue = false;
   });
-  */
 
   mainWindow.on('closed', () => {
     mainWindow = null;
