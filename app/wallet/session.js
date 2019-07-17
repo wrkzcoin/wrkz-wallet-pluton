@@ -40,8 +40,8 @@ export default class WalletSession {
 
     if (error) {
       if (error.errorCode === 1) {
-        log.debug("Didn't find default wallet file, creating...");
-        openWallet = WalletBackend.createWallet(this.daemon);
+        this.walletFile = '';
+        this.firstStartup = true;
       } else if (error.errorCode === 5) {
         this.loginFailed = true;
       }
