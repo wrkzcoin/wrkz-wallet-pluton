@@ -19,12 +19,21 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 
-export const installationDirectory = path.resolve(
-  remote.app.getAppPath(),
-  '../../'
-);
-
-log.debug(installationDirectory);
+export function savedInInstallDir(savePath) {
+  const installationDirectory = path.resolve(
+    remote.app.getAppPath(),
+    '../../'
+  );
+  log.debug(installationDirectory);
+  const saveAttemptDirectory = path.resolve(savePath, '../');
+  if (
+    saveAttemptDirectory === installationDirectory &&
+    os.platform() === 'win32'
+  ) {
+    return true;
+  }
+  return false;
+}
 
 export let config = iConfig;
 
@@ -47,11 +56,6 @@ export const directories = [
 ];
 
 const [programDirectory, logDirectory, walletDirectory] = directories;
-
-fs.writeFile(`${programDirectory}/test.txt`, installationDirectory, err => {
-  if (err) throw err;
-  log.debug('Config not detected, wrote internal config to disk.');
-});
 
 log.debug('Checking if program directories are present...');
 // eslint-disable-next-line func-names
@@ -260,16 +264,13 @@ function handleNew() {
   if (savePath === undefined) {
     return;
   }
-  if (
-    path.resolve(savePath, '../') === installationDirectory &&
-    os.platform() === 'win32'
-  ) {
+  if (savedInInstallDir(savePath)) {
     remote.dialog.showMessageBox(null, {
       type: 'error',
       buttons: ['OK'],
       title: 'Can not save to installation directory',
       message:
-        'You can not save the wallet in the installation directory. The windows installer will delete it upon upgrading the application, so it is not allowed.'
+        'You can not save the wallet in the installation directory. The windows installer will delete all files in the directory upon upgrading the application, so it is not allowed.'
     });
     return;
   }

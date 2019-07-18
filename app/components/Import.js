@@ -9,7 +9,7 @@ import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
 import navBar from './NavBar';
 import routes from '../constants/routes';
-import { config, session, directories, eventEmitter } from '../index';
+import { config, session, directories, eventEmitter, savedInInstallDir } from '../index';
 
 // import styles from './Send.css';
 
@@ -114,7 +114,16 @@ export default class Send extends Component<Props> {
     if (savePath === undefined) {
       return;
     }
-
+    if (savedInInstallDir(savePath)) {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Can not save to installation directory',
+        message:
+          'You can not save the wallet in the installation directory. The windows installer will delete all files in the directory upon upgrading the application, so it is not allowed.'
+      });
+      return;
+    }
     const importedSuccessfully = session.handleImportFromSeed(
       seed,
       savePath,
