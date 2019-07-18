@@ -4,6 +4,7 @@
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
+import path from 'path';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
@@ -18,7 +19,10 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 
-export const installationDirectory = remote.app.getAppPath();
+export const installationDirectory = path.resolve(
+  remote.app.getAppPath(),
+  '../../'
+);
 
 log.debug(installationDirectory);
 
@@ -44,7 +48,7 @@ export const directories = [
 
 const [programDirectory, logDirectory, walletDirectory] = directories;
 
-fs.writeFile(`${programDirectory}/test.txt`, installationDirectory,  err => {
+fs.writeFile(`${programDirectory}/test.txt`, installationDirectory, err => {
   if (err) throw err;
   log.debug('Config not detected, wrote internal config to disk.');
 });
@@ -256,13 +260,16 @@ function handleNew() {
   if (savePath === undefined) {
     return;
   }
-  if (savePath === installationDirectory && os.platform() === 'win32') {
+  if (
+    path.resolve(savePath, '../') === installationDirectory &&
+    os.platform() === 'win32'
+  ) {
     remote.dialog.showMessageBox(null, {
       type: 'error',
       buttons: ['OK'],
       title: 'Can not save to installation directory',
       message:
-        'You can not save the wallet in the installation directory. The installer will overwrite it upon upgrading the application, so it is not allowed.'
+        'You can not save the wallet in the installation directory. The windows installer will delete it upon upgrading the application, so it is not allowed.'
     });
     return;
   }
