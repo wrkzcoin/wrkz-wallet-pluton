@@ -18,7 +18,7 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 
-const installationDirectory = remote.app.getAppPath();
+export const installationDirectory = remote.app.getAppPath();
 
 log.debug(installationDirectory);
 
@@ -249,6 +249,16 @@ function handleNew() {
   };
   const savePath = remote.dialog.showSaveDialog(null, options);
   if (savePath === undefined) {
+    return;
+  }
+  if (savePath === installationDirectory && os.platform() === 'win32') {
+    remote.dialog.showMessageBox(null, {
+      type: 'error',
+      buttons: ['OK'],
+      title: 'Can not save to installation directory',
+      message:
+        'You can not save the wallet in the installation directory. The installer will overwrite it upon upgrading the application, so it is not allowed.'
+    });
     return;
   }
   const createdSuccessfuly = session.handleNewWallet(savePath);
