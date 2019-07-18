@@ -44,6 +44,11 @@ export const directories = [
 
 const [programDirectory, logDirectory, walletDirectory] = directories;
 
+fs.writeFile(`${programDirectory}/test.txt`, installationDirectory,  err => {
+  if (err) throw err;
+  log.debug('Config not detected, wrote internal config to disk.');
+});
+
 log.debug('Checking if program directories are present...');
 // eslint-disable-next-line func-names
 directories.forEach(function(dir) {
