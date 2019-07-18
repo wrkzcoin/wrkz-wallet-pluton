@@ -24,7 +24,6 @@ export function savedInInstallDir(savePath) {
     remote.app.getAppPath(),
     '../../'
   );
-  log.debug(installationDirectory);
   const saveAttemptDirectory = path.resolve(savePath, '../');
   if (
     saveAttemptDirectory === installationDirectory &&
