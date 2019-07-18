@@ -16,10 +16,7 @@ import { app, BrowserWindow, Tray, Menu } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
-import path from 'path';
 import MenuBuilder from './menu';
-
-let isQuitting;
 
 export default class AppUpdater {
   constructor() {
@@ -74,10 +71,6 @@ if (!isSingleInstance) {
   });
 }
 
-app.on('before-quit', () => {
-  isQuitting = true;
-});
-
 app.on('window-all-closed', () => {
   app.quit();
 });
@@ -124,7 +117,9 @@ app.on('ready', async () => {
     event.preventDefault();
     log.debug('Detected close of app.');
     event.returnValue = false;
-    mainWindow.webContents.send('handleClose');
+    if (mainWindow !== null) {
+      mainWindow.webContents.send('handleClose');
+    }
   });
 
   mainWindow.on('closed', () => {
