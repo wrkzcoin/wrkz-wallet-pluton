@@ -160,10 +160,13 @@ export default class Login extends Component<Props> {
                         <div className="control">
                           <input
                             ref={input => input && input.focus()}
-                            className="input is-large"
+                            className={
+                              this.state.wrongPassword
+                                ? 'input is-large is-danger'
+                                : 'input is-large'
+                            }
                             type="password"
-                            placeholder="Enter your password..."
-                            id="scanheight"
+                            placeholder="Enter your wallet password..."
                           />
                         </div>
                       </label>
@@ -206,10 +209,13 @@ export default class Login extends Component<Props> {
                         <div className="control">
                           <input
                             ref={input => input && input.focus()}
-                            className="input is-large"
+                            className={
+                              this.state.wrongPassword
+                                ? 'input is-large is-danger'
+                                : 'input is-large'
+                            }
                             type="password"
                             placeholder="Enter your wallet password..."
-                            id="scanheight"
                           />
                         </div>
                       </label>
