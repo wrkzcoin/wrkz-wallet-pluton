@@ -44,7 +44,8 @@ export default class Send extends Component<Props> {
       enteredAmount: '',
       totalAmount: '',
       gohome: false,
-      darkMode: session.darkMode
+      darkMode: session.darkMode,
+      transactionFailed: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -135,6 +136,12 @@ export default class Send extends Component<Props> {
       transactionComplete: true,
       transactionInProgress: false
     });
+  }
+
+  handleTransactionFailed() {
+    this.setState({
+      transactionFailed: true
+    })
   }
 
   handleAmountChange(event) {
@@ -229,7 +236,7 @@ export default class Send extends Component<Props> {
       return;
     }
 
-    const hash = await session.sendTransaction(
+    const [hash, err] = await session.sendTransaction(
       sendToAddress,
       amount,
       paymentID,
@@ -239,10 +246,17 @@ export default class Send extends Component<Props> {
       remote.dialog.showMessageBox(null, {
         type: 'info',
         buttons: ['OK'],
-        title: 'Saved!',
-        message: 'Your transaction was sent successfully.\n\n' + `${hash}`
+        title: 'Transaction Sent!',
+        message: `Your transaction was sent successfully.\nTransaction hash: ${hash}`
       });
       eventEmitter.emit('transactionComplete');
+    } else if (err) {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Transaction Error',
+        message: err.toString()
+      });
     }
   }
 

@@ -7,7 +7,13 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
-import { config, session, directories, eventEmitter, loginCounter } from '../index';
+import {
+  config,
+  session,
+  directories,
+  eventEmitter,
+  loginCounter
+} from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 
@@ -140,14 +146,13 @@ export default class Login extends Component<Props> {
           <div className="fullwindow">
             {this.state.loginInProgress === false && (
               <div className="mid-div">
-                <div className="box loginbox has-background-light inner-div">
-                  {this.state.wrongPassword && (
-                    <center>
-                      <span className="tag is-danger is-large">
-                        Password incorrect, please try again
-                      </span>
-                    </center>
-                  )}
+                <div
+                  className={
+                    this.state.wrongPassword
+                      ? 'box loginbox-fail has-background-light inner-div'
+                      : 'box loginbox has-background-light inner-div'
+                  }
+                >
                   <form onSubmit={this.handleSubmit}>
                     <div className="field">
                       <label className="label" htmlFor="scanheight">
@@ -162,12 +167,9 @@ export default class Login extends Component<Props> {
                           />
                         </div>
                       </label>
-                      <label
-                      className="help"
-                      htmlFor="scanheight"
-                    >
-                      attempting login to {this.state.walletFile}
-                    </label>
+                      <label className="help" htmlFor="scanheight">
+                        attempting login to {this.state.walletFile}
+                      </label>
                     </div>
                     <div className="buttons is-right">
                       <button
@@ -187,14 +189,13 @@ export default class Login extends Component<Props> {
           <div className="fullwindow has-background-dark outer-div">
             {this.state.loginInProgress === false && (
               <div className="mid-div">
-                <div className="box loginbox has-background-black inner-div">
-                {this.state.wrongPassword && (
-                  <center>
-                    <span className="tag is-danger is-large">
-                      Password incorrect, please try again
-                    </span>
-                  </center>
-                )}
+                <div
+                  className={
+                    this.state.wrongPassword
+                      ? 'box loginbox-fail has-background-black inner-div'
+                      : 'box loginbox has-background-black inner-div'
+                  }
+                >
                   <form onSubmit={this.handleSubmit}>
                     <div className="field">
                       <label

@@ -368,10 +368,10 @@ export default class WalletSession {
     );
     if (err) {
       log.debug(`Failed to send transaction: ${err.toString()}`);
-      return err;
+      return [hash, err];
     }
     log.debug(`Transaction succeeded! ${hash}`);
-    return hash;
+    return [hash, err];
   }
 
   formatLikeCurrency(x: number) {
