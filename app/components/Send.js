@@ -141,7 +141,7 @@ export default class Send extends Component<Props> {
   handleTransactionFailed() {
     this.setState({
       transactionFailed: true
-    })
+    });
   }
 
   handleAmountChange(event) {
@@ -257,6 +257,7 @@ export default class Send extends Component<Props> {
         title: 'Transaction Error',
         message: err.toString()
       });
+      eventEmitter.emit('transactionCancel');
     }
   }
 
@@ -462,7 +463,12 @@ export default class Send extends Component<Props> {
                       )}
                     {session.daemon.networkBlockCount === 0 && (
                       <span className="tag is-danger is-large">
-                                                <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
+                        <ReactLoading
+                          type="spinningBubbles"
+                          color="#F5F5F5"
+                          height={30}
+                          width={30}
+                        />
                       </span>
                     )}
                   </div>
@@ -622,7 +628,12 @@ export default class Send extends Component<Props> {
                       )}
                     {session.daemon.networkBlockCount === 0 && (
                       <span className="tag is-danger is-large">
-                                                <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
+                        <ReactLoading
+                          type="spinningBubbles"
+                          color="#F5F5F5"
+                          height={30}
+                          width={30}
+                        />
                       </span>
                     )}
                   </div>
