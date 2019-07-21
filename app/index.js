@@ -179,7 +179,6 @@ ipcRenderer.on('exportToCSV', function(evt, route) {
 });
 
 function handleOpen() {
-  session.saveWallet(session.walletFile);
   const options = {
     defaultPath: remote.app.getPath('documents')
   };
@@ -187,6 +186,7 @@ function handleOpen() {
   if (getPaths === undefined) {
     return;
   }
+  session.saveWallet(session.walletFile);
   const [wallet, error] = WalletBackend.openWalletFromFile(
     session.daemon,
     getPaths[0],
@@ -263,6 +263,7 @@ function handleNew() {
   if (savePath === undefined) {
     return;
   }
+  session.saveWallet(session.walletFile);
   if (savedInInstallDir(savePath)) {
     remote.dialog.showMessageBox(null, {
       type: 'error',

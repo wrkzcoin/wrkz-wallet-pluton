@@ -114,6 +114,7 @@ export default class Send extends Component<Props> {
     if (savePath === undefined) {
       return;
     }
+    session.saveWallet(session.walletFile);
     if (savedInInstallDir(savePath)) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
