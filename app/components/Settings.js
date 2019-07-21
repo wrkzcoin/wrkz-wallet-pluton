@@ -454,7 +454,12 @@ export default class Settings extends Component<Props> {
                     {session.daemon.networkBlockCount === 0 &&
                       session.wallet !== undefined && (
                         <span className="tag is-danger is-large">
-                                                  <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
+                          <ReactLoading
+                            type="spinningBubbles"
+                            color="#F5F5F5"
+                            height={30}
+                            width={30}
+                          />
                         </span>
                       )}
                     {session.wallet === undefined && (
@@ -468,8 +473,11 @@ export default class Settings extends Component<Props> {
                   <div className="tags has-addons">
                     <span className="tag is-large is-white">Balance:</span>
                     <span className="tag is-info is-large">
-                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
-                      TRTL
+                      {session.atomicToHuman(
+                        this.state.unlockedBalance + this.state.lockedBalance,
+                        true
+                      )}
+                      &nbsp;TRTL
                     </span>
                   </div>
                 </div>
@@ -619,7 +627,12 @@ export default class Settings extends Component<Props> {
                     {session.daemon.networkBlockCount === 0 &&
                       session.wallet !== undefined && (
                         <span className="tag is-danger is-large">
-                                                  <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
+                          <ReactLoading
+                            type="spinningBubbles"
+                            color="#F5F5F5"
+                            height={30}
+                            width={30}
+                          />
                         </span>
                       )}
                     {session.wallet === undefined && (
@@ -633,8 +646,11 @@ export default class Settings extends Component<Props> {
                   <div className="tags has-addons">
                     <span className="tag is-large is-dark">Balance:</span>
                     <span className="tag is-info is-large">
-                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
-                      TRTL
+                      {session.atomicToHuman(
+                        this.state.unlockedBalance + this.state.lockedBalance,
+                        true
+                      )}
+                      &nbsp;TRTL
                     </span>
                   </div>
                 </div>

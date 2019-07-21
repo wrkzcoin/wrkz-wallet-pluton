@@ -207,7 +207,7 @@ export default class Receive extends Component<Props> {
                   </form>
                 </div>
                 <div className="column">
-                <div className="field">
+                  <div className="field">
                     <label className="label">
                       QR Code
                       <div className="box has-background-light">
@@ -262,7 +262,12 @@ export default class Receive extends Component<Props> {
                       )}
                     {session.daemon.networkBlockCount === 0 && (
                       <span className="tag is-danger is-large">
-                                                <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
+                        <ReactLoading
+                          type="spinningBubbles"
+                          color="#F5F5F5"
+                          height={30}
+                          width={30}
+                        />
                       </span>
                     )}
                   </div>
@@ -271,8 +276,11 @@ export default class Receive extends Component<Props> {
                   <div className="tags has-addons">
                     <span className="tag is-white is-large">Balance:</span>
                     <span className="tag is-info is-large">
-                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
-                      TRTL
+                      {session.atomicToHuman(
+                        this.state.unlockedBalance + this.state.lockedBalance,
+                        true
+                      )}
+                      &nbsp;TRTL
                     </span>
                   </div>
                 </div>
@@ -371,7 +379,12 @@ export default class Receive extends Component<Props> {
                       )}
                     {session.daemon.networkBlockCount === 0 && (
                       <span className="tag is-danger is-large">
-                                                <ReactLoading                           type="spinningBubbles"                           color="#F5F5F5"                           height={30}                           width={30}                         />
+                        <ReactLoading
+                          type="spinningBubbles"
+                          color="#F5F5F5"
+                          height={30}
+                          width={30}
+                        />
                       </span>
                     )}
                   </div>
@@ -380,8 +393,11 @@ export default class Receive extends Component<Props> {
                   <div className="tags has-addons">
                     <span className="tag is-dark is-large">Balance:</span>
                     <span className="tag is-info is-large">
-                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
-                      TRTL
+                      {session.atomicToHuman(
+                        this.state.unlockedBalance + this.state.lockedBalance,
+                        true
+                      )}
+                      &nbsp;TRTL
                     </span>
                   </div>
                 </div>

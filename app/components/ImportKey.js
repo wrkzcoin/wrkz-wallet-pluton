@@ -8,7 +8,13 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
-import { config, session, directories, eventEmitter, savedInInstallDir } from '../index';
+import {
+  config,
+  session,
+  directories,
+  eventEmitter,
+  savedInInstallDir
+} from '../index';
 import navBar from './NavBar';
 import routes from '../constants/routes';
 

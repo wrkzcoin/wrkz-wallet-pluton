@@ -477,8 +477,11 @@ export default class Send extends Component<Props> {
                   <div className="tags has-addons">
                     <span className="tag is-large is-white">Balance:</span>
                     <span className="tag is-info is-large">
-                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
-                      TRTL
+                      {session.atomicToHuman(
+                        this.state.unlockedBalance + this.state.lockedBalance,
+                        true
+                      )}
+                      &nbsp;TRTL
                     </span>
                   </div>
                 </div>
@@ -642,8 +645,11 @@ export default class Send extends Component<Props> {
                   <div className="tags has-addons">
                     <span className="tag is-large is-dark">Balance:</span>
                     <span className="tag is-info is-large">
-                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
-                      TRTL
+                      {session.atomicToHuman(
+                        this.state.unlockedBalance + this.state.lockedBalance,
+                        true
+                      )}
+                      &nbsp;TRTL
                     </span>
                   </div>
                 </div>

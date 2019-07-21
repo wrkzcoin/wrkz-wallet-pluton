@@ -346,8 +346,11 @@ export default class Home extends Component<Props> {
                   <div className="tags has-addons">
                     <span className="tag is-white is-large">Balance:</span>
                     <span className="tag is-info is-large">
-                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
-                      TRTL
+                      {session.atomicToHuman(
+                        this.state.unlockedBalance + this.state.lockedBalance,
+                        true
+                      )}
+                      &nbsp;TRTL
                     </span>
                   </div>
                 </div>
@@ -492,8 +495,11 @@ export default class Home extends Component<Props> {
                   <div className="tags has-addons">
                     <span className="tag is-dark is-large">Balance:</span>
                     <span className="tag is-info is-large">
-                      {session.atomicToHuman(this.state.unlockedBalance, true)}{' '}
-                      TRTL
+                      {session.atomicToHuman(
+                        this.state.unlockedBalance + this.state.lockedBalance,
+                        true
+                      )}
+                      &nbsp;TRTL
                     </span>
                   </div>
                 </div>

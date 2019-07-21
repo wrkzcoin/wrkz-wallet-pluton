@@ -9,7 +9,13 @@ import { Redirect, Link } from 'react-router-dom';
 import log from 'electron-log';
 import navBar from './NavBar';
 import routes from '../constants/routes';
-import { config, session, directories, eventEmitter, savedInInstallDir } from '../index';
+import {
+  config,
+  session,
+  directories,
+  eventEmitter,
+  savedInInstallDir
+} from '../index';
 
 // import styles from './Send.css';
 

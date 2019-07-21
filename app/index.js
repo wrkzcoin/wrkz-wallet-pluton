@@ -20,10 +20,7 @@ import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 
 export function savedInInstallDir(savePath) {
-  const installationDirectory = path.resolve(
-    remote.app.getAppPath(),
-    '../../'
-  );
+  const installationDirectory = path.resolve(remote.app.getAppPath(), '../../');
   const saveAttemptDirectory = path.resolve(savePath, '../');
   if (
     saveAttemptDirectory === installationDirectory &&

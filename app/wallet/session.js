@@ -256,8 +256,8 @@ export default class WalletSession {
       numTransactions,
       includeFusions
     );
-
-    let balance = parseInt(this.wallet.getBalance(), 10);
+    const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+    let balance = parseInt(unlockedBalance + lockedBalance, 10);
     const balances = [];
 
     for (const [index, tx] of rawTransactions.entries()) {
