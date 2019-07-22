@@ -1,9 +1,35 @@
 ## Changelog
 
+**v0.0.22:**
+* updated balance widget to include visual difference when some of the balance is locked as well as a mouseover event that shows locked / unlocked bal
+* conditional validation for the transaction dialog box
+* fixes a bug that would cause the historical and balance to be incorrectly displayed when a portion of the balane was locked
+
+**v0.0.21:**
+* save dialog now defaults to the "my documents" folder instead of the program installation folder
+* on windows, the windows installer was deleting the entire directory when upgrading the application which caused any user wallets stored there to be lost, so I have blacklisted the installation directory and the wallet will no longer allow you to save there
+* adds a visual notification on the login screen if the password is entered incorrectly
+
+**v0.0.20:**
+* I didn't notice I broke the file > restore menu by updating the close behavior, whoops, this is fixed
+
+**v0.0.19:**
+* adds some animations to the wallet
+* fixes a bug that caused the autosave on app exit to not function properly
+* sends a native OS notification when you receive a transaction
+* implements an automatic save every few minutes if the wallet is left running
+* windows now has a configurable installer which allows installation in a custom directory or for all users (all users requires administrative permissions)
+* turtlecoin-wallet-backend-js version upgraded, now connects to daemon with KeepAlive = true
+* fixes copy + paste on MacOS
+* various UI improvements
+
+**v0.0.18:** Fixes a stupid bug where the user is presented with a white screen on initial startup instead of a splash screen
+
+**v0.0.17:** We've got dark mode! You heard me right, dark mode is now featured. Also some improvements were made to the navbar and the UI as well as some various bugfixes.
+
 **v0.0.16:**
 * This adds exporting to .csv which was a user requested feature to a new Tools menu
 * also only allows one wallet to be open at a time until I can experiment with the behavior
-
 
 **v0.0.15:**
 * bumps turtlecoin-wallet-backend-js dependency to latest version
