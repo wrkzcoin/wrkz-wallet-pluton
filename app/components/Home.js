@@ -4,10 +4,9 @@ import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
-import request from 'request';
-import { config, session, loginCounter } from '../index';
+import ReactTooltip from 'react-tooltip';
+import { session, loginCounter, eventEmitter } from '../index';
 import navBar from './NavBar';
-import { eventEmitter } from '../index';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -208,10 +207,24 @@ export default class Home extends Component<Props> {
       return <Redirect to="/login" />;
     }
 
+    let balanceTooltip =
+      `Unlocked: ${session.atomicToHuman(
+        this.state.unlockedBalance,
+        true
+      )} TRTL<br>` +
+      `Locked: ${session.atomicToHuman(this.state.lockedBalance, true)} TRTL`;
+
     return (
       <div>
         {this.state.darkmode === false && (
           <div className="wholescreen">
+            <ReactTooltip
+              effect="solid"
+              border
+              type="dark"
+              multiline
+              place="top"
+            />
             {navBar('wallet', false)}
             <div
               className={
@@ -345,7 +358,20 @@ export default class Home extends Component<Props> {
                 <div className="control statusicons">
                   <div className="tags has-addons">
                     <span className="tag is-white is-large">Balance:</span>
-                    <span className="tag is-info is-large">
+                    <span
+                      className={
+                        this.state.lockedBalance > 0
+                          ? 'tag is-warning is-large'
+                          : 'tag is-info is-large'
+                      }
+                      data-tip={balanceTooltip}
+                    >
+                      {this.state.lockedBalance > 0 ? (
+                        <i className="fa fa-lock" />
+                      ) : (
+                        <i className="fa fa-unlock" />
+                      )}
+                      &nbsp;
                       {session.atomicToHuman(
                         this.state.unlockedBalance + this.state.lockedBalance,
                         true
@@ -360,6 +386,13 @@ export default class Home extends Component<Props> {
         )}
         {this.state.darkmode === true && (
           <div className="wholescreen has-background-dark">
+            <ReactTooltip
+              effect="solid"
+              border
+              type="light"
+              multiline
+              place="top"
+            />
             {navBar('wallet', true)}
             <div
               className={
@@ -494,7 +527,20 @@ export default class Home extends Component<Props> {
                 <div className="control statusicons">
                   <div className="tags has-addons">
                     <span className="tag is-dark is-large">Balance:</span>
-                    <span className="tag is-info is-large">
+                    <span
+                      className={
+                        this.state.lockedBalance > 0
+                          ? 'tag is-warning is-large'
+                          : 'tag is-info is-large'
+                      }
+                      data-tip={balanceTooltip}
+                    >
+                      {this.state.lockedBalance > 0 ? (
+                        <i className="fa fa-lock" />
+                      ) : (
+                        <i className="fa fa-unlock" />
+                      )}
+                      &nbsp;
                       {session.atomicToHuman(
                         this.state.unlockedBalance + this.state.lockedBalance,
                         true

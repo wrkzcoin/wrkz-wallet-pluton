@@ -5,11 +5,11 @@ import crypto from 'crypto';
 import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import ReactTooltip from 'react-tooltip';
 import log from 'electron-log';
-import { config, session, eventEmitter } from '../index';
+import { session, eventEmitter } from '../index';
 import navBar from './NavBar';
-import routes from '../constants/routes';
 
 // import styles from './Send.css';
 
@@ -325,10 +325,24 @@ export default class Send extends Component<Props> {
       return <Redirect to="/changepassword" />;
     }
 
+    let balanceTooltip =
+      `Unlocked: ${session.atomicToHuman(
+        this.state.unlockedBalance,
+        true
+      )} TRTL<br>` +
+      `Locked: ${session.atomicToHuman(this.state.lockedBalance, true)} TRTL`;
+
     return (
       <div>
         {this.state.darkMode === false && (
           <div className="wholescreen">
+            <ReactTooltip
+              effect="solid"
+              border
+              type="dark"
+              multiline
+              place="top"
+            />
             {navBar('send', false)}
             <div className="maincontent">
               <form onSubmit={this.handleSubmit}>
@@ -475,8 +489,21 @@ export default class Send extends Component<Props> {
                 </div>
                 <div className="control statusicons">
                   <div className="tags has-addons">
-                    <span className="tag is-large is-white">Balance:</span>
-                    <span className="tag is-info is-large">
+                    <span className="tag is-white is-large">Balance:</span>
+                    <span
+                      className={
+                        this.state.lockedBalance > 0
+                          ? 'tag is-warning is-large'
+                          : 'tag is-info is-large'
+                      }
+                      data-tip={balanceTooltip}
+                    >
+                      {this.state.lockedBalance > 0 ? (
+                        <i className="fa fa-lock" />
+                      ) : (
+                        <i className="fa fa-unlock" />
+                      )}
+                      &nbsp;
                       {session.atomicToHuman(
                         this.state.unlockedBalance + this.state.lockedBalance,
                         true
@@ -491,6 +518,13 @@ export default class Send extends Component<Props> {
         )}
         {this.state.darkMode === true && (
           <div className="wholescreen has-background-dark">
+            <ReactTooltip
+              effect="solid"
+              border
+              type="light"
+              multiline
+              place="top"
+            />
             {navBar('send', true)}
             <div className="maincontent has-background-dark">
               <form onSubmit={this.handleSubmit}>
@@ -643,8 +677,21 @@ export default class Send extends Component<Props> {
                 </div>
                 <div className="control statusicons">
                   <div className="tags has-addons">
-                    <span className="tag is-large is-dark">Balance:</span>
-                    <span className="tag is-info is-large">
+                    <span className="tag is-dark is-large">Balance:</span>
+                    <span
+                      className={
+                        this.state.lockedBalance > 0
+                          ? 'tag is-warning is-large'
+                          : 'tag is-info is-large'
+                      }
+                      data-tip={balanceTooltip}
+                    >
+                      {this.state.lockedBalance > 0 ? (
+                        <i className="fa fa-lock" />
+                      ) : (
+                        <i className="fa fa-unlock" />
+                      )}
+                      &nbsp;
                       {session.atomicToHuman(
                         this.state.unlockedBalance + this.state.lockedBalance,
                         true

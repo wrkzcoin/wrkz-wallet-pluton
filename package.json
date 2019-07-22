@@ -75,13 +75,11 @@
       "target": [
         "nsis"
       ]
-
     },
     "nsis": {
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true
-
     },
     "linux": {
       "target": [
@@ -268,6 +266,7 @@
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
     "react-spinkit": "^3.0.0",
+    "react-tooltip": "^3.10.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "request": "^2.88.0",

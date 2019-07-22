@@ -256,6 +256,7 @@ export default class WalletSession {
       numTransactions,
       includeFusions
     );
+    // log.debug(rawTransactions);
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
     let balance = parseInt(unlockedBalance + lockedBalance, 10);
     const balances = [];
@@ -271,6 +272,7 @@ export default class WalletSession {
       ]);
       balance -= parseInt(tx.totalAmount(), 10);
     }
+    log.debug(balances);
     return balances;
   }
 
@@ -355,11 +357,10 @@ export default class WalletSession {
   async sendTransaction(
     sendToAddress: string,
     amount: number,
-    paymentID: string,
-    fee: number
+    paymentID: string
   ) {
     log.debug(
-      `** Sending transaction: Amount: ${amount} Address ${sendToAddress} PID: ${paymentID} Fee ${fee}...`
+      `Sending transaction: Amount: ${amount} Address ${sendToAddress} PID: ${paymentID}`
     );
     const [hash, err] = await this.wallet.sendTransactionBasic(
       sendToAddress,
