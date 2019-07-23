@@ -11,6 +11,7 @@ import log from 'electron-log';
 import { session, eventEmitter } from '../index';
 import navBar from './NavBar';
 
+/*
 function getNodeList() {
   const options = {
     method: 'GET',
@@ -23,6 +24,7 @@ function getNodeList() {
     return body;
   });
 }
+*/
 
 type Props = {
   syncStatus: number,
@@ -48,7 +50,6 @@ export default class Settings extends Component<Props> {
       transactionInProgress: false,
       importkey: false,
       importseed: false,
-      nodeList: getNodeList(),
       connectednode: `${session.daemonHost}:${session.daemonPort}`,
       nodeFee: session.daemon.feeAmount,
       changePassword: false,
@@ -228,10 +229,11 @@ export default class Settings extends Component<Props> {
 
   async rescanWallet(event) {
     event.preventDefault();
+    let fromStartHeight = false;
     let scanHeight = event.target[0].value;
     if (scanHeight === '') {
-      scanHeight = 0;
-      log.debug(scanHeight);
+      scanHeight = parseInt(session.wallet.walletSynchronizer.startHeight, 10);
+      fromStartHeight = true;
     } else {
       scanHeight = parseInt(event.target[0].value, 10);
     }
@@ -252,7 +254,10 @@ export default class Settings extends Component<Props> {
       type: 'warning',
       buttons: ['Cancel', 'OK'],
       title: 'This could take a while...',
-      message: `You are about to rescan your wallet from block ${scanHeight}. Are you sure you want to do this? Rescanning can take a very long time.`
+      message:
+        fromStartHeight === true
+          ? `You are about to resan your wallet from block ${scanHeight}, which is the original start height of your wallet. Are you sure you want to do this? Rescanning can take a very long time.`
+          : `You are about to rescan your wallet from block ${scanHeight}. Are you sure you want to do this? Rescanning can take a very long time.`
     });
     if (userConfirm !== 1) {
       return;
