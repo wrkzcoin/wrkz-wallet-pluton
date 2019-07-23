@@ -253,7 +253,7 @@ export default class Home extends Component<Props> {
                   {this.state.transactions.map((tx, index) => {
                     return (
                       <tr key={index}>
-                        <td>
+                        <td data-tip={tx[0] === 0 ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!' : `Block ${tx[4]}`}>
                           {tx[0] === 0 && (
                             <p className="has-text-danger">Unconfirmed</p>
                           )}
@@ -422,8 +422,8 @@ export default class Home extends Component<Props> {
                   {this.state.transactions.map((tx, index) => {
                     return (
                       <tr key={index}>
-                        <td>
-                          {tx[0] === 0 && (
+                      <td data-tip={tx[0] === 0 ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!' : `Block ${tx[4]}`}>
+                      {tx[0] === 0 && (
                             <p className="has-text-danger">Unconfirmed</p>
                           )}
                           {tx[0] > 0 && (

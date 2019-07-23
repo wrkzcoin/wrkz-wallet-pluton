@@ -350,7 +350,7 @@ export default class Settings extends Component<Props> {
                   <form onSubmit={this.changeNode}>
                     <label className="label">
                       Connected Node (node:port)
-                      <div className="field has-addons is-expanded">
+                      <div className="field has-addons is-expanded" data-tip="The node you'd like to use. If no port is entered, will default to port 11898 (the default rpc port)">
                         <div className="control is-expanded has-icons-left">
                           {this.state.nodeChangeInProgress === false && (
                             <input
@@ -411,7 +411,7 @@ export default class Settings extends Component<Props> {
                     <form onSubmit={this.rescanWallet}>
                       <label className="label">
                         Rescan Wallet
-                        <div className="field has-addons">
+                        <div className="field has-addons" data-tip="Defaults to the wallet creation height if nothing is entered.">
                           <div className="control is-expanded">
                             <input
                               className="input"
@@ -420,7 +420,6 @@ export default class Settings extends Component<Props> {
                               value={this.state.scanHeight}
                               onChange={this.handleScanHeightChange}
                             />
-                            <p className="help">Defaults to 0</p>
                           </div>
                           <div className="control">
                             <button className="button is-danger">Rescan</button>
@@ -551,7 +550,7 @@ export default class Settings extends Component<Props> {
                   <form onSubmit={this.changeNode}>
                     <label className="label has-text-white">
                       Connected Node (node:port)
-                      <div className="field has-addons is-expanded">
+                      <div className="field has-addons is-expanded" data-tip="The node you'd like to use. If no port is entered, will default to port 11898 (the default rpc port)">
                         <div className="control is-expanded has-icons-left">
                           {this.state.nodeChangeInProgress === false && (
                             <input
@@ -612,7 +611,7 @@ export default class Settings extends Component<Props> {
                     <form onSubmit={this.rescanWallet}>
                       <label className="label has-text-white">
                         Rescan Wallet
-                        <div className="field has-addons">
+                        <div className="field has-addons" data-tip="Defaults to the wallet creation height if nothing is entered.">
                           <div className="control is-expanded">
                             <input
                               className="input"
