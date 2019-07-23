@@ -313,12 +313,19 @@ export default class Settings extends Component<Props> {
       return <Redirect to="/" />;
     }
 
-    let balanceTooltip =
+    const balanceTooltip =
       `Unlocked: ${session.atomicToHuman(
         this.state.unlockedBalance,
         true
       )} TRTL<br>` +
       `Locked: ${session.atomicToHuman(this.state.lockedBalance, true)} TRTL`;
+
+    const syncTooltip =
+      session.wallet.getSyncStatus()[2] === 0
+        ? 'Connecting, please wait...'
+        : `${session.wallet.getSyncStatus()[0]}/${
+            session.wallet.getSyncStatus()[2]
+          };`;
 
     return (
       <div>
@@ -451,7 +458,10 @@ export default class Settings extends Component<Props> {
                     <span className="tag is-white is-large">Sync:</span>
                     {this.state.syncStatus < 100 &&
                       session.daemon.networkBlockCount !== 0 && (
-                        <span className="tag is-warning is-large">
+                        <span
+                          className="tag is-warning is-large"
+                          data-tip={syncTooltip}
+                        >
                           {this.state.syncStatus}%
                           <ReactLoading
                             type="bubbles"
@@ -463,13 +473,19 @@ export default class Settings extends Component<Props> {
                       )}
                     {this.state.syncStatus === 100 &&
                       session.daemon.networkBlockCount !== 0 && (
-                        <span className="tag is-success is-large">
+                        <span
+                          className="tag is-success is-large"
+                          data-tip={syncTooltip}
+                        >
                           {this.state.syncStatus}%
                         </span>
                       )}
                     {session.daemon.networkBlockCount === 0 &&
                       session.wallet !== undefined && (
-                        <span className="tag is-danger is-large">
+                        <span
+                          className="tag is-danger is-large"
+                          data-tip={syncTooltip}
+                        >
                           <ReactLoading
                             type="spinningBubbles"
                             color="#F5F5F5"
@@ -516,13 +532,13 @@ export default class Settings extends Component<Props> {
         )}
         {this.state.darkMode === true && (
           <div className="wholescreen has-background-dark">
-          <ReactTooltip
-          effect="solid"
-          border
-          type="light"
-          multiline
-          place="top"
-        />
+            <ReactTooltip
+              effect="solid"
+              border
+              type="light"
+              multiline
+              place="top"
+            />
             {navBar('settings', true)}
             <div className="maincontent has-background-dark">
               <div className="columns">
@@ -643,7 +659,10 @@ export default class Settings extends Component<Props> {
                     <span className="tag is-dark is-large">Sync:</span>
                     {this.state.syncStatus < 100 &&
                       session.daemon.networkBlockCount !== 0 && (
-                        <span className="tag is-warning is-large">
+                        <span
+                          className="tag is-warning is-large"
+                          data-tip={syncTooltip}
+                        >
                           {this.state.syncStatus}%
                           <ReactLoading
                             type="bubbles"
@@ -655,13 +674,19 @@ export default class Settings extends Component<Props> {
                       )}
                     {this.state.syncStatus === 100 &&
                       session.daemon.networkBlockCount !== 0 && (
-                        <span className="tag is-success is-large">
+                        <span
+                          className="tag is-success is-large"
+                          data-tip={syncTooltip}
+                        >
                           {this.state.syncStatus}%
                         </span>
                       )}
                     {session.daemon.networkBlockCount === 0 &&
                       session.wallet !== undefined && (
-                        <span className="tag is-danger is-large">
+                        <span
+                          className="tag is-danger is-large"
+                          data-tip={syncTooltip}
+                        >
                           <ReactLoading
                             type="spinningBubbles"
                             color="#F5F5F5"

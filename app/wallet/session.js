@@ -272,7 +272,7 @@ export default class WalletSession {
       ]);
       balance -= parseInt(tx.totalAmount(), 10);
     }
-    log.debug(balances);
+    // log.debug(balances);
     return balances;
   }
 
