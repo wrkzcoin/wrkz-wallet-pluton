@@ -185,7 +185,7 @@ export default class Receive extends Component<Props> {
         ? 'Connecting, please wait...'
         : `${session.wallet.getSyncStatus()[0]}/${
             session.wallet.getSyncStatus()[2]
-          };`;
+          }`;
 
     return (
       <div>
