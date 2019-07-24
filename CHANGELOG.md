@@ -4,6 +4,9 @@
 * updated balance widget to include visual difference when some of the balance is locked as well as a mouseover event that shows locked / unlocked bal
 * conditional validation for the transaction dialog box
 * fixes a bug that would cause the historical and balance to be incorrectly displayed when a portion of the balane was locked
+* bumps turtlecoin-wallet-backend
+* fixes the send field allowing negative numbers
+* fixes a bug that would cause the send field to add wrong (eg 1 + 0.1 = 1.11)
 
 **v0.0.21:**
 * save dialog now defaults to the "my documents" folder instead of the program installation folder
