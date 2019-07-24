@@ -153,14 +153,20 @@ export default class Send extends Component<Props> {
       });
       return;
     }
-    const totalAmount = session.roundToNearestHundredth(
-      Number(amount) +
-        0.1 +
-        Number(session.atomicToHuman(session.daemon.feeAmount, false))
-    );
+    if (isNaN(amount)) {
+      return;
+    }
+    if (amount < 0) {
+      return;
+    }
+    const totalAmount = 
+      session.atomicToHuman(Number(amount * 100) +
+        10 +
+        Number(session.daemon.feeAmount), false)
+    ;
     this.setState({
       enteredAmount: amount,
-      totalAmount
+      totalAmount: totalAmount
     });
   }
 
@@ -173,14 +179,20 @@ export default class Send extends Component<Props> {
       });
       return;
     }
-    const amount = session.roundToNearestHundredth(
-      Number(totalAmount) -
-        0.1 -
-        Number(session.atomicToHuman(session.daemon.feeAmount, false))
+    if (isNaN(totalAmount)) {
+      return;
+    }
+    if (totalAmount < 0) {
+      return;
+    }
+    const amount = session.atomicToHuman(
+      Number(totalAmount * 100) -
+        10 -
+        Number(session.daemon.feeAmount), false
     );
     this.setState({
       enteredAmount: amount,
-      totalAmount
+      totalAmount: totalAmount
     });
   }
 
