@@ -391,14 +391,14 @@ export default class Settings extends Component<Props> {
                         </div>
                         {this.state.nodeChangeInProgress === true && (
                           <div className="control">
-                            <button className="button is-warning is-loading">
+                            <button className="button is-success is-loading">
                               Connect
                             </button>
                           </div>
                         )}
                         {this.state.nodeChangeInProgress === false && (
                           <div className="control">
-                            <button className="button is-warning">
+                            <button className="button is-success">
                               Connect
                             </button>
                           </div>
@@ -406,6 +406,34 @@ export default class Settings extends Component<Props> {
                       </div>
                     </label>
                   </form>
+                  <div className="is-divider" />
+                  {this.state.wallet && (
+                    <form onSubmit={this.rewindWallet}>
+                      <label className="label">
+                        Rewind Wallet
+                        <div className="field has-addons">
+                          <div className="control is-expanded">
+                            <input
+                              className="input"
+                              type="text"
+                              placeholder="Enter a height to scan from..."
+                              value={this.state.rewindHeight}
+                              onChange={this.handleRewindHeightChange}
+                            />
+                            <p className="help">
+                              Rewind to a block height. Defaults to about one
+                              day worth of blocks.
+                            </p>
+                          </div>
+                          <div className="control">
+                            <button className="button is-warning">
+                              Rewind
+                            </button>
+                          </div>
+                        </div>
+                      </label>
+                    </form>
+                  )}
                   <div className="is-divider" />
                   {this.state.wallet && (
                     <form onSubmit={this.rescanWallet}>
@@ -420,7 +448,9 @@ export default class Settings extends Component<Props> {
                               value={this.state.scanHeight}
                               onChange={this.handleScanHeightChange}
                             />
-                            <p className="help">Defaults to Wallet Creation Height</p>
+                            <p className="help">
+                              Defaults to Wallet Creation Height
+                            </p>
                           </div>
                           <div className="control">
                             <button className="button is-danger">Rescan</button>
@@ -592,14 +622,14 @@ export default class Settings extends Component<Props> {
                         </div>
                         {this.state.nodeChangeInProgress === true && (
                           <div className="control">
-                            <button className="button is-warning is-loading">
+                            <button className="button is-success is-loading">
                               Connect
                             </button>
                           </div>
                         )}
                         {this.state.nodeChangeInProgress === false && (
                           <div className="control">
-                            <button className="button is-warning">
+                            <button className="button is-success">
                               Connect
                             </button>
                           </div>
@@ -607,6 +637,34 @@ export default class Settings extends Component<Props> {
                       </div>
                     </label>
                   </form>
+                  <div className="is-divider" />
+                  {this.state.wallet && (
+                    <form onSubmit={this.rewindWallet}>
+                      <label className="label has-text-white">
+                        Rewind Wallet
+                        <div className="field has-addons">
+                          <div className="control is-expanded">
+                            <input
+                              className="input"
+                              type="text"
+                              placeholder="Enter a height to scan from..."
+                              value={this.state.rewindHeight}
+                              onChange={this.handleRewindHeightChange}
+                            />
+                            <p className="help">
+                              Rewind to a block height. Defaults to about one
+                              day worth of blocks.
+                            </p>
+                          </div>
+                          <div className="control">
+                            <button className="button is-warning">
+                              Rewind
+                            </button>
+                          </div>
+                        </div>
+                      </label>
+                    </form>
+                  )}
                   <div className="is-divider" />
                   {this.state.wallet && (
                     <form onSubmit={this.rescanWallet}>
@@ -621,7 +679,9 @@ export default class Settings extends Component<Props> {
                               value={this.state.scanHeight}
                               onChange={this.handleScanHeightChange}
                             />
-                            <p className="help">Defaults to Wallet Creation Height</p>
+                            <p className="help">
+                              Defaults to Wallet Creation Height
+                            </p>
                           </div>
                           <div className="control">
                             <button className="button is-danger">Rescan</button>
