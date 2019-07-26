@@ -146,6 +146,7 @@ export default class Receive extends Component<Props> {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus()
     }));
+    ReactTooltip.rebuild();
   }
 
   render() {

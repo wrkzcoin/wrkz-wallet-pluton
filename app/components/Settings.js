@@ -59,7 +59,8 @@ export default class Settings extends Component<Props> {
       ssl: session.daemon.ssl,
       wallet: session.wallet,
       gohome: false,
-      darkMode: session.darkMode
+      darkMode: session.darkMode,
+      rewindHeight: ''
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -81,6 +82,7 @@ export default class Settings extends Component<Props> {
     this.handleInitialize = this.handleInitialize.bind(this);
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
+    this.rewindWallet = this.rewindWallet.bind(this);
   }
 
   componentDidMount() {
@@ -299,6 +301,18 @@ export default class Settings extends Component<Props> {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus()
     }));
+    ReactTooltip.rebuild();
+  }
+
+  async rewindWallet(evt) {
+    evt.preventDefault();
+    const currentHeight = session.wallet.getSyncStatus()[0];
+    log.debug(currentHeight);
+    await session.wallet.rewind(currentHeight - 2880);
+  }
+
+  handleRewindHeightChange() {
+    //
   }
 
   render() {
@@ -406,7 +420,7 @@ export default class Settings extends Component<Props> {
                       </div>
                     </label>
                   </form>
-                  <div className="is-divider" />
+                  <br />
                   {this.state.wallet && (
                     <form onSubmit={this.rewindWallet}>
                       <label className="label">
@@ -421,8 +435,9 @@ export default class Settings extends Component<Props> {
                               onChange={this.handleRewindHeightChange}
                             />
                             <p className="help">
-                              Rewind to a block height. Defaults to about one
-                              day worth of blocks.
+                              Keeps previous transactions and rewinds wallet to
+                              resync from there. If left blank, defaults to
+                              about one day worth of blocks.
                             </p>
                           </div>
                           <div className="control">
@@ -434,7 +449,7 @@ export default class Settings extends Component<Props> {
                       </label>
                     </form>
                   )}
-                  <div className="is-divider" />
+                  <br />
                   {this.state.wallet && (
                     <form onSubmit={this.rescanWallet}>
                       <label className="label">
@@ -449,7 +464,10 @@ export default class Settings extends Component<Props> {
                               onChange={this.handleScanHeightChange}
                             />
                             <p className="help">
-                              Defaults to Wallet Creation Height
+                              Completely wipes all transactions from history and
+                              rescans the wallet from the specified block. If
+                              left blank, defaults to the last block wallet was
+                              scanned from.
                             </p>
                           </div>
                           <div className="control">
@@ -637,7 +655,7 @@ export default class Settings extends Component<Props> {
                       </div>
                     </label>
                   </form>
-                  <div className="is-divider" />
+                  <br />
                   {this.state.wallet && (
                     <form onSubmit={this.rewindWallet}>
                       <label className="label has-text-white">
@@ -652,8 +670,9 @@ export default class Settings extends Component<Props> {
                               onChange={this.handleRewindHeightChange}
                             />
                             <p className="help">
-                              Rewind to a block height. Defaults to about one
-                              day worth of blocks.
+                              Keeps previous transactions and rewinds wallet to
+                              resync from there. If left blank, defaults to
+                              about one day worth of blocks.
                             </p>
                           </div>
                           <div className="control">
@@ -665,7 +684,7 @@ export default class Settings extends Component<Props> {
                       </label>
                     </form>
                   )}
-                  <div className="is-divider" />
+                  <br />
                   {this.state.wallet && (
                     <form onSubmit={this.rescanWallet}>
                       <label className="label has-text-white">
@@ -680,7 +699,10 @@ export default class Settings extends Component<Props> {
                               onChange={this.handleScanHeightChange}
                             />
                             <p className="help">
-                              Defaults to Wallet Creation Height
+                              Completely wipes all transactions from history and
+                              rescans the wallet from the specified block. If
+                              left blank, defaults to the last block wallet was
+                              scanned from.
                             </p>
                           </div>
                           <div className="control">
@@ -697,7 +719,7 @@ export default class Settings extends Component<Props> {
                   <p className="buttons is-right">
                     <span className="has-text-white">
                       Enable light mode &nbsp;&nbsp;
-                      <a className="button  is-info" onClick={this.darkModeOff}>
+                      <a className="button is-info" onClick={this.darkModeOff}>
                         <span className="icon is-large has-text-warning">
                           <i className="fas fa-sun" />
                         </span>

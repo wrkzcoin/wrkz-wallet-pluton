@@ -159,11 +159,10 @@ export default class Send extends Component<Props> {
     if (amount < 0) {
       return;
     }
-    const totalAmount = 
-      session.atomicToHuman(Number(amount * 100) +
-        10 +
-        Number(session.daemon.feeAmount), false)
-    ;
+    const totalAmount = session.atomicToHuman(
+      Number(amount * 100) + 10 + Number(session.daemon.feeAmount),
+      false
+    );
     this.setState({
       enteredAmount: amount,
       totalAmount: totalAmount
@@ -186,9 +185,8 @@ export default class Send extends Component<Props> {
       return;
     }
     const amount = session.atomicToHuman(
-      Number(totalAmount * 100) -
-        10 -
-        Number(session.daemon.feeAmount), false
+      Number(totalAmount * 100) - 10 - Number(session.daemon.feeAmount),
+      false
     );
     this.setState({
       enteredAmount: amount,
@@ -297,6 +295,7 @@ export default class Send extends Component<Props> {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus()
     }));
+    ReactTooltip.rebuild();
   }
 
   handlePaymentIDChange(event) {

@@ -184,6 +184,7 @@ export default class Home extends Component<Props> {
     this.setState(prevState => ({
       syncStatus: session.getSyncStatus()
     }));
+    ReactTooltip.rebuild();
   }
 
   render() {
@@ -253,7 +254,13 @@ export default class Home extends Component<Props> {
                   {this.state.transactions.map((tx, index) => {
                     return (
                       <tr key={index}>
-                        <td data-tip={tx[0] === 0 ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!' : `Block ${tx[4]}`}>
+                        <td
+                          data-tip={
+                            tx[0] === 0
+                              ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!'
+                              : `Block ${tx[4]}`
+                          }
+                        >
                           {tx[0] === 0 && (
                             <p className="has-text-danger">Unconfirmed</p>
                           )}
@@ -334,7 +341,10 @@ export default class Home extends Component<Props> {
                     <span className="tag is-white is-large">Sync:</span>
                     {this.state.syncStatus < 100 &&
                       session.daemon.networkBlockCount !== 0 && (
-                        <span className="tag is-warning is-large" data-tip={syncTooltip}>
+                        <span
+                          className="tag is-warning is-large"
+                          data-tip={syncTooltip}
+                        >
                           {this.state.syncStatus}%
                           <ReactLoading
                             type="bubbles"
@@ -346,12 +356,18 @@ export default class Home extends Component<Props> {
                       )}
                     {this.state.syncStatus === 100 &&
                       session.daemon.networkBlockCount !== 0 && (
-                        <span className="tag is-success is-large" data-tip={syncTooltip}>
+                        <span
+                          className="tag is-success is-large"
+                          data-tip={syncTooltip}
+                        >
                           {this.state.syncStatus}%
                         </span>
                       )}
                     {session.daemon.networkBlockCount === 0 && (
-                      <span className="tag is-danger is-large is-loading" data-tip={syncTooltip}>
+                      <span
+                        className="tag is-danger is-large is-loading"
+                        data-tip={syncTooltip}
+                      >
                         <ReactLoading
                           type="spinningBubbles"
                           color="#F5F5F5"
@@ -422,8 +438,14 @@ export default class Home extends Component<Props> {
                   {this.state.transactions.map((tx, index) => {
                     return (
                       <tr key={index}>
-                      <td data-tip={tx[0] === 0 ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!' : `Block ${tx[4]}`}>
-                      {tx[0] === 0 && (
+                        <td
+                          data-tip={
+                            tx[0] === 0
+                              ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!'
+                              : `Block ${tx[4]}`
+                          }
+                        >
+                          {tx[0] === 0 && (
                             <p className="has-text-danger">Unconfirmed</p>
                           )}
                           {tx[0] > 0 && (
@@ -503,7 +525,10 @@ export default class Home extends Component<Props> {
                     <span className="tag is-dark is-large">Sync:</span>
                     {this.state.syncStatus < 100 &&
                       session.daemon.networkBlockCount !== 0 && (
-                        <span className="tag is-warning is-large" data-tip={syncTooltip}>
+                        <span
+                          className="tag is-warning is-large"
+                          data-tip={syncTooltip}
+                        >
                           {this.state.syncStatus}%
                           <ReactLoading
                             type="bubbles"
@@ -515,12 +540,18 @@ export default class Home extends Component<Props> {
                       )}
                     {this.state.syncStatus === 100 &&
                       session.daemon.networkBlockCount !== 0 && (
-                        <span className="tag is-success is-large" data-tip={syncTooltip}>
+                        <span
+                          className="tag is-success is-large"
+                          data-tip={syncTooltip}
+                        >
                           {this.state.syncStatus}%
                         </span>
                       )}
                     {session.daemon.networkBlockCount === 0 && (
-                      <span className="tag is-danger is-large" data-tip={syncTooltip}>
+                      <span
+                        className="tag is-danger is-large"
+                        data-tip={syncTooltip}
+                      >
                         <ReactLoading
                           type="spinningBubbles"
                           color="#F5F5F5"

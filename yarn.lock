@@ -8523,12 +8523,7 @@ lodash@4.17.11, "lodash@4.6.1 || ^4.16.1", lodash@^4.0.0, lodash@^4.14.0, lodash
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
 
-lodash@^4.17.11:
-  version "4.17.13"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.13.tgz#0bdc3a6adc873d2f4e0c4bac285df91b64fc7b93"
-  integrity sha512-vm3/XWXfWtRua0FkUyEHBZy8kCPjErNBT9fJx8Zvs+U6zjqPbTUOpkaoum3O5uiA8sm+yNMHXfYkTUHFoMxFNA==
-
-lodash@^4.17.15:
+lodash@^4.17.11, lodash@^4.17.15:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
@@ -11716,9 +11711,9 @@ seamless-immutable@^7.1.3:
   integrity sha512-XiUO1QP4ki4E2PHegiGAlu6r82o5A+6tRh7IkGGTVg/h+UoeX4nFBeCGPOhb4CYjvkqsfm/TUtvOMYC1xmV30A==
 
 secure-random-string@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/secure-random-string/-/secure-random-string-1.1.0.tgz#c47d2f20b6d93db1255edb4dadf5e03188ab978e"
-  integrity sha512-V/h8jqoz58zklNGybVhP++cWrxEPXlLM/6BeJ4e0a8zlb4BsbYRzFs16snrxByPa5LUxCVTD3M6EYIVIHR1fAg==
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/secure-random-string/-/secure-random-string-1.1.2.tgz#9cade0678acff7eeaf4517d110ea29e66530ebdc"
+  integrity sha512-o5aaoY4mEh209vOmt4wkUMF/uxGJV87ImeQdv1BnVQ7TOjemUiT6xgED3VpHTGz2AlmMfqBxS8C+UMZAxSOATA==
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -13250,9 +13245,9 @@ turtlecoin-utils@^1.0.3:
     turtlecoin-crypto "^3.0.4"
 
 turtlecoin-wallet-backend@^3.4.5:
-  version "3.4.5"
-  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.5.tgz#a5f92741ddedf93de7dcbf4859cabbf5164e34d5"
-  integrity sha512-0D4hfFeR0eJSbs26d5ME4dLv/E4R0vKdFnfO5tzdBBXaadeKcXD+UGh9+k79i8nFD9kI0roN3k/K5ecWnY08lg==
+  version "3.4.6"
+  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.6.tgz#2fa8decb54f2e6089a57e2774b4a0a728d587ba7"
+  integrity sha512-ibL7NZ+23skFvD5m+jDdV2WQOn+aGmQxJJc6aogMbbAVIt1RY+gllVrADdNY18LhRjnhaTfJlr44hARlbWzucA==
   dependencies:
     lodash "^4.17.15"
     object-sizeof "^1.4.0"
