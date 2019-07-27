@@ -1,8 +1,5 @@
 <img src="https://cdn.discordapp.com/attachments/595762657458651152/599842701978107904/unknown.png">
 
-# Proton Wallet - a TurtleCoin Wallet
-[![proton-wallet](https://snapcraft.io/proton-wallet/badge.svg)](https://snapcraft.io/proton-wallet)
-
 #### Master Build Status
 [![Build Status](https://travis-ci.org/turtlecoin/turtle-wallet-proton.svg?branch=master)](https://travis-ci.org/turtlecoin/turtle-wallet-proton)
 
