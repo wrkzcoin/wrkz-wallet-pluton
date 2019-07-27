@@ -3,16 +3,6 @@
   "productName": "Proton",
   "version": "0.0.22",
   "description": "TurtleCoin wallet based on React, React Router, Webpack, and React Hot Loader",
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-zip"
-        }
-      ]
-    }
-  },
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -24,6 +14,7 @@
     "lint-styles": "stylelint --ignore-path .eslintignore '**/*.*(css|scss)' --syntax scss",
     "lint-styles-fix": "yarn --silent lint-styles --fix; exit 0",
     "package": "yarn build && electron-builder build --publish never",
+    "package-arm": "yarn build && electron-builder build --armv7l --publish never",
     "package-all": "yarn build && electron-builder build -mwl",
     "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
     "package-linux": "yarn build && electron-builder build --linux",
@@ -93,8 +84,7 @@
     },
     "linux": {
       "target": [
-        "AppImage",
-        "snap"
+        "AppImage"
       ],
       "category": "Development"
     },
@@ -183,7 +173,6 @@
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.0",
-    "@electron-forge/maker-zip": "^6.0.0-beta.43",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.5.0",
@@ -265,7 +254,6 @@
     "devtron": "^1.4.0",
     "electron-context-menu": "^0.13.0",
     "electron-debug": "^2.1.0",
-    "electron-forge-maker-appimage": "^21.1.5",
     "electron-log": "^3.0.4",
     "electron-updater": "^4.0.6",
     "history": "^4.9.0",
