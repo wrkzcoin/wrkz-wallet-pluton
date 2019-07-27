@@ -9,6 +9,7 @@ import npmPackage from '../../package.json';
 
 const currentVersion = npmPackage.version;
 const operatingSystem = os.platform();
+const arch = os.arch();
 
 export default class AutoUpdater {
   getLatestVersion() {
@@ -16,7 +17,7 @@ export default class AutoUpdater {
       log.debug('Checking for updates...');
       const options = {
         method: 'GET',
-        url: `http://68.183.53.229:3000/latest/${operatingSystem}/${currentVersion}`,
+        url: `http://68.183.53.229:3000/latest/${operatingSystem}/${currentVersion}/${arch}`,
         json: true
       };
       request(options, function(error, response, body) {
