@@ -10,6 +10,8 @@
 * bumps turtlecoin-wallet-backend
 * fixes the send field allowing negative numbers
 * fixes a bug that would cause the send field to add wrong (eg 1 + 0.1 = 1.11)
+* adds aarmv7 / arm64 support
+* drops SNAP releases
 
 **v0.0.21:**
 * save dialog now defaults to the "my documents" folder instead of the program installation folder
