@@ -60,7 +60,8 @@ export default class Settings extends Component<Props> {
       wallet: session.wallet,
       gohome: false,
       darkMode: session.darkMode,
-      rewindHeight: ''
+      rewindHeight: '',
+      rewindInProgress: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -83,6 +84,7 @@ export default class Settings extends Component<Props> {
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
     this.rewindWallet = this.rewindWallet.bind(this);
+    this.handleRewindHeightChange = this.handleRewindHeightChange.bind(this);
   }
 
   componentDidMount() {
@@ -306,13 +308,20 @@ export default class Settings extends Component<Props> {
 
   async rewindWallet(evt) {
     evt.preventDefault();
+    this.setState({
+      rewindInProgress: true
+    });
     const currentHeight = session.wallet.getSyncStatus()[0];
     log.debug(currentHeight);
     await session.wallet.rewind(currentHeight - 2880);
+    this.setState({
+      rewindInProgress: false
+    });
   }
 
-  handleRewindHeightChange() {
-    //
+  handleRewindHeightChange(event) {
+    const rewindHeight = parseInt(event.target.value.trim(), 10);
+    this.setState({ rewindHeight: rewindHeight });
   }
 
   render() {
@@ -441,7 +450,13 @@ export default class Settings extends Component<Props> {
                             </p>
                           </div>
                           <div className="control">
-                            <button className="button is-warning">
+                            <button
+                              className={
+                                this.state.rewindInProgress
+                                  ? 'button is-warning is-loading'
+                                  : 'button is-warning'
+                              }
+                            >
                               Rewind
                             </button>
                           </div>
