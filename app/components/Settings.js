@@ -312,15 +312,19 @@ export default class Settings extends Component<Props> {
       rewindInProgress: true
     });
     const currentHeight = session.wallet.getSyncStatus()[0];
-    log.debug(currentHeight);
-    await session.wallet.rewind(currentHeight - 2880);
+    let rewindHeight = evt.target[0].value;
+    if (rewindHeight === '' || rewindHeight === null) {
+      rewindHeight = currentHeight - 2880;
+    }
+    await session.wallet.rewind(parseInt(rewindHeight));
     this.setState({
-      rewindInProgress: false
+      rewindInProgress: false,
+      rewindHeight: ''
     });
   }
 
   handleRewindHeightChange(event) {
-    const rewindHeight = parseInt(event.target.value.trim(), 10);
+    const rewindHeight = event.target.value.trim();
     this.setState({ rewindHeight: rewindHeight });
   }
 
@@ -691,7 +695,14 @@ export default class Settings extends Component<Props> {
                             </p>
                           </div>
                           <div className="control">
-                            <button className="button is-warning">
+                            <button
+                              className={
+                                this.state.rewindInProgress
+                                  ? 'button is-warning is-loading'
+                                  : 'button is-warning'
+                              }
+                            >
+                              {' '}
                               Rewind
                             </button>
                           </div>
