@@ -311,12 +311,14 @@ export default class Settings extends Component<Props> {
     this.setState({
       rewindInProgress: true
     });
-    const currentHeight = session.wallet.getSyncStatus()[0];
-    let rewindHeight = evt.target[0].value;
-    if (rewindHeight === '' || rewindHeight === null) {
-      rewindHeight = currentHeight - 2880;
+    let rewindHeight = parseInt(evt.target[0].value, 10);
+    if (isNaN(rewindHeight)) {
+      this.setState({
+        rewindInProgress: false
+      });
+      return;
     }
-    await session.wallet.rewind(parseInt(rewindHeight));
+    await session.wallet.rewind(rewindHeight);
     this.setState({
       rewindInProgress: false,
       rewindHeight: ''
@@ -448,9 +450,8 @@ export default class Settings extends Component<Props> {
                               onChange={this.handleRewindHeightChange}
                             />
                             <p className="help">
-                              Keeps previous transactions and rewinds wallet to
-                              resync from there. If left blank, defaults to
-                              about one day worth of blocks.
+                              Rewinds wallet, keeping previous transactions, to
+                              a block height and picks up scanning from there.
                             </p>
                           </div>
                           <div className="control">
@@ -689,9 +690,8 @@ export default class Settings extends Component<Props> {
                               onChange={this.handleRewindHeightChange}
                             />
                             <p className="help">
-                              Keeps previous transactions and rewinds wallet to
-                              resync from there. If left blank, defaults to
-                              about one day worth of blocks.
+                              Rewinds wallet, keeping previous transactions, to
+                              a block height and picks up scanning from there.
                             </p>
                           </div>
                           <div className="control">
