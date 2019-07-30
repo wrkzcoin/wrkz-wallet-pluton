@@ -13,6 +13,7 @@
  * @flow
  */
 import path from 'path';
+import os from 'os';
 import { app, BrowserWindow, Tray, Menu } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -21,6 +22,10 @@ import MenuBuilder from './menu';
 
 let isQuitting;
 let tray = null;
+
+if (os.platform() === 'darwin') {
+  isQuitting = true;
+}
 
 export default class AppUpdater {
   constructor() {
@@ -104,29 +109,31 @@ app.on('ready', async () => {
     icon: path.join(__dirname, 'images/icon.png')
   });
 
-  tray = new Tray(path.join(__dirname, 'images/icon.png'));
+  if (os.platform() !== 'darwin') {
+    tray = new Tray(path.join(__dirname, 'images/icon.png'));
 
-  tray.setContextMenu(
-    Menu.buildFromTemplate([
-      {
-        label: 'Show App',
-        click() {
-          if (mainWindow) {
-            mainWindow.show();
+    tray.setContextMenu(
+      Menu.buildFromTemplate([
+        {
+          label: 'Show App',
+          click() {
+            if (mainWindow) {
+              mainWindow.show();
+            }
+          }
+        },
+        {
+          label: 'Quit',
+          click() {
+            isQuitting = true;
+            app.quit();
           }
         }
-      },
-      {
-        label: 'Quit',
-        click() {
-          isQuitting = true;
-          app.quit();
-        }
-      }
-    ])
-  );
+      ])
+    );
 
-  tray.on('click', () => mainWindow.show());
+    tray.on('click', () => mainWindow.show());
+  }
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
@@ -147,7 +154,7 @@ app.on('ready', async () => {
   mainWindow.on('close', event => {
     event.preventDefault();
     if (!isQuitting) {
-      log.debug('Closing to system tray.');
+      log.debug('Closing to system tray or dock.');
       mainWindow.hide();
       event.returnValue = false;
     } else {
