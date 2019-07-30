@@ -23,9 +23,9 @@ export default function navBar(activePage, isDarkMode) {
             >
               <div id="navbarBasicExample" className="navbar-menu">
                 <div class="navbar-brand">
-                  <a class="navbar-item">
+                  <div class="navbar-item">
                     <img src="images/icon_black_64x64.png" />
-                  </a>
+                  </div>
                 </div>
                 <div className="navbar-start">
                   <Link className="navbar-item" to={routes.HOME}>
@@ -80,9 +80,9 @@ export default function navBar(activePage, isDarkMode) {
             >
               <div id="navbarBasicExample" className="navbar-menu">
                 <div className="navbar-brand">
-                  <Link className="navbar-item">
+                  <div className="navbar-item">
                     <img src="images/icon_white_64x64.png" />
-                  </Link>
+                  </div>
                 </div>
                 <div className="navbar-start">
                   <Link className="navbar-item" to={routes.HOME}>
