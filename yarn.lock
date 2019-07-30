@@ -13244,16 +13244,17 @@ turtlecoin-utils@^1.0.3:
   optionalDependencies:
     turtlecoin-crypto "^3.0.4"
 
-turtlecoin-wallet-backend@^3.4.5:
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.6.tgz#2fa8decb54f2e6089a57e2774b4a0a728d587ba7"
-  integrity sha512-ibL7NZ+23skFvD5m+jDdV2WQOn+aGmQxJJc6aogMbbAVIt1RY+gllVrADdNY18LhRjnhaTfJlr44hARlbWzucA==
+turtlecoin-wallet-backend@^3.4.8:
+  version "3.4.8"
+  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.8.tgz#6c411425181bd1fddcf8d3c9b583a40b578a8741"
+  integrity sha512-cVcu9GnqoH+shvz3c7t6pc8pZnID1CFYJFV+mnISdCVfSu0i3vI/0pdGdRO/izE3MUgUvAtyNR63EPeRk4vURA==
   dependencies:
     lodash "^4.17.15"
     object-sizeof "^1.4.0"
     pbkdf2 "^3.0.17"
     turtlecoin-rpc "^1.0.1"
     turtlecoin-utils "^1.0.3"
+    typescript "^3.5.3"
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
@@ -13289,6 +13290,11 @@ typescript@^3.3.3:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.1.tgz#b6691be11a881ffa9a05765a205cb7383f3b63c6"
   integrity sha512-3NSMb2VzDQm8oBTLH6Nj55VVtUEpe/rgkIzMir0qVoLyjDZlnMBva0U6vDiV3IH+sl/Yu6oP5QwsAQtHPmDd2Q==
+
+typescript@^3.5.3:
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.5.3.tgz#c830f657f93f1ea846819e929092f5fe5983e977"
+  integrity sha512-ACzBtm/PhXBDId6a6sDJfroT2pOWt/oOnk4/dElG5G33ZL776N3Y6/6bKZJBFpd+b05F3Ct9qDjMeJmRWtE2/g==
 
 ua-parser-js@^0.7.18:
   version "0.7.19"

@@ -12,11 +12,14 @@
  *
  * @flow
  */
+import path from 'path';
 import { app, BrowserWindow, Tray, Menu } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
+
+let isQuitting;
 
 export default class AppUpdater {
   constructor() {
@@ -61,15 +64,17 @@ if (!isSingleInstance) {
     "There's an instance of the application already locked, terminating..."
   );
   app.quit();
-} else {
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
-    // Someone tried to run a second instance, we should focus our window.
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore();
-      mainWindow.focus();
-    }
-  });
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+  }
 }
+
+app.on('before-quit', () => {
+  log.debug('Exiting application.');
+  isQuitting = true;
+});
 
 app.on('window-all-closed', () => {
   app.quit();
@@ -94,8 +99,33 @@ app.on('ready', async () => {
     minWidth: 1200,
     minHeight: 600,
     nodeIntegration: true,
-    backgroundColor: '#121212'
+    backgroundColor: '#121212',
+    icon: path.join(__dirname, 'images/icon.png')
   });
+
+  const tray = new Tray(path.join(__dirname, 'images/icon.png'));
+
+  tray.setContextMenu(
+    Menu.buildFromTemplate([
+      {
+        label: 'Show App',
+        click() {
+          if (mainWindow) {
+            mainWindow.show();
+          }
+        }
+      },
+      {
+        label: 'Quit',
+        click() {
+          isQuitting = true;
+          app.quit();
+        }
+      }
+    ])
+  );
+
+  tray.on('click', () => mainWindow.show());
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
@@ -115,9 +145,11 @@ app.on('ready', async () => {
 
   mainWindow.on('close', event => {
     event.preventDefault();
-    log.debug('Detected close of app.');
-    event.returnValue = false;
-    if (mainWindow !== null) {
+    if (!isQuitting) {
+      log.debug('Closing to system tray.');
+      mainWindow.hide();
+      event.returnValue = false;
+    } else {
       mainWindow.webContents.send('handleClose');
     }
   });

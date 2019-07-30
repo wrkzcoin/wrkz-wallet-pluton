@@ -225,8 +225,7 @@ function handleOpen() {
 
 eventEmitter.on('sendNotification', function sendNotification(amount) {
   const notif = new window.Notification('Transaction Received!', {
-    body: `You've just received ${amount} TRTL`,
-    silent: true // We'll play our own sound
+    body: `You've just received ${amount} TRTL`
   });
 });
 
