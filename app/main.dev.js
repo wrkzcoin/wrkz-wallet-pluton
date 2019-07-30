@@ -24,8 +24,7 @@ let isQuitting;
 let tray = null;
 let trayIcon = null;
 
-
-if ( os.platform() !== 'win32' ) {
+if (os.platform() !== 'win32') {
   trayIcon = path.join(__dirname, 'images/icon.png');
 } else {
   trayIcon = path.join(__dirname, 'images/icon.ico');
