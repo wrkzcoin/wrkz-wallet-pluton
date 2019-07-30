@@ -41,6 +41,8 @@ updater.getLatestVersion();
 
 export const loginCounter = new LoginCounter();
 
+remote.app.setAppUserModelId('wallet.proton.extra');
+
 log.debug(`Proton wallet started...`);
 
 const homedir = os.homedir();
