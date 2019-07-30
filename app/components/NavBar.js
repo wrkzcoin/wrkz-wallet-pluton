@@ -1,8 +1,8 @@
 import React from 'react';
+import path from 'path';
 import { Link } from 'react-router-dom';
-import log from 'electron-log';
 import routes from '../constants/routes';
-import { config, session } from '../index';
+import { session } from '../index';
 
 export default function navBar(activePage, isDarkMode) {
   return (
@@ -22,6 +22,11 @@ export default function navBar(activePage, isDarkMode) {
               aria-label="main navigation"
             >
               <div id="navbarBasicExample" className="navbar-menu">
+                <div class="navbar-brand">
+                  <a class="navbar-item">
+                    <img src="images/icon_black_64x64.png" />
+                  </a>
+                </div>
                 <div className="navbar-start">
                   <Link className="navbar-item" to={routes.HOME}>
                     <i className="fa fa-credit-card" />
@@ -74,6 +79,11 @@ export default function navBar(activePage, isDarkMode) {
               aria-label="main navigation"
             >
               <div id="navbarBasicExample" className="navbar-menu">
+                <div className="navbar-brand">
+                  <Link className="navbar-item">
+                    <img src="images/icon_white_64x64.png" />
+                  </Link>
+                </div>
                 <div className="navbar-start">
                   <Link className="navbar-item" to={routes.HOME}>
                     <i className="fa fa-credit-card" />

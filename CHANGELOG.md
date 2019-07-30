@@ -2,6 +2,9 @@
 
 **v0.0.23:**
 * finishes rewind feature (before you could only press the button to rewind ~day, i forgot to finish the user input height)
+* bumps turtlecoin-wallet-backend version
+* fixes AppImage system icon not working
+* now closes to system tray instead of closing completely on X
 
 **v0.0.22:**
 * updated balance widget to include visual difference when some of the balance is locked as well as a mouseover event that shows locked / unlocked bal
