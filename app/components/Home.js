@@ -172,6 +172,18 @@ export default class Home extends Component<Props> {
     });
   }
 
+  handleShowAll(evt, route) {
+    evt.preventDefault();
+    displayedTransactionCount = this.state.totalTransactionCount;
+    this.setState({
+      transactions: session.getTransactions(
+        0,
+        this.state.totalTransactionCount,
+        false
+      )
+    });
+  }
+
   resetDefault(evt, route) {
     evt.preventDefault();
     displayedTransactionCount = 50;
@@ -300,10 +312,17 @@ export default class Home extends Component<Props> {
                     <div className="buttons">
                       <button
                         type="submit"
+                        className="button is-success"
+                        onClick={this.handleShowAll.bind(this)}
+                      >
+                        Show all
+                      </button>
+                      <button
+                        type="submit"
                         className="button is-warning"
                         onClick={this.handleLoadMore.bind(this)}
                       >
-                        Load more...
+                        Load more
                       </button>
                       <button
                         type="submit"
@@ -484,10 +503,17 @@ export default class Home extends Component<Props> {
                     <div className="buttons">
                       <button
                         type="submit"
+                        className="button is-success"
+                        onClick={this.handleShowAll.bind(this)}
+                      >
+                        Show all
+                      </button>
+                      <button
+                        type="submit"
                         className="button is-warning"
                         onClick={this.handleLoadMore.bind(this)}
                       >
-                        Load more...
+                        Load more
                       </button>
                       <button
                         type="submit"

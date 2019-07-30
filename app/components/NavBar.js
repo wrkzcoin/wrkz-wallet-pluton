@@ -22,8 +22,8 @@ export default function navBar(activePage, isDarkMode) {
               aria-label="main navigation"
             >
               <div id="navbarBasicExample" className="navbar-menu">
-                <div class="navbar-brand">
-                  <div class="navbar-item">
+                <div className="navbar-brand">
+                  <div className="navbar-item">
                     <img src="images/icon_black_64x64.png" />
                   </div>
                 </div>

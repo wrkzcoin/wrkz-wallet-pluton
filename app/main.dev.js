@@ -20,6 +20,7 @@ import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
 
 let isQuitting;
+let tray = null;
 
 export default class AppUpdater {
   constructor() {
@@ -30,7 +31,6 @@ export default class AppUpdater {
 }
 
 let mainWindow = null;
-let tray = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -104,7 +104,7 @@ app.on('ready', async () => {
     icon: path.join(__dirname, 'images/icon.png')
   });
 
-  const tray = new Tray(path.join(__dirname, 'images/icon.png'));
+  tray = new Tray(path.join(__dirname, 'images/icon.png'));
 
   tray.setContextMenu(
     Menu.buildFromTemplate([
