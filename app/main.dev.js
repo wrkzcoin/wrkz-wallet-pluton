@@ -22,6 +22,14 @@ import MenuBuilder from './menu';
 
 let isQuitting;
 let tray = null;
+let trayIcon = null;
+
+
+if ( os.platform() !== 'win32' ) {
+  trayIcon = path.join(__dirname, 'images/icon.png');
+} else {
+  trayIcon = path.join(__dirname, 'images/icon.ico');
+}
 
 if (os.platform() === 'darwin') {
   isQuitting = true;
@@ -110,7 +118,7 @@ app.on('ready', async () => {
   });
 
   if (os.platform() !== 'darwin') {
-    tray = new Tray(path.join(__dirname, 'images/icon.png'));
+    tray = new Tray(trayIcon);
 
     tray.setContextMenu(
       Menu.buildFromTemplate([

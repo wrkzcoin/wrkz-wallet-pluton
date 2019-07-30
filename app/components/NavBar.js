@@ -81,7 +81,7 @@ export default function navBar(activePage, isDarkMode) {
               <div id="navbarBasicExample" className="navbar-menu">
                 <div className="navbar-brand">
                   <div className="navbar-item">
-                    <img src="images/icon_white_64x64.png" />
+                    <img src="images/icon_color_64x64.png" />
                   </div>
                 </div>
                 <div className="navbar-start">
