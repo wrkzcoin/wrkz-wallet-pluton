@@ -208,27 +208,7 @@ export default class Settings extends Component<Props> {
   }
 
   async findNode(evt, route) {
-    const requestOptions = {
-      method: 'GET',
-      uri: `https://trtl.nodes.pub/api/getNodes`,
-      headers: {},
-      json: true,
-      gzip: true,
-      timeout: 5000
-    };
-    try {
-      const result = await request(requestOptions);
-      const selectedNode = result[Math.floor(Math.random() * result.length)];
-
-      const connectionString = `${selectedNode.url}:${selectedNode.port}`;
-      log.debug(`Found new node: ${connectionString}`);
-      this.setState({
-        connectednode: connectionString
-      });
-      return;
-    } catch (err) {
-      log.debug(err);
-    }
+    remote.shell.openExternal('https://trtl.nodes.pub/');
   }
 
   async rescanWallet(event) {
