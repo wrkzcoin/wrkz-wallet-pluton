@@ -17,6 +17,7 @@ export default class BottomBar extends Component<Props> {
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
+    this.refreshNodeFee = this.refreshNodeFee.bind(this);
   }
 
   componentDidMount() {

@@ -2,7 +2,6 @@
   "HOME": "/",
   "COUNTER": "/counter",
   "SEND": "/send",
-  "ADDRESSES": "/addresses",
   "IMPORT": "/import",
   "IMPORTKEY": "/importkey",
   "SETTINGS": "/settings",
