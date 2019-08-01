@@ -7,6 +7,7 @@ import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import { session, loginCounter, eventEmitter } from '../index';
 import navBar from './NavBar';
+import BottomBar from './BottomBar';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -30,9 +31,6 @@ export default class Home extends Component<Props> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      syncStatus: session.getSyncStatus(),
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
       transactions: session.getTransactions(
         0,
         displayedTransactionCount,
@@ -41,7 +39,6 @@ export default class Home extends Component<Props> {
       totalTransactionCount: session.getTransactions().length,
       importkey: false,
       importseed: false,
-      nodeFee: session.daemon.feeAmount,
       loginFailed: session.loginFailed,
       changePassword: false,
       firstStartup: session.firstStartup,
@@ -55,12 +52,10 @@ export default class Home extends Component<Props> {
       this
     );
     this.openNewWallet = this.openNewWallet.bind(this);
-    this.refreshNodeFee = this.refreshNodeFee.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.setMaxListeners(1);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
@@ -70,7 +65,6 @@ export default class Home extends Component<Props> {
       session.wallet.on('transaction', this.refreshListOnNewTransaction);
     }
     eventEmitter.on('openNewWallet', this.openNewWallet);
-    eventEmitter.on('gotNodeFee', this.refreshNodeFee);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
     if (session.firstLoadOnLogin && this.state.loginFailed === false) {
       this.switchOffAnimation();
@@ -81,7 +75,6 @@ export default class Home extends Component<Props> {
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
     displayedTransactionCount = 50;
     this.setState({
       transactions: session.getTransactions(0, displayedTransactionCount, false)
@@ -90,7 +83,6 @@ export default class Home extends Component<Props> {
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('openNewWallet', this.openNewWallet);
-    eventEmitter.off('gotNodeFee', this.refreshNodeFee);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
     if (session.wallet !== undefined) {
       session.wallet.off('transaction', this.refreshListOnNewTransaction);
@@ -111,12 +103,6 @@ export default class Home extends Component<Props> {
   handleLoginFailure() {
     this.setState({
       loginFailed: true
-    });
-  }
-
-  refreshNodeFee() {
-    this.setState({
-      nodeFee: session.daemon.feeAmount
     });
   }
 
@@ -190,13 +176,6 @@ export default class Home extends Component<Props> {
     this.setState({
       transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
-  }
-
-  refresh() {
-    this.setState(prevState => ({
-      syncStatus: session.getSyncStatus()
-    }));
-    ReactTooltip.rebuild();
   }
 
   render() {
@@ -336,94 +315,7 @@ export default class Home extends Component<Props> {
                 </form>
               )}
             </div>
-            <div
-              className={
-                session.firstLoadOnLogin
-                  ? 'footerbar-slideup has-background-light'
-                  : 'footerbar has-background-light'
-              }
-            >
-              {' '}
-              <div className="field is-grouped is-grouped-multiline is-grouped-right">
-                {this.state.nodeFee > 0 && (
-                  <div className="control statusicons">
-                    <div className="tags has-addons">
-                      <span className="tag is-large is-white">Node Fee:</span>
-                      <span className="tag is-danger is-large">
-                        {session.atomicToHuman(this.state.nodeFee, true)} TRTL
-                      </span>
-                    </div>
-                  </div>
-                )}
-                <div className="control statusicons">
-                  <div className="tags has-addons">
-                    <span className="tag is-white is-large">Sync:</span>
-                    {this.state.syncStatus < 100 &&
-                      session.daemon.networkBlockCount !== 0 && (
-                        <span
-                          className="tag is-warning is-large"
-                          data-tip={syncTooltip}
-                        >
-                          {this.state.syncStatus}%
-                          <ReactLoading
-                            type="bubbles"
-                            color="#363636"
-                            height={30}
-                            width={30}
-                          />
-                        </span>
-                      )}
-                    {this.state.syncStatus === 100 &&
-                      session.daemon.networkBlockCount !== 0 && (
-                        <span
-                          className="tag is-success is-large"
-                          data-tip={syncTooltip}
-                        >
-                          {this.state.syncStatus}%
-                        </span>
-                      )}
-                    {session.daemon.networkBlockCount === 0 && (
-                      <span
-                        className="tag is-danger is-large is-loading"
-                        data-tip={syncTooltip}
-                      >
-                        <ReactLoading
-                          type="spinningBubbles"
-                          color="#F5F5F5"
-                          height={30}
-                          width={30}
-                        />
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="control statusicons">
-                  <div className="tags has-addons">
-                    <span className="tag is-white is-large">Balance:</span>
-                    <span
-                      className={
-                        this.state.lockedBalance > 0
-                          ? 'tag is-warning is-large'
-                          : 'tag is-info is-large'
-                      }
-                      data-tip={balanceTooltip}
-                    >
-                      {this.state.lockedBalance > 0 ? (
-                        <i className="fa fa-lock" />
-                      ) : (
-                        <i className="fa fa-unlock" />
-                      )}
-                      &nbsp;
-                      {session.atomicToHuman(
-                        this.state.unlockedBalance + this.state.lockedBalance,
-                        true
-                      )}
-                      &nbsp;TRTL
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <BottomBar />
           </div>
         )}
         {this.state.darkmode === true && (
@@ -527,94 +419,7 @@ export default class Home extends Component<Props> {
                 </form>
               )}
             </div>
-            <div
-              className={
-                session.firstLoadOnLogin
-                  ? 'footerbar-slideup has-background-black'
-                  : 'footerbar has-background-black'
-              }
-            >
-              {' '}
-              <div className="field is-grouped is-grouped-multiline is-grouped-right">
-                {this.state.nodeFee > 0 && (
-                  <div className="control statusicons">
-                    <div className="tags has-addons">
-                      <span className="tag is-dark is-large">Node Fee:</span>
-                      <span className="tag is-danger is-large">
-                        {session.atomicToHuman(this.state.nodeFee, true)} TRTL
-                      </span>
-                    </div>
-                  </div>
-                )}
-                <div className="control statusicons">
-                  <div className="tags has-addons">
-                    <span className="tag is-dark is-large">Sync:</span>
-                    {this.state.syncStatus < 100 &&
-                      session.daemon.networkBlockCount !== 0 && (
-                        <span
-                          className="tag is-warning is-large"
-                          data-tip={syncTooltip}
-                        >
-                          {this.state.syncStatus}%
-                          <ReactLoading
-                            type="bubbles"
-                            color="#363636"
-                            height={30}
-                            width={30}
-                          />
-                        </span>
-                      )}
-                    {this.state.syncStatus === 100 &&
-                      session.daemon.networkBlockCount !== 0 && (
-                        <span
-                          className="tag is-success is-large"
-                          data-tip={syncTooltip}
-                        >
-                          {this.state.syncStatus}%
-                        </span>
-                      )}
-                    {session.daemon.networkBlockCount === 0 && (
-                      <span
-                        className="tag is-danger is-large"
-                        data-tip={syncTooltip}
-                      >
-                        <ReactLoading
-                          type="spinningBubbles"
-                          color="#F5F5F5"
-                          height={30}
-                          width={30}
-                        />
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="control statusicons">
-                  <div className="tags has-addons">
-                    <span className="tag is-dark is-large">Balance:</span>
-                    <span
-                      className={
-                        this.state.lockedBalance > 0
-                          ? 'tag is-warning is-large'
-                          : 'tag is-info is-large'
-                      }
-                      data-tip={balanceTooltip}
-                    >
-                      {this.state.lockedBalance > 0 ? (
-                        <i className="fa fa-lock" />
-                      ) : (
-                        <i className="fa fa-unlock" />
-                      )}
-                      &nbsp;
-                      {session.atomicToHuman(
-                        this.state.unlockedBalance + this.state.lockedBalance,
-                        true
-                      )}
-                      &nbsp;TRTL
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <BottomBar />
           </div>
         )}
       </div>
