@@ -13,11 +13,13 @@ export default class BottomBar extends Component<Props> {
       syncStatus: session.getSyncStatus(),
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      darkmode: session.darkMode
+      darkmode: session.darkMode,
+      nodeFee: session.daemon.feeAmount || 0,
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
+    this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(this);
   }
 
   componentDidMount() {
@@ -25,6 +27,10 @@ export default class BottomBar extends Component<Props> {
     eventEmitter.on('darkmodeon', this.darkModeOn);
     eventEmitter.on('darkmodeon', this.darkModeOff);
     eventEmitter.on('gotNodeFee', this.refreshNodeFee);
+    if (session.wallet !== undefined) {
+      session.wallet.setMaxListeners(2);
+      session.wallet.on('transaction', this.refreshBalanceOnNewTransaction);
+    }
   }
 
   componentWillUnmount() {
@@ -32,6 +38,10 @@ export default class BottomBar extends Component<Props> {
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
     eventEmitter.off('darkmodeon', this.darkModeOn);
     eventEmitter.off('darkmodeon', this.darkModeOff);
+    if (session.wallet !== undefined) {
+      session.wallet.setMaxListeners(1);
+      session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
+    }
   }
 
   darkModeOn() {
@@ -49,6 +59,14 @@ export default class BottomBar extends Component<Props> {
   refreshNodeFee() {
     this.setState({
       nodeFee: session.daemon.feeAmount
+    });
+  }
+
+  refreshBalanceOnNewTransaction() {
+    log.debug('Transaction found, refreshing balance...');
+    this.setState({
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance()
     });
   }
 
@@ -91,7 +109,10 @@ export default class BottomBar extends Component<Props> {
           {this.state.nodeFee > 0 && (
             <div className="control statusicons">
               <div className="tags has-addons">
-                <span className="tag is-dark is-large">Node Fee:</span>
+                <span className={
+                  this.state.darkmode
+                    ? 'tag is-dark is-large'
+                    : 'tag is-white is-large'}>Node Fee:</span>
                 <span className="tag is-danger is-large">
                   {session.atomicToHuman(this.state.nodeFee, true)} TRTL
                 </span>
@@ -100,7 +121,10 @@ export default class BottomBar extends Component<Props> {
           )}
           <div className="control statusicons">
             <div className="tags has-addons">
-              <span className="tag is-dark is-large">Sync:</span>
+              <span className={
+                this.state.darkmode
+                  ? 'tag is-dark is-large'
+                  : 'tag is-white is-large'}>Sync:</span>
               {this.state.syncStatus < 100 &&
                 session.daemon.networkBlockCount !== 0 && (
                   <span
@@ -139,7 +163,10 @@ export default class BottomBar extends Component<Props> {
           </div>
           <div className="control statusicons">
             <div className="tags has-addons">
-              <span className="tag is-dark is-large">Balance:</span>
+              <span className={
+                this.state.darkmode
+                  ? 'tag is-dark is-large'
+                  : 'tag is-white is-large'}>Balance:</span>
               <span
                 className={
                   this.state.lockedBalance > 0

@@ -1,5 +1,3 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable class-methods-use-this */
 // @flow
 import request from 'request-promise';
 import { ipcRenderer, remote } from 'electron';
@@ -10,21 +8,8 @@ import ReactTooltip from 'react-tooltip';
 import log from 'electron-log';
 import { session, eventEmitter } from '../index';
 import navBar from './NavBar';
+import BottomBar from './BottomBar';
 
-/*
-function getNodeList() {
-  const options = {
-    method: 'GET',
-    url:
-      'https://raw.githubusercontent.com/turtlecoin/turtlecoin-nodes-json/master/turtlecoin-nodes.json'
-  };
-  // eslint-disable-next-line func-names
-  request(options, function(error, response, body) {
-    if (error) throw new Error(error);
-    return body;
-  });
-}
-*/
 
 type Props = {
   syncStatus: number,
@@ -496,93 +481,7 @@ export default class Settings extends Component<Props> {
                 </div>
               </div>
             </div>
-            <div className="footerbar has-background-light">
-              <div className="field is-grouped is-grouped-multiline is-grouped-right">
-                {this.state.nodeFee > 0 && (
-                  <div className="control statusicons">
-                    <div className="tags has-addons">
-                      <span className="tag  is-white is-large">Node Fee:</span>
-                      <span className="tag is-danger is-large">
-                        {session.atomicToHuman(this.state.nodeFee, true)} TRTL
-                      </span>
-                    </div>
-                  </div>
-                )}
-                <div className="control statusicons">
-                  <div className="tags has-addons">
-                    <span className="tag is-white is-large">Sync:</span>
-                    {this.state.syncStatus < 100 &&
-                      session.daemon.networkBlockCount !== 0 && (
-                        <span
-                          className="tag is-warning is-large"
-                          data-tip={syncTooltip}
-                        >
-                          {this.state.syncStatus}%
-                          <ReactLoading
-                            type="bubbles"
-                            color="#363636"
-                            height={30}
-                            width={30}
-                          />
-                        </span>
-                      )}
-                    {this.state.syncStatus === 100 &&
-                      session.daemon.networkBlockCount !== 0 && (
-                        <span
-                          className="tag is-success is-large"
-                          data-tip={syncTooltip}
-                        >
-                          {this.state.syncStatus}%
-                        </span>
-                      )}
-                    {session.daemon.networkBlockCount === 0 &&
-                      session.wallet !== undefined && (
-                        <span
-                          className="tag is-danger is-large"
-                          data-tip={syncTooltip}
-                        >
-                          <ReactLoading
-                            type="spinningBubbles"
-                            color="#F5F5F5"
-                            height={30}
-                            width={30}
-                          />
-                        </span>
-                      )}
-                    {session.wallet === undefined && (
-                      <span className="tag is-danger is-large">
-                        No Wallet Open
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="control statusicons">
-                  <div className="tags has-addons">
-                    <span className="tag is-white is-large">Balance:</span>
-                    <span
-                      className={
-                        this.state.lockedBalance > 0
-                          ? 'tag is-warning is-large'
-                          : 'tag is-info is-large'
-                      }
-                      data-tip={balanceTooltip}
-                    >
-                      {this.state.lockedBalance > 0 ? (
-                        <i className="fa fa-lock" />
-                      ) : (
-                        <i className="fa fa-unlock" />
-                      )}
-                      &nbsp;
-                      {session.atomicToHuman(
-                        this.state.unlockedBalance + this.state.lockedBalance,
-                        true
-                      )}
-                      &nbsp;TRTL
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <BottomBar />
           </div>
         )}
         {this.state.darkMode === true && (
@@ -737,93 +636,7 @@ export default class Settings extends Component<Props> {
                 </div>
               </div>
             </div>
-            <div className="footerbar has-background-black">
-              <div className="field is-grouped is-grouped-multiline is-grouped-right">
-                {this.state.nodeFee > 0 && (
-                  <div className="control statusicons">
-                    <div className="tags has-addons">
-                      <span className="tag is-dark is-large">Node Fee:</span>
-                      <span className="tag is-danger is-large">
-                        {session.atomicToHuman(this.state.nodeFee, true)} TRTL
-                      </span>
-                    </div>
-                  </div>
-                )}
-                <div className="control statusicons">
-                  <div className="tags has-addons">
-                    <span className="tag is-dark is-large">Sync:</span>
-                    {this.state.syncStatus < 100 &&
-                      session.daemon.networkBlockCount !== 0 && (
-                        <span
-                          className="tag is-warning is-large"
-                          data-tip={syncTooltip}
-                        >
-                          {this.state.syncStatus}%
-                          <ReactLoading
-                            type="bubbles"
-                            color="#363636"
-                            height={30}
-                            width={30}
-                          />
-                        </span>
-                      )}
-                    {this.state.syncStatus === 100 &&
-                      session.daemon.networkBlockCount !== 0 && (
-                        <span
-                          className="tag is-success is-large"
-                          data-tip={syncTooltip}
-                        >
-                          {this.state.syncStatus}%
-                        </span>
-                      )}
-                    {session.daemon.networkBlockCount === 0 &&
-                      session.wallet !== undefined && (
-                        <span
-                          className="tag is-danger is-large"
-                          data-tip={syncTooltip}
-                        >
-                          <ReactLoading
-                            type="spinningBubbles"
-                            color="#F5F5F5"
-                            height={30}
-                            width={30}
-                          />
-                        </span>
-                      )}
-                    {session.wallet === undefined && (
-                      <span className="tag is-danger is-large">
-                        No Wallet Open
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="control statusicons">
-                  <div className="tags has-addons">
-                    <span className="tag is-dark is-large">Balance:</span>
-                    <span
-                      className={
-                        this.state.lockedBalance > 0
-                          ? 'tag is-warning is-large'
-                          : 'tag is-info is-large'
-                      }
-                      data-tip={balanceTooltip}
-                    >
-                      {this.state.lockedBalance > 0 ? (
-                        <i className="fa fa-lock" />
-                      ) : (
-                        <i className="fa fa-unlock" />
-                      )}
-                      &nbsp;
-                      {session.atomicToHuman(
-                        this.state.unlockedBalance + this.state.lockedBalance,
-                        true
-                      )}
-                      &nbsp;TRTL
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <BottomBar />
           </div>
         )}
       </div>

@@ -61,7 +61,6 @@ export default class Home extends Component<Props> {
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     if (session.wallet !== undefined) {
-      session.wallet.setMaxListeners(1);
       session.wallet.on('transaction', this.refreshListOnNewTransaction);
     }
     eventEmitter.on('openNewWallet', this.openNewWallet);
