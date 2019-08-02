@@ -193,6 +193,10 @@
   left: -18px;
 }
 
+.sync-status {
+  width: 115px;
+}
+
 .modal {
   position: absolute;
   top: 50%;

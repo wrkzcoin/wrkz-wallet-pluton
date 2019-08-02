@@ -128,7 +128,7 @@ export default class BottomBar extends Component<Props> {
               {this.state.syncStatus < 100 &&
                 session.daemon.networkBlockCount !== 0 && (
                   <span
-                    className="tag is-warning is-large"
+                    className="tag is-warning is-large sync-status"
                     data-tip={syncTooltip}
                   >
                     {this.state.syncStatus}%
@@ -143,7 +143,7 @@ export default class BottomBar extends Component<Props> {
               {this.state.syncStatus === 100 &&
                 session.daemon.networkBlockCount !== 0 && (
                   <span
-                    className="tag is-success is-large"
+                    className="tag is-success is-large sync-status"
                     data-tip={syncTooltip}
                   >
                     {this.state.syncStatus}%
