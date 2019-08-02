@@ -193,7 +193,7 @@ export default class Send extends Component<Props> {
     if (session.daemon.feeAmount > 0) {
       displayIfNodeFee = ` and a node fee of ${session.atomicToHuman(
         session.daemon.feeAmount
-      )} TRTL`;
+      )} ${session.wallet.config.ticker}`;
     } else {
       displayIfNodeFee = '';
     }
@@ -206,7 +206,7 @@ export default class Send extends Component<Props> {
       type: 'warning',
       buttons: ['Cancel', 'OK'],
       title: 'Please Confirm Transaction',
-      message: `You are about to send ${totalTransactionAmount} TRTL to ${sendToAddress}${displayIfPaymentID} which includes a network fee of 0.10 TRTL${displayIfNodeFee}. Do you wish to proceed?`
+      message: `You are about to send ${totalTransactionAmount} ${session.wallet.config.ticker} to ${sendToAddress}${displayIfPaymentID} which includes a network fee of 0.10 ${session.wallet.config.ticker}${displayIfNodeFee}. Do you wish to proceed?`
     });
 
     if (userSelection !== 1) {
@@ -334,7 +334,7 @@ export default class Send extends Component<Props> {
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder="How much TRTL to send (eg. 100)"
+                            placeholder={"How much " + session.wallet.config.ticker + " to send (eg. 100)"}
                             id="amount"
                             value={this.state.enteredAmount}
                             onChange={this.handleAmountChange}
@@ -448,7 +448,7 @@ export default class Send extends Component<Props> {
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder="How much TRTL to send (eg. 100)"
+                            placeholder={"How much " + session.wallet.config.ticker + " to send (eg. 100)"}
                             id="amount"
                             value={this.state.enteredAmount}
                             onChange={this.handleAmountChange}
