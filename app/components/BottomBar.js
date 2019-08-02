@@ -150,7 +150,7 @@ export default class BottomBar extends Component<Props> {
                   </span>
                 )}
               {session.daemon.networkBlockCount === 0 && (
-                <span className="tag is-danger is-large" data-tip={syncTooltip}>
+                <span className="tag is-danger is-large sync-status" data-tip={syncTooltip}>
                   <ReactLoading
                     type="spinningBubbles"
                     color="#F5F5F5"

@@ -216,7 +216,7 @@ export default class Settings extends Component<Props> {
       type: 'info',
       buttons: ['OK'],
       title: 'Rewind completed successfully.',
-      message: `Your wallet has been rewound to block ${scanHeight}, and will sync again from there.`
+      message: `Your wallet has been rewound to block ${rewindHeight}, and will sync again from there.`
     });
   }
 
