@@ -227,7 +227,7 @@ function handleOpen() {
 
 eventEmitter.on('sendNotification', function sendNotification(amount) {
   const notif = new window.Notification('Transaction Received!', {
-    body: `You've just received ${amount} TRTL`
+    body: `You've just received ${amount} ${session.wallet.config.ticker}`
   });
 });
 

@@ -88,8 +88,8 @@ export default class BottomBar extends Component<Props> {
       `Unlocked: ${session.atomicToHuman(
         this.state.unlockedBalance,
         true
-      )} TRTL<br>` +
-      `Locked: ${session.atomicToHuman(this.state.lockedBalance, true)} TRTL`;
+      )} ${session.wallet.config.ticker}<br>` +
+      `Locked: ${session.atomicToHuman(this.state.lockedBalance, true)} ${session.wallet.config.ticker}`;
 
     return (
       // prettier-ignore
@@ -114,7 +114,7 @@ export default class BottomBar extends Component<Props> {
                     ? 'tag is-dark is-large'
                     : 'tag is-white is-large'}>Node Fee:</span>
                 <span className="tag is-danger is-large">
-                  {session.atomicToHuman(this.state.nodeFee, true)} TRTL
+                  {session.atomicToHuman(this.state.nodeFee, true)} {session.wallet.config.ticker}
                 </span>
               </div>
             </div>
@@ -185,7 +185,7 @@ export default class BottomBar extends Component<Props> {
                   this.state.unlockedBalance + this.state.lockedBalance,
                   true
                 )}
-                &nbsp;TRTL
+                &nbsp;{session.wallet.config.ticker}
               </span>
             </div>
           </div>
