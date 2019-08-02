@@ -15,7 +15,7 @@ import {
   eventEmitter,
   savedInInstallDir
 } from '../index';
-import navBar from './NavBar';
+import NavBar from './NavBar';
 import routes from '../constants/routes';
 
 // import styles from './Send.css';
@@ -35,17 +35,12 @@ export default class Send extends Component<Props> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      syncStatus: session.getSyncStatus(),
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
-      transactions: session.getTransactions(),
+      darkMode: session.darkMode,
       importkey: false,
       importseed: false,
       importCompleted: false,
-      nodeFee: session.daemon.feeAmount,
       changePassword: false,
-      loginFailed: false,
-      darkMode: session.darkMode
+      loginFailed: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -55,7 +50,6 @@ export default class Send extends Component<Props> {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
@@ -65,7 +59,6 @@ export default class Send extends Component<Props> {
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
@@ -180,12 +173,6 @@ export default class Send extends Component<Props> {
     }
   }
 
-  refresh() {
-    this.setState(prevState => ({
-      syncStatus: session.getSyncStatus()
-    }));
-  }
-
   render() {
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
@@ -203,7 +190,7 @@ export default class Send extends Component<Props> {
       <div>
         {this.state.darkMode === false && (
           <div className="wholescreen">
-            {navBar('import', false)}
+            <NavBar />
             <div className="maincontent">
               <form onSubmit={this.handleSubmit}>
                 <div className="field">
@@ -260,7 +247,7 @@ export default class Send extends Component<Props> {
         )}
         {this.state.darkMode === true && (
           <div className="wholescreen has-background-dark">
-            {navBar('import', true)}
+            <NavBar />
             <div className="maincontent has-background-dark">
               <form onSubmit={this.handleSubmit}>
                 <div className="field">

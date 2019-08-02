@@ -2,11 +2,10 @@
 import { ipcRenderer } from 'electron';
 import log from 'electron-log';
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import { session, loginCounter, eventEmitter } from '../index';
-import navBar from './NavBar';
+import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 
 function sleep(ms) {
@@ -209,7 +208,7 @@ export default class Home extends Component<Props> {
               multiline
               place="top"
             />
-            {navBar('wallet', false)}
+            <NavBar />
             <div
               className={
                 session.firstLoadOnLogin
@@ -312,7 +311,7 @@ export default class Home extends Component<Props> {
               multiline
               place="top"
             />
-            {navBar('wallet', true)}
+            <NavBar />
             <div
               className={
                 session.firstLoadOnLogin

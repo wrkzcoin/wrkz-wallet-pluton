@@ -4,16 +4,12 @@
 import crypto from 'crypto';
 import { remote, ipcRenderer } from 'electron';
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import log from 'electron-log';
 import { session, eventEmitter } from '../index';
-import navBar from './NavBar';
+import NavBar from './NavBar';
 import BottomBar from './BottomBar';
-
-
-// import styles from './Send.css';
 
 type Props = {};
 
@@ -309,7 +305,7 @@ export default class Send extends Component<Props> {
               multiline
               place="top"
             />
-            {navBar('send', false)}
+            <NavBar />
             <div className="maincontent">
               <form onSubmit={this.handleSubmit}>
                 <div className="field">
@@ -420,7 +416,7 @@ export default class Send extends Component<Props> {
               multiline
               place="top"
             />
-            {navBar('send', true)}
+            <NavBar />
             <div className="maincontent has-background-dark">
               <form onSubmit={this.handleSubmit}>
                 <div className="field">

@@ -1,20 +1,12 @@
 // @flow
-import { ipcRenderer, clipboard } from 'electron';
-import log from 'electron-log';
+import { ipcRenderer } from 'electron';
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
 import QRCode from 'qrcode.react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
-import { sync } from 'glob';
 import { session, eventEmitter } from '../index';
-import navBar from './NavBar';
+import NavBar from './NavBar';
 import BottomBar from './BottomBar';
-
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 type Props = {
   increment: () => void,
@@ -142,7 +134,7 @@ export default class Receive extends Component<Props> {
               multiline
               place="top"
             />
-            {navBar('receive', false)}
+            <NavBar />
             <div className="maincontent">
               <div className="columns">
                 <div className="column is-three-quarters">
@@ -205,7 +197,7 @@ export default class Receive extends Component<Props> {
               multiline
               place="top"
             />
-            {navBar('receive', true)}
+            <NavBar />
             <div className="maincontent has-background-dark">
               <div className="columns">
                 <div className="column is-three-quarters">

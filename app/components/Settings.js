@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import log from 'electron-log';
 import { session, eventEmitter } from '../index';
-import navBar from './NavBar';
+import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 
 type Props = {};
@@ -24,14 +24,14 @@ export default class Settings extends Component<Props> {
       wallet: session.wallet,
       darkMode: session.darkMode,
       transactionInProgress: false,
+      scanHeight: '',
+      rewindHeight: '',
       importkey: false,
       importseed: false,
       changePassword: false,
       loginFailed: false,
       nodeChangeInProgress: false,
-      scanHeight: '',
       gohome: false,
-      rewindHeight: '',
       rewindInProgress: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
@@ -271,7 +271,7 @@ export default class Settings extends Component<Props> {
               multiline
               place="top"
             />
-            {navBar('settings', false)}
+            <NavBar />
             <div className="maincontent">
               <div className="columns">
                 <div className="column">
@@ -425,7 +425,7 @@ export default class Settings extends Component<Props> {
               multiline
               place="top"
             />
-            {navBar('settings', true)}
+            <NavBar />
             <div className="maincontent has-background-dark">
               <div className="columns">
                 <div className="column">

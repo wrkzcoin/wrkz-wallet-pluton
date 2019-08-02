@@ -2,25 +2,15 @@
 /* eslint-disable class-methods-use-this */
 // @flow
 import { remote, ipcRenderer } from 'electron';
-import fs from 'fs';
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
-import { config, session, directories, eventEmitter } from '../index';
-import navBar from './NavBar';
-import routes from '../constants/routes';
+import { config, session, eventEmitter } from '../index';
+import NavBar from './NavBar';
 
 // import styles from './Send.css';
 
-type Props = {
-  syncStatus: number,
-  unlockedBalance: number,
-  lockedBalance: number,
-  transactions: Array<string>,
-  handleSubmit: () => void,
-  transactionInProgress: boolean
-};
+type Props = {};
 
 export default class FirstStartup extends Component<Props> {
   props: Props;
@@ -45,7 +35,6 @@ export default class FirstStartup extends Component<Props> {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
@@ -56,7 +45,6 @@ export default class FirstStartup extends Component<Props> {
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
@@ -175,12 +163,6 @@ export default class FirstStartup extends Component<Props> {
       log.debug('User selected to import from keys...');
       eventEmitter.emit('importKey');
     }
-  }
-
-  refresh() {
-    this.setState(prevState => ({
-      syncStatus: session.getSyncStatus()
-    }));
   }
 
   render() {

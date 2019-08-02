@@ -2,25 +2,14 @@
 /* eslint-disable class-methods-use-this */
 // @flow
 import { remote, ipcRenderer } from 'electron';
-import fs from 'fs';
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
-import { Redirect, Link } from 'react-router-dom';
-import log from 'electron-log';
-import { config, session, directories, eventEmitter } from '../index';
-import navBar from './NavBar';
-import routes from '../constants/routes';
+import { Redirect } from 'react-router-dom';
+import { config, session, eventEmitter } from '../index';
+import NavBar from './NavBar';
 
 // import styles from './Send.css';
 
-type Props = {
-  syncStatus: number,
-  unlockedBalance: number,
-  lockedBalance: number,
-  transactions: Array<string>,
-  handleSubmit: () => void,
-  transactionInProgress: boolean
-};
+type Props = {};
 
 export default class ChangePassword extends Component<Props> {
   props: Props;
@@ -41,7 +30,6 @@ export default class ChangePassword extends Component<Props> {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 1000);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
@@ -50,7 +38,6 @@ export default class ChangePassword extends Component<Props> {
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
@@ -128,12 +115,6 @@ export default class ChangePassword extends Component<Props> {
     }
   }
 
-  refresh() {
-    this.setState(prevState => ({
-      syncStatus: session.getSyncStatus()
-    }));
-  }
-
   render() {
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
@@ -152,7 +133,7 @@ export default class ChangePassword extends Component<Props> {
       <div>
         {this.state.darkMode === false && (
           <div className="wholescreen">
-            {navBar('changepassword', false)}
+            <NavBar />
             <div className="maincontent">
               <form onSubmit={this.handleSubmit}>
                 {session.walletPassword !== '' && (
@@ -220,7 +201,7 @@ export default class ChangePassword extends Component<Props> {
         )}
         {this.state.darkMode === true && (
           <div className="wholescreen has-background-dark">
-            {navBar('changepassword', true)}
+            <NavBar />
             <div className="maincontent has-background-dark ">
               <form onSubmit={this.handleSubmit}>
                 {session.walletPassword !== '' && (
