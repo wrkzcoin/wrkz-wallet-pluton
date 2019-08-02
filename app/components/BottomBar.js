@@ -154,8 +154,8 @@ export default class BottomBar extends Component<Props> {
                   <ReactLoading
                     type="spinningBubbles"
                     color="#F5F5F5"
-                    height={30}
-                    width={30}
+                    height={25}
+                    width={25}
                   />
                 </span>
               )}
