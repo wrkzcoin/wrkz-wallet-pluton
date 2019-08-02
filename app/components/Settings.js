@@ -9,6 +9,8 @@ import log from 'electron-log';
 import { session, eventEmitter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
+import Redirector from './Redirector';
+
 
 type Props = {};
 
@@ -26,17 +28,11 @@ export default class Settings extends Component<Props> {
       transactionInProgress: false,
       scanHeight: '',
       rewindHeight: '',
-      importkey: false,
-      importseed: false,
-      changePassword: false,
       loginFailed: false,
       nodeChangeInProgress: false,
       gohome: false,
       rewindInProgress: false
     };
-    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
-    this.handleImportFromKey = this.handleImportFromKey.bind(this);
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
@@ -55,18 +51,12 @@ export default class Settings extends Component<Props> {
   }
 
   componentDidMount() {
-    ipcRenderer.on('importSeed', this.handleImportFromSeed);
-    ipcRenderer.on('importKey', this.handleImportFromKey);
-    ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.on('newNodeConnected', this.handleNewNode);
     eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.on('openNewWallet', this.handleInitialize);
   }
 
   componentWillUnmount() {
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
-    ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('newNodeConnected', this.handleNewNode);
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.off('openNewWallet', this.handleInitialize);
@@ -129,20 +119,6 @@ export default class Settings extends Component<Props> {
     eventEmitter.emit('nodeChangeInProgress');
     session.swapNode(host, port);
     eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
-  }
-
-  handleImportFromSeed(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importseed: true
-    });
-  }
-
-  handleImportFromKey(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importkey: true
-    });
   }
 
   async findNode(evt, route) {
@@ -236,6 +212,12 @@ export default class Settings extends Component<Props> {
       rewindInProgress: false,
       rewindHeight: ''
     });
+    remote.dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['OK'],
+      title: 'Rewind completed successfully.',
+      message: `Your wallet has been rewound to block ${scanHeight}, and will sync again from there.`
+    });
   }
 
   handleRewindHeightChange(event) {
@@ -244,15 +226,6 @@ export default class Settings extends Component<Props> {
   }
 
   render() {
-    if (this.state.importkey === true) {
-      return <Redirect to="/importkey" />;
-    }
-    if (this.state.importseed === true) {
-      return <Redirect to="/import" />;
-    }
-    if (this.state.changePassword === true) {
-      return <Redirect to="/changepassword" />;
-    }
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
     }
@@ -262,6 +235,7 @@ export default class Settings extends Component<Props> {
 
     return (
       <div>
+        <Redirector />
         {this.state.darkMode === false && (
           <div className="wholescreen">
             <ReactTooltip

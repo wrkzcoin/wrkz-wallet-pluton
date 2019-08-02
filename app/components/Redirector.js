@@ -11,13 +11,9 @@ export default class Redirector extends Component<props> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      firstStartup: session.firstStartup,
       importkey: false,
       importseed: false,
-      changePassword: false,
-      loginFailed: false,
-      loginInProgress: false,
-      goHome: false
+      changePassword: false
     };
     this.handleImportFromSeed = this.handleImportFromSeed.bind(this)
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
@@ -56,16 +52,8 @@ export default class Redirector extends Component<props> {
 
   render() {
 
-    if (this.state.goHome === true) {
-      return <Redirect to="/" />
-    }
-
     if (this.state.changePassword === true) {
       return <Redirect to="/changepassword" />;
-    }
-
-    if (this.state.firstStartup === true) {
-      return <Redirect to="/firststartup" />;
     }
 
     if (this.state.importkey === true) {

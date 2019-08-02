@@ -6,8 +6,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { config, session, eventEmitter } from '../index';
 import NavBar from './NavBar';
-
-// import styles from './Send.css';
+import Redirector from './Redirector';
 
 type Props = {};
 
@@ -104,6 +103,7 @@ export default class ChangePassword extends Component<Props> {
     }
     return (
       <div>
+        <Redirector />
         {this.state.darkMode === false && (
           <div className="wholescreen">
             <NavBar />

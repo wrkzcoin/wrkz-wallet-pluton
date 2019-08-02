@@ -6,7 +6,8 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
 import { config, session, eventEmitter } from '../index';
-import NavBar from './NavBar';
+import Redirector from './Redirector';
+
 
 // import styles from './Send.css';
 
@@ -18,15 +19,11 @@ export default class FirstStartup extends Component<Props> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      importkey: false,
-      importseed: false,
       importCompleted: false,
       loginFailed: false,
       loginInProgress: false,
       darkMode: session.darkMode
     };
-    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
-    this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.openExisting = this.openExisting.bind(this);
@@ -35,23 +32,15 @@ export default class FirstStartup extends Component<Props> {
   }
 
   componentDidMount() {
-    ipcRenderer.on('importSeed', this.handleImportFromSeed);
-    ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
     eventEmitter.on('openNewWallet', this.openNewWallet);
-    eventEmitter.on('importSeed', this.handleImportFromSeed);
-    eventEmitter.on('importKey', this.handleImportFromKey);
   }
 
   componentWillUnmount() {
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
     eventEmitter.off('openNewWallet', this.openNewWallet);
-    eventEmitter.off('importSeed', this.handleImportFromSeed);
-    eventEmitter.off('importKey', this.handleImportFromKey);
   }
 
   handleLoginInProgress() {
@@ -74,20 +63,6 @@ export default class FirstStartup extends Component<Props> {
   handleInitialize() {
     this.setState({
       importCompleted: true
-    });
-  }
-
-  handleImportFromSeed(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importseed: true
-    });
-  }
-
-  handleImportFromKey(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importkey: true
     });
   }
 
@@ -143,7 +118,7 @@ export default class FirstStartup extends Component<Props> {
   createNew() {
     this.handleLoginInProgress();
     log.debug('User selected to create a new wallet.');
-    eventEmitter.emit('handleNew');
+    eventEmitter.emit('handleNew');f
   }
 
   importFromKeysOrSeed() {
@@ -170,18 +145,13 @@ export default class FirstStartup extends Component<Props> {
       return <Redirect to="/login" />;
     }
 
-    if (this.state.importseed === true) {
-      return <Redirect to="/import" />;
-    }
-    if (this.state.importkey === true) {
-      return <Redirect to="/importkey" />;
-    }
     if (this.state.importCompleted === true) {
       return <Redirect to="/" />;
     }
 
     return (
       <div>
+        <Redirector />
         {this.state.darkMode === false && (
           <div className="fullwindow">
             <div className="mid-div">

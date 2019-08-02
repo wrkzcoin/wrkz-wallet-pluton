@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
 import NavBar from './NavBar';
+import Redirector from './Redirector';
 import {
   config,
   session,
@@ -15,16 +16,7 @@ import {
   savedInInstallDir
 } from '../index';
 
-// import styles from './Send.css';
-
-type Props = {
-  syncStatus: number,
-  unlockedBalance: number,
-  lockedBalance: number,
-  transactions: Array<string>,
-  handleSubmit: () => void,
-  transactionInProgress: boolean
-};
+type Props = {};
 
 export default class Send extends Component<Props> {
   props: Props;
@@ -33,32 +25,20 @@ export default class Send extends Component<Props> {
     super(props);
     this.state = {
       darkMode: session.darkMode,
-      importkey: false,
-      importseed: false,
       importCompleted: false,
-      changePassword: false,
       loginFailed: false
     };
-    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
-    this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
   }
 
   componentDidMount() {
-    ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
-    ipcRenderer.on('importSeed', this.handleImportFromSeed);
-    ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
     eventEmitter.on('openNewWallet', this.handleInitialize);
   }
 
   componentWillUnmount() {
-    ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
     eventEmitter.off('openNewWallet', this.handleInitialize);
@@ -67,26 +47,6 @@ export default class Send extends Component<Props> {
   handleLoginFailure() {
     this.setState({
       loginFailed: true
-    });
-  }
-
-  handleImportFromSeed(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importseed: true
-    });
-  }
-
-  handleImportFromKey(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importkey: true
-    });
-  }
-
-  handlePasswordChange() {
-    this.setState({
-      changePassword: true
     });
   }
 
@@ -170,20 +130,12 @@ export default class Send extends Component<Props> {
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
     }
-    if (this.state.changePassword === true) {
-      return <Redirect to="/changepassword" />;
-    }
-
-    if (this.state.importkey === true) {
-      return <Redirect to="/importkey" />;
-    }
-
     if (this.state.importCompleted === true) {
       return <Redirect to="/" />;
     }
-
     return (
       <div>
+        <Redirector />
         {this.state.darkMode === false && (
           <div className="wholescreen">
             <NavBar />

@@ -15,15 +15,7 @@ function sleep(ms) {
 
 let displayedTransactionCount = 50;
 
-type Props = {
-  syncStatus: number,
-  unlockedBalance: number,
-  lockedBalance: number,
-  transactions: Array<string>,
-  history: any,
-  importkey: boolean,
-  importseed: boolean
-};
+type Props = {};
 
 export default class Home extends Component<Props> {
   props: Props;
@@ -41,7 +33,6 @@ export default class Home extends Component<Props> {
       firstStartup: session.firstStartup,
       darkmode: session.darkMode
     };
-
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
@@ -148,18 +139,6 @@ export default class Home extends Component<Props> {
   render() {
     if (this.state.firstStartup === true) {
       return <Redirect to="/firststartup" />;
-    }
-
-    if (this.state.changePassword === true) {
-      return <Redirect to="/changepassword" />;
-    }
-
-    if (this.state.importkey === true) {
-      return <Redirect to="/importkey" />;
-    }
-
-    if (this.state.importseed === true) {
-      return <Redirect to="/import" />;
     }
 
     if (this.state.loginFailed === true) {

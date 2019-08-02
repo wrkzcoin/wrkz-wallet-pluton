@@ -9,7 +9,6 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 
-
 type Props = {
   copyToClipboard: () => void,
 };
@@ -26,14 +25,17 @@ export default class Receive extends Component<Props> {
       gohome: false
     };
     this.handleInitialize = this.handleInitialize.bind(this);
+    this.handleLoginFailure = this.handleLoginFailure.bind(this);
   }
 
   componentDidMount() {
     eventEmitter.on('openNewWallet', this.handleInitialize);
+    eventEmitter.on('loginFailed', this.handleLoginFailure);
   }
 
   componentWillUnmount() {
     eventEmitter.off('openNewWallet', this.handleInitialize);
+    eventEmitter.off('loginFailed', this.handleLoginFailure);
   }
 
   handleInitialize() {
@@ -42,13 +44,25 @@ export default class Receive extends Component<Props> {
     });
   }
 
+  handleLoginFailure() {
+    this.setState({
+      loginFailed: true
+    });
+  }
+
   render() {
     const { copyToClipboard } = this.props;
+
     if (this.state.gohome === true) {
       return <Redirect to="/" />;
     }
 
+    if (this.state.loginFailed === true) {
+      return <Redirect to="/login" />;
+    }
+
     return (
+
       <div>
         <Redirector />
         {this.state.darkMode === false && (
