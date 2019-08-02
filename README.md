@@ -22,9 +22,10 @@
 
 ### Dependencies
 
-* Node.JS (latest LTS version)
+* Node.JS (Latest LTS version - 10.x)
 
-https://nodejs.org/
+https://nodejs.org/   
+[Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script) makes installing different versions of node super easy, fully recommended.
 
 * Yarn
 
