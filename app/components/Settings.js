@@ -10,18 +10,7 @@ import { session, eventEmitter } from '../index';
 import navBar from './NavBar';
 import BottomBar from './BottomBar';
 
-
-type Props = {
-  syncStatus: number,
-  unlockedBalance: number,
-  lockedBalance: number,
-  transactions: Array<string>,
-  handleSubmit: () => void,
-  transactionInProgress: boolean,
-  importseed: boolean,
-  importkey: boolean,
-  nodeList: Array<string>
-};
+type Props = {};
 
 export default class Settings extends Component<Props> {
   props: Props;
@@ -29,22 +18,19 @@ export default class Settings extends Component<Props> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      syncStatus: session.getSyncStatus(),
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
+      connectednode: `${session.daemonHost}:${session.daemonPort}`,
+      nodeFee: session.daemon.feeAmount,
+      ssl: session.daemon.ssl,
+      wallet: session.wallet,
+      darkMode: session.darkMode,
       transactionInProgress: false,
       importkey: false,
       importseed: false,
-      connectednode: `${session.daemonHost}:${session.daemonPort}`,
-      nodeFee: session.daemon.feeAmount,
       changePassword: false,
       loginFailed: false,
       nodeChangeInProgress: false,
       scanHeight: '',
-      ssl: session.daemon.ssl,
-      wallet: session.wallet,
       gohome: false,
-      darkMode: session.darkMode,
       rewindHeight: '',
       rewindInProgress: false
     };
@@ -54,13 +40,9 @@ export default class Settings extends Component<Props> {
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
-    this.refreshNodeFee = this.refreshNodeFee.bind(this);
     this.findNode = this.findNode.bind(this);
     this.changeNode = this.changeNode.bind(this);
     this.handleNodeChangeInProgress = this.handleNodeChangeInProgress.bind(
-      this
-    );
-    this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
       this
     );
     this.handleScanHeightChange = this.handleScanHeightChange.bind(this);
@@ -73,12 +55,6 @@ export default class Settings extends Component<Props> {
   }
 
   componentDidMount() {
-    if (session.wallet !== undefined) {
-      session.wallet.setMaxListeners(1);
-      session.wallet.on('transaction', this.refreshBalanceOnNewTransaction);
-    }
-    this.interval = setInterval(() => this.refresh(), 1000);
-    eventEmitter.on('gotNodeFee', this.refreshNodeFee);
     ipcRenderer.on('importSeed', this.handleImportFromSeed);
     ipcRenderer.on('importKey', this.handleImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
@@ -88,16 +64,10 @@ export default class Settings extends Component<Props> {
   }
 
   componentWillUnmount() {
-    if (session.wallet !== undefined) {
-      session.wallet.setMaxListeners(1);
-      session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
-    }
-    clearInterval(this.interval);
     ipcRenderer.off('importSeed', this.handleImportFromSeed);
     ipcRenderer.off('importKey', this.handleImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
     eventEmitter.off('newNodeConnected', this.handleNewNode);
-    eventEmitter.off('gotNodeFee', this.refreshNodeFee);
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.off('openNewWallet', this.handleInitialize);
   }
@@ -105,23 +75,6 @@ export default class Settings extends Component<Props> {
   handleInitialize() {
     this.setState({
       gohome: true
-    });
-  }
-
-  refreshBalanceOnNewTransaction() {
-    log.debug('Transaction found, refreshing balance...');
-    this.setState({
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance()
-    });
-  }
-
-  refreshNodeFee() {
-    this.setState({
-      nodeFee: session.daemon.feeAmount,
-      connectednode: `${session.daemonHost}:${session.daemonPort}`,
-      nodeChangeInProgress: false,
-      ssl: session.daemon.ssl
     });
   }
 
@@ -266,13 +219,6 @@ export default class Settings extends Component<Props> {
     eventEmitter.emit('darkmodeoff');
   }
 
-  refresh() {
-    this.setState(prevState => ({
-      syncStatus: session.getSyncStatus()
-    }));
-    ReactTooltip.rebuild();
-  }
-
   async rewindWallet(evt) {
     evt.preventDefault();
     this.setState({
@@ -313,20 +259,6 @@ export default class Settings extends Component<Props> {
     if (this.state.gohome === true) {
       return <Redirect to="/" />;
     }
-
-    const balanceTooltip =
-      `Unlocked: ${session.atomicToHuman(
-        this.state.unlockedBalance,
-        true
-      )} TRTL<br>` +
-      `Locked:  ${session.atomicToHuman(this.state.lockedBalance, true)} TRTL`;
-
-    const syncTooltip =
-      session.wallet.getSyncStatus()[2] === 0
-        ? 'Connecting, please wait...'
-        : `${session.wallet.getSyncStatus()[0]}/${
-            session.wallet.getSyncStatus()[2]
-          }`;
 
     return (
       <div>

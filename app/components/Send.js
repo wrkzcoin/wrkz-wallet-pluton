@@ -298,20 +298,6 @@ export default class Send extends Component<Props> {
       return <Redirect to="/changepassword" />;
     }
 
-    const balanceTooltip =
-      `Unlocked: ${session.atomicToHuman(
-        this.state.unlockedBalance,
-        true
-      )} TRTL<br>` +
-      `Locked: ${session.atomicToHuman(this.state.lockedBalance, true)} TRTL`;
-
-    const syncTooltip =
-      session.wallet.getSyncStatus()[2] === 0
-        ? 'Connecting, please wait...'
-        : `${session.wallet.getSyncStatus()[0]}/${
-            session.wallet.getSyncStatus()[2]
-          }`;
-
     return (
       <div>
         {this.state.darkMode === false && (
