@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
 import { session, eventEmitter, loginCounter } from '../index';
+import Redirector from './Redirector';
 
 // import styles from './Send.css';
 
@@ -17,8 +18,6 @@ export default class Login extends Component<Props> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      importkey: false,
-      importseed: false,
       importCompleted: false,
       loginInProgress: false,
       userOpenedDifferentWallet: false,
@@ -26,8 +25,6 @@ export default class Login extends Component<Props> {
       walletFile: session.walletFile,
       wrongPassword: loginCounter.userLoginAttempted
     };
-    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
-    this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleLoginInProgress = this.handleLoginInProgress.bind(this);
@@ -35,16 +32,12 @@ export default class Login extends Component<Props> {
   }
 
   componentDidMount() {
-    ipcRenderer.on('importSeed', this.handleImportFromSeed);
-    ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
     eventEmitter.on('loginInProgress', this.handleLoginInProgress);
     eventEmitter.on('refreshLogin', this.refreshLogin);
   }
 
   componentWillUnmount() {
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
     eventEmitter.off('loginInProgress', this.handleLoginInProgress);
     eventEmitter.off('refreshLogin', this.refreshLogin);
@@ -76,20 +69,6 @@ export default class Login extends Component<Props> {
     });
   }
 
-  handleImportFromSeed(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importseed: true
-    });
-  }
-
-  handleImportFromKey(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importkey: true
-    });
-  }
-
   async handleSubmit(event) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
@@ -102,27 +81,16 @@ export default class Login extends Component<Props> {
     eventEmitter.emit('initializeNewSession', password);
   }
 
-  refresh() {
-    this.setState(prevState => ({
-      syncStatus: session.getSyncStatus()
-    }));
-  }
-
   render() {
     if (this.state.userOpenedDifferentWallet) {
       return <Redirect to="/" />;
-    }
-    if (this.state.loginFailed === true) {
-      return <Redirect to="/login" />;
-    }
-    if (this.state.importseed === true) {
-      return <Redirect to="/import" />;
     }
     if (this.state.importCompleted === true) {
       return <Redirect to="/" />;
     }
     return (
       <div>
+        <Redirector />
         {this.state.darkMode === false && (
           <div className="fullwindow">
             {this.state.loginInProgress === false && (

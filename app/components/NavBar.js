@@ -18,12 +18,12 @@ export default class NavBar extends Component<props> {
 
   componentDidMount() {
     eventEmitter.on('darkmodeon', this.darkModeOn);
-    eventEmitter.on('darkmodeon', this.darkModeOff);
+    eventEmitter.on('darkmodeoff', this.darkModeOff);
   }
 
   componentWillUnmount() {
     eventEmitter.off('darkmodeon', this.darkModeOn);
-    eventEmitter.off('darkmodeon', this.darkModeOff);
+    eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
 
   darkModeOn() {

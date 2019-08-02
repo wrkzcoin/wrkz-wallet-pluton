@@ -17,29 +17,22 @@ export default class ChangePassword extends Component<Props> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      importkey: false,
-      importseed: false,
       importCompleted: false,
       loginFailed: false,
       darkMode: session.darkMode
     };
-    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
-    this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
-    ipcRenderer.on('importSeed', this.handleImportFromSeed);
-    ipcRenderer.on('importKey', this.handleImportFromKey);
     eventEmitter.on('initializeNewSession', this.handleInitialize);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
     eventEmitter.on('openNewWallet', this.handleInitialize);
   }
 
   componentWillUnmount() {
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('initializeNewSession', this.handleInitialize);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
     eventEmitter.off('openNewWallet', this.handleInitialize);
@@ -54,20 +47,6 @@ export default class ChangePassword extends Component<Props> {
   handleInitialize() {
     this.setState({
       importCompleted: true
-    });
-  }
-
-  handleImportFromSeed(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importseed: true
-    });
-  }
-
-  handleImportFromKey(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importkey: true
     });
   }
 
@@ -105,6 +84,7 @@ export default class ChangePassword extends Component<Props> {
         title: 'Saved!',
         message: 'The password was changed successfully.'
       });
+      this.handleInitialize();
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
@@ -118,13 +98,6 @@ export default class ChangePassword extends Component<Props> {
   render() {
     if (this.state.loginFailed === true) {
       return <Redirect to="/login" />;
-    }
-
-    if (this.state.importseed === true) {
-      return <Redirect to="/import" />;
-    }
-    if (this.state.importkey === true) {
-      return <Redirect to="/importkey" />;
     }
     if (this.state.importCompleted === true) {
       return <Redirect to="/" />;

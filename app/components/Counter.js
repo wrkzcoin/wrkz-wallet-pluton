@@ -7,18 +7,11 @@ import ReactTooltip from 'react-tooltip';
 import { session, eventEmitter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
+import Redirector from './Redirector';
+
 
 type Props = {
-  increment: () => void,
-  incrementIfOdd: () => void,
-  incrementAsync: () => void,
-  decrement: () => void,
-  counter: number,
   copyToClipboard: () => void,
-  syncStatus: number,
-  unlockedBalance: number,
-  lockedBalance: number,
-  transactions: Array<string>
 };
 
 export default class Receive extends Component<Props> {
@@ -30,33 +23,16 @@ export default class Receive extends Component<Props> {
       nodeFee: session.daemon.feeAmount,
       darkMode: session.darkMode,
       firstLoad: session.firstLoadOnLogin,
-      importkey: false,
-      importseed: false,
-      changePassword: false,
-      loginFailed: false,
       gohome: false
     };
-    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
-    this.handleImportFromKey = this.handleImportFromKey.bind(this);
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleInitialize = this.handleInitialize.bind(this);
   }
 
   componentDidMount() {
-    ipcRenderer.on('importSeed', this.handleImportFromSeed);
-    ipcRenderer.on('importKey', this.handleImportFromKey);
-    ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
-    eventEmitter.on('loginFailed', this.handleLoginFailure);
     eventEmitter.on('openNewWallet', this.handleInitialize);
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
-    ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
-    eventEmitter.off('loginFailed', this.handleLoginFailure);
     eventEmitter.off('openNewWallet', this.handleInitialize);
   }
 
@@ -66,65 +42,15 @@ export default class Receive extends Component<Props> {
     });
   }
 
-  handleLoginFailure() {
-    this.setState({
-      loginFailed: true
-    });
-  }
-
-  handleImportFromSeed(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importseed: true
-    });
-  }
-
-  handleImportFromKey(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importkey: true
-    });
-  }
-
-  handleLoginFailure() {
-    this.setState({
-      loginFailed: true
-    });
-  }
-
-  handlePasswordChange() {
-    this.setState({
-      changePassword: true
-    });
-  }
-
   render() {
-    const {
-      increment,
-      incrementIfOdd,
-      incrementAsync,
-      decrement,
-      counter,
-      copyToClipboard
-    } = this.props;
-    if (this.state.changePassword === true) {
-      return <Redirect to="/changepassword" />;
-    }
-    if (this.state.importkey === true) {
-      return <Redirect to="/importkey" />;
-    }
-    if (this.state.importseed === true) {
-      return <Redirect to="/import" />;
-    }
-    if (this.state.loginFailed === true) {
-      return <Redirect to="/login" />;
-    }
+    const { copyToClipboard } = this.props;
     if (this.state.gohome === true) {
       return <Redirect to="/" />;
     }
 
     return (
       <div>
+        <Redirector />
         {this.state.darkMode === false && (
           <div className="wholescreen">
             <ReactTooltip

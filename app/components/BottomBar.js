@@ -25,7 +25,7 @@ export default class BottomBar extends Component<Props> {
   componentDidMount() {
     this.interval = setInterval(() => this.refresh(), 1000);
     eventEmitter.on('darkmodeon', this.darkModeOn);
-    eventEmitter.on('darkmodeon', this.darkModeOff);
+    eventEmitter.on('darkmodeoff', this.darkModeOff);
     eventEmitter.on('gotNodeFee', this.refreshNodeFee);
     if (session.wallet !== undefined) {
       session.wallet.setMaxListeners(2);
@@ -37,7 +37,7 @@ export default class BottomBar extends Component<Props> {
     clearInterval(this.interval);
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
     eventEmitter.off('darkmodeon', this.darkModeOn);
-    eventEmitter.off('darkmodeon', this.darkModeOff);
+    eventEmitter.off('darkmodeoff', this.darkModeOff);
     if (session.wallet !== undefined) {
       session.wallet.setMaxListeners(1);
       session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);

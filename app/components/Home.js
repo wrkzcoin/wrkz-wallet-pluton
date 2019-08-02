@@ -7,6 +7,7 @@ import ReactTooltip from 'react-tooltip';
 import { session, loginCounter, eventEmitter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
+import Redirector from './Redirector';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -36,29 +37,20 @@ export default class Home extends Component<Props> {
         false
       ),
       totalTransactionCount: session.getTransactions().length,
-      importkey: false,
-      importseed: false,
       loginFailed: session.loginFailed,
-      changePassword: false,
       firstStartup: session.firstStartup,
       darkmode: session.darkMode
     };
 
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
-    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
-    this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
     );
     this.openNewWallet = this.openNewWallet.bind(this);
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
   componentDidMount() {
     ipcRenderer.setMaxListeners(1);
-    ipcRenderer.on('handlePasswordChange', this.handlePasswordChange);
-    ipcRenderer.on('importSeed', this.handleImportFromSeed);
-    ipcRenderer.on('importKey', this.handleImportFromKey);
     if (session.wallet !== undefined) {
       session.wallet.on('transaction', this.refreshListOnNewTransaction);
     }
@@ -77,9 +69,6 @@ export default class Home extends Component<Props> {
     this.setState({
       transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
-    ipcRenderer.off('importSeed', this.handleImportFromSeed);
-    ipcRenderer.off('handlePasswordChange', this.handlePasswordChange);
-    ipcRenderer.off('importKey', this.handleImportFromKey);
     eventEmitter.off('openNewWallet', this.openNewWallet);
     eventEmitter.off('loginFailed', this.handleLoginFailure);
     if (session.wallet !== undefined) {
@@ -90,12 +79,6 @@ export default class Home extends Component<Props> {
   async switchOffAnimation() {
     await sleep(1000);
     session.firstLoadOnLogin = false;
-  }
-
-  handlePasswordChange() {
-    this.setState({
-      changePassword: true
-    });
   }
 
   handleLoginFailure() {
@@ -131,20 +114,6 @@ export default class Home extends Component<Props> {
       totalTransactionCount: session.getTransactions().length,
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance()
-    });
-  }
-
-  handleImportFromSeed(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importseed: true
-    });
-  }
-
-  handleImportFromKey(evt, route) {
-    clearInterval(this.interval);
-    this.setState({
-      importkey: true
     });
   }
 
@@ -199,6 +168,7 @@ export default class Home extends Component<Props> {
 
     return (
       <div>
+        <Redirector />
         {this.state.darkmode === false && (
           <div className="wholescreen">
             <ReactTooltip
