@@ -18,6 +18,10 @@ export default class WalletSession {
     this.walletFile = config.walletFile;
     this.darkMode = config.darkMode || false;
     this.firstLoadOnLogin = true;
+    /* put config for turtlecoin-wallet-backend/WalletBackend.ts here */
+    this.wb_config = {
+      scanCoinbaseTransactions: config.scanCoinbaseTransactions
+    };
 
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
 
@@ -33,7 +37,8 @@ export default class WalletSession {
       [openWallet, error] = WalletBackend.openWalletFromFile(
         this.daemon,
         this.walletFile,
-        this.walletPassword
+        this.walletPassword,
+        this.wb_config
       );
     }
 
@@ -140,7 +145,8 @@ export default class WalletSession {
     const [importedWallet, err] = WalletBackend.importWalletFromSeed(
       this.daemon,
       height,
-      seed
+      seed,
+      this.wb_config
     );
     if (err) {
       log.debug(`Failed to load wallet: ${err.toString()}`);
@@ -161,7 +167,8 @@ export default class WalletSession {
       this.daemon,
       height,
       viewKey,
-      spendKey
+      spendKey,
+      this.wb_config
     );
     if (err) {
       log.debug(`Failed to load wallet: ${err.toString()}`);
@@ -173,7 +180,7 @@ export default class WalletSession {
   }
 
   handleNewWallet(filename: string) {
-    const newWallet = WalletBackend.createWallet(this.daemon);
+    const newWallet = WalletBackend.createWallet(this.daemon, this.wb_config);
     const saved = newWallet.saveWalletToFile(filename, '');
     if (!saved) {
       log.debug('Failed to save wallet!');
