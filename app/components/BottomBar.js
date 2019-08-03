@@ -14,12 +14,14 @@ export default class BottomBar extends Component<Props> {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
       darkmode: session.darkMode,
-      nodeFee: session.daemon.feeAmount || 0,
+      nodeFee: session.daemon.feeAmount || 0
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
-    this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(this);
+    this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
+      this
+    );
   }
 
   componentDidMount() {
@@ -85,11 +87,12 @@ export default class BottomBar extends Component<Props> {
             session.wallet.getSyncStatus()[2]
           }`;
     const balanceTooltip =
-      `Unlocked: ${session.atomicToHuman(
-        this.state.unlockedBalance,
-        true
-      )} ${session.wallet.config.ticker}<br>` +
-      `Locked: ${session.atomicToHuman(this.state.lockedBalance, true)} ${session.wallet.config.ticker}`;
+      `Unlocked: ${session.atomicToHuman(this.state.unlockedBalance, true)} ${
+        session.wallet.config.ticker
+      }<br>` +
+      `Locked: ${session.atomicToHuman(this.state.lockedBalance, true)} ${
+        session.wallet.config.ticker
+      }`;
 
     return (
       // prettier-ignore

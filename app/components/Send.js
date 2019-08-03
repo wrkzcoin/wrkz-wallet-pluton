@@ -12,7 +12,6 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 
-
 type Props = {};
 
 export default class Send extends Component<Props> {
@@ -186,7 +185,11 @@ export default class Send extends Component<Props> {
       type: 'warning',
       buttons: ['Cancel', 'OK'],
       title: 'Please Confirm Transaction',
-      message: `You are about to send ${totalTransactionAmount} ${session.wallet.config.ticker} to ${sendToAddress}${displayIfPaymentID} which includes a network fee of 0.10 ${session.wallet.config.ticker}${displayIfNodeFee}. Do you wish to proceed?`
+      message: `You are about to send ${totalTransactionAmount} ${
+        session.wallet.config.ticker
+      } to ${sendToAddress}${displayIfPaymentID} which includes a network fee of 0.10 ${
+        session.wallet.config.ticker
+      }${displayIfNodeFee}. Do you wish to proceed?`
     });
 
     if (userSelection !== 1) {
@@ -288,7 +291,11 @@ export default class Send extends Component<Props> {
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder={"How much " + session.wallet.config.ticker + " to send (eg. 100)"}
+                            placeholder={
+                              'How much ' +
+                              session.wallet.config.ticker +
+                              ' to send (eg. 100)'
+                            }
                             id="amount"
                             value={this.state.enteredAmount}
                             onChange={this.handleAmountChange}
@@ -402,7 +409,11 @@ export default class Send extends Component<Props> {
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder={"How much " + session.wallet.config.ticker + " to send (eg. 100)"}
+                            placeholder={
+                              'How much ' +
+                              session.wallet.config.ticker +
+                              ' to send (eg. 100)'
+                            }
                             id="amount"
                             value={this.state.enteredAmount}
                             onChange={this.handleAmountChange}

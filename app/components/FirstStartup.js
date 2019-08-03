@@ -8,7 +8,6 @@ import log from 'electron-log';
 import { config, session, eventEmitter } from '../index';
 import Redirector from './Redirector';
 
-
 // import styles from './Send.css';
 
 type Props = {};
@@ -118,7 +117,8 @@ export default class FirstStartup extends Component<Props> {
   createNew() {
     this.handleLoginInProgress();
     log.debug('User selected to create a new wallet.');
-    eventEmitter.emit('handleNew');f
+    eventEmitter.emit('handleNew');
+    f;
   }
 
   importFromKeysOrSeed() {

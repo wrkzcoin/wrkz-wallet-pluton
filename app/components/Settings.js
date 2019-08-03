@@ -11,7 +11,6 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 
-
 type Props = {};
 
 export default class Settings extends Component<Props> {

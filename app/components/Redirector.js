@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
-import { matchPath } from 'react-router';
 import { Redirect, withRouter } from 'react-router-dom';
-import log from 'electron-log';
 
 class Redirector extends Component<props> {
   props: Props;

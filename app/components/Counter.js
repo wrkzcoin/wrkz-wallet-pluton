@@ -10,7 +10,7 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 
 type Props = {
-  copyToClipboard: () => void,
+  copyToClipboard: () => void
 };
 
 export default class Receive extends Component<Props> {
@@ -62,7 +62,6 @@ export default class Receive extends Component<Props> {
     }
 
     return (
-
       <div>
         <Redirector />
         {this.state.darkMode === false && (

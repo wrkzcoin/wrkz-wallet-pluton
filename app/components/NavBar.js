@@ -70,7 +70,9 @@ export default class NavBar extends Component<props> {
                       {this.state.activepage === 'wallet' && (
                         <strong>&nbsp;&nbsp;Wallet</strong>
                       )}
-                      {this.state.activepage !== 'wallet' && <p>&nbsp;&nbsp;Wallet</p>}
+                      {this.state.activepage !== 'wallet' && (
+                        <p>&nbsp;&nbsp;Wallet</p>
+                      )}
                     </Link>
 
                     <Link className="navbar-item" to={routes.SEND}>
@@ -78,7 +80,9 @@ export default class NavBar extends Component<props> {
                       {this.state.activepage === 'send' && (
                         <strong>&nbsp;&nbsp;Send</strong>
                       )}
-                      {this.state.activepage !== 'send' && <p>&nbsp;&nbsp;Send</p>}
+                      {this.state.activepage !== 'send' && (
+                        <p>&nbsp;&nbsp;Send</p>
+                      )}
                     </Link>
 
                     <Link className="navbar-item" to={routes.COUNTER}>
@@ -86,7 +90,9 @@ export default class NavBar extends Component<props> {
                       {this.state.activepage === 'receive' && (
                         <strong>&nbsp;&nbsp;Receive</strong>
                       )}
-                      {this.state.activepage !== 'receive' && <p>&nbsp;&nbsp;Receive</p>}
+                      {this.state.activepage !== 'receive' && (
+                        <p>&nbsp;&nbsp;Receive</p>
+                      )}
                     </Link>
                   </div>
 
@@ -129,7 +135,9 @@ export default class NavBar extends Component<props> {
                       {this.state.activepage === 'wallet' && (
                         <strong>&nbsp;&nbsp;Wallet</strong>
                       )}
-                      {this.state.activepage !== 'wallet' && <p>&nbsp;&nbsp;Wallet</p>}
+                      {this.state.activepage !== 'wallet' && (
+                        <p>&nbsp;&nbsp;Wallet</p>
+                      )}
                     </Link>
 
                     <Link className="navbar-item" to={routes.SEND}>
@@ -137,7 +145,9 @@ export default class NavBar extends Component<props> {
                       {this.state.activepage === 'send' && (
                         <strong>&nbsp;&nbsp;Send</strong>
                       )}
-                      {this.state.activepage !== 'send' && <p>&nbsp;&nbsp;Send</p>}
+                      {this.state.activepage !== 'send' && (
+                        <p>&nbsp;&nbsp;Send</p>
+                      )}
                     </Link>
 
                     <Link className="navbar-item" to={routes.COUNTER}>
@@ -145,7 +155,9 @@ export default class NavBar extends Component<props> {
                       {this.state.activepage === 'receive' && (
                         <strong>&nbsp;&nbsp;Receive</strong>
                       )}
-                      {this.state.activepage !== 'receive' && <p>&nbsp;&nbsp;Receive</p>}
+                      {this.state.activepage !== 'receive' && (
+                        <p>&nbsp;&nbsp;Receive</p>
+                      )}
                     </Link>
                   </div>
 
