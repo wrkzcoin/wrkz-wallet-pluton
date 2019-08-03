@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
 import { matchPath } from 'react-router';
-import { Redirect } from 'react-router-dom';
-import { session, eventEmitter, loginCounter } from '../index';
+import { Redirect, withRouter } from 'react-router-dom';
 import log from 'electron-log';
 
-export default class Redirector extends Component<props> {
+class Redirector extends Component<props> {
   props: Props;
 
   constructor(props?: Props) {
@@ -15,7 +14,7 @@ export default class Redirector extends Component<props> {
       importseed: false,
       changePassword: false
     };
-    this.handleImportFromSeed = this.handleImportFromSeed.bind(this)
+    this.handleImportFromSeed = this.handleImportFromSeed.bind(this);
     this.handleImportFromKey = this.handleImportFromKey.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
@@ -51,20 +50,29 @@ export default class Redirector extends Component<props> {
   }
 
   render() {
-
-    if (this.state.changePassword === true) {
+    if (
+      this.state.changePassword === true &&
+      this.props.location.pathname !== '/changepassword'
+    ) {
       return <Redirect to="/changepassword" />;
     }
 
-    if (this.state.importkey === true) {
+    if (
+      this.state.importkey === true &&
+      this.props.location.pathname !== '/importkey'
+    ) {
       return <Redirect to="/importkey" />;
     }
 
-    if (this.state.importseed === true) {
+    if (
+      this.state.importseed === true &&
+      this.props.location.pathname !== '/import'
+    ) {
       return <Redirect to="/import" />;
     }
 
     return null;
-
   }
 }
+
+export default withRouter(Redirector);
