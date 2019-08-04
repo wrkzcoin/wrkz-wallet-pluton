@@ -1,4 +1,3 @@
-/* eslint-disable flowtype/no-weak-types */
 // @flow
 import { ipcRenderer } from 'electron';
 import log from 'electron-log';
