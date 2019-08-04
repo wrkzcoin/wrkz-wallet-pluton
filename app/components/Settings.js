@@ -477,7 +477,7 @@ export default class Settings extends Component<Props, State> {
                             <i className="fas fa-sync fa-spin" />
                           </span>
                         )}
-                        <p className="help has-text-white">
+                        <p className="help">
                           <a
                             onClick={this.findNode}
                             onKeyPress={this.findNode}
@@ -517,7 +517,7 @@ export default class Settings extends Component<Props, State> {
                             value={rewindHeight}
                             onChange={this.handleRewindHeightChange}
                           />
-                          <p className="help">
+                          <p className="help has-text-white">
                             Rewinds wallet, keeping previous transactions, to a
                             block height and picks up scanning from there.
                           </p>
@@ -552,7 +552,7 @@ export default class Settings extends Component<Props, State> {
                             value={scanHeight}
                             onChange={this.handleScanHeightChange}
                           />
-                          <p className="help">
+                          <p className="help has-text-white">
                             Completely wipes all transactions from history and
                             rescans the wallet from the specified block. If left
                             blank, defaults to the last block wallet was scanned
