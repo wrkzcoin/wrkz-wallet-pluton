@@ -13,12 +13,22 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-let displayedTransactionCount = 50;
+let displayedTransactionCount: number = 50;
 
 type Props = {};
 
-export default class Home extends Component<Props> {
+type State = {
+  transactions: Array<any>,
+  totalTransactionCount: number,
+  loginFailed: boolean,
+  firstStartup: boolean,
+  darkmode: boolean
+}
+
+export default class Home extends Component<Props, State> {
   props: Props;
+
+  state: State;
 
   constructor(props?: Props) {
     super(props);
@@ -72,13 +82,13 @@ export default class Home extends Component<Props> {
     session.firstLoadOnLogin = false;
   }
 
-  handleLoginFailure() {
+  handleLoginFailure = () => {
     this.setState({
       loginFailed: true
     });
   }
 
-  refreshListOnNewTransaction() {
+  refreshListOnNewTransaction = () => {
     log.debug('Transaction found, refreshing transaction list...');
     displayedTransactionCount++;
     this.setState({
@@ -88,12 +98,10 @@ export default class Home extends Component<Props> {
         false
       ),
       totalTransactionCount: session.getTransactions().length,
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance()
     });
   }
 
-  openNewWallet() {
+  openNewWallet = () => {
     log.debug('Initialized new wallet session, refreshing transaction list...');
     displayedTransactionCount = 50;
     this.setState({
@@ -103,12 +111,10 @@ export default class Home extends Component<Props> {
         false
       ),
       totalTransactionCount: session.getTransactions().length,
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance()
     });
   }
 
-  handleLoadMore(evt, route) {
+  handleLoadMore = (evt: any) => {
     evt.preventDefault();
     displayedTransactionCount += 50;
     this.setState({
@@ -116,19 +122,19 @@ export default class Home extends Component<Props> {
     });
   }
 
-  handleShowAll(evt, route) {
+  handleShowAll = (evt: any) => {
     evt.preventDefault();
-    displayedTransactionCount = this.state.totalTransactionCount;
+    const { totalTransactionCount } = this.state;
     this.setState({
       transactions: session.getTransactions(
         0,
-        this.state.totalTransactionCount,
+        totalTransactionCount,
         false
       )
     });
   }
 
-  resetDefault(evt, route) {
+  resetDefault = (evt: any) => {
     evt.preventDefault();
     displayedTransactionCount = 50;
     this.setState({
@@ -145,10 +151,13 @@ export default class Home extends Component<Props> {
       return <Redirect to="/login" />;
     }
 
+    const { darkmode, transactions, totalTransactionCount } = this.state;
+
     return (
+
       <div>
         <Redirector />
-        {this.state.darkmode === false && (
+        {darkmode === false && (
           <div className="wholescreen">
             <ReactTooltip
               effect="solid"
@@ -175,7 +184,7 @@ export default class Home extends Component<Props> {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.state.transactions.map((tx, index) => {
+                  {transactions.map((tx, index) => {
                     return (
                       <tr key={index}>
                         <td
@@ -217,36 +226,33 @@ export default class Home extends Component<Props> {
                   })}
                 </tbody>
               </table>
-              {this.state.transactions.length <
-                this.state.totalTransactionCount && (
                 <form>
                   <div className="field">
                     <div className="buttons">
                       <button
                         type="submit"
                         className="button is-success"
-                        onClick={this.handleShowAll.bind(this)}
+                        onClick={this.handleShowAll}
                       >
                         Show all
                       </button>
                       <button
                         type="submit"
                         className="button is-warning"
-                        onClick={this.handleLoadMore.bind(this)}
+                        onClick={this.handleLoadMore}
                       >
                         Load more
                       </button>
                       <button
                         type="submit"
                         className="button is-danger"
-                        onClick={this.resetDefault.bind(this)}
+                        onClick={this.resetDefault}
                       >
                         Reset
                       </button>
                     </div>
                   </div>
                 </form>
-              )}
             </div>
             <BottomBar />
           </div>
@@ -279,7 +285,7 @@ export default class Home extends Component<Props> {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.state.transactions.map((tx, index) => {
+                  {transactions.map((tx, index) => {
                     return (
                       <tr key={index}>
                         <td
@@ -321,36 +327,33 @@ export default class Home extends Component<Props> {
                   })}
                 </tbody>
               </table>
-              {this.state.transactions.length <
-                this.state.totalTransactionCount && (
                 <form>
                   <div className="field">
                     <div className="buttons">
                       <button
                         type="submit"
                         className="button is-success"
-                        onClick={this.handleShowAll.bind(this)}
+                        onClick={this.handleShowAll}
                       >
                         Show all
                       </button>
                       <button
                         type="submit"
                         className="button is-warning"
-                        onClick={this.handleLoadMore.bind(this)}
+                        onClick={this.handleLoadMore}
                       >
                         Load more
                       </button>
                       <button
                         type="submit"
                         className="button is-danger"
-                        onClick={this.resetDefault.bind(this)}
+                        onClick={this.resetDefault}
                       >
                         Reset
                       </button>
                     </div>
                   </div>
                 </form>
-              )}
             </div>
             <BottomBar />
           </div>
