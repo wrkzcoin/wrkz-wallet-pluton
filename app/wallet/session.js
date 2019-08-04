@@ -411,14 +411,10 @@ export default class WalletSession {
 
   atomicToHuman(x: number, prettyPrint: boolean) {
     if (prettyPrint) {
-      const moveTheDecimal: number = x / 100;
-      const prettyPrintedNumber: number = parseFloat(
-        this.formatLikeCurrency(moveTheDecimal)
-      );
-      return prettyPrintedNumber.toFixed(2);
+      return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
     }
     return x / 100;
-  }
+}
 
   humanToAtomic(x: number) {
     return x * 100;
