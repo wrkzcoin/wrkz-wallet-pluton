@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
 import { Redirect, withRouter } from 'react-router-dom';
 import { eventEmitter } from '../index';
-import log from 'electron-log';
 
 type State = {
   importKey?: boolean,
@@ -88,9 +87,7 @@ class Redirector extends Component<Props, State> {
 
   render() {
     // eslint-disable-next-line prettier/prettier
-    const {
-      location: { pathname }
-    } = this.props;
+    const { location: { pathname } } = this.props;
     const {
       changePassword,
       importKey,
@@ -122,4 +119,5 @@ class Redirector extends Component<Props, State> {
   }
 }
 
+// $FlowFixMe
 export default withRouter(Redirector);

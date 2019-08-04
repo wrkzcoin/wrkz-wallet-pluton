@@ -1,8 +1,6 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable class-methods-use-this */
 // @flow
 import crypto from 'crypto';
-import { remote, ipcRenderer } from 'electron';
+import { remote } from 'electron';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
@@ -14,8 +12,21 @@ import Redirector from './Redirector';
 
 type Props = {};
 
-export default class Send extends Component<Props> {
+type State = {
+  unlockedBalance: number,
+  enteredAmount: string,
+  totalAmount: string,
+  paymentID: string,
+  darkMode: boolean,
+  transactionInProgress: boolean,
+  transactionComplete: boolean,
+  loginFailed: boolean
+};
+
+export default class Send extends Component<Props, State> {
   props: Props;
+
+  state: State;
 
   constructor(props?: Props) {
     super(props);
@@ -27,9 +38,7 @@ export default class Send extends Component<Props> {
       darkMode: session.darkMode,
       transactionInProgress: false,
       transactionComplete: false,
-      loginFailed: false,
-      gohome: false,
-      transactionFailed: false
+      loginFailed: false
     };
     this.transactionComplete = this.transactionComplete.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
@@ -61,38 +70,32 @@ export default class Send extends Component<Props> {
     eventEmitter.off('openNewWallet', this.transactionComplete);
   }
 
-  handleLoginFailure() {
+  handleLoginFailure = () => {
     this.setState({
       loginFailed: true
     });
-  }
+  };
 
-  handleTransactionInProgress() {
+  handleTransactionInProgress = () => {
     this.setState({
       transactionInProgress: true
     });
-  }
+  };
 
-  handleTransactionCancel() {
+  handleTransactionCancel = () => {
     this.setState({
       transactionInProgress: false
     });
-  }
+  };
 
-  transactionComplete() {
+  transactionComplete = () => {
     this.setState({
       transactionComplete: true,
       transactionInProgress: false
     });
-  }
+  };
 
-  handleTransactionFailed() {
-    this.setState({
-      transactionFailed: true
-    });
-  }
-
-  handleAmountChange(event) {
+  handleAmountChange = (event: any) => {
     const amount = event.target.value;
     if (amount === '') {
       this.setState({
@@ -101,7 +104,7 @@ export default class Send extends Component<Props> {
       });
       return;
     }
-    if (isNaN(amount)) {
+    if (Number.isNaN(amount)) {
       return;
     }
     if (amount < 0) {
@@ -113,11 +116,11 @@ export default class Send extends Component<Props> {
     );
     this.setState({
       enteredAmount: amount,
-      totalAmount: totalAmount
+      totalAmount
     });
-  }
+  };
 
-  handleTotalAmountChange(event) {
+  handleTotalAmountChange = (event: any) => {
     const totalAmount = event.target.value;
     if (totalAmount === '') {
       this.setState({
@@ -126,7 +129,7 @@ export default class Send extends Component<Props> {
       });
       return;
     }
-    if (isNaN(totalAmount)) {
+    if (Number.isNaN(totalAmount)) {
       return;
     }
     if (totalAmount < 0) {
@@ -138,11 +141,11 @@ export default class Send extends Component<Props> {
     );
     this.setState({
       enteredAmount: amount,
-      totalAmount: totalAmount
+      totalAmount
     });
-  }
+  };
 
-  async handleSubmit(event) {
+  async handleSubmit(event: any) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
 
@@ -223,41 +226,49 @@ export default class Send extends Component<Props> {
     }
   }
 
-  generatePaymentID() {
+  generatePaymentID = () => {
     const paymentID = crypto.randomBytes(32).toString('hex');
     log.debug(`Generated paymentID: ${paymentID}`);
     this.setState({ paymentID });
-  }
+  };
 
-  handlePaymentIDChange(event) {
+  handlePaymentIDChange = (event: any) => {
     this.setState({ paymentID: event.target.value });
-  }
+  };
 
-  resetPaymentID(event) {
+  resetPaymentID = () => {
     this.setState({ paymentID: '', enteredAmount: '', totalAmount: '' });
-  }
+  };
 
-  sendAll() {
+  sendAll = () => {
+    const { unlockedBalance } = this.state;
     this.setState({
-      enteredAmount: session.atomicToHuman(
-        this.state.unlockedBalance - 10,
-        false
-      ),
-      totalAmount: session.atomicToHuman(this.state.unlockedBalance, false)
+      enteredAmount: session.atomicToHuman(unlockedBalance - 10, false),
+      totalAmount: session.atomicToHuman(unlockedBalance, false)
     });
-  }
+  };
 
   render() {
-    if (this.state.loginFailed === true) {
+    const {
+      loginFailed,
+      transactionComplete,
+      darkMode,
+      enteredAmount,
+      totalAmount,
+      paymentID,
+      transactionInProgress
+    } = this.state;
+
+    if (loginFailed === true) {
       return <Redirect to="/login" />;
     }
-    if (this.state.transactionComplete === true) {
+    if (transactionComplete === true) {
       return <Redirect to="/" />;
     }
     return (
       <div>
         <Redirector />
-        {this.state.darkMode === false && (
+        {darkMode === false && (
           <div className="wholescreen">
             <ReactTooltip
               effect="solid"
@@ -291,18 +302,21 @@ export default class Send extends Component<Props> {
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder={
-                              'How much ' +
-                              session.wallet.config.ticker +
-                              ' to send (eg. 100)'
-                            }
+                            placeholder={`How much ${
+                              session.wallet.config.ticker
+                            } to send (eg. 100)`}
                             id="amount"
-                            value={this.state.enteredAmount}
+                            value={enteredAmount}
                             onChange={this.handleAmountChange}
                           />
-                          <label className="help">
-                            <a onClick={this.sendAll}>Send All</a>
-                          </label>
+                          <a
+                            onClick={this.sendAll}
+                            onKeyPress={this.sendAll}
+                            role="button"
+                            tabIndex={0}
+                          >
+                            Send All
+                          </a>
                         </label>
                       </div>
                       <div className="column">
@@ -313,7 +327,7 @@ export default class Send extends Component<Props> {
                             type="text"
                             placeholder="The total amount including fees"
                             id="totalamount"
-                            value={this.state.totalAmount}
+                            value={totalAmount}
                             onChange={this.handleTotalAmountChange}
                           />
                         </label>
@@ -330,19 +344,23 @@ export default class Send extends Component<Props> {
                         type="text"
                         placeholder="Enter a payment ID"
                         id="paymentid"
-                        value={this.state.paymentID}
+                        value={paymentID}
                         onChange={this.handlePaymentIDChange}
                       />
-                      <label className="help">
-                        <a onClick={this.generatePaymentID}>
-                          Generate Random Payment ID
-                        </a>
-                      </label>
+                      <a
+                        onClick={this.generatePaymentID}
+                        onKeyPress={this.generatePaymentID}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        {' '}
+                        Generate Random Payment ID
+                      </a>
                     </div>
                   </label>
                 </div>
                 <div className="buttons">
-                  {!this.state.transactionInProgress && (
+                  {!transactionInProgress && (
                     <button
                       type="submit"
                       className="button is-success is-large "
@@ -350,7 +368,7 @@ export default class Send extends Component<Props> {
                       Send
                     </button>
                   )}
-                  {this.state.transactionInProgress && (
+                  {transactionInProgress && (
                     <button
                       type="submit"
                       className="button is-success is-large is-loading is-disabled"
@@ -372,7 +390,7 @@ export default class Send extends Component<Props> {
             <BottomBar />
           </div>
         )}
-        {this.state.darkMode === true && (
+        {darkMode === true && (
           <div className="wholescreen has-background-dark">
             <ReactTooltip
               effect="solid"
@@ -409,18 +427,21 @@ export default class Send extends Component<Props> {
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder={
-                              'How much ' +
-                              session.wallet.config.ticker +
-                              ' to send (eg. 100)'
-                            }
+                            placeholder={`How much ${
+                              session.wallet.config.ticker
+                            } to send (eg. 100)`}
                             id="amount"
-                            value={this.state.enteredAmount}
+                            value={enteredAmount}
                             onChange={this.handleAmountChange}
                           />
-                          <label className="help">
-                            <a onClick={this.sendAll}>Send All</a>
-                          </label>
+                          <a
+                            onClick={this.sendAll}
+                            onKeyPress={this.sendAll}
+                            role="button"
+                            tabIndex={0}
+                          >
+                            Send All
+                          </a>
                         </label>
                       </div>
                       <div className="column">
@@ -434,7 +455,7 @@ export default class Send extends Component<Props> {
                             type="text"
                             placeholder="The total amount including fees"
                             id="totalamount"
-                            value={this.state.totalAmount}
+                            value={totalAmount}
                             onChange={this.handleTotalAmountChange}
                           />
                         </label>
@@ -451,19 +472,22 @@ export default class Send extends Component<Props> {
                         type="text"
                         placeholder="Enter a payment ID"
                         id="paymentid"
-                        value={this.state.paymentID}
+                        value={paymentID}
                         onChange={this.handlePaymentIDChange}
                       />
-                      <label className="help">
-                        <a onClick={this.generatePaymentID}>
-                          Generate Random Payment ID
-                        </a>
-                      </label>
+                      <a
+                        onClick={this.generatePaymentID}
+                        onKeyPress={this.generatePaymentID}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        Generate Random Payment ID
+                      </a>
                     </div>
                   </label>
                 </div>
                 <div className="buttons">
-                  {!this.state.transactionInProgress && (
+                  {!transactionInProgress && (
                     <button
                       type="submit"
                       className="button is-success is-large "
@@ -471,7 +495,7 @@ export default class Send extends Component<Props> {
                       Send
                     </button>
                   )}
-                  {this.state.transactionInProgress && (
+                  {transactionInProgress && (
                     <button
                       type="submit"
                       className="button is-success is-large is-loading is-disabled"

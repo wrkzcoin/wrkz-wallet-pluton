@@ -1,11 +1,24 @@
+// @flow
 import React, { Component } from 'react';
-import { session, eventEmitter } from '../index';
 import ReactLoading from 'react-loading';
 import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
+import { session, eventEmitter } from '../index';
 
-export default class BottomBar extends Component<Props> {
+type Props = {};
+
+type State = {
+  syncStatus: number,
+  unlockedBalance: number,
+  lockedBalance: number,
+  darkmode: boolean,
+  nodeFee: number
+};
+
+export default class BottomBar extends Component<Props, State> {
   props: Props;
+
+  syncInterval: IntervalID;
 
   constructor(props?: Props) {
     super(props);
@@ -16,6 +29,7 @@ export default class BottomBar extends Component<Props> {
       darkmode: session.darkMode,
       nodeFee: session.daemon.feeAmount || 0
     };
+    this.syncInterval = setInterval(() => this.refresh(), 1000);
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
@@ -25,7 +39,6 @@ export default class BottomBar extends Component<Props> {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refresh(), 1000);
     eventEmitter.on('darkmodeon', this.darkModeOn);
     eventEmitter.on('darkmodeoff', this.darkModeOff);
     eventEmitter.on('gotNodeFee', this.refreshNodeFee);
@@ -36,7 +49,7 @@ export default class BottomBar extends Component<Props> {
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.syncInterval);
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
     eventEmitter.off('darkmodeon', this.darkModeOn);
     eventEmitter.off('darkmodeoff', this.darkModeOff);
@@ -46,40 +59,47 @@ export default class BottomBar extends Component<Props> {
     }
   }
 
-  darkModeOn() {
+  darkModeOn = () => {
     this.setState({
       darkmode: true
     });
-  }
+  };
 
-  darkModeOff() {
+  darkModeOff = () => {
     this.setState({
       darkmode: false
     });
-  }
+  };
 
-  refreshNodeFee() {
+  refreshNodeFee = () => {
     this.setState({
       nodeFee: session.daemon.feeAmount
     });
-  }
+  };
 
-  refreshBalanceOnNewTransaction() {
+  refreshBalanceOnNewTransaction = () => {
     log.debug('Transaction found, refreshing balance...');
     this.setState({
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance()
     });
-  }
+  };
 
   refresh() {
-    this.setState(prevState => ({
+    this.setState(() => ({
       syncStatus: session.getSyncStatus()
     }));
     ReactTooltip.rebuild();
   }
 
   render() {
+    const {
+      darkmode,
+      unlockedBalance,
+      lockedBalance,
+      nodeFee,
+      syncStatus
+    } = this.state;
     const syncTooltip =
       session.wallet.getSyncStatus()[2] === 0
         ? 'Connecting, please wait...'
@@ -87,10 +107,10 @@ export default class BottomBar extends Component<Props> {
             session.wallet.getSyncStatus()[2]
           }`;
     const balanceTooltip =
-      `Unlocked: ${session.atomicToHuman(this.state.unlockedBalance, true)} ${
+      `Unlocked: ${session.atomicToHuman(unlockedBalance, true)} ${
         session.wallet.config.ticker
       }<br>` +
-      `Locked: ${session.atomicToHuman(this.state.lockedBalance, true)} ${
+      `Locked: ${session.atomicToHuman(lockedBalance, true)} ${
         session.wallet.config.ticker
       }`;
 
@@ -98,7 +118,8 @@ export default class BottomBar extends Component<Props> {
       // prettier-ignore
       <div
         className={
-          this.state.darkmode
+          // eslint-disable-next-line no-nested-ternary
+          darkmode
             ? session.firstLoadOnLogin
               ? 'footerbar-slideup has-background-black'
               : 'footerbar has-background-black'
@@ -109,15 +130,15 @@ export default class BottomBar extends Component<Props> {
       >
         {' '}
         <div className="field is-grouped is-grouped-multiline is-grouped-right">
-          {this.state.nodeFee > 0 && (
+          {nodeFee > 0 && (
             <div className="control statusicons">
               <div className="tags has-addons">
                 <span className={
-                  this.state.darkmode
+                  darkmode
                     ? 'tag is-dark is-large'
                     : 'tag is-white is-large'}>Node Fee:</span>
                 <span className="tag is-danger is-large">
-                  {session.atomicToHuman(this.state.nodeFee, true)} {session.wallet.config.ticker}
+                  {session.atomicToHuman(nodeFee, true)} {session.wallet.config.ticker}
                 </span>
               </div>
             </div>
@@ -125,16 +146,16 @@ export default class BottomBar extends Component<Props> {
           <div className="control statusicons">
             <div className="tags has-addons">
               <span className={
-                this.state.darkmode
+                darkmode
                   ? 'tag is-dark is-large'
                   : 'tag is-white is-large'}>Sync:</span>
-              {this.state.syncStatus < 100 &&
+              {syncStatus < 100 &&
                 session.daemon.networkBlockCount !== 0 && (
                   <span
                     className="tag is-warning is-large sync-status"
                     data-tip={syncTooltip}
                   >
-                    {this.state.syncStatus}%
+                    {syncStatus}%
                     <ReactLoading
                       type="bubbles"
                       color="#363636"
@@ -143,13 +164,13 @@ export default class BottomBar extends Component<Props> {
                     />
                   </span>
                 )}
-              {this.state.syncStatus === 100 &&
+              {syncStatus === 100 &&
                 session.daemon.networkBlockCount !== 0 && (
                   <span
                     className="tag is-success is-large sync-status"
                     data-tip={syncTooltip}
                   >
-                    {this.state.syncStatus}%
+                    {syncStatus}%
                   </span>
                 )}
               {session.daemon.networkBlockCount === 0 && (
@@ -167,25 +188,25 @@ export default class BottomBar extends Component<Props> {
           <div className="control statusicons">
             <div className="tags has-addons">
               <span className={
-                this.state.darkmode
+                darkmode
                   ? 'tag is-dark is-large'
                   : 'tag is-white is-large'}>Balance:</span>
               <span
                 className={
-                  this.state.lockedBalance > 0
+                  lockedBalance > 0
                     ? 'tag is-warning is-large'
                     : 'tag is-info is-large'
                 }
                 data-tip={balanceTooltip}
               >
-                {this.state.lockedBalance > 0 ? (
+                {lockedBalance > 0 ? (
                   <i className="fa fa-lock" />
                 ) : (
                   <i className="fa fa-unlock" />
                 )}
                 &nbsp;
                 {session.atomicToHuman(
-                  this.state.unlockedBalance + this.state.lockedBalance,
+                  unlockedBalance + lockedBalance,
                   true
                 )}
                 &nbsp;{session.wallet.config.ticker}

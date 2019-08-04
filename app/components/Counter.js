@@ -1,5 +1,4 @@
 // @flow
-import { ipcRenderer } from 'electron';
 import React, { Component } from 'react';
 import QRCode from 'qrcode.react';
 import { Redirect } from 'react-router-dom';
@@ -10,19 +9,26 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 
 type Props = {
-  copyToClipboard: () => void
+  copyToClipboard: string => void
 };
 
-export default class Receive extends Component<Props> {
+type State = {
+  darkMode: boolean,
+  gohome: boolean,
+  loginFailed: boolean
+};
+
+export default class Receive extends Component<Props, State> {
   props: Props;
+
+  state: State;
 
   constructor(props?: Props) {
     super(props);
     this.state = {
-      nodeFee: session.daemon.feeAmount,
       darkMode: session.darkMode,
-      firstLoad: session.firstLoadOnLogin,
-      gohome: false
+      gohome: false,
+      loginFailed: false
     };
     this.handleInitialize = this.handleInitialize.bind(this);
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
@@ -38,33 +44,34 @@ export default class Receive extends Component<Props> {
     eventEmitter.off('loginFailed', this.handleLoginFailure);
   }
 
-  handleInitialize() {
+  handleInitialize = () => {
     this.setState({
       gohome: true
     });
-  }
+  };
 
-  handleLoginFailure() {
+  handleLoginFailure = () => {
     this.setState({
       loginFailed: true
     });
-  }
+  };
 
   render() {
     const { copyToClipboard } = this.props;
+    const { gohome, loginFailed, darkMode } = this.state;
 
-    if (this.state.gohome === true) {
+    if (gohome === true) {
       return <Redirect to="/" />;
     }
 
-    if (this.state.loginFailed === true) {
+    if (loginFailed === true) {
       return <Redirect to="/login" />;
     }
 
     return (
       <div>
         <Redirector />
-        {this.state.darkMode === false && (
+        {darkMode === false && (
           <div className="wholescreen">
             <ReactTooltip
               effect="solid"
@@ -105,21 +112,19 @@ export default class Receive extends Component<Props> {
                 </div>
                 <div className="column">
                   <div className="field">
-                    <label className="label">
-                      QR Code
-                      <div className="box has-background-light">
-                        <center>
-                          <span>
-                            <QRCode
-                              value={session.address}
-                              renderAs="svg"
-                              bgColor="#f5f5f5"
-                              size={200}
-                            />
-                          </span>
-                        </center>
-                      </div>
-                    </label>
+                    <p className="has-text-weight-bold">QR Code</p>
+                    <div className="box has-background-light">
+                      <center>
+                        <span>
+                          <QRCode
+                            value={session.address}
+                            renderAs="svg"
+                            bgColor="#f5f5f5"
+                            size={200}
+                          />
+                        </span>
+                      </center>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -127,7 +132,7 @@ export default class Receive extends Component<Props> {
             <BottomBar />
           </div>
         )}
-        {this.state.darkMode === true && (
+        {darkMode === true && (
           <div className="wholescreen has-background-dark">
             <ReactTooltip
               effect="solid"
@@ -171,21 +176,21 @@ export default class Receive extends Component<Props> {
                 </div>
                 <div className="column">
                   <div className="field">
-                    <label className="label has-text-white">
+                    <p className="has-text-weight-bold has-text-white">
                       QR Code
-                      <div className="box has-background-light">
-                        <center>
-                          <span>
-                            <QRCode
-                              value={session.address}
-                              renderAs="svg"
-                              bgColor="#f5f5f5"
-                              size={200}
-                            />
-                          </span>
-                        </center>
-                      </div>
-                    </label>
+                    </p>
+                    <div className="box has-background-light">
+                      <center>
+                        <span>
+                          <QRCode
+                            value={session.address}
+                            renderAs="svg"
+                            bgColor="#f5f5f5"
+                            size={200}
+                          />
+                        </span>
+                      </center>
+                    </div>
                   </div>
                 </div>
               </div>

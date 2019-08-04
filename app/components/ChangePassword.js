@@ -1,7 +1,7 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable class-methods-use-this */
 // @flow
-import { remote, ipcRenderer } from 'electron';
+import { remote } from 'electron';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { config, session, eventEmitter } from '../index';
@@ -10,8 +10,16 @@ import Redirector from './Redirector';
 
 type Props = {};
 
-export default class ChangePassword extends Component<Props> {
+type State = {
+  importCompleted: boolean,
+  loginFailed: boolean,
+  darkMode: boolean
+};
+
+export default class ChangePassword extends Component<Props, State> {
   props: Props;
+
+  state: State;
 
   constructor(props?: Props) {
     super(props);
@@ -37,19 +45,19 @@ export default class ChangePassword extends Component<Props> {
     eventEmitter.off('openNewWallet', this.handleInitialize);
   }
 
-  handleLoginFailure() {
+  handleLoginFailure = () => {
     this.setState({
       loginFailed: true
     });
-  }
+  };
 
-  handleInitialize() {
+  handleInitialize = () => {
     this.setState({
       importCompleted: true
     });
-  }
+  };
 
-  handleSubmit(event) {
+  handleSubmit = (event: any) => {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
     const oldPassword = event.target[0].value;
@@ -92,19 +100,21 @@ export default class ChangePassword extends Component<Props> {
         message: 'The password was not changed successfully. Try again.'
       });
     }
-  }
+  };
 
   render() {
-    if (this.state.loginFailed === true) {
+    const { loginFailed, importCompleted, darkMode } = this.state;
+
+    if (loginFailed === true) {
       return <Redirect to="/login" />;
     }
-    if (this.state.importCompleted === true) {
+    if (importCompleted === true) {
       return <Redirect to="/" />;
     }
     return (
       <div>
         <Redirector />
-        {this.state.darkMode === false && (
+        {darkMode === false && (
           <div className="wholescreen">
             <NavBar />
             <div className="maincontent">
@@ -172,7 +182,7 @@ export default class ChangePassword extends Component<Props> {
             <div className="footerbar has-background-light" />
           </div>
         )}
-        {this.state.darkMode === true && (
+        {darkMode === true && (
           <div className="wholescreen has-background-dark">
             <NavBar />
             <div className="maincontent has-background-dark ">

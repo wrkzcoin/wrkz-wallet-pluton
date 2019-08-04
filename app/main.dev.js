@@ -1,7 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-param-reassign */
-/* eslint global-require: off */
-
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -45,6 +41,7 @@ export default class AppUpdater {
 let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
+  // eslint-disable-next-line global-require
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
@@ -53,10 +50,12 @@ if (
   process.env.NODE_ENV === 'development' ||
   process.env.DEBUG_PROD === 'true'
 ) {
+  // eslint-disable-next-line global-require
   require('electron-debug')();
 }
 
 const installExtensions = async () => {
+  // eslint-disable-next-line global-require
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
@@ -94,6 +93,7 @@ app.on('window-all-closed', () => {
 });
 
 contextMenu({
+  // eslint-disable-next-line no-unused-vars
   prepend: (defaultActions, params) => []
 });
 
@@ -139,7 +139,7 @@ app.on('ready', async () => {
       ])
     );
 
-    tray.on('click', () => mainWindow.show());
+    tray.on('click', () => showMainWindow());
   }
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
@@ -160,11 +160,10 @@ app.on('ready', async () => {
 
   mainWindow.on('close', event => {
     event.preventDefault();
-    if (!isQuitting) {
+    if (!isQuitting && mainWindow) {
       log.debug('Closing to system tray or dock.');
       mainWindow.hide();
-      event.returnValue = false;
-    } else {
+    } else if (mainWindow) {
       mainWindow.webContents.send('handleClose');
     }
   });
@@ -175,8 +174,10 @@ app.on('ready', async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  // new AppUpdater();
 });
+
+function showMainWindow() {
+  if (mainWindow) {
+    mainWindow.show();
+  }
+}

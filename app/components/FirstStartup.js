@@ -1,7 +1,5 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable class-methods-use-this */
 // @flow
-import { remote, ipcRenderer } from 'electron';
+import { remote } from 'electron';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
@@ -12,15 +10,22 @@ import Redirector from './Redirector';
 
 type Props = {};
 
-export default class FirstStartup extends Component<Props> {
+type State = {
+  importCompleted: boolean,
+  loginFailed: boolean,
+  darkMode: boolean
+};
+
+export default class FirstStartup extends Component<Props, State> {
   props: Props;
+
+  state: State;
 
   constructor(props?: Props) {
     super(props);
     this.state = {
       importCompleted: false,
       loginFailed: false,
-      loginInProgress: false,
       darkMode: session.darkMode
     };
     this.handleInitialize = this.handleInitialize.bind(this);
@@ -42,30 +47,23 @@ export default class FirstStartup extends Component<Props> {
     eventEmitter.off('openNewWallet', this.openNewWallet);
   }
 
-  handleLoginInProgress() {
-    log.debug('Login in progress...');
-    this.setState({
-      loginInProgress: true
-    });
-  }
-
-  openNewWallet() {
+  openNewWallet = () => {
     this.handleInitialize();
-  }
+  };
 
-  handleLoginFailure() {
+  handleLoginFailure = () => {
     this.setState({
       loginFailed: true
     });
-  }
+  };
 
-  handleInitialize() {
+  handleInitialize = () => {
     this.setState({
       importCompleted: true
     });
-  }
+  };
 
-  handleSubmit(event) {
+  handleSubmit(event: any) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
     const oldPassword = event.target[0].value;
@@ -109,17 +107,15 @@ export default class FirstStartup extends Component<Props> {
     }
   }
 
-  openExisting() {
+  openExisting = () => {
     log.debug('User selected to open an existing wallet.');
     eventEmitter.emit('handleOpen');
-  }
+  };
 
-  createNew() {
-    this.handleLoginInProgress();
+  createNew = () => {
     log.debug('User selected to create a new wallet.');
     eventEmitter.emit('handleNew');
-    f;
-  }
+  };
 
   importFromKeysOrSeed() {
     log.debug('User selected to import wallet.');
@@ -141,18 +137,19 @@ export default class FirstStartup extends Component<Props> {
   }
 
   render() {
-    if (this.state.loginFailed === true) {
+    const { loginFailed, importCompleted, darkMode } = this.state;
+    if (loginFailed === true) {
       return <Redirect to="/login" />;
     }
 
-    if (this.state.importCompleted === true) {
+    if (importCompleted === true) {
       return <Redirect to="/" />;
     }
 
     return (
       <div>
         <Redirector />
-        {this.state.darkMode === false && (
+        {darkMode === false && (
           <div className="fullwindow">
             <div className="mid-div">
               <div className="box loginbox has-background-light passwordchangebox">
@@ -181,7 +178,7 @@ export default class FirstStartup extends Component<Props> {
             </div>
           </div>
         )}
-        {this.state.darkMode === true && (
+        {darkMode === true && (
           <div className="fullwindow has-background-dark">
             <div className="mid-div">
               <div className="box loginbox has-background-black passwordchangebox">

@@ -49,11 +49,10 @@ const homedir = os.homedir();
 
 export const directories = [
   `${homedir}/.protonwallet`,
-  `${homedir}/.protonwallet/logs`,
-  `${homedir}/.protonwallet/wallets`
+  `${homedir}/.protonwallet/logs`
 ];
 
-const [programDirectory, logDirectory, walletDirectory] = directories;
+const [programDirectory, logDirectory] = directories;
 
 log.debug('Checking if program directories are present...');
 // eslint-disable-next-line func-names

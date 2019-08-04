@@ -1,5 +1,4 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable func-names */
+// @flow
 import request from 'request-promise';
 import log from 'electron-log';
 import semver from 'semver';
@@ -20,7 +19,7 @@ export default class AutoUpdater {
         url: `http://68.183.53.229:3000/latest/${operatingSystem}/${currentVersion}/${arch}`,
         json: true
       };
-      request(options, function(error, response, body) {
+      request(options, (error, response, body) => {
         if (error) {
           log.debug('Error when contacting update server...');
           return;

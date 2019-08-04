@@ -1,8 +1,6 @@
 // @flow
-import request from 'request-promise';
-import { ipcRenderer, remote } from 'electron';
+import { remote } from 'electron';
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import log from 'electron-log';
@@ -13,30 +11,46 @@ import Redirector from './Redirector';
 
 type Props = {};
 
-export default class Settings extends Component<Props> {
+type State = {
+  connectednode: string,
+  ssl: boolean,
+  wallet: any,
+  darkMode: boolean,
+  scanHeight: string,
+  rewindHeight: string,
+  loginFailed: boolean,
+  nodeChangeInProgress: boolean,
+  gohome: boolean,
+  rewindInProgress: boolean
+};
+
+export default class Settings extends Component<Props, State> {
   props: Props;
+
+  state: State;
 
   constructor(props?: Props) {
     super(props);
     this.state = {
       connectednode: `${session.daemonHost}:${session.daemonPort}`,
-      nodeFee: session.daemon.feeAmount,
       ssl: session.daemon.ssl,
       wallet: session.wallet,
       darkMode: session.darkMode,
-      transactionInProgress: false,
       scanHeight: '',
       rewindHeight: '',
       loginFailed: false,
       nodeChangeInProgress: false,
       gohome: false,
-      rewindInProgress: false
+      rewindInProgress: false,
     };
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
     this.findNode = this.findNode.bind(this);
     this.changeNode = this.changeNode.bind(this);
+    this.handleNodeChangeInProgress = this.handleNodeChangeInProgress.bind(
+      this
+    );
     this.handleNodeChangeInProgress = this.handleNodeChangeInProgress.bind(
       this
     );
@@ -53,57 +67,62 @@ export default class Settings extends Component<Props> {
     eventEmitter.on('newNodeConnected', this.handleNewNode);
     eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.on('openNewWallet', this.handleInitialize);
+    eventEmitter.on('nodeChangeComplete', this.handleNodeChangeComplete);
   }
 
   componentWillUnmount() {
     eventEmitter.off('newNodeConnected', this.handleNewNode);
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.off('openNewWallet', this.handleInitialize);
+    eventEmitter.off('nodeChangeComplete', this.handleNodeChangeComplete);
   }
 
-  handleInitialize() {
+  handleInitialize = () => {
     this.setState({
       gohome: true
     });
-  }
+  };
 
-  handleNodeChangeInProgress() {
+  handleNodeChangeInProgress = () => {
     this.setState({
       nodeChangeInProgress: true,
       ssl: undefined
     });
-  }
+  };
 
-  handleLoginFailure() {
+  handleNodeChangeComplete = () => {
+    this.setState({
+      nodeChangeInProgress: false,
+      connectednode: `${session.daemonHost}:${session.daemonPort}`,
+      ssl: session.daemon.ssl
+    });
+  };
+
+  handleLoginFailure = () => {
     this.setState({
       loginFailed: true
     });
-  }
+  };
 
-  handleNewNode() {
+  handleNewNode = () => {
     this.setState({
       connectednode: `${session.daemon.daemonHost}:${session.daemon.daemonPort}`
     });
-  }
+  };
 
-  handlePasswordChange() {
-    this.setState({
-      changePassword: true
-    });
-  }
-
-  handleNodeInputChange(event) {
+  handleNodeInputChange = (event: any) => {
     this.setState({ connectednode: event.target.value.trim() });
-  }
+  };
 
-  async changeNode(event) {
+  changeNode = async (event: any) => {
     event.preventDefault();
     this.setState({
       connectednode: event.target[0].value
     });
     const connectionString = event.target[0].value;
     const splitConnectionString = connectionString.split(':', 2);
-    let [host, port] = [splitConnectionString[0], splitConnectionString[1]];
+    const host = splitConnectionString[0];
+    let port = splitConnectionString[1];
     if (port === undefined) {
       port = '11898';
     }
@@ -118,13 +137,13 @@ export default class Settings extends Component<Props> {
     eventEmitter.emit('nodeChangeInProgress');
     session.swapNode(host, port);
     eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
-  }
+  };
 
-  async findNode(evt, route) {
+  findNode = () => {
     remote.shell.openExternal('https://trtl.nodes.pub/');
-  }
+  };
 
-  async rescanWallet(event) {
+  rescanWallet = async (event: any) => {
     event.preventDefault();
     let fromStartHeight = false;
     let scanHeight = event.target[0].value;
@@ -134,7 +153,7 @@ export default class Settings extends Component<Props> {
     } else {
       scanHeight = parseInt(event.target[0].value, 10);
     }
-    if (isNaN(scanHeight)) {
+    if (Number.isNaN(scanHeight)) {
       log.debug('User provided invalid height.');
       remote.dialog.showMessageBox(null, {
         type: 'error',
@@ -170,37 +189,37 @@ export default class Settings extends Component<Props> {
       title: 'Reset completed successfully.',
       message: `Your wallet is now syncing again from block ${scanHeight}.`
     });
-  }
+  };
 
-  handleScanHeightChange(event) {
+  handleScanHeightChange = (event: any) => {
     this.setState({ scanHeight: event.target.value.trim() });
-  }
+  };
 
-  darkModeOn() {
+  darkModeOn = () => {
     this.setState({
       darkMode: true
     });
     session.darkMode = true;
     session.toggleDarkMode(true);
     eventEmitter.emit('darkmodeon');
-  }
+  };
 
-  darkModeOff() {
+  darkModeOff = () => {
     this.setState({
       darkMode: false
     });
     session.darkMode = false;
     session.toggleDarkMode(false);
     eventEmitter.emit('darkmodeoff');
-  }
+  };
 
-  async rewindWallet(evt) {
-    evt.preventDefault();
+  rewindWallet = async (event: any) => {
+    event.preventDefault();
     this.setState({
       rewindInProgress: true
     });
-    let rewindHeight = parseInt(evt.target[0].value, 10);
-    if (isNaN(rewindHeight)) {
+    const rewindHeight = parseInt(event.target[0].value, 10);
+    if (Number.isNaN(rewindHeight)) {
       this.setState({
         rewindInProgress: false
       });
@@ -217,25 +236,38 @@ export default class Settings extends Component<Props> {
       title: 'Rewind completed successfully.',
       message: `Your wallet has been rewound to block ${rewindHeight}, and will sync again from there.`
     });
-  }
+  };
 
-  handleRewindHeightChange(event) {
+  handleRewindHeightChange = (event: any) => {
     const rewindHeight = event.target.value.trim();
-    this.setState({ rewindHeight: rewindHeight });
-  }
+    this.setState({ rewindHeight });
+  };
 
   render() {
-    if (this.state.loginFailed === true) {
+    const {
+      loginFailed,
+      gohome,
+      darkMode,
+      nodeChangeInProgress,
+      connectednode,
+      ssl,
+      wallet,
+      rewindHeight,
+      rewindInProgress,
+      scanHeight
+    } = this.state;
+
+    if (loginFailed === true) {
       return <Redirect to="/login" />;
     }
-    if (this.state.gohome === true) {
+    if (gohome === true) {
       return <Redirect to="/" />;
     }
 
     return (
       <div>
         <Redirector />
-        {this.state.darkMode === false && (
+        {darkMode === false && (
           <div className="wholescreen">
             <ReactTooltip
               effect="solid"
@@ -249,124 +281,124 @@ export default class Settings extends Component<Props> {
               <div className="columns">
                 <div className="column">
                   <form onSubmit={this.changeNode}>
-                    <label className="label">
+                    <p className="has-text-weight-bold">
                       Connected Node (node:port)
-                      <div className="field has-addons is-expanded">
-                        <div className="control is-expanded has-icons-left">
-                          {this.state.nodeChangeInProgress === false && (
-                            <input
-                              className="input has-icons-left"
-                              type="text"
-                              value={this.state.connectednode}
-                              onChange={this.handleNodeInputChange}
-                            />
-                          )}
-                          {this.state.ssl === true && (
-                            <span className="icon is-small is-left">
-                              <i className="fas fa-lock" />
-                            </span>
-                          )}
-                          {this.state.ssl === false && (
-                            <span className="icon is-small is-left">
-                              <i className="fas fa-unlock" />
-                            </span>
-                          )}
-                          {this.state.nodeChangeInProgress === true && (
-                            <input
-                              className="input"
-                              type="text"
-                              placeholder="connecting..."
-                              onChange={this.handleNodeInputChange}
-                            />
-                          )}
-                          {this.state.nodeChangeInProgress === true && (
-                            <span className="icon is-small is-left">
-                              <i className="fas fa-sync fa-spin" />
-                            </span>
-                          )}
-                          <label className="help">
-                            <p>
-                              <a onClick={this.findNode}>Find node...</a>
-                            </p>
-                          </label>
-                        </div>
-                        {this.state.nodeChangeInProgress === true && (
-                          <div className="control">
-                            <button className="button is-success is-loading">
-                              Connect
-                            </button>
-                          </div>
+                    </p>
+                    <div className="field has-addons is-expanded">
+                      <div className="control is-expanded has-icons-left">
+                        {nodeChangeInProgress === false && (
+                          <input
+                            className="input has-icons-left"
+                            type="text"
+                            value={connectednode}
+                            onChange={this.handleNodeInputChange}
+                          />
                         )}
-                        {this.state.nodeChangeInProgress === false && (
-                          <div className="control">
-                            <button className="button is-success">
-                              Connect
-                            </button>
-                          </div>
+                        {ssl === true && (
+                          <span className="icon is-small is-left">
+                            <i className="fas fa-lock" />
+                          </span>
                         )}
+                        {ssl === false && (
+                          <span className="icon is-small is-left">
+                            <i className="fas fa-unlock" />
+                          </span>
+                        )}
+                        {nodeChangeInProgress === true && (
+                          <input
+                            className="input"
+                            type="text"
+                            placeholder="connecting..."
+                            onChange={this.handleNodeInputChange}
+                          />
+                        )}
+                        {nodeChangeInProgress === true && (
+                          <span className="icon is-small is-left">
+                            <i className="fas fa-sync fa-spin" />
+                          </span>
+                        )}
+                        <p className="help">
+                          <a
+                            onClick={this.findNode}
+                            onKeyPress={this.findNode}
+                            role="button"
+                            tabIndex={0}
+                          >
+                            Find node...
+                          </a>
+                        </p>
                       </div>
-                    </label>
-                  </form>
-                  <br />
-                  {this.state.wallet && (
-                    <form onSubmit={this.rewindWallet}>
-                      <label className="label">
-                        Rewind Wallet
-                        <div className="field has-addons">
-                          <div className="control is-expanded">
-                            <input
-                              className="input"
-                              type="text"
-                              placeholder="Enter a height to scan from..."
-                              value={this.state.rewindHeight}
-                              onChange={this.handleRewindHeightChange}
-                            />
-                            <p className="help">
-                              Rewinds wallet, keeping previous transactions, to
-                              a block height and picks up scanning from there.
-                            </p>
-                          </div>
-                          <div className="control">
-                            <button
-                              className={
-                                this.state.rewindInProgress
-                                  ? 'button is-warning is-loading'
-                                  : 'button is-warning'
-                              }
-                            >
-                              Rewind
-                            </button>
-                          </div>
+                      {nodeChangeInProgress === true && (
+                        <div className="control">
+                          <button className="button is-success is-loading">
+                            Connect
+                          </button>
                         </div>
-                      </label>
+                      )}
+                      {nodeChangeInProgress === false && (
+                        <div className="control">
+                          <button className="button is-success">Connect</button>
+                        </div>
+                      )}
+                    </div>
+                  </form>
+
+                  <br />
+                  {wallet && (
+                    <form onSubmit={this.rewindWallet}>
+                      <p className="has-text-weight-bold">Rewind Wallet</p>
+                      <div className="field has-addons">
+                        <div className="control is-expanded">
+                          <input
+                            className="input"
+                            type="text"
+                            placeholder="Enter a height to scan from..."
+                            value={rewindHeight}
+                            onChange={this.handleRewindHeightChange}
+                          />
+                          <p className="help">
+                            Rewinds wallet, keeping previous transactions, to a
+                            block height and picks up scanning from there.
+                          </p>
+                        </div>
+                        <div className="control">
+                          <button
+                            className={
+                              rewindInProgress
+                                ? 'button is-warning is-loading'
+                                : 'button is-warning'
+                            }
+                          >
+                            Rewind
+                          </button>
+                        </div>
+                      </div>
                     </form>
                   )}
                   <br />
-                  {this.state.wallet && (
+                  {wallet && (
                     <form onSubmit={this.rescanWallet}>
-                      <label className="label">
-                        Rescan Wallet
-                        <div className="field has-addons">
-                          <div className="control is-expanded">
-                            <input
-                              className="input"
-                              type="text"
-                              placeholder="Enter a height to scan from..."
-                              value={this.state.scanHeight}
-                              onChange={this.handleScanHeightChange}
-                            />
-                            <p className="help">
-                              Completely wipes all transactions from history and
-                              rescans the wallet from the specified block. If
-                              left blank, defaults to the last block wallet was
-                              scanned from.
-                            </p>
-                          </div>
-                          <div className="control">
-                            <button className="button is-danger">Rescan</button>
-                          </div>
+                      <p className="has-text-weight-bold">Rescan Wallet</p>
+                      <div className="field has-addons">
+                        <div className="control is-expanded">
+                          <input
+                            className="input"
+                            type="text"
+                            placeholder="Enter a height to scan from..."
+                            value={scanHeight}
+                            onChange={this.handleScanHeightChange}
+                          />
+                          <p className="help">
+                            Completely wipes all transactions from history and
+                            rescans the wallet from the specified block. If left
+                            blank, defaults to the last block wallet was scanned
+                            from.
+                          </p>
                         </div>
-                      </label>
+                        <div className="control">
+                          <button className="button is-danger">Rescan</button>
+                        </div>
+                      </div>
                     </form>
                   )}
                 </div>
@@ -376,7 +408,13 @@ export default class Settings extends Component<Props> {
                   <p className="buttons is-right">
                     <span>
                       Enable dark mode &nbsp;&nbsp;
-                      <a className="button is-dark" onClick={this.darkModeOn}>
+                      <a
+                        className="button is-dark"
+                        onClick={this.darkModeOn}
+                        onKeyPress={this.darkModeOn}
+                        role="button"
+                        tabIndex={0}
+                      >
                         <span className="icon is-large">
                           <i className="fas fa-moon" />
                         </span>
@@ -389,7 +427,7 @@ export default class Settings extends Component<Props> {
             <BottomBar />
           </div>
         )}
-        {this.state.darkMode === true && (
+        {darkMode === true && (
           <div className="wholescreen has-background-dark">
             <ReactTooltip
               effect="solid"
@@ -403,125 +441,128 @@ export default class Settings extends Component<Props> {
               <div className="columns">
                 <div className="column">
                   <form onSubmit={this.changeNode}>
-                    <label className="label has-text-white">
+                    <p className="has-text-weight-bold has-text-white">
                       Connected Node (node:port)
-                      <div className="field has-addons is-expanded">
-                        <div className="control is-expanded has-icons-left">
-                          {this.state.nodeChangeInProgress === false && (
-                            <input
-                              className="input has-icons-left"
-                              type="text"
-                              value={this.state.connectednode}
-                              onChange={this.handleNodeInputChange}
-                            />
-                          )}
-                          {this.state.ssl === true && (
-                            <span className="icon is-small is-left">
-                              <i className="fas fa-lock" />
-                            </span>
-                          )}
-                          {this.state.ssl === false && (
-                            <span className="icon is-small is-left">
-                              <i className="fas fa-unlock" />
-                            </span>
-                          )}
-                          {this.state.nodeChangeInProgress === true && (
-                            <input
-                              className="input"
-                              type="text"
-                              placeholder="connecting..."
-                              onChange={this.handleNodeInputChange}
-                            />
-                          )}
-                          {this.state.nodeChangeInProgress === true && (
-                            <span className="icon is-small is-left">
-                              <i className="fas fa-sync fa-spin" />
-                            </span>
-                          )}
-                          <label className="help has-text-white">
-                            <p>
-                              <a onClick={this.findNode}>Find node...</a>
-                            </p>
-                          </label>
-                        </div>
-                        {this.state.nodeChangeInProgress === true && (
-                          <div className="control">
-                            <button className="button is-success is-loading">
-                              Connect
-                            </button>
-                          </div>
+                    </p>
+                    <div className="field has-addons is-expanded">
+                      <div className="control is-expanded has-icons-left">
+                        {nodeChangeInProgress === false && (
+                          <input
+                            className="input has-icons-left"
+                            type="text"
+                            value={connectednode}
+                            onChange={this.handleNodeInputChange}
+                          />
                         )}
-                        {this.state.nodeChangeInProgress === false && (
-                          <div className="control">
-                            <button className="button is-success">
-                              Connect
-                            </button>
-                          </div>
+                        {ssl === true && (
+                          <span className="icon is-small is-left">
+                            <i className="fas fa-lock" />
+                          </span>
                         )}
+                        {ssl === false && (
+                          <span className="icon is-small is-left">
+                            <i className="fas fa-unlock" />
+                          </span>
+                        )}
+                        {nodeChangeInProgress === true && (
+                          <input
+                            className="input"
+                            type="text"
+                            placeholder="connecting..."
+                            onChange={this.handleNodeInputChange}
+                          />
+                        )}
+                        {nodeChangeInProgress === true && (
+                          <span className="icon is-small is-left">
+                            <i className="fas fa-sync fa-spin" />
+                          </span>
+                        )}
+                        <p className="help has-text-white">
+                          <a
+                            onClick={this.findNode}
+                            onKeyPress={this.findNode}
+                            role="button"
+                            tabIndex={0}
+                          >
+                            Find node...
+                          </a>
+                        </p>
                       </div>
-                    </label>
+                      {nodeChangeInProgress === true && (
+                        <div className="control">
+                          <button className="button is-success is-loading">
+                            Connect
+                          </button>
+                        </div>
+                      )}
+                      {nodeChangeInProgress === false && (
+                        <div className="control">
+                          <button className="button is-success">Connect</button>
+                        </div>
+                      )}
+                    </div>
                   </form>
                   <br />
-                  {this.state.wallet && (
+                  {wallet && (
                     <form onSubmit={this.rewindWallet}>
-                      <label className="label has-text-white">
+                      <p className="has-text-white has-text-weight-bold">
                         Rewind Wallet
-                        <div className="field has-addons">
-                          <div className="control is-expanded">
-                            <input
-                              className="input"
-                              type="text"
-                              placeholder="Enter a height to scan from..."
-                              value={this.state.rewindHeight}
-                              onChange={this.handleRewindHeightChange}
-                            />
-                            <p className="help">
-                              Rewinds wallet, keeping previous transactions, to
-                              a block height and picks up scanning from there.
-                            </p>
-                          </div>
-                          <div className="control">
-                            <button
-                              className={
-                                this.state.rewindInProgress
-                                  ? 'button is-warning is-loading'
-                                  : 'button is-warning'
-                              }
-                            >
-                              {' '}
-                              Rewind
-                            </button>
-                          </div>
+                      </p>
+                      <div className="field has-addons">
+                        <div className="control is-expanded">
+                          <input
+                            className="input"
+                            type="text"
+                            placeholder="Enter a height to scan from..."
+                            value={rewindHeight}
+                            onChange={this.handleRewindHeightChange}
+                          />
+                          <p className="help">
+                            Rewinds wallet, keeping previous transactions, to a
+                            block height and picks up scanning from there.
+                          </p>
                         </div>
-                      </label>
+                        <div className="control">
+                          <button
+                            className={
+                              rewindInProgress
+                                ? 'button is-warning is-loading'
+                                : 'button is-warning'
+                            }
+                          >
+                            {' '}
+                            Rewind
+                          </button>
+                        </div>
+                      </div>
                     </form>
                   )}
                   <br />
-                  {this.state.wallet && (
+                  {wallet && (
                     <form onSubmit={this.rescanWallet}>
-                      <label className="label has-text-white">
+                      <p className="has-text-white has-text-weight-bold">
                         Rescan Wallet
-                        <div className="field has-addons">
-                          <div className="control is-expanded">
-                            <input
-                              className="input"
-                              type="text"
-                              placeholder="Enter a height to scan from..."
-                              value={this.state.scanHeight}
-                              onChange={this.handleScanHeightChange}
-                            />
-                            <p className="help">
-                              Completely wipes all transactions from history and
-                              rescans the wallet from the specified block. If
-                              left blank, defaults to the last block wallet was
-                              scanned from.
-                            </p>
-                          </div>
-                          <div className="control">
-                            <button className="button is-danger">Rescan</button>
-                          </div>
+                      </p>
+                      <div className="field has-addons">
+                        <div className="control is-expanded">
+                          <input
+                            className="input"
+                            type="text"
+                            placeholder="Enter a height to scan from..."
+                            value={scanHeight}
+                            onChange={this.handleScanHeightChange}
+                          />
+                          <p className="help">
+                            Completely wipes all transactions from history and
+                            rescans the wallet from the specified block. If left
+                            blank, defaults to the last block wallet was scanned
+                            from.
+                          </p>
                         </div>
-                      </label>
+                        <div className="control">
+                          <button className="button is-danger">Rescan</button>
+                        </div>
+                      </div>
                     </form>
                   )}
                 </div>
@@ -531,7 +572,13 @@ export default class Settings extends Component<Props> {
                   <p className="buttons is-right">
                     <span className="has-text-white">
                       Enable light mode &nbsp;&nbsp;
-                      <a className="button is-info" onClick={this.darkModeOff}>
+                      <a
+                        className="button is-info"
+                        onClick={this.darkModeOff}
+                        onKeyPress={this.darkModeOff}
+                        role="button"
+                        tabIndex={0}
+                      >
                         <span className="icon is-large has-text-warning">
                           <i className="fas fa-sun" />
                         </span>

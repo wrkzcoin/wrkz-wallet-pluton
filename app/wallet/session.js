@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable class-methods-use-this */
+// @flow
 import { WalletBackend, Daemon, LogLevel } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
@@ -8,7 +6,33 @@ import { createObjectCsvWriter } from 'csv-writer';
 import { config, directories, eventEmitter } from '../index';
 
 export default class WalletSession {
-  constructor(password, daemonHost, daemonPort) {
+  loginFailed: boolean;
+
+  firstStartup: boolean;
+
+  walletPassword: string;
+
+  daemonHost: string;
+
+  daemonPort: number;
+
+  walletFile: string;
+
+  darkMode: boolean;
+
+  firstLoadOnLogin: boolean;
+
+  wbConfig: any;
+
+  daemon: any;
+
+  wallet: any;
+
+  syncStatus: number;
+
+  address: string;
+
+  constructor(password: string, daemonHost: string, daemonPort: string) {
     this.loginFailed = false;
     this.firstStartup = false;
     this.walletPassword = password || '';
@@ -19,7 +43,7 @@ export default class WalletSession {
     this.darkMode = config.darkMode || false;
     this.firstLoadOnLogin = true;
     /* put config for turtlecoin-wallet-backend/WalletBackend.ts here */
-    this.wb_config = {
+    this.wbConfig = {
       scanCoinbaseTransactions: config.scanCoinbaseTransactions
     };
 
@@ -38,7 +62,7 @@ export default class WalletSession {
         this.daemon,
         this.walletFile,
         this.walletPassword,
-        this.wb_config
+        this.wbConfig
       );
     }
 
@@ -97,11 +121,11 @@ export default class WalletSession {
     await this.saveWallet(this.walletFile);
   }
 
-  toggleDarkMode(status) {
+  toggleDarkMode(status: boolean) {
     const programDirectory = directories[0];
     const modifyConfig = config;
     modifyConfig.darkMode = status;
-    log.debug(`Dark mode changed to ${status}`);
+    log.debug(`Dark mode changed to ${status.toString()}`);
     config.darkMode = status;
     fs.writeFileSync(
       `${programDirectory}/config.json`,
@@ -115,8 +139,8 @@ export default class WalletSession {
     log.debug('Wrote config file to disk.');
   }
 
-  exportToCSV(savePath) {
-    const rawTransactions = this.getTransactions();
+  exportToCSV(savePath: string) {
+    const rawTransactions = this.getTransactions(undefined, undefined, false);
     const csvWriter = createObjectCsvWriter({
       path: `${savePath}.csv`,
       header: [
@@ -135,7 +159,7 @@ export default class WalletSession {
         transactionHash: item[1],
         pid: item[5],
         amount: this.atomicToHuman(item[2], true),
-        bal: this.atomicToHuman(item[3])
+        bal: this.atomicToHuman(item[3], true)
       };
     });
     csvWriter.writeRecords(csvData);
@@ -146,7 +170,7 @@ export default class WalletSession {
       this.daemon,
       height,
       seed,
-      this.wb_config
+      this.wbConfig
     );
     if (err) {
       log.debug(`Failed to load wallet: ${err.toString()}`);
@@ -168,7 +192,7 @@ export default class WalletSession {
       height,
       viewKey,
       spendKey,
-      this.wb_config
+      this.wbConfig
     );
     if (err) {
       log.debug(`Failed to load wallet: ${err.toString()}`);
@@ -180,7 +204,7 @@ export default class WalletSession {
   }
 
   handleNewWallet(filename: string) {
-    const newWallet = WalletBackend.createWallet(this.daemon, this.wb_config);
+    const newWallet = WalletBackend.createWallet(this.daemon, this.wbConfig);
     const saved = newWallet.saveWalletToFile(filename, '');
     if (!saved) {
       log.debug('Failed to save wallet!');
@@ -192,7 +216,7 @@ export default class WalletSession {
   readConfigFromDisk() {
     const programDirectory = directories[0];
     const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
-    return JSON.parse(rawUserConfig);
+    return JSON.parse(rawUserConfig.toString());
   }
 
   handleWalletOpen(selectedPath: string) {
@@ -218,8 +242,8 @@ export default class WalletSession {
     return true;
   }
 
-  async swapNode(daemonHost, daemonPort) {
-    const saved = await this.saveWallet(this.walletFile, this.walletPassword);
+  async swapNode(daemonHost: string, daemonPort: string) {
+    const saved = await this.saveWallet(this.walletFile);
     if (saved) {
       const programDirectory = directories[0];
       const modifyConfig = config;
@@ -240,6 +264,7 @@ export default class WalletSession {
         modifyConfig.daemonPort
       );
       await this.wallet.swapNode(this.daemon);
+      eventEmitter.emit('nodeChangeComplete');
       return true;
     }
     return false;
@@ -253,7 +278,11 @@ export default class WalletSession {
     return this.wallet.getAddresses();
   }
 
-  getTransactions(startIndex, numTransactions, includeFusions) {
+  getTransactions(
+    startIndex?: number,
+    numTransactions?: number,
+    includeFusions: boolean
+  ) {
     if (this.loginFailed || this.firstStartup) {
       return [];
     }
@@ -263,7 +292,6 @@ export default class WalletSession {
       numTransactions,
       includeFusions
     );
-    // log.debug(rawTransactions);
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
     let balance = parseInt(unlockedBalance + lockedBalance, 10);
     const balances = [];
@@ -275,11 +303,11 @@ export default class WalletSession {
         tx.totalAmount(),
         balance,
         tx.blockHeight,
-        tx.paymentID
+        tx.paymentID,
+        index
       ]);
       balance -= parseInt(tx.totalAmount(), 10);
     }
-    // log.debug(balances);
     return balances;
   }
 
@@ -287,7 +315,7 @@ export default class WalletSession {
     if (this.loginFailed || this.firstStartup) {
       return 0;
     }
-    const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
+    const [unlockedBalance] = this.wallet.getBalance(subwallets);
     return unlockedBalance;
   }
 
@@ -295,7 +323,7 @@ export default class WalletSession {
     if (this.loginFailed || this.firstStartup) {
       return 0;
     }
-    const [unlockedBalance, lockedBalance] = this.wallet.getBalance(subwallets);
+    const [, lockedBalance] = this.wallet.getBalance(subwallets);
     return lockedBalance;
   }
 
@@ -303,13 +331,8 @@ export default class WalletSession {
     if (this.loginFailed || this.firstStartup) {
       return 0;
     }
-    let [
-      // eslint-disable-next-line prefer-const
-      walletHeight,
-      // eslint-disable-next-line prefer-const
-      localHeight,
-      networkHeight
-    ] = this.wallet.getSyncStatus();
+    const [walletHeight] = this.wallet.getSyncStatus();
+    let [, , networkHeight] = this.wallet.getSyncStatus();
     /* Since we update the network height in intervals, and we update wallet
         height by syncing, occasionally wallet height is > network height.
         Fix that here. */
@@ -388,7 +411,11 @@ export default class WalletSession {
 
   atomicToHuman(x: number, prettyPrint: boolean) {
     if (prettyPrint) {
-      return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
+      const moveTheDecimal: number = x / 100;
+      const prettyPrintedNumber: number = parseFloat(
+        this.formatLikeCurrency(moveTheDecimal)
+      );
+      return prettyPrintedNumber.toFixed(2);
     }
     return x / 100;
   }

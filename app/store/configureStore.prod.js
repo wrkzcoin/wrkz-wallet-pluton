@@ -7,6 +7,7 @@ import createRootReducer from '../reducers';
 import type { counterStateType } from '../reducers/types';
 
 const history = createHashHistory();
+// $FlowFixMe
 const rootReducer = createRootReducer(history);
 const router = routerMiddleware(history);
 const enhancer = applyMiddleware(thunk, router);

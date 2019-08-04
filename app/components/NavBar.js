@@ -3,14 +3,23 @@ import { Link } from 'react-router-dom';
 import routes from '../constants/routes';
 import { session, eventEmitter } from '../index';
 
-export default class NavBar extends Component<props> {
+type Props = {};
+
+type State = {
+  darkMode: boolean,
+  activePage?: string
+};
+
+export default class NavBar extends Component<Props, State> {
   props: Props;
+
+  state: State;
 
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkmode: session.darkMode,
-      activepage: 'home'
+      darkMode: session.darkMode,
+      activePage: null
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
@@ -28,21 +37,23 @@ export default class NavBar extends Component<props> {
 
   darkModeOn() {
     this.setState({
-      darkmode: true
+      darkMode: true
     });
   }
 
   darkModeOff() {
     this.setState({
-      darkmode: false
+      darkMode: false
     });
   }
 
   render() {
+    const { darkMode, activePage } = this.state;
+
     return (
       <React-Fragment>
         <div>
-          {this.state.darkmode === false && (
+          {darkMode === false && (
             <div
               className={
                 session.firstLoadOnLogin
@@ -67,32 +78,26 @@ export default class NavBar extends Component<props> {
                   <div className="navbar-start">
                     <Link className="navbar-item" to={routes.HOME}>
                       <i className="fa fa-credit-card" />
-                      {this.state.activepage === 'wallet' && (
+                      {activePage === 'wallet' && (
                         <strong>&nbsp;&nbsp;Wallet</strong>
                       )}
-                      {this.state.activepage !== 'wallet' && (
-                        <p>&nbsp;&nbsp;Wallet</p>
-                      )}
+                      {activePage !== 'wallet' && <p>&nbsp;&nbsp;Wallet</p>}
                     </Link>
 
                     <Link className="navbar-item" to={routes.SEND}>
                       <i className="fa fa-paper-plane" />
-                      {this.state.activepage === 'send' && (
+                      {activePage === 'send' && (
                         <strong>&nbsp;&nbsp;Send</strong>
                       )}
-                      {this.state.activepage !== 'send' && (
-                        <p>&nbsp;&nbsp;Send</p>
-                      )}
+                      {activePage !== 'send' && <p>&nbsp;&nbsp;Send</p>}
                     </Link>
 
                     <Link className="navbar-item" to={routes.COUNTER}>
                       <i className="fa fa-arrow-circle-down" />
-                      {this.state.activepage === 'receive' && (
+                      {activePage === 'receive' && (
                         <strong>&nbsp;&nbsp;Receive</strong>
                       )}
-                      {this.state.activepage !== 'receive' && (
-                        <p>&nbsp;&nbsp;Receive</p>
-                      )}
+                      {activePage !== 'receive' && <p>&nbsp;&nbsp;Receive</p>}
                     </Link>
                   </div>
 
@@ -109,7 +114,7 @@ export default class NavBar extends Component<props> {
               </nav>
             </div>
           )}
-          {this.state.darkmode === true && (
+          {darkMode === true && (
             <div
               className={
                 session.firstLoadOnLogin
@@ -126,38 +131,35 @@ export default class NavBar extends Component<props> {
                 <div id="navbarBasicExample" className="navbar-menu">
                   <div className="navbar-brand">
                     <div className="navbar-item">
-                      <img src="images/icon_color_64x64.png" />
+                      <img
+                        src="images/icon_color_64x64.png"
+                        alt="proton wallet logo in green"
+                      />
                     </div>
                   </div>
                   <div className="navbar-start">
                     <Link className="navbar-item" to={routes.HOME}>
                       <i className="fa fa-credit-card" />
-                      {this.state.activepage === 'wallet' && (
+                      {activePage === 'wallet' && (
                         <strong>&nbsp;&nbsp;Wallet</strong>
                       )}
-                      {this.state.activepage !== 'wallet' && (
-                        <p>&nbsp;&nbsp;Wallet</p>
-                      )}
+                      {activePage !== 'wallet' && <p>&nbsp;&nbsp;Wallet</p>}
                     </Link>
 
                     <Link className="navbar-item" to={routes.SEND}>
                       <i className="fa fa-paper-plane" />
-                      {this.state.activepage === 'send' && (
+                      {activePage === 'send' && (
                         <strong>&nbsp;&nbsp;Send</strong>
                       )}
-                      {this.state.activepage !== 'send' && (
-                        <p>&nbsp;&nbsp;Send</p>
-                      )}
+                      {activePage !== 'send' && <p>&nbsp;&nbsp;Send</p>}
                     </Link>
 
                     <Link className="navbar-item" to={routes.COUNTER}>
                       <i className="fa fa-arrow-circle-down" />
-                      {this.state.activepage === 'receive' && (
+                      {activePage === 'receive' && (
                         <strong>&nbsp;&nbsp;Receive</strong>
                       )}
-                      {this.state.activepage !== 'receive' && (
-                        <p>&nbsp;&nbsp;Receive</p>
-                      )}
+                      {activePage !== 'receive' && <p>&nbsp;&nbsp;Receive</p>}
                     </Link>
                   </div>
 

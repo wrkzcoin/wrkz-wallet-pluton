@@ -1,13 +1,10 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/button-has-type */
-/* eslint-disable class-methods-use-this */
 // @flow
-import { remote, ipcRenderer } from 'electron';
+import { remote } from 'electron';
 import fs from 'fs';
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
+import NavBar from './NavBar';
 import Redirector from './Redirector';
 import {
   config,
@@ -16,15 +13,19 @@ import {
   eventEmitter,
   savedInInstallDir
 } from '../index';
-import NavBar from './NavBar';
-import routes from '../constants/routes';
-
-// import styles from './Send.css';
 
 type Props = {};
 
-export default class Send extends Component<Props> {
+type State = {
+  darkMode: boolean,
+  importCompleted: boolean,
+  loginFailed: boolean
+};
+
+export default class Send extends Component<Props, State> {
   props: Props;
+
+  state: State;
 
   constructor(props?: Props) {
     super(props);
@@ -49,33 +50,25 @@ export default class Send extends Component<Props> {
     eventEmitter.off('openNewWallet', this.handleInitialize);
   }
 
-  handleLoginFailure() {
+  handleLoginFailure = () => {
     this.setState({
       loginFailed: true
     });
-  }
+  };
 
-  handlePasswordChange() {
-    this.setState({
-      changePassword: true
-    });
-  }
-
-  handleInitialize() {
+  handleInitialize = () => {
     this.setState({
       importCompleted: true
     });
-  }
+  };
 
-  handleSubmit(event) {
+  handleSubmit(event: any) {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
 
-    let [spendKey, viewKey, height] = [
-      event.target[0].value, // private spend key
-      event.target[1].value, // private view key
-      event.target[2].value // scan height
-    ];
+    const spendKey = event.target[0].value;
+    const viewKey = event.target[1].value;
+    let height = event.target[2].value;
 
     if (viewKey === undefined || spendKey === undefined) {
       return;
@@ -115,7 +108,7 @@ export default class Send extends Component<Props> {
         message:
           'The wallet was imported successfully. Go to Wallet > Password and add a password to the wallet if desired.'
       });
-      const [programDirectory, logDirectory, walletDirectory] = directories;
+      const programDirectory = directories[0];
       const modifyConfig = config;
       modifyConfig.walletFile = savePath;
       log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
@@ -142,16 +135,18 @@ export default class Send extends Component<Props> {
   }
 
   render() {
-    if (this.state.loginFailed === true) {
+    const { loginFailed, importCompleted, darkMode } = this.state;
+
+    if (loginFailed === true) {
       return <Redirect to="/login" />;
     }
-    if (this.state.importCompleted === true) {
+    if (importCompleted === true) {
       return <Redirect to="/" />;
     }
     return (
       <div>
         <Redirector />
-        {this.state.darkMode === false && (
+        {darkMode === false && (
           <div className="wholescreen">
             <NavBar />
             <div className="maincontent">
@@ -208,7 +203,7 @@ export default class Send extends Component<Props> {
             <div className="footerbar has-background-light" />
           </div>
         )}
-        {this.state.darkMode === true && (
+        {darkMode === true && (
           <div className="wholescreen has-background-dark">
             <NavBar />
             <div className="maincontent has-background-dark">

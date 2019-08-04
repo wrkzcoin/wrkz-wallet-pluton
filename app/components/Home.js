@@ -78,7 +78,6 @@ export default class Home extends Component<Props, State> {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async switchOffAnimation() {
     await sleep(1000);
     session.firstLoadOnLogin = false;
@@ -181,10 +180,9 @@ export default class Home extends Component<Props, State> {
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map((tx, index) => {
+                  {transactions.map(tx => {
                     return (
-                      // eslint-disable-next-line react/no-array-index-key
-                      <tr key={index}>
+                      <tr key={tx[1]}>
                         <td
                           data-tip={
                             tx[0] === 0
@@ -283,10 +281,9 @@ export default class Home extends Component<Props, State> {
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map((tx, index) => {
+                  {transactions.map(tx => {
                     return (
-                      // eslint-disable-next-line react/no-array-index-key
-                      <tr key={index}>
+                      <tr key={tx[1]}>
                         <td
                           data-tip={
                             tx[0] === 0
