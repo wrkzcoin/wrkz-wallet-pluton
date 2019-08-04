@@ -41,7 +41,7 @@ export default class Settings extends Component<Props, State> {
       loginFailed: false,
       nodeChangeInProgress: false,
       gohome: false,
-      rewindInProgress: false,
+      rewindInProgress: false
     };
     this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);

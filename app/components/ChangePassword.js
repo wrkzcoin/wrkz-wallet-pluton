@@ -1,5 +1,3 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable class-methods-use-this */
 // @flow
 import { remote } from 'electron';
 import React, { Component } from 'react';
