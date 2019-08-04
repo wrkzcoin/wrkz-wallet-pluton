@@ -1,3 +1,4 @@
+/* eslint-disable flowtype/no-weak-types */
 // @flow
 import { ipcRenderer } from 'electron';
 import log from 'electron-log';
@@ -52,15 +53,16 @@ export default class Home extends Component<Props, State> {
 
   componentDidMount() {
     ipcRenderer.setMaxListeners(1);
+    const { loginFailed } = this.state;
     if (session.wallet !== undefined) {
       session.wallet.on('transaction', this.refreshListOnNewTransaction);
     }
     eventEmitter.on('openNewWallet', this.openNewWallet);
     eventEmitter.on('loginFailed', this.handleLoginFailure);
-    if (session.firstLoadOnLogin && this.state.loginFailed === false) {
+    if (session.firstLoadOnLogin && loginFailed === false) {
       this.switchOffAnimation();
     }
-    if (!this.state.loginFailed) {
+    if (!loginFailed) {
       loginCounter.userLoginAttempted = false;
     }
   }
@@ -77,6 +79,7 @@ export default class Home extends Component<Props, State> {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async switchOffAnimation() {
     await sleep(1000);
     session.firstLoadOnLogin = false;
@@ -90,7 +93,7 @@ export default class Home extends Component<Props, State> {
 
   refreshListOnNewTransaction = () => {
     log.debug('Transaction found, refreshing transaction list...');
-    displayedTransactionCount++;
+    displayedTransactionCount += 1;
     this.setState({
       transactions: session.getTransactions(
         0,
@@ -139,15 +142,15 @@ export default class Home extends Component<Props, State> {
   };
 
   render() {
-    if (this.state.firstStartup === true) {
+    const { darkmode, transactions, firstStartup, loginFailed } = this.state;
+
+    if (firstStartup === true) {
       return <Redirect to="/firststartup" />;
     }
 
-    if (this.state.loginFailed === true) {
+    if (loginFailed === true) {
       return <Redirect to="/login" />;
     }
-
-    const { darkmode, transactions, totalTransactionCount } = this.state;
 
     return (
       <div>
@@ -181,6 +184,7 @@ export default class Home extends Component<Props, State> {
                 <tbody>
                   {transactions.map((tx, index) => {
                     return (
+                      // eslint-disable-next-line react/no-array-index-key
                       <tr key={index}>
                         <td
                           data-tip={
@@ -252,7 +256,7 @@ export default class Home extends Component<Props, State> {
             <BottomBar />
           </div>
         )}
-        {this.state.darkmode === true && (
+        {darkmode === true && (
           <div className="wholescreen has-background-dark">
             <ReactTooltip
               effect="solid"
@@ -282,6 +286,7 @@ export default class Home extends Component<Props, State> {
                 <tbody>
                   {transactions.map((tx, index) => {
                     return (
+                      // eslint-disable-next-line react/no-array-index-key
                       <tr key={index}>
                         <td
                           data-tip={
