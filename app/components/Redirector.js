@@ -86,7 +86,7 @@ class Redirector extends Component<Props, State> {
   };
 
   render() {
-    // eslint-disable-next-line prettier/prettier
+    // prettier-ignore
     const { location: { pathname } } = this.props;
     const {
       changePassword,

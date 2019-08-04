@@ -12,14 +12,14 @@
     "class-methods-use-this": "off",
     "jsx-a11y/label-has-for": "off",
     "no-restricted-syntax": [
-      "error", "ForInStatement", "LabeledStatement", "WithStatement"
+      "error",
+      "ForInStatement",
+      "LabeledStatement",
+      "WithStatement"
     ],
     "react/button-has-type": [
       true,
-        { "button": true,
-          "submit": true,
-          "reset": true
-        }
+      { "button": true, "submit": true, "reset": true }
     ]
   }
 }
