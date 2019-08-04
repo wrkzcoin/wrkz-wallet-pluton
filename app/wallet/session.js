@@ -411,6 +411,7 @@ export default class WalletSession {
 
   atomicToHuman(x: number, prettyPrint: boolean) {
     if (prettyPrint) {
+      // $FlowFixMe
       return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
     }
     return x / 100;
