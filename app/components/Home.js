@@ -23,7 +23,7 @@ type State = {
   loginFailed: boolean,
   firstStartup: boolean,
   darkmode: boolean
-}
+};
 
 export default class Home extends Component<Props, State> {
   props: Props;
@@ -86,7 +86,7 @@ export default class Home extends Component<Props, State> {
     this.setState({
       loginFailed: true
     });
-  }
+  };
 
   refreshListOnNewTransaction = () => {
     log.debug('Transaction found, refreshing transaction list...');
@@ -97,9 +97,9 @@ export default class Home extends Component<Props, State> {
         displayedTransactionCount,
         false
       ),
-      totalTransactionCount: session.getTransactions().length,
+      totalTransactionCount: session.getTransactions().length
     });
-  }
+  };
 
   openNewWallet = () => {
     log.debug('Initialized new wallet session, refreshing transaction list...');
@@ -110,9 +110,9 @@ export default class Home extends Component<Props, State> {
         displayedTransactionCount,
         false
       ),
-      totalTransactionCount: session.getTransactions().length,
+      totalTransactionCount: session.getTransactions().length
     });
-  }
+  };
 
   handleLoadMore = (evt: any) => {
     evt.preventDefault();
@@ -120,19 +120,15 @@ export default class Home extends Component<Props, State> {
     this.setState({
       transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
-  }
+  };
 
   handleShowAll = (evt: any) => {
     evt.preventDefault();
     const { totalTransactionCount } = this.state;
     this.setState({
-      transactions: session.getTransactions(
-        0,
-        totalTransactionCount,
-        false
-      )
+      transactions: session.getTransactions(0, totalTransactionCount, false)
     });
-  }
+  };
 
   resetDefault = (evt: any) => {
     evt.preventDefault();
@@ -140,7 +136,7 @@ export default class Home extends Component<Props, State> {
     this.setState({
       transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
-  }
+  };
 
   render() {
     if (this.state.firstStartup === true) {
@@ -154,7 +150,6 @@ export default class Home extends Component<Props, State> {
     const { darkmode, transactions, totalTransactionCount } = this.state;
 
     return (
-
       <div>
         <Redirector />
         {darkmode === false && (
@@ -226,33 +221,33 @@ export default class Home extends Component<Props, State> {
                   })}
                 </tbody>
               </table>
-                <form>
-                  <div className="field">
-                    <div className="buttons">
-                      <button
-                        type="submit"
-                        className="button is-success"
-                        onClick={this.handleShowAll}
-                      >
-                        Show all
-                      </button>
-                      <button
-                        type="submit"
-                        className="button is-warning"
-                        onClick={this.handleLoadMore}
-                      >
-                        Load more
-                      </button>
-                      <button
-                        type="submit"
-                        className="button is-danger"
-                        onClick={this.resetDefault}
-                      >
-                        Reset
-                      </button>
-                    </div>
+              <form>
+                <div className="field">
+                  <div className="buttons">
+                    <button
+                      type="submit"
+                      className="button is-success"
+                      onClick={this.handleShowAll}
+                    >
+                      Show all
+                    </button>
+                    <button
+                      type="submit"
+                      className="button is-warning"
+                      onClick={this.handleLoadMore}
+                    >
+                      Load more
+                    </button>
+                    <button
+                      type="submit"
+                      className="button is-danger"
+                      onClick={this.resetDefault}
+                    >
+                      Reset
+                    </button>
                   </div>
-                </form>
+                </div>
+              </form>
             </div>
             <BottomBar />
           </div>
@@ -327,33 +322,33 @@ export default class Home extends Component<Props, State> {
                   })}
                 </tbody>
               </table>
-                <form>
-                  <div className="field">
-                    <div className="buttons">
-                      <button
-                        type="submit"
-                        className="button is-success"
-                        onClick={this.handleShowAll}
-                      >
-                        Show all
-                      </button>
-                      <button
-                        type="submit"
-                        className="button is-warning"
-                        onClick={this.handleLoadMore}
-                      >
-                        Load more
-                      </button>
-                      <button
-                        type="submit"
-                        className="button is-danger"
-                        onClick={this.resetDefault}
-                      >
-                        Reset
-                      </button>
-                    </div>
+              <form>
+                <div className="field">
+                  <div className="buttons">
+                    <button
+                      type="submit"
+                      className="button is-success"
+                      onClick={this.handleShowAll}
+                    >
+                      Show all
+                    </button>
+                    <button
+                      type="submit"
+                      className="button is-warning"
+                      onClick={this.handleLoadMore}
+                    >
+                      Load more
+                    </button>
+                    <button
+                      type="submit"
+                      className="button is-danger"
+                      onClick={this.resetDefault}
+                    >
+                      Reset
+                    </button>
                   </div>
-                </form>
+                </div>
+              </form>
             </div>
             <BottomBar />
           </div>

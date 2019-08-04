@@ -17,7 +17,7 @@ type Location = {
   hash: string,
   pathname: string,
   search: string
-}
+};
 
 type Props = {
   location: Location
@@ -40,7 +40,6 @@ class Redirector extends Component<Props, State> {
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
     this.goToImportFromKey = this.goToImportFromKey.bind(this);
     this.goToPasswordChange = this.goToPasswordChange.bind(this);
-
   }
 
   componentDidMount() {
@@ -61,35 +60,37 @@ class Redirector extends Component<Props, State> {
     this.setState({
       importSeed: true
     });
-  }
+  };
 
   goToImportFromKey = () => {
     this.setState({
       importKey: true
     });
-  }
+  };
 
   goToPasswordChange = () => {
     this.setState({
       changePassword: true
     });
-  }
+  };
 
   goToLogin = () => {
     this.setState({
       login: true
     });
-  }
+  };
 
   goToFirstStartup = () => {
     this.setState({
       firstStartup: true
     });
-  }
+  };
 
   render() {
     // eslint-disable-next-line prettier/prettier
-    const { location: { pathname } } = this.props;
+    const {
+      location: { pathname }
+    } = this.props;
     const {
       changePassword,
       importKey,
