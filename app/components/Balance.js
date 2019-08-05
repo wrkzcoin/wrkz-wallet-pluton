@@ -16,8 +16,6 @@ type State = {
 export default class Balance extends Component<Props, State> {
   props: Props;
 
-  syncInterval: IntervalID;
-
   constructor(props?: Props) {
     super(props);
     this.state = {
@@ -25,7 +23,6 @@ export default class Balance extends Component<Props, State> {
       lockedBalance: session.getLockedBalance(),
       darkmode: session.darkMode,
     };
-    this.syncInterval = setInterval(() => this.refresh(), 1000);
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
     this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
@@ -33,9 +30,18 @@ export default class Balance extends Component<Props, State> {
     );
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    if (session.wallet !== undefined) {
+      session.wallet.setMaxListeners(2);
+      session.wallet.on('transaction', this.refreshBalanceOnNewTransaction);
+    }
+  }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    if (session.wallet !== undefined) {
+      session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
+    }
+  }
 
   darkModeOn = () => {
     this.setState({
@@ -55,14 +61,8 @@ export default class Balance extends Component<Props, State> {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance()
     });
-  };
-
-  refresh() {
-    this.setState(() => ({
-      syncStatus: session.getSyncStatus()
-    }));
     ReactTooltip.rebuild();
-  }
+  };
 
   render() {
     const { darkmode, unlockedBalance, lockedBalance } = this.state;

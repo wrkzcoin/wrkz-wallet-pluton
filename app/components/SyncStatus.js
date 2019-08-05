@@ -1,9 +1,8 @@
 // @flow
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter } from '../index';
+import { session } from '../index';
 
 type Props = {};
 
@@ -54,13 +53,7 @@ export default class BottomBar extends Component<Props, State> {
   }
 
   render() {
-    const {
-      darkmode,
-      unlockedBalance,
-      lockedBalance,
-      nodeFee,
-      syncStatus
-    } = this.state;
+    const { darkmode, syncStatus } = this.state;
     const syncTooltip =
       session.wallet.getSyncStatus()[2] === 0
         ? 'Connecting, please wait...'
@@ -71,36 +64,40 @@ export default class BottomBar extends Component<Props, State> {
     return (
       <div className="control statusicons">
         <div className="tags has-addons">
-          <span className={
-            darkmode
-              ? 'tag is-dark is-large'
-              : 'tag is-white is-large'}>Sync:</span>
-          {syncStatus < 100 &&
-            session.daemon.networkBlockCount !== 0 && (
-              <span
-                className="tag is-warning is-large sync-status"
-                data-tip={syncTooltip}
-              >
-                {syncStatus}%
-                <ReactLoading
-                  type="bubbles"
-                  color="#363636"
-                  height={30}
-                  width={30}
-                />
-              </span>
-            )}
-          {syncStatus === 100 &&
-            session.daemon.networkBlockCount !== 0 && (
-              <span
-                className="tag is-success is-large sync-status"
-                data-tip={syncTooltip}
-              >
-                {syncStatus}%
-              </span>
-            )}
+          <span
+            className={
+              darkmode ? 'tag is-dark is-large' : 'tag is-white is-large'
+            }
+          >
+            Sync:
+          </span>
+          {syncStatus < 100 && session.daemon.networkBlockCount !== 0 && (
+            <span
+              className="tag is-warning is-large sync-status"
+              data-tip={syncTooltip}
+            >
+              {syncStatus}%
+              <ReactLoading
+                type="bubbles"
+                color="#363636"
+                height={30}
+                width={30}
+              />
+            </span>
+          )}
+          {syncStatus === 100 && session.daemon.networkBlockCount !== 0 && (
+            <span
+              className="tag is-success is-large sync-status"
+              data-tip={syncTooltip}
+            >
+              {syncStatus}%
+            </span>
+          )}
           {session.daemon.networkBlockCount === 0 && (
-            <span className="tag is-danger is-large sync-status" data-tip={syncTooltip}>
+            <span
+              className="tag is-danger is-large sync-status"
+              data-tip={syncTooltip}
+            >
               <ReactLoading
                 type="spinningBubbles"
                 color="#F5F5F5"
