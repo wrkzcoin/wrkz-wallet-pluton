@@ -19,6 +19,9 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 
+// Lang
+import LocalizedStrings from 'react-localization';
+
 export function savedInInstallDir(savePath) {
   const installationDirectory = path.resolve(remote.app.getAppPath(), '../../');
   const saveAttemptDirectory = path.resolve(savePath, '../');
@@ -372,3 +375,7 @@ if (module.hot) {
     );
   });
 }
+
+
+
+export const il8n = new LocalizedStrings();

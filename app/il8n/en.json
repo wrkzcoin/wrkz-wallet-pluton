@@ -3,7 +3,13 @@
   "hash": "Hash",
   "amount": "Amount",
   "balance": "Balance",
-  "show_all": "Show All",
-  "load_more": "Load More",
-  "reset": "Reset"
+  "show_all": "Show all",
+  "load_more": "Load more",
+  "reset": "Reset",
+  "uncomfirmed_tx_30_sec_confirm": "This transaction is unconfirmed. Should be confirmed within 30 seconds!",
+  "block": "Block",
+  "unconfirmed": "Unconfirmed",
+  "wallet": "Wallet",
+  "send": "Send",
+  "receive": "Receive"
 }

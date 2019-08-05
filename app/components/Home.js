@@ -4,8 +4,7 @@ import log from 'electron-log';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
-import { session, loginCounter, eventEmitter } from '../index';
-import LocalizedStrings from 'react-localization';
+import { session, loginCounter, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -49,12 +48,6 @@ export default class Home extends Component<Props, State> {
       this
     );
     this.openNewWallet = this.openNewWallet.bind(this);
-
-    this.il8n = new LocalizedStrings({
-      en:require('../il8n/en.json'),
-      fr:require('../il8n/fr.json')
-    });
-
   }
 
   componentDidMount() {
@@ -193,12 +186,12 @@ export default class Home extends Component<Props, State> {
                         <td
                           data-tip={
                             tx[0] === 0
-                              ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!'
-                              : `Block ${tx[4]}`
+                              ? this.il8n.unconfirmed_tx_30_sec_confirm
+                              : this.il8n.block + ` ${tx[4]}`
                           }
                         >
                           {tx[0] === 0 && (
-                            <p className="has-text-danger">Unconfirmed</p>
+                            <p className="has-text-danger">{this.il8n.unconfirmed}</p>
                           )}
                           {tx[0] > 0 && (
                             <p>{session.convertTimestamp(tx[0])}</p>
@@ -237,21 +230,21 @@ export default class Home extends Component<Props, State> {
                       className="button is-success"
                       onClick={this.handleShowAll}
                     >
-                      Show all
+                      {this.il8n.show_all}
                     </button>
                     <button
                       type="submit"
                       className="button is-warning"
                       onClick={this.handleLoadMore}
                     >
-                      Load more
+                      {this.il8n.load_more}
                     </button>
                     <button
                       type="submit"
                       className="button is-danger"
                       onClick={this.resetDefault}
                     >
-                      Reset
+                      {this.il8n.reset}
                     </button>
                   </div>
                 </div>
@@ -294,12 +287,12 @@ export default class Home extends Component<Props, State> {
                         <td
                           data-tip={
                             tx[0] === 0
-                              ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!'
-                              : `Block ${tx[4]}`
+                              ? this.il8n.unconfirmed_tx_30_sec_confirm
+                              : this.il8n.block + ` ${tx[4]}`
                           }
                         >
                           {tx[0] === 0 && (
-                            <p className="has-text-danger">Unconfirmed</p>
+                            <p className="has-text-danger">{this.il8n.unconfirmed}</p>
                           )}
                           {tx[0] > 0 && (
                             <p>{session.convertTimestamp(tx[0])}</p>
