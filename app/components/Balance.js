@@ -1,9 +1,8 @@
 // @flow
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
 import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter } from '../index';
+import { session } from '../index';
 
 type Props = {};
 
@@ -16,15 +15,15 @@ type State = {
 export default class Balance extends Component<Props, State> {
   props: Props;
 
+  state: State;
+
   constructor(props?: Props) {
     super(props);
     this.state = {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      darkmode: session.darkMode,
+      darkmode: session.darkMode
     };
-    this.darkModeOn = this.darkModeOn.bind(this);
-    this.darkModeOff = this.darkModeOff.bind(this);
     this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
       this
     );
@@ -42,18 +41,6 @@ export default class Balance extends Component<Props, State> {
       session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
     }
   }
-
-  darkModeOn = () => {
-    this.setState({
-      darkmode: true
-    });
-  };
-
-  darkModeOff = () => {
-    this.setState({
-      darkmode: false
-    });
-  };
 
   refreshBalanceOnNewTransaction = () => {
     log.debug('Transaction found, refreshing balance...');

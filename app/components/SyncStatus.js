@@ -11,8 +11,10 @@ type State = {
   darkmode: boolean
 };
 
-export default class BottomBar extends Component<Props, State> {
+export default class SyncStatus extends Component<Props, State> {
   props: Props;
+
+  state: State;
 
   syncInterval: IntervalID;
 
@@ -23,8 +25,6 @@ export default class BottomBar extends Component<Props, State> {
       darkmode: session.darkMode
     };
     this.syncInterval = setInterval(() => this.refresh(), 1000);
-    this.darkModeOn = this.darkModeOn.bind(this);
-    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
   componentDidMount() {}
@@ -32,18 +32,6 @@ export default class BottomBar extends Component<Props, State> {
   componentWillUnmount() {
     clearInterval(this.syncInterval);
   }
-
-  darkModeOn = () => {
-    this.setState({
-      darkmode: true
-    });
-  };
-
-  darkModeOff = () => {
-    this.setState({
-      darkmode: false
-    });
-  };
 
   refresh() {
     this.setState(() => ({
