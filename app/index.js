@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable import/no-mutable-exports */
-/* eslint-disable func-names */
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
@@ -52,11 +49,10 @@ export const directories = [
   `${homedir}/.protonwallet/logs`
 ];
 
-const [programDirectory, logDirectory] = directories;
+const [programDirectory] = directories;
 
 log.debug('Checking if program directories are present...');
-// eslint-disable-next-line func-names
-directories.forEach(function(dir) {
+directories.forEach(dir => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
     log.debug(`${dir} directories not detected, creating...`);
@@ -89,7 +85,7 @@ if (!session.loginFailed && !session.firstStartup) {
   log.debug('Login failed, redirecting to login...');
 }
 
-ipcRenderer.on('handleClose', function(evt, route) {
+ipcRenderer.on('handleClose', () => {
   if (!session.loginFailed && !session.firstStartup) {
     const saved = session.saveWallet(session.walletFile);
     if (saved) {
@@ -100,7 +96,7 @@ ipcRenderer.on('handleClose', function(evt, route) {
   }
 });
 
-eventEmitter.on('updateRequired', function(updateFile) {
+eventEmitter.on('updateRequired', updateFile => {
   const userResponse = remote.dialog.showMessageBox(null, {
     type: 'info',
     buttons: ['Cancel', 'OK'],
@@ -114,14 +110,16 @@ eventEmitter.on('updateRequired', function(updateFile) {
   }
 });
 
-ipcRenderer.on('handleSaveSilent', function(evt, route) {
+ipcRenderer.on('handleSaveSilent', () => {
   if (!session.loginFailed && !session.firstStartup) {
     const saved = session.saveWallet(session.walletFile);
+    if (saved) {
+      log.debug(`Wallet saved at ${session.walletFile}`);
+    }
   }
 });
 
-// eslint-disable-next-line func-names
-ipcRenderer.on('handleSave', function(evt, route) {
+ipcRenderer.on('handleSave', () => {
   const saved = session.saveWallet(session.walletFile);
   if (saved) {
     remote.dialog.showMessageBox(null, {
@@ -141,7 +139,7 @@ ipcRenderer.on('handleSave', function(evt, route) {
   }
 });
 
-ipcRenderer.on('handleSaveAs', function(evt, route) {
+ipcRenderer.on('handleSaveAs', () => {
   const options = {
     defaultPath: remote.app.getPath('documents')
   };
@@ -158,7 +156,7 @@ ipcRenderer.on('handleSaveAs', function(evt, route) {
   });
 });
 
-ipcRenderer.on('exportToCSV', function(evt, route) {
+ipcRenderer.on('exportToCSV', () => {
   const options = {
     defaultPath: remote.app.getPath('documents')
   };
@@ -185,7 +183,7 @@ function handleOpen() {
     return;
   }
   session.saveWallet(session.walletFile);
-  const [wallet, error] = WalletBackend.openWalletFromFile(
+  const [, error] = WalletBackend.openWalletFromFile(
     session.daemon,
     getPaths[0],
     ''
@@ -228,16 +226,19 @@ eventEmitter.on('sendNotification', function sendNotification(amount) {
   const notif = new window.Notification('Transaction Received!', {
     body: `You've just received ${amount} ${session.wallet.config.ticker}`
   });
+  if (notif) {
+    log.debug(
+      `Sent notification: You've just received ${amount} ${
+        session.wallet.config.ticker
+      }`
+    );
+  }
 });
 
 ipcRenderer.on('handleOpen', handleOpen);
 eventEmitter.on('handleOpen', handleOpen);
 
-eventEmitter.on('initializeNewNode', function(
-  password,
-  daemonHost,
-  daemonPort
-) {
+eventEmitter.on('initializeNewNode', (password, daemonHost, daemonPort) => {
   session = null;
   session = new WalletSession(password, daemonHost, daemonPort);
   startWallet();
@@ -245,7 +246,7 @@ eventEmitter.on('initializeNewNode', function(
   session.firstLoadOnLogin = false;
 });
 
-eventEmitter.on('initializeNewSession', function(password) {
+eventEmitter.on('initializeNewSession', password => {
   session = null;
   session = new WalletSession(password);
   startWallet();
@@ -309,7 +310,7 @@ function handleNew() {
 ipcRenderer.on('handleNew', handleNew);
 eventEmitter.on('handleNew', handleNew);
 
-ipcRenderer.on('handleBackup', function(evt, route) {
+ipcRenderer.on('handleBackup', () => {
   const publicAddress = session.wallet.getPrimaryAddress();
   const [
     privateSpendKey,
