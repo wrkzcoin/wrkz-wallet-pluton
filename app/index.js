@@ -22,6 +22,11 @@ import LoginCounter from './wallet/loginCounter';
 // Lang
 import LocalizedStrings from 'react-localization';
 
+export const il8n = new LocalizedStrings({
+  en:require('./il8n/en.json'),
+  fr:require('./il8n/fr.json')
+});
+
 export function savedInInstallDir(savePath) {
   const installationDirectory = path.resolve(remote.app.getAppPath(), '../../');
   const saveAttemptDirectory = path.resolve(savePath, '../');
@@ -375,7 +380,3 @@ if (module.hot) {
     );
   });
 }
-
-
-
-export const il8n = new LocalizedStrings();

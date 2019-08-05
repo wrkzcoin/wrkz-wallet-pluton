@@ -79,25 +79,25 @@ export default class NavBar extends Component<Props, State> {
                     <Link className="navbar-item" to={routes.HOME}>
                       <i className="fa fa-credit-card" />
                       {activePage === 'wallet' && (
-                        <strong>&nbsp;&nbsp;{this.il8n.wallet}</strong>
+                        <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
                       )}
-                      {activePage !== 'wallet' && <p>&nbsp;&nbsp;{this.il8n.wallet}</p>}
+                      {activePage !== 'wallet' && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
                     </Link>
 
                     <Link className="navbar-item" to={routes.SEND}>
                       <i className="fa fa-paper-plane" />
                       {activePage === 'send' && (
-                        <strong>&nbsp;&nbsp;{this.il8n.send}</strong>
+                        <strong>&nbsp;&nbsp;{il8n.send}</strong>
                       )}
-                      {activePage !== 'send' && <p>&nbsp;&nbsp;{this.il8n.send}</p>}
+                      {activePage !== 'send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
                     </Link>
 
                     <Link className="navbar-item" to={routes.COUNTER}>
                       <i className="fa fa-arrow-circle-down" />
                       {activePage === 'receive' && (
-                        <strong>&nbsp;&nbsp;{this.il8n.receive}</strong>
+                        <strong>&nbsp;&nbsp;{il8n.receive}</strong>
                       )}
-                      {activePage !== 'receive' && <p>&nbsp;&nbsp;{this.il8n.receive}</p>}
+                      {activePage !== 'receive' && <p>&nbsp;&nbsp;{il8n.receive}</p>}
                     </Link>
                   </div>
 
@@ -141,25 +141,25 @@ export default class NavBar extends Component<Props, State> {
                     <Link className="navbar-item" to={routes.HOME}>
                       <i className="fa fa-credit-card" />
                       {activePage === 'wallet' && (
-                        <strong>&nbsp;&nbsp;{this.il8n.wallet}</strong>
+                        <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
                       )}
-                      {activePage !== 'wallet' && <p>&nbsp;&nbsp;{this.il8n.wallet}</p>}
+                      {activePage !== 'wallet' && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
                     </Link>
 
                     <Link className="navbar-item" to={routes.SEND}>
                       <i className="fa fa-paper-plane" />
                       {activePage === 'send' && (
-                        <strong>&nbsp;&nbsp;{this.il8n.send}</strong>
+                        <strong>&nbsp;&nbsp;{il8n.send}</strong>
                       )}
-                      {activePage !== 'send' && <p>&nbsp;&nbsp;{this.il8n.send}</p>}
+                      {activePage !== 'send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
                     </Link>
 
                     <Link className="navbar-item" to={routes.COUNTER}>
                       <i className="fa fa-arrow-circle-down" />
                       {activePage === 'receive' && (
-                        <strong>&nbsp;&nbsp;{this.il8n.receive}</strong>
+                        <strong>&nbsp;&nbsp;{il8n.receive}</strong>
                       )}
-                      {activePage !== 'receive' && <p>&nbsp;&nbsp;{this.il8n.receive}</p>}
+                      {activePage !== 'receive' && <p>&nbsp;&nbsp;{il8n.receive}</p>}
                     </Link>
                   </div>
 

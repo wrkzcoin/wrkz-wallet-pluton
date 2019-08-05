@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import log from 'electron-log';
-import { session, eventEmitter } from '../index';
+import { session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -186,13 +186,9 @@ export default class Send extends Component<Props, State> {
 
     const userSelection = remote.dialog.showMessageBox(null, {
       type: 'warning',
-      buttons: ['Cancel', 'OK'],
-      title: 'Please Confirm Transaction',
-      message: `You are about to send ${totalTransactionAmount} ${
-        session.wallet.config.ticker
-      } to ${sendToAddress}${displayIfPaymentID} which includes a network fee of 0.10 ${
-        session.wallet.config.ticker
-      }${displayIfNodeFee}. Do you wish to proceed?`
+      buttons: [il8n.cancel, il8n.ok],
+      title: il8n.send_tx_confirmation_title,
+      message: il8n.send_tx_confirmation_l1 + totalTransactionAmount + " " +  session.wallet.config.ticker + " to " + sendToAddress + displayIfPaymentID + il8n.send_tx_confirmation_l2 + session.wallet.config.ticker + displayIfNodeFee + il8n.send_tx_confirmation_l3
     });
 
     if (userSelection !== 1) {
@@ -210,16 +206,16 @@ export default class Send extends Component<Props, State> {
     if (hash) {
       remote.dialog.showMessageBox(null, {
         type: 'info',
-        buttons: ['OK'],
-        title: 'Transaction Sent!',
-        message: `Your transaction was sent successfully.\nTransaction hash: ${hash}`
+        buttons: [il8n.ok],
+        title: il8n.send_tx_complete.title,
+        message: il8n.send_tx_complete_message + hash
       });
       eventEmitter.emit('transactionComplete');
     } else if (err) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: ['OK'],
-        title: 'Transaction Error',
+        buttons: [il8n.ok],
+        title: il8n.send_tx_error_title,
         message: err.toString()
       });
       eventEmitter.emit('transactionCancel');
