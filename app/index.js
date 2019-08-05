@@ -378,4 +378,7 @@ if (module.hot) {
 
 
 
-export const il8n = new LocalizedStrings();
+export let il8n = new LocalizedStrings({
+  en:require('./il8n/en.json'),
+  fr:require('./il8n/fr.json')
+});
