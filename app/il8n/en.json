@@ -1,0 +1,9 @@
+{
+  "date": "Date",
+  "hash": "Hash",
+  "amount": "Amount",
+  "balance": "Balance",
+  "show_all": "Show All",
+  "load_more": "Load More",
+  "reset": "Reset"
+}

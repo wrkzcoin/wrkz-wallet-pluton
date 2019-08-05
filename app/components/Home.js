@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import { session, loginCounter, eventEmitter } from '../index';
+import LocalizedStrings from 'react-localization';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -48,6 +49,12 @@ export default class Home extends Component<Props, State> {
       this
     );
     this.openNewWallet = this.openNewWallet.bind(this);
+
+    this.il8n = new LocalizedStrings({
+      en:require('../il8n/en.json'),
+      fr:require('../il8n/fr.json')
+    });
+
   }
 
   componentDidMount() {
@@ -173,10 +180,10 @@ export default class Home extends Component<Props, State> {
               <table className="table is-striped is-hoverable is-fullwidth is-family-monospace">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Hash</th>
-                    <th className="has-text-right">Amount</th>
-                    <th className="has-text-right">Balance</th>
+                    <th>{this.il8n.date}</th>
+                    <th>{this.il8n.hash}</th>
+                    <th className="has-text-right">{this.il8n.amount}</th>
+                    <th className="has-text-right">{this.il8n.balance}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -274,10 +281,10 @@ export default class Home extends Component<Props, State> {
               <table className="table is-striped is-hoverable is-fullwidth is-family-monospace table-darkmode">
                 <thead>
                   <tr>
-                    <th className="has-text-white">Date</th>
-                    <th className="has-text-white">Hash</th>
-                    <th className="has-text-white has-text-right">Amount</th>
-                    <th className="has-text-white has-text-right">Balance</th>
+                    <th className="has-text-white">{this.il8n.date}</th>
+                    <th className="has-text-white">{this.il8n.hash}</th>
+                    <th className="has-text-white has-text-right">{this.il8n.amount}</th>
+                    <th className="has-text-white has-text-right">{this.il8n.balance}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -331,21 +338,21 @@ export default class Home extends Component<Props, State> {
                       className="button is-success"
                       onClick={this.handleShowAll}
                     >
-                      Show all
+                      {this.il8n.show_all}
                     </button>
                     <button
                       type="submit"
                       className="button is-warning"
                       onClick={this.handleLoadMore}
                     >
-                      Load more
+                      {this.il8n.load_more}
                     </button>
                     <button
                       type="submit"
                       className="button is-danger"
                       onClick={this.resetDefault}
                     >
-                      Reset
+                      {this.il8n.reset}
                     </button>
                   </div>
                 </div>
