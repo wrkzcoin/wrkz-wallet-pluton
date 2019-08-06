@@ -88,6 +88,10 @@ export default class Send extends Component<Props, State> {
     });
   };
 
+  isNumeric(num: number){
+    return !isNaN(num);
+  }
+
   transactionComplete = () => {
     this.setState({
       transactionComplete: true,
@@ -96,26 +100,25 @@ export default class Send extends Component<Props, State> {
   };
 
   handleAmountChange = (event: any) => {
-    const amount = event.target.value;
-    if (amount === '') {
+    let enteredAmount = event.target.value;
+    if (enteredAmount === '') {
       this.setState({
-        enteredAmount: amount,
-        totalAmount: amount
+        enteredAmount: '',
+        totalAmount: ''
       });
       return;
     }
-    if (Number.isNaN(amount)) {
+    if (enteredAmount === '.') {
+      enteredAmount = '0.';
+    }
+    const result = this.isNumeric(Number(enteredAmount));
+    if (!result) {
+      log.debug('nudu niga');
       return;
     }
-    if (amount < 0) {
-      return;
-    }
-    const totalAmount = session.atomicToHuman(
-      Number(amount * 100) + 10 + Number(session.daemon.feeAmount),
-      false
-    );
+    const totalAmount = (parseFloat(enteredAmount) + 0.1).toFixed(2);
     this.setState({
-      enteredAmount: amount,
+      enteredAmount,
       totalAmount
     });
   };
@@ -135,12 +138,12 @@ export default class Send extends Component<Props, State> {
     if (totalAmount < 0) {
       return;
     }
-    const amount = session.atomicToHuman(
+    const enteredAmount = session.atomicToHuman(
       Number(totalAmount * 100) - 10 - Number(session.daemon.feeAmount),
       false
     );
     this.setState({
-      enteredAmount: amount,
+      enteredAmount,
       totalAmount
     });
   };
