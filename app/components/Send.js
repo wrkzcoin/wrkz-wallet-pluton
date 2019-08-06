@@ -88,10 +88,6 @@ export default class Send extends Component<Props, State> {
     });
   };
 
-  isNumeric(num: number){
-    return !isNaN(num);
-  }
-
   transactionComplete = () => {
     this.setState({
       transactionComplete: true,
@@ -111,11 +107,12 @@ export default class Send extends Component<Props, State> {
     if (enteredAmount === '.') {
       enteredAmount = '0.';
     }
-    const result = this.isNumeric(Number(enteredAmount));
-    if (!result) {
-      log.debug('nudu niga');
+
+    const regex = /^\d*(\.(\d\d?)?)?$/;
+    if (!regex.test(enteredAmount) === true) {
       return;
     }
+
     const totalAmount = (parseFloat(enteredAmount) + 0.1).toFixed(2);
     this.setState({
       enteredAmount,
@@ -124,7 +121,7 @@ export default class Send extends Component<Props, State> {
   };
 
   handleTotalAmountChange = (event: any) => {
-    const totalAmount = event.target.value;
+    let totalAmount = event.target.value;
     if (totalAmount === '') {
       this.setState({
         enteredAmount: '',
@@ -132,16 +129,23 @@ export default class Send extends Component<Props, State> {
       });
       return;
     }
-    if (Number.isNaN(totalAmount)) {
+    if (totalAmount === '.') {
+      totalAmount = '0.';
+    }
+
+    const regex = /^\d*(\.(\d\d?)?)?$/;
+    if (!regex.test(totalAmount) === true) {
       return;
     }
-    if (totalAmount < 0) {
-      return;
-    }
-    const enteredAmount = session.atomicToHuman(
-      Number(totalAmount * 100) - 10 - Number(session.daemon.feeAmount),
-      false
-    );
+
+    const subtractFee =
+      Number(totalAmount) * 100 - 10 - Number(session.daemon.feeAmount);
+
+    const enteredAmount =
+      subtractFee < 0
+        ? ''
+        : session.atomicToHuman(subtractFee, false).toFixed(2);
+
     this.setState({
       enteredAmount,
       totalAmount
