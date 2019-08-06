@@ -249,9 +249,10 @@ export default class Send extends Component<Props, State> {
 
   sendAll = () => {
     const { unlockedBalance } = this.state;
+    const enteredAmount = unlockedBalance - 10 < 0 ? 0 : unlockedBalance - 10;
     this.setState({
-      enteredAmount: session.atomicToHuman(unlockedBalance - 10, false),
-      totalAmount: session.atomicToHuman(unlockedBalance, false)
+      enteredAmount: session.atomicToHuman(enteredAmount, false),
+      totalAmount: session.atomicToHuman(enteredAmount + 10, false)
     });
   };
 
