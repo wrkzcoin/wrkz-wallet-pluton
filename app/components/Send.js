@@ -113,7 +113,11 @@ export default class Send extends Component<Props, State> {
       return;
     }
 
-    const totalAmount = (parseFloat(enteredAmount) + 0.1).toFixed(2);
+    const totalAmount = (
+      parseFloat(enteredAmount) +
+      0.1 +
+      parseFloat(session.daemon.feeAmount / 100, 10)
+    ).toFixed(2);
     this.setState({
       enteredAmount,
       totalAmount
@@ -139,7 +143,7 @@ export default class Send extends Component<Props, State> {
     }
 
     const subtractFee =
-      Number(totalAmount) * 100 - 10 - Number(session.daemon.feeAmount);
+      Number(totalAmount) * 100 - 10 - parseInt(session.daemon.feeAmount, 10);
 
     const enteredAmount =
       subtractFee < 0
@@ -249,8 +253,14 @@ export default class Send extends Component<Props, State> {
 
   sendAll = () => {
     const { unlockedBalance } = this.state;
-    const totalAmount = unlockedBalance - 10 <= 0 ? 0 : unlockedBalance;
-    const enteredAmount = unlockedBalance - 10 <= 0 ? 0 : totalAmount - 10;
+    const totalAmount =
+      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
+        ? 0
+        : unlockedBalance;
+    const enteredAmount =
+      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
+        ? 0
+        : totalAmount - 10 - parseInt(session.daemon.feeAmount, 10);
     this.setState({
       totalAmount: session.atomicToHuman(totalAmount, false),
       enteredAmount: session.atomicToHuman(enteredAmount, false)
