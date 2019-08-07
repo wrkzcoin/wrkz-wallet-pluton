@@ -2,7 +2,6 @@
 import { remote } from 'electron';
 import fs from 'fs';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
 import NavBar from './NavBar';
 import Redirector from './Redirector';
@@ -17,8 +16,7 @@ import {
 type Props = {};
 
 type States = {
-  darkMode: boolean,
-  importCompleted: boolean
+  darkMode: boolean
 };
 
 export default class Send extends Component<Props, States> {
@@ -29,27 +27,13 @@ export default class Send extends Component<Props, States> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
-      importCompleted: false
+      darkMode: session.darkMode
     };
-    this.handleInitialize = this.handleInitialize.bind(this);
   }
 
-  componentDidMount() {
-    eventEmitter.on('initializeNewSession', this.handleInitialize);
-    eventEmitter.on('openNewWallet', this.handleInitialize);
-  }
+  componentDidMount() {}
 
-  componentWillUnmount() {
-    eventEmitter.off('initializeNewSession', this.handleInitialize);
-    eventEmitter.off('openNewWallet', this.handleInitialize);
-  }
-
-  handleInitialize = () => {
-    this.setState({
-      importCompleted: true
-    });
-  };
+  componentWillUnmount() {}
 
   handleSubmit(event: any) {
     // We're preventing the default refresh of the page that occurs on form submit
@@ -121,11 +105,8 @@ export default class Send extends Component<Props, States> {
   }
 
   render() {
-    const { importCompleted, darkMode } = this.state;
+    const { darkMode } = this.state;
 
-    if (importCompleted === true) {
-      return <Redirect to="/" />;
-    }
     return (
       <div>
         <Redirector />

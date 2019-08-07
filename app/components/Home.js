@@ -45,11 +45,11 @@ export default class Home extends Component<Props, State> {
 
   componentDidMount() {
     eventEmitter.on('openNewWallet', this.openNewWallet);
-    const { loginFailed, wallet } = session;
-    if (wallet !== undefined) {
+    const { loginFailed, wallet, firstLoadOnLogin } = session;
+    if (wallet) {
       wallet.on('transaction', this.refreshListOnNewTransaction);
     }
-    if (session.firstLoadOnLogin && loginFailed === false) {
+    if (firstLoadOnLogin && loginFailed === false) {
       this.switchOffAnimation();
     }
     if (!loginFailed) {
@@ -59,11 +59,12 @@ export default class Home extends Component<Props, State> {
 
   componentWillUnmount() {
     displayedTransactionCount = 50;
+    const { wallet } = session;
     this.setState({
       transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
     eventEmitter.off('openNewWallet', this.openNewWallet);
-    if (session.wallet !== undefined) {
+    if (wallet) {
       session.wallet.off('transaction', this.refreshListOnNewTransaction);
     }
   }
@@ -124,7 +125,7 @@ export default class Home extends Component<Props, State> {
   };
 
   render() {
-    const { darkmode, transactions } = this.state;
+    const { darkmode, transactions, totalTransactionCount } = this.state;
 
     return (
       <div>
@@ -198,33 +199,35 @@ export default class Home extends Component<Props, State> {
                   })}
                 </tbody>
               </table>
-              <form>
-                <div className="field">
-                  <div className="buttons">
-                    <button
-                      type="submit"
-                      className="button is-success"
-                      onClick={this.handleShowAll}
-                    >
-                      Show all
-                    </button>
-                    <button
-                      type="submit"
-                      className="button is-warning"
-                      onClick={this.handleLoadMore}
-                    >
-                      Load more
-                    </button>
-                    <button
-                      type="submit"
-                      className="button is-danger"
-                      onClick={this.resetDefault}
-                    >
-                      Reset
-                    </button>
+              {totalTransactionCount > 50 && (
+                <form>
+                  <div className="field">
+                    <div className="buttons">
+                      <button
+                        type="submit"
+                        className="button is-success"
+                        onClick={this.handleShowAll}
+                      >
+                        Show all
+                      </button>
+                      <button
+                        type="submit"
+                        className="button is-warning"
+                        onClick={this.handleLoadMore}
+                      >
+                        Load more
+                      </button>
+                      <button
+                        type="submit"
+                        className="button is-danger"
+                        onClick={this.resetDefault}
+                      >
+                        Reset
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </form>
+                </form>
+              )}
             </div>
             <BottomBar />
           </div>
@@ -299,33 +302,35 @@ export default class Home extends Component<Props, State> {
                   })}
                 </tbody>
               </table>
-              <form>
-                <div className="field">
-                  <div className="buttons">
-                    <button
-                      type="submit"
-                      className="button is-success"
-                      onClick={this.handleShowAll}
-                    >
-                      Show all
-                    </button>
-                    <button
-                      type="submit"
-                      className="button is-warning"
-                      onClick={this.handleLoadMore}
-                    >
-                      Load more
-                    </button>
-                    <button
-                      type="submit"
-                      className="button is-danger"
-                      onClick={this.resetDefault}
-                    >
-                      Reset
-                    </button>
+              {totalTransactionCount > 50 && (
+                <form>
+                  <div className="field">
+                    <div className="buttons">
+                      <button
+                        type="submit"
+                        className="button is-success"
+                        onClick={this.handleShowAll}
+                      >
+                        Show all
+                      </button>
+                      <button
+                        type="submit"
+                        className="button is-warning"
+                        onClick={this.handleLoadMore}
+                      >
+                        Load more
+                      </button>
+                      <button
+                        type="submit"
+                        className="button is-danger"
+                        onClick={this.resetDefault}
+                      >
+                        Reset
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </form>
+                </form>
+              )}
             </div>
             <BottomBar />
           </div>

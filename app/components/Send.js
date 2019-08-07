@@ -19,8 +19,7 @@ type State = {
   paymentID: string,
   darkMode: boolean,
   transactionInProgress: boolean,
-  transactionComplete: boolean,
-  loginFailed: boolean
+  transactionComplete: boolean
 };
 
 export default class Send extends Component<Props, State> {
@@ -37,11 +36,9 @@ export default class Send extends Component<Props, State> {
       paymentID: '',
       darkMode: session.darkMode,
       transactionInProgress: false,
-      transactionComplete: false,
-      loginFailed: false
+      transactionComplete: false
     };
     this.transactionComplete = this.transactionComplete.bind(this);
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.generatePaymentID = this.generatePaymentID.bind(this);
     this.resetPaymentID = this.resetPaymentID.bind(this);
     this.handleTransactionInProgress = this.handleTransactionInProgress.bind(
@@ -56,25 +53,15 @@ export default class Send extends Component<Props, State> {
 
   componentDidMount() {
     eventEmitter.on('transactionComplete', this.transactionComplete);
-    eventEmitter.on('loginFailed', this.handleLoginFailure);
     eventEmitter.on('transactionInProgress', this.handleTransactionInProgress);
     eventEmitter.on('transactionCancel', this.handleTransactionCancel);
-    eventEmitter.on('openNewWallet', this.transactionComplete);
   }
 
   componentWillUnmount() {
     eventEmitter.off('transactionComplete', this.transactionComplete);
-    eventEmitter.off('loginFailed', this.handleLoginFailure);
     eventEmitter.off('transactionInProgress', this.handleTransactionInProgress);
     eventEmitter.off('transactionCancel', this.handleTransactionCancel);
-    eventEmitter.off('openNewWallet', this.transactionComplete);
   }
-
-  handleLoginFailure = () => {
-    this.setState({
-      loginFailed: true
-    });
-  };
 
   handleTransactionInProgress = () => {
     this.setState({
@@ -250,7 +237,6 @@ export default class Send extends Component<Props, State> {
 
   render() {
     const {
-      loginFailed,
       transactionComplete,
       darkMode,
       enteredAmount,
@@ -259,12 +245,10 @@ export default class Send extends Component<Props, State> {
       transactionInProgress
     } = this.state;
 
-    if (loginFailed === true) {
-      return <Redirect to="/login" />;
-    }
     if (transactionComplete === true) {
       return <Redirect to="/" />;
     }
+
     return (
       <div>
         <Redirector />

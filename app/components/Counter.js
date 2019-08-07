@@ -1,9 +1,8 @@
 // @flow
 import React, { Component } from 'react';
 import QRCode from 'qrcode.react';
-import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter } from '../index';
+import { session } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -13,9 +12,7 @@ type Props = {
 };
 
 type State = {
-  darkMode: boolean,
-  gohome: boolean,
-  loginFailed: boolean
+  darkMode: boolean
 };
 
 export default class Receive extends Component<Props, State> {
@@ -26,47 +23,17 @@ export default class Receive extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
-      gohome: false,
-      loginFailed: false
+      darkMode: session.darkMode
     };
-    this.handleInitialize = this.handleInitialize.bind(this);
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
   }
 
-  componentDidMount() {
-    eventEmitter.on('openNewWallet', this.handleInitialize);
-    eventEmitter.on('loginFailed', this.handleLoginFailure);
-  }
+  componentDidMount() {}
 
-  componentWillUnmount() {
-    eventEmitter.off('openNewWallet', this.handleInitialize);
-    eventEmitter.off('loginFailed', this.handleLoginFailure);
-  }
-
-  handleInitialize = () => {
-    this.setState({
-      gohome: true
-    });
-  };
-
-  handleLoginFailure = () => {
-    this.setState({
-      loginFailed: true
-    });
-  };
+  componentWillUnmount() {}
 
   render() {
     const { copyToClipboard } = this.props;
-    const { gohome, loginFailed, darkMode } = this.state;
-
-    if (gohome === true) {
-      return <Redirect to="/" />;
-    }
-
-    if (loginFailed === true) {
-      return <Redirect to="/login" />;
-    }
+    const { darkMode } = this.state;
 
     return (
       <div>

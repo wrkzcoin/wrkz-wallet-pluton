@@ -18,9 +18,7 @@ type State = {
   darkMode: boolean,
   scanHeight: string,
   rewindHeight: string,
-  loginFailed: boolean,
   nodeChangeInProgress: boolean,
-  gohome: boolean,
   rewindInProgress: boolean
 };
 
@@ -38,12 +36,9 @@ export default class Settings extends Component<Props, State> {
       darkMode: session.darkMode,
       scanHeight: '',
       rewindHeight: '',
-      loginFailed: false,
       nodeChangeInProgress: false,
-      gohome: false,
       rewindInProgress: false
     };
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
     this.findNode = this.findNode.bind(this);
@@ -56,7 +51,6 @@ export default class Settings extends Component<Props, State> {
     );
     this.handleScanHeightChange = this.handleScanHeightChange.bind(this);
     this.rescanWallet = this.rescanWallet.bind(this);
-    this.handleInitialize = this.handleInitialize.bind(this);
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
     this.rewindWallet = this.rewindWallet.bind(this);
@@ -66,22 +60,14 @@ export default class Settings extends Component<Props, State> {
   componentDidMount() {
     eventEmitter.on('newNodeConnected', this.handleNewNode);
     eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
-    eventEmitter.on('openNewWallet', this.handleInitialize);
     eventEmitter.on('nodeChangeComplete', this.handleNodeChangeComplete);
   }
 
   componentWillUnmount() {
     eventEmitter.off('newNodeConnected', this.handleNewNode);
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
-    eventEmitter.off('openNewWallet', this.handleInitialize);
     eventEmitter.off('nodeChangeComplete', this.handleNodeChangeComplete);
   }
-
-  handleInitialize = () => {
-    this.setState({
-      gohome: true
-    });
-  };
 
   handleNodeChangeInProgress = () => {
     this.setState({
@@ -95,12 +81,6 @@ export default class Settings extends Component<Props, State> {
       nodeChangeInProgress: false,
       connectednode: `${session.daemonHost}:${session.daemonPort}`,
       ssl: session.daemon.ssl
-    });
-  };
-
-  handleLoginFailure = () => {
-    this.setState({
-      loginFailed: true
     });
   };
 
@@ -245,8 +225,6 @@ export default class Settings extends Component<Props, State> {
 
   render() {
     const {
-      loginFailed,
-      gohome,
       darkMode,
       nodeChangeInProgress,
       connectednode,
@@ -256,13 +234,6 @@ export default class Settings extends Component<Props, State> {
       rewindInProgress,
       scanHeight
     } = this.state;
-
-    if (loginFailed === true) {
-      return <Redirect to="/login" />;
-    }
-    if (gohome === true) {
-      return <Redirect to="/" />;
-    }
 
     return (
       <div>

@@ -1,7 +1,6 @@
 // @flow
 import { remote } from 'electron';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { config, session, eventEmitter } from '../index';
 import NavBar from './NavBar';
 import Redirector from './Redirector';
@@ -9,8 +8,6 @@ import Redirector from './Redirector';
 type Props = {};
 
 type State = {
-  importCompleted: boolean,
-  loginFailed: boolean,
   darkMode: boolean
 };
 
@@ -22,38 +19,14 @@ export default class ChangePassword extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      importCompleted: false,
-      loginFailed: false,
       darkMode: session.darkMode
     };
-    this.handleInitialize = this.handleInitialize.bind(this);
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount() {
-    eventEmitter.on('initializeNewSession', this.handleInitialize);
-    eventEmitter.on('loginFailed', this.handleLoginFailure);
-    eventEmitter.on('openNewWallet', this.handleInitialize);
-  }
+  componentDidMount() {}
 
-  componentWillUnmount() {
-    eventEmitter.off('initializeNewSession', this.handleInitialize);
-    eventEmitter.off('loginFailed', this.handleLoginFailure);
-    eventEmitter.off('openNewWallet', this.handleInitialize);
-  }
-
-  handleLoginFailure = () => {
-    this.setState({
-      loginFailed: true
-    });
-  };
-
-  handleInitialize = () => {
-    this.setState({
-      importCompleted: true
-    });
-  };
+  componentWillUnmount() {}
 
   handleSubmit = (event: any) => {
     // We're preventing the default refresh of the page that occurs on form submit
@@ -89,7 +62,7 @@ export default class ChangePassword extends Component<Props, State> {
         title: 'Saved!',
         message: 'The password was changed successfully.'
       });
-      this.handleInitialize();
+      eventEmitter.emit('openNewWallet');
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
@@ -101,14 +74,8 @@ export default class ChangePassword extends Component<Props, State> {
   };
 
   render() {
-    const { loginFailed, importCompleted, darkMode } = this.state;
+    const { darkMode } = this.state;
 
-    if (loginFailed === true) {
-      return <Redirect to="/login" />;
-    }
-    if (importCompleted === true) {
-      return <Redirect to="/" />;
-    }
     return (
       <div>
         <Redirector />

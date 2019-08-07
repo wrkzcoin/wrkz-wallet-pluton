@@ -1,7 +1,5 @@
 // @flow
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
-import ReactTooltip from 'react-tooltip';
 import { session, eventEmitter } from '../index';
 
 type Props = {};
