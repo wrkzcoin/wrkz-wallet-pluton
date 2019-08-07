@@ -1,7 +1,6 @@
 // @flow
 import log from 'electron-log';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import { session, loginCounter, eventEmitter } from '../index';
 import NavBar from './NavBar';
@@ -19,7 +18,6 @@ type Props = {};
 type State = {
   transactions: Array<any>,
   totalTransactionCount: number,
-  firstStartup: boolean,
   darkmode: boolean
 };
 
@@ -37,7 +35,6 @@ export default class Home extends Component<Props, State> {
         false
       ),
       totalTransactionCount: session.getTransactions().length,
-      firstStartup: session.firstStartup,
       darkmode: session.darkMode
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
@@ -127,11 +124,7 @@ export default class Home extends Component<Props, State> {
   };
 
   render() {
-    const { darkmode, transactions, firstStartup } = this.state;
-
-    if (firstStartup === true) {
-      return <Redirect to="/firststartup" />;
-    }
+    const { darkmode, transactions } = this.state;
 
     return (
       <div>

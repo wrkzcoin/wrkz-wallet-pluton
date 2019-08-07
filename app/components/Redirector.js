@@ -34,7 +34,7 @@ class Redirector extends Component<Props, State> {
       importKey: false,
       importSeed: false,
       changePassword: false,
-      firstStartup: false,
+      firstStartup: session.firstStartup,
       loginFailed: session.loginFailed
     };
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
