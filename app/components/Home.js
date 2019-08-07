@@ -145,7 +145,7 @@ export default class Home extends Component<Props, State> {
       transactions,
       firstStartup,
       loginFailed,
-      totalTransactions
+      totalTransactionCount
     } = this.state;
 
     if (firstStartup === true) {
@@ -228,7 +228,7 @@ export default class Home extends Component<Props, State> {
                   })}
                 </tbody>
               </table>
-              {totalTransactions > 50 && (
+              {totalTransactionCount > 50 && (
                 <form>
                   <div className="field">
                     <div className="buttons">
@@ -331,7 +331,7 @@ export default class Home extends Component<Props, State> {
                   })}
                 </tbody>
               </table>
-              {totalTransactions > 50 && (
+              {totalTransactionCount > 50 && (
                 <form>
                   <div className="field">
                     <div className="buttons">

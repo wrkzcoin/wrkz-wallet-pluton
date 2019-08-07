@@ -116,7 +116,7 @@ export default class Send extends Component<Props, State> {
     const totalAmount = (
       parseFloat(enteredAmount) +
       0.1 +
-      parseFloat(session.daemon.feeAmount / 100, 10)
+      parseFloat(session.daemon.feeAmount / 100)
     ).toFixed(2);
     this.setState({
       enteredAmount,
