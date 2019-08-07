@@ -1,5 +1,3 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-undef */
 // @flow
 import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
 import log from 'electron-log';
