@@ -1,5 +1,4 @@
 // @flow
-import { ipcRenderer } from 'electron';
 import log from 'electron-log';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
@@ -20,7 +19,6 @@ type Props = {};
 type State = {
   transactions: Array<any>,
   totalTransactionCount: number,
-  loginFailed: boolean,
   firstStartup: boolean,
   darkmode: boolean
 };
@@ -39,11 +37,9 @@ export default class Home extends Component<Props, State> {
         false
       ),
       totalTransactionCount: session.getTransactions().length,
-      loginFailed: session.loginFailed,
       firstStartup: session.firstStartup,
       darkmode: session.darkMode
     };
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
     );
@@ -51,13 +47,11 @@ export default class Home extends Component<Props, State> {
   }
 
   componentDidMount() {
-    ipcRenderer.setMaxListeners(1);
-    const { loginFailed } = this.state;
-    if (session.wallet !== undefined) {
-      session.wallet.on('transaction', this.refreshListOnNewTransaction);
-    }
     eventEmitter.on('openNewWallet', this.openNewWallet);
-    eventEmitter.on('loginFailed', this.handleLoginFailure);
+    const { loginFailed, wallet } = session;
+    if (wallet !== undefined) {
+      wallet.on('transaction', this.refreshListOnNewTransaction);
+    }
     if (session.firstLoadOnLogin && loginFailed === false) {
       this.switchOffAnimation();
     }
@@ -72,7 +66,6 @@ export default class Home extends Component<Props, State> {
       transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
     eventEmitter.off('openNewWallet', this.openNewWallet);
-    eventEmitter.off('loginFailed', this.handleLoginFailure);
     if (session.wallet !== undefined) {
       session.wallet.off('transaction', this.refreshListOnNewTransaction);
     }
@@ -82,12 +75,6 @@ export default class Home extends Component<Props, State> {
     await sleep(1000);
     session.firstLoadOnLogin = false;
   }
-
-  handleLoginFailure = () => {
-    this.setState({
-      loginFailed: true
-    });
-  };
 
   refreshListOnNewTransaction = () => {
     log.debug('Transaction found, refreshing transaction list...');
@@ -140,14 +127,10 @@ export default class Home extends Component<Props, State> {
   };
 
   render() {
-    const { darkmode, transactions, firstStartup, loginFailed } = this.state;
+    const { darkmode, transactions, firstStartup } = this.state;
 
     if (firstStartup === true) {
       return <Redirect to="/firststartup" />;
-    }
-
-    if (loginFailed === true) {
-      return <Redirect to="/login" />;
     }
 
     return (

@@ -2,14 +2,15 @@
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
 import { Redirect, withRouter } from 'react-router-dom';
-import { eventEmitter } from '../index';
+import { session } from '../index';
 
 type State = {
   importKey?: boolean,
   importSeed?: boolean,
   changePassword?: boolean,
   login?: boolean,
-  firstStartup?: boolean
+  firstStartup?: boolean,
+  loginFailed?: boolean
 };
 
 type Location = {
@@ -33,8 +34,8 @@ class Redirector extends Component<Props, State> {
       importKey: false,
       importSeed: false,
       changePassword: false,
-      login: false,
-      firstStartup: false
+      firstStartup: false,
+      loginFailed: session.loginFailed
     };
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
     this.goToImportFromKey = this.goToImportFromKey.bind(this);
@@ -45,14 +46,12 @@ class Redirector extends Component<Props, State> {
     ipcRenderer.on('importSeed', this.goToImportFromSeed);
     ipcRenderer.on('importKey', this.goToImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.goToPasswordChange);
-    eventEmitter.on('loginFailed', this.goToLogin);
   }
 
   componentWillUnmount() {
     ipcRenderer.off('importSeed', this.goToImportFromSeed);
     ipcRenderer.off('importKey', this.goToImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.goToPasswordChange);
-    eventEmitter.off('loginFailed', this.goToLogin);
   }
 
   goToImportFromSeed = () => {
@@ -73,12 +72,6 @@ class Redirector extends Component<Props, State> {
     });
   };
 
-  goToLogin = () => {
-    this.setState({
-      login: true
-    });
-  };
-
   goToFirstStartup = () => {
     this.setState({
       firstStartup: true
@@ -92,7 +85,7 @@ class Redirector extends Component<Props, State> {
       changePassword,
       importKey,
       importSeed,
-      login,
+      loginFailed,
       firstStartup
     } = this.state;
     if (changePassword === true && pathname !== '/changepassword') {
@@ -107,7 +100,12 @@ class Redirector extends Component<Props, State> {
       return <Redirect to="/import" />;
     }
 
-    if (login === true && pathname !== '/login') {
+    if (
+      loginFailed === true &&
+      pathname !== '/login' &&
+      pathname !== '/import' &&
+      pathname !== '/importkey'
+    ) {
       return <Redirect to="/login" />;
     }
 

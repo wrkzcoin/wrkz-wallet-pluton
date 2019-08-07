@@ -42,13 +42,19 @@ export default class SyncStatus extends Component<Props, State> {
 
   render() {
     const { darkmode, syncStatus } = this.state;
-    const syncTooltip =
-      session.wallet.getSyncStatus()[2] === 0
-        ? 'Connecting, please wait...'
-        : `${session.wallet.getSyncStatus()[0]}/${
-            session.wallet.getSyncStatus()[2]
-          }`;
 
+    let syncTooltip;
+
+    if (session.wallet) {
+      syncTooltip =
+        session.wallet.getSyncStatus()[2] === 0
+          ? 'Connecting, please wait...'
+          : `${session.wallet.getSyncStatus()[0]}/${
+              session.wallet.getSyncStatus()[2]
+            }`;
+    } else {
+      syncTooltip = 'No wallet open!';
+    }
     return (
       <div className="control statusicons">
         <div className="tags has-addons">

@@ -18,8 +18,7 @@ type Props = {};
 
 type States = {
   darkMode: boolean,
-  importCompleted: boolean,
-  loginFailed: boolean
+  importCompleted: boolean
 };
 
 export default class Send extends Component<Props, States> {
@@ -31,30 +30,20 @@ export default class Send extends Component<Props, States> {
     super(props);
     this.state = {
       darkMode: session.darkMode,
-      importCompleted: false,
-      loginFailed: false
+      importCompleted: false
     };
     this.handleInitialize = this.handleInitialize.bind(this);
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
   }
 
   componentDidMount() {
     eventEmitter.on('initializeNewSession', this.handleInitialize);
-    eventEmitter.on('loginFailed', this.handleLoginFailure);
     eventEmitter.on('openNewWallet', this.handleInitialize);
   }
 
   componentWillUnmount() {
     eventEmitter.off('initializeNewSession', this.handleInitialize);
-    eventEmitter.off('loginFailed', this.handleLoginFailure);
     eventEmitter.off('openNewWallet', this.handleInitialize);
   }
-
-  handleLoginFailure = () => {
-    this.setState({
-      loginFailed: true
-    });
-  };
 
   handleInitialize = () => {
     this.setState({
@@ -132,10 +121,8 @@ export default class Send extends Component<Props, States> {
   }
 
   render() {
-    const { loginFailed, importCompleted, darkMode } = this.state;
-    if (loginFailed === true) {
-      return <Redirect to="/login" />;
-    }
+    const { importCompleted, darkMode } = this.state;
+
     if (importCompleted === true) {
       return <Redirect to="/" />;
     }
