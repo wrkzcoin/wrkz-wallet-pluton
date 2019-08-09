@@ -7,8 +7,6 @@ import Redirector from './Redirector';
 type Props = {};
 
 type State = {
-  importCompleted: boolean,
-  userOpenedDifferentWallet: boolean,
   darkMode: boolean,
   walletFile: string,
   wrongPassword: boolean
@@ -20,37 +18,15 @@ export default class Login extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      importCompleted: false,
-      userOpenedDifferentWallet: false,
       darkMode: session.darkMode || false,
       walletFile: session.walletFile,
       wrongPassword: loginCounter.userLoginAttempted
     };
-    this.handleInitialize = this.handleInitialize.bind(this);
-    this.refreshLogin = this.refreshLogin.bind(this);
   }
 
-  componentDidMount() {
-    eventEmitter.on('initializeNewSession', this.handleInitialize);
-    eventEmitter.on('refreshLogin', this.refreshLogin);
-  }
+  componentDidMount() {}
 
-  componentWillUnmount() {
-    eventEmitter.off('initializeNewSession', this.handleInitialize);
-    eventEmitter.off('refreshLogin', this.refreshLogin);
-  }
-
-  refreshLogin = () => {
-    this.setState({
-      userOpenedDifferentWallet: true
-    });
-  };
-
-  handleInitialize = () => {
-    this.setState({
-      importCompleted: true
-    });
-  };
+  componentWillUnmount() {}
 
   async handleSubmit(event: any) {
     // We're preventing the default refresh of the page that occurs on form submit
@@ -66,19 +42,11 @@ export default class Login extends Component<Props, State> {
 
   render() {
     const {
-      userOpenedDifferentWallet,
-      importCompleted,
       darkMode,
       wrongPassword,
       walletFile
     } = this.state;
 
-    if (userOpenedDifferentWallet) {
-      return <Redirect to="/" />;
-    }
-    if (importCompleted === true) {
-      return <Redirect to="/" />;
-    }
     return (
       <div>
         <Redirector />
