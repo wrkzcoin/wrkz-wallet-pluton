@@ -1,7 +1,6 @@
 // @flow
 import { remote } from 'electron';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
 import { config, session, eventEmitter, il8n } from '../index';
 import Redirector from './Redirector';
@@ -11,8 +10,6 @@ import Redirector from './Redirector';
 type Props = {};
 
 type State = {
-  importCompleted: boolean,
-  loginFailed: boolean,
   darkMode: boolean
 };
 
@@ -24,44 +21,13 @@ export default class FirstStartup extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      importCompleted: false,
-      loginFailed: false,
       darkMode: session.darkMode
     };
-    this.handleInitialize = this.handleInitialize.bind(this);
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
-    this.openExisting = this.openExisting.bind(this);
-    this.openNewWallet = this.openNewWallet.bind(this);
-    this.createNew = this.createNew.bind(this);
   }
 
-  componentDidMount() {
-    eventEmitter.on('initializeNewSession', this.handleInitialize);
-    eventEmitter.on('loginFailed', this.handleLoginFailure);
-    eventEmitter.on('openNewWallet', this.openNewWallet);
-  }
+  componentDidMount() {}
 
-  componentWillUnmount() {
-    eventEmitter.off('initializeNewSession', this.handleInitialize);
-    eventEmitter.off('loginFailed', this.handleLoginFailure);
-    eventEmitter.off('openNewWallet', this.openNewWallet);
-  }
-
-  openNewWallet = () => {
-    this.handleInitialize();
-  };
-
-  handleLoginFailure = () => {
-    this.setState({
-      loginFailed: true
-    });
-  };
-
-  handleInitialize = () => {
-    this.setState({
-      importCompleted: true
-    });
-  };
+  componentWillUnmount() {}
 
   handleSubmit(event: any) {
     // We're preventing the default refresh of the page that occurs on form submit
@@ -122,12 +88,11 @@ export default class FirstStartup extends Component<Props, State> {
     const userSelection = remote.dialog.showMessageBox(null, {
       type: 'info',
       buttons: ['Cancel', 'Seed', 'Keys'],
-      title: 'Seed',
-      message: 'Would you like to restore from seed or keys?'
+      title: il8n.restore,
+      message: il8n.seed_or_keys
     });
     if (userSelection === 1) {
       log.debug('User selected to import from seed...');
-      // this.mainWindow.webContents.send('importSeed');
       eventEmitter.emit('importSeed');
     } else if (userSelection === 2) {
       log.debug('User selected to import from keys...');
@@ -136,14 +101,7 @@ export default class FirstStartup extends Component<Props, State> {
   }
 
   render() {
-    const { loginFailed, importCompleted, darkMode } = this.state;
-    if (loginFailed === true) {
-      return <Redirect to="/login" />;
-    }
-
-    if (importCompleted === true) {
-      return <Redirect to="/" />;
-    }
+    const { darkMode } = this.state;
 
     return (
       <div>

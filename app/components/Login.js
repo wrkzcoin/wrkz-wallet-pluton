@@ -1,6 +1,5 @@
 // @flow
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
 
@@ -41,11 +40,7 @@ export default class Login extends Component<Props, State> {
   }
 
   render() {
-    const {
-      darkMode,
-      wrongPassword,
-      walletFile
-    } = this.state;
+    const { darkMode, wrongPassword, walletFile } = this.state;
 
     return (
       <div>
