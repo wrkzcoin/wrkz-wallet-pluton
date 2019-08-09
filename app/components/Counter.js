@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import QRCode from 'qrcode.react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter } from '../index';
+import { session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -87,7 +87,7 @@ export default class Receive extends Component<Props, State> {
                   <form>
                     <div className="field">
                       <label className="label" htmlFor="receiveaddress">
-                        Receiving Address
+                        {il8n.receiving_address}
                         <textarea
                           className="textarea is-family-monospace is-large"
                           rows="6"
@@ -104,7 +104,7 @@ export default class Receive extends Component<Props, State> {
                           className="button is-success is-large"
                           onClick={() => copyToClipboard(session.address)}
                         >
-                          Copy to Clipboard
+                          {il8n.copy_to_clipboard}
                         </button>
                       </div>
                     </div>
@@ -112,7 +112,7 @@ export default class Receive extends Component<Props, State> {
                 </div>
                 <div className="column">
                   <div className="field">
-                    <p className="has-text-weight-bold">QR Code</p>
+                    <p className="has-text-weight-bold">{il8n.qr_code}</p>
                     <div className="box has-background-light">
                       <center>
                         <span>
@@ -151,7 +151,7 @@ export default class Receive extends Component<Props, State> {
                         className="label has-text-white"
                         htmlFor="receiveaddress"
                       >
-                        Receiving Address
+                        {il8n.receiving_address}
                         <textarea
                           className="textarea is-family-monospace is-large"
                           rows="6"
@@ -168,7 +168,7 @@ export default class Receive extends Component<Props, State> {
                           className="button is-success is-large"
                           onClick={() => copyToClipboard(session.address)}
                         >
-                          Copy to Clipboard
+                          {il8n.copy_to_clipboard}
                         </button>
                       </div>
                     </div>
@@ -177,7 +177,7 @@ export default class Receive extends Component<Props, State> {
                 <div className="column">
                   <div className="field">
                     <p className="has-text-weight-bold has-text-white">
-                      QR Code
+                      {il8n.qr_code}
                     </p>
                     <div className="box has-background-light">
                       <center>
