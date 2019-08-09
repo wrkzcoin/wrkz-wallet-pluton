@@ -75,17 +75,23 @@ export default class ChangePassword extends Component<Props, State> {
   render() {
     const { darkMode } = this.state;
 
+    const backgroundColor = this.state.darkMode === true ? 'has-background-dark' : 'has-background-white';
+    const fillColor = this.state.darkMode === true ? 'has-background-black' : 'has-background-light';
+    const textColor = this.state.darkMode === true ? 'has-text-white' : ''
+
     return (
       <div>
         <Redirector />
-        {darkMode === false && (
-          <div className="wholescreen">
+          <div className={`wholescreen ${fillColor}`}>
             <NavBar />
-            <div className="maincontent">
+            <div className={`maincontent ${backgroundColor}`}>
               <form onSubmit={this.handleSubmit}>
                 {session.walletPassword !== '' && (
                   <div className="field">
-                    <label className="label" htmlFor="scanheight">
+                    <label
+                      className={`label ${textColor}`}
+                      htmlFor="scanheight"
+                    >
                       {il8n.change_passwd_enter_current_passwd}
                       <div className="control">
                         <input
@@ -101,7 +107,10 @@ export default class ChangePassword extends Component<Props, State> {
                 )}
                 {session.walletPassword === '' && (
                   <div className="field">
-                    <label className="label" htmlFor="scanheight">
+                    <label
+                      className={`label ${textColor}`}
+                      htmlFor="scanheight"
+                    >
                       {il8n.change_passwd_enter_current_passwd}
                       <div className="control">
                         <input
@@ -117,7 +126,7 @@ export default class ChangePassword extends Component<Props, State> {
                   </div>
                 )}
                 <div className="field">
-                  <label className="label" htmlFor="scanheight">
+                  <label className={`label ${textColor}`} htmlFor="scanheight">
                     {il8n.change_passwd_enter_new_passwd}
                     <div className="control">
                       <input
@@ -131,7 +140,7 @@ export default class ChangePassword extends Component<Props, State> {
                   </label>
                 </div>
                 <div className="field">
-                  <label className="label" htmlFor="scanheight">
+                  <label className={`label ${textColor}`} htmlFor="scanheight">
                     {il8n.change_passwd_confirm_new_passwd}
                     <div className="control">
                       <input
@@ -151,91 +160,8 @@ export default class ChangePassword extends Component<Props, State> {
                 </div>
               </form>
             </div>
-            <div className="footerbar has-background-light" />
+            <div className={`footerbar ${fillColor}`} />
           </div>
-        )}
-        {darkMode === true && (
-          <div className="wholescreen has-background-dark">
-            <NavBar />
-            <div className="maincontent has-background-dark ">
-              <form onSubmit={this.handleSubmit}>
-                {session.walletPassword !== '' && (
-                  <div className="field">
-                    <label
-                      className="label has-text-white"
-                      htmlFor="scanheight"
-                    >
-                      {il8n.change_passwd_enter_current_passwd}
-                      <div className="control">
-                        <input
-                          className="input is-large"
-                          type="password"
-                          placeholder={
-                            il8n.change_passwd_enter_current_passwd_input_placeholder
-                          }
-                        />
-                      </div>
-                    </label>
-                  </div>
-                )}
-                {session.walletPassword === '' && (
-                  <div className="field">
-                    <label
-                      className="label has-text-white"
-                      htmlFor="scanheight"
-                    >
-                      {il8n.change_passwd_enter_current_passwd}
-                      <div className="control">
-                        <input
-                          className="input is-large"
-                          type="password"
-                          placeholder={
-                            il8n.change_passwd_enter_current_passwd_no_passwd_input_placeholder
-                          }
-                          disabled
-                        />
-                      </div>
-                    </label>
-                  </div>
-                )}
-                <div className="field">
-                  <label className="label has-text-white" htmlFor="scanheight">
-                    {il8n.change_passwd_enter_new_passwd}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="password"
-                        placeholder={
-                          il8n.change_passwd_enter_new_passwd_input_placeholder
-                        }
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="field">
-                  <label className="label has-text-white" htmlFor="scanheight">
-                    {il8n.change_passwd_confirm_new_passwd}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="password"
-                        placeholder={
-                          il8n.change_passwd_confirm_new_passwd_input_placeholder
-                        }
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="buttons is-right">
-                  <button type="submit" className="button is-success is-large">
-                    {il8n.change}
-                  </button>
-                </div>
-              </form>
-            </div>
-            <div className="footerbar has-background-black" />
-          </div>
-        )}
       </div>
     );
   }
