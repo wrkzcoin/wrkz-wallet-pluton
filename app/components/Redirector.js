@@ -2,14 +2,15 @@
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
 import { Redirect, withRouter } from 'react-router-dom';
-import { eventEmitter } from '../index';
+import { session, eventEmitter } from '../index';
 
 type State = {
-  importKey?: boolean,
-  importSeed?: boolean,
-  changePassword?: boolean,
-  login?: boolean,
-  firstStartup?: boolean
+  home: boolean,
+  importKey: boolean,
+  importSeed: boolean,
+  changePassword: boolean,
+  firstStartup: boolean,
+  loginFailed: boolean
 };
 
 type Location = {
@@ -30,30 +31,41 @@ class Redirector extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
+      home: false,
       importKey: false,
       importSeed: false,
       changePassword: false,
-      login: false,
-      firstStartup: false
+      firstStartup: session.firstStartup,
+      loginFailed: session.loginFailed
     };
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
     this.goToImportFromKey = this.goToImportFromKey.bind(this);
     this.goToPasswordChange = this.goToPasswordChange.bind(this);
+    this.goToHome = this.goToHome.bind(this);
   }
 
   componentDidMount() {
     ipcRenderer.on('importSeed', this.goToImportFromSeed);
     ipcRenderer.on('importKey', this.goToImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.goToPasswordChange);
-    eventEmitter.on('loginFailed', this.goToLogin);
+    eventEmitter.on('openNewWallet', this.goToHome);
+    eventEmitter.on('initializeNewSession', this.goToHome);
+    eventEmitter.on('refreshLogin', this.goToHome);
   }
 
   componentWillUnmount() {
     ipcRenderer.off('importSeed', this.goToImportFromSeed);
     ipcRenderer.off('importKey', this.goToImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.goToPasswordChange);
-    eventEmitter.off('loginFailed', this.goToLogin);
+    eventEmitter.off('openNewWallet', this.goToHome);
+    eventEmitter.off('initializeNewSession', this.goToHome);
   }
+
+  goToHome = () => {
+    this.setState({
+      home: true
+    });
+  };
 
   goToImportFromSeed = () => {
     this.setState({
@@ -73,12 +85,6 @@ class Redirector extends Component<Props, State> {
     });
   };
 
-  goToLogin = () => {
-    this.setState({
-      login: true
-    });
-  };
-
   goToFirstStartup = () => {
     this.setState({
       firstStartup: true
@@ -92,9 +98,13 @@ class Redirector extends Component<Props, State> {
       changePassword,
       importKey,
       importSeed,
-      login,
-      firstStartup
+      loginFailed,
+      firstStartup,
+      home
     } = this.state;
+    if (home === true && pathname !== '/') {
+      return <Redirect to="/" />;
+    }
     if (changePassword === true && pathname !== '/changepassword') {
       return <Redirect to="/changepassword" />;
     }
@@ -107,7 +117,12 @@ class Redirector extends Component<Props, State> {
       return <Redirect to="/import" />;
     }
 
-    if (login === true && pathname !== '/login') {
+    if (
+      loginFailed === true &&
+      pathname !== '/login' &&
+      pathname !== '/import' &&
+      pathname !== '/importkey'
+    ) {
       return <Redirect to="/login" />;
     }
 

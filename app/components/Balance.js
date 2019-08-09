@@ -54,13 +54,19 @@ export default class Balance extends Component<Props, State> {
   render() {
     const { darkmode, unlockedBalance, lockedBalance } = this.state;
 
-    const balanceTooltip =
-      `Unlocked: ${session.atomicToHuman(unlockedBalance, true)} ${
-        session.wallet.config.ticker
-      }<br>` +
-      `Locked: ${session.atomicToHuman(lockedBalance, true)} ${
-        session.wallet.config.ticker
-      }`;
+    let balanceTooltip;
+
+    if (session.wallet) {
+      balanceTooltip =
+        `Unlocked: ${session.atomicToHuman(unlockedBalance, true)} ${
+          session.wallet.config.ticker
+        }<br>` +
+        `Locked: ${session.atomicToHuman(lockedBalance, true)} ${
+          session.wallet.config.ticker
+        }`;
+    } else {
+      balanceTooltip = 'No wallet open!';
+    }
 
     return (
       // prettier-ignore
@@ -88,7 +94,7 @@ export default class Balance extends Component<Props, State> {
               unlockedBalance + lockedBalance,
               true
             )}
-            &nbsp;{session.wallet.config.ticker}
+            &nbsp;TRTL
           </span>
         </div>
       </div>

@@ -4,11 +4,9 @@ import log from 'electron-log';
 import npmPackage from '../package.json';
 import LocalizedStrings from 'react-localization';
 
-
 export const il8n = new LocalizedStrings({
-  en:require('./il8n/en-menu.json')
+  en: require('./il8n/en-menu.json')
 });
-
 
 const { version: currentVersion } = npmPackage;
 const { productName } = npmPackage;
@@ -201,7 +199,11 @@ export default class MenuBuilder {
           accelerator: 'Command+M',
           selector: 'performMiniaturize:'
         },
-        { label: il8n.close, accelerator: 'Command+W', selector: 'performClose:' },
+        {
+          label: il8n.close,
+          accelerator: 'Command+W',
+          selector: 'performClose:'
+        },
         { type: 'separator' },
         { label: il8n.bring_all_front, selector: 'arrangeInFront:' }
       ]

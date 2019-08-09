@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable import/no-mutable-exports */
-/* eslint-disable func-names */
+/* eslint-disable global-require */
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
 import path from 'path';
 import React, { Fragment } from 'react';
+import LocalizedStrings from 'react-localization';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { ipcRenderer, remote, clipboard } from 'electron';
@@ -19,12 +18,9 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 
-// Lang
-import LocalizedStrings from 'react-localization';
-
 export const il8n = new LocalizedStrings({
-  en:require('./il8n/en.json'),
-  fr:require('./il8n/fr.json')
+  en: require('./il8n/en.json'),
+  fr: require('./il8n/fr.json')
 });
 
 export function savedInInstallDir(savePath) {
@@ -60,11 +56,10 @@ export const directories = [
   `${homedir}/.protonwallet/logs`
 ];
 
-const [programDirectory, logDirectory] = directories;
+const [programDirectory] = directories;
 
 log.debug('Checking if program directories are present...');
-// eslint-disable-next-line func-names
-directories.forEach(function(dir) {
+directories.forEach(dir => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
     log.debug(`${dir} directories not detected, creating...`);
@@ -97,7 +92,7 @@ if (!session.loginFailed && !session.firstStartup) {
   log.debug('Login failed, redirecting to login...');
 }
 
-ipcRenderer.on('handleClose', function(evt, route) {
+ipcRenderer.on('handleClose', () => {
   if (!session.loginFailed && !session.firstStartup) {
     const saved = session.saveWallet(session.walletFile);
     if (saved) {
@@ -108,7 +103,7 @@ ipcRenderer.on('handleClose', function(evt, route) {
   }
 });
 
-eventEmitter.on('updateRequired', function(updateFile) {
+eventEmitter.on('updateRequired', updateFile => {
   const userResponse = remote.dialog.showMessageBox(null, {
     type: 'info',
     buttons: [il8n.cancel, il8n.ok],
@@ -121,14 +116,16 @@ eventEmitter.on('updateRequired', function(updateFile) {
   }
 });
 
-ipcRenderer.on('handleSaveSilent', function(evt, route) {
+ipcRenderer.on('handleSaveSilent', () => {
   if (!session.loginFailed && !session.firstStartup) {
     const saved = session.saveWallet(session.walletFile);
+    if (saved) {
+      log.debug(`Wallet saved at ${session.walletFile}`);
+    }
   }
 });
 
-// eslint-disable-next-line func-names
-ipcRenderer.on('handleSave', function(evt, route) {
+ipcRenderer.on('handleSave', () => {
   const saved = session.saveWallet(session.walletFile);
   if (saved) {
     remote.dialog.showMessageBox(null, {
@@ -147,7 +144,7 @@ ipcRenderer.on('handleSave', function(evt, route) {
   }
 });
 
-ipcRenderer.on('handleSaveAs', function(evt, route) {
+ipcRenderer.on('handleSaveAs', () => {
   const options = {
     defaultPath: remote.app.getPath('documents')
   };
@@ -164,7 +161,7 @@ ipcRenderer.on('handleSaveAs', function(evt, route) {
   });
 });
 
-ipcRenderer.on('exportToCSV', function(evt, route) {
+ipcRenderer.on('exportToCSV', () => {
   const options = {
     defaultPath: remote.app.getPath('documents')
   };
@@ -191,7 +188,7 @@ function handleOpen() {
     return;
   }
   session.saveWallet(session.walletFile);
-  const [wallet, error] = WalletBackend.openWalletFromFile(
+  const [, error] = WalletBackend.openWalletFromFile(
     session.daemon,
     getPaths[0],
     ''
@@ -234,16 +231,19 @@ eventEmitter.on('sendNotification', function sendNotification(amount) {
   const notif = new window.Notification('Transaction Received!', {
     body: `${il8n.just_received} ${amount} ${session.wallet.config.ticker}`
   });
+  if (notif) {
+    log.debug(
+      `Sent notification: You've just received ${amount} ${
+        session.wallet.config.ticker
+      }`
+    );
+  }
 });
 
 ipcRenderer.on('handleOpen', handleOpen);
 eventEmitter.on('handleOpen', handleOpen);
 
-eventEmitter.on('initializeNewNode', function(
-  password,
-  daemonHost,
-  daemonPort
-) {
+eventEmitter.on('initializeNewNode', (password, daemonHost, daemonPort) => {
   session = null;
   session = new WalletSession(password, daemonHost, daemonPort);
   startWallet();
@@ -251,7 +251,7 @@ eventEmitter.on('initializeNewNode', function(
   session.firstLoadOnLogin = false;
 });
 
-eventEmitter.on('initializeNewSession', function(password) {
+eventEmitter.on('initializeNewSession', password => {
   session = null;
   session = new WalletSession(password);
   startWallet();
@@ -312,7 +312,7 @@ function handleNew() {
 ipcRenderer.on('handleNew', handleNew);
 eventEmitter.on('handleNew', handleNew);
 
-ipcRenderer.on('handleBackup', function(evt, route) {
+ipcRenderer.on('handleBackup', () => {
   const publicAddress = session.wallet.getPrimaryAddress();
   const [
     privateSpendKey,

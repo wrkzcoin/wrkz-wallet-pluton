@@ -1,8 +1,6 @@
 // @flow
-import { ipcRenderer } from 'electron';
 import log from 'electron-log';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import { session, loginCounter, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
@@ -20,8 +18,6 @@ type Props = {};
 type State = {
   transactions: Array<any>,
   totalTransactionCount: number,
-  loginFailed: boolean,
-  firstStartup: boolean,
   darkmode: boolean
 };
 
@@ -39,11 +35,8 @@ export default class Home extends Component<Props, State> {
         false
       ),
       totalTransactionCount: session.getTransactions().length,
-      loginFailed: session.loginFailed,
-      firstStartup: session.firstStartup,
       darkmode: session.darkMode
     };
-    this.handleLoginFailure = this.handleLoginFailure.bind(this);
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
     );
@@ -51,14 +44,12 @@ export default class Home extends Component<Props, State> {
   }
 
   componentDidMount() {
-    ipcRenderer.setMaxListeners(1);
-    const { loginFailed } = this.state;
-    if (session.wallet !== undefined) {
-      session.wallet.on('transaction', this.refreshListOnNewTransaction);
-    }
     eventEmitter.on('openNewWallet', this.openNewWallet);
-    eventEmitter.on('loginFailed', this.handleLoginFailure);
-    if (session.firstLoadOnLogin && loginFailed === false) {
+    const { loginFailed, wallet, firstLoadOnLogin } = session;
+    if (wallet) {
+      wallet.on('transaction', this.refreshListOnNewTransaction);
+    }
+    if (firstLoadOnLogin && loginFailed === false) {
       this.switchOffAnimation();
     }
     if (!loginFailed) {
@@ -68,12 +59,12 @@ export default class Home extends Component<Props, State> {
 
   componentWillUnmount() {
     displayedTransactionCount = 50;
+    const { wallet } = session;
     this.setState({
       transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
     eventEmitter.off('openNewWallet', this.openNewWallet);
-    eventEmitter.off('loginFailed', this.handleLoginFailure);
-    if (session.wallet !== undefined) {
+    if (wallet) {
       session.wallet.off('transaction', this.refreshListOnNewTransaction);
     }
   }
@@ -82,12 +73,6 @@ export default class Home extends Component<Props, State> {
     await sleep(1000);
     session.firstLoadOnLogin = false;
   }
-
-  handleLoginFailure = () => {
-    this.setState({
-      loginFailed: true
-    });
-  };
 
   refreshListOnNewTransaction = () => {
     log.debug('Transaction found, refreshing transaction list...');
@@ -140,21 +125,7 @@ export default class Home extends Component<Props, State> {
   };
 
   render() {
-    const {
-      darkmode,
-      transactions,
-      firstStartup,
-      loginFailed,
-      totalTransactionCount
-    } = this.state;
-
-    if (firstStartup === true) {
-      return <Redirect to="/firststartup" />;
-    }
-
-    if (loginFailed === true) {
-      return <Redirect to="/login" />;
-    }
+    const { darkmode, transactions, totalTransactionCount } = this.state;
 
     return (
       <div>

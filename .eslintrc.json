@@ -8,6 +8,7 @@
     }
   },
   "rules": {
+    "import/no-mutable-exports": "off",
     "flowtype/no-weak-types": "off",
     "class-methods-use-this": "off",
     "jsx-a11y/label-has-for": "off",
