@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { config, session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import Redirector from './Redirector';
+import uiType from '../utils/uitype';
 
 type Props = {};
 
@@ -74,12 +75,7 @@ export default class ChangePassword extends Component<Props, State> {
 
   render() {
     const { darkMode } = this.state;
-
-    const backgroundColor =
-      darkMode === true ? 'has-background-dark' : 'has-background-white';
-    const fillColor =
-      darkMode === true ? 'has-background-black' : 'has-background-light';
-    const textColor = darkMode === true ? 'has-text-white' : '';
+    const { backgroundColor, fillColor, textColor } = uiType(darkMode);
 
     return (
       <div>

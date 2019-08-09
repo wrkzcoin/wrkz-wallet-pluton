@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
+import uiType from '../utils/uitype';
+
 
 type Props = {};
 
@@ -41,12 +43,7 @@ export default class Login extends Component<Props, State> {
 
   render() {
     const { darkMode, wrongPassword, walletFile } = this.state;
-
-    const backgroundColor =
-      darkMode === true ? 'has-background-dark' : 'has-background-white';
-    const fillColor =
-      darkMode === true ? 'has-background-black' : 'has-background-light';
-    const textColor = darkMode === true ? 'has-text-white' : '';
+    const { backgroundColor, fillColor, textColor } = uiType(darkMode);
 
     return (
       <div>
