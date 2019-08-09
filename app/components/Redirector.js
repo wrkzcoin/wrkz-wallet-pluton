@@ -59,6 +59,7 @@ class Redirector extends Component<Props, State> {
     ipcRenderer.off('handlePasswordChange', this.goToPasswordChange);
     eventEmitter.off('openNewWallet', this.goToHome);
     eventEmitter.off('initializeNewSession', this.goToHome);
+    eventEmitter.off('refreshLogin', this.goToHome);
   }
 
   goToHome = () => {
