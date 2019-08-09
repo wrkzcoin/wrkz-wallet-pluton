@@ -187,11 +187,13 @@ export default class Home extends Component<Props, State> {
                           data-tip={
                             tx[0] === 0
                               ? il8n.unconfirmed_tx_30_sec_confirm
-                              : il8n.block + ` ${tx[4]}`
+                              : `${il8n.block} ${tx[4]}`
                           }
                         >
                           {tx[0] === 0 && (
-                            <p className="has-text-danger">{il8n.unconfirmed}</p>
+                            <p className="has-text-danger">
+                              {il8n.unconfirmed}
+                            </p>
                           )}
                           {tx[0] > 0 && (
                             <p>{session.convertTimestamp(tx[0])}</p>
@@ -276,8 +278,12 @@ export default class Home extends Component<Props, State> {
                   <tr>
                     <th className="has-text-white">{il8n.date}</th>
                     <th className="has-text-white">{il8n.hash}</th>
-                    <th className="has-text-white has-text-right">{il8n.amount}</th>
-                    <th className="has-text-white has-text-right">{il8n.balance}</th>
+                    <th className="has-text-white has-text-right">
+                      {il8n.amount}
+                    </th>
+                    <th className="has-text-white has-text-right">
+                      {il8n.balance}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -288,11 +294,13 @@ export default class Home extends Component<Props, State> {
                           data-tip={
                             tx[0] === 0
                               ? il8n.unconfirmed_tx_30_sec_confirm
-                              : il8n.block + ` ${tx[4]}`
+                              : `${il8n.block} ${tx[4]}`
                           }
                         >
                           {tx[0] === 0 && (
-                            <p className="has-text-danger">{il8n.unconfirmed}</p>
+                            <p className="has-text-danger">
+                              {il8n.unconfirmed}
+                            </p>
                           )}
                           {tx[0] > 0 && (
                             <p>{session.convertTimestamp(tx[0])}</p>

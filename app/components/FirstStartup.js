@@ -72,18 +72,18 @@ export default class FirstStartup extends Component<Props, State> {
     if (oldPassword !== session.walletPassword) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: [this.il8n.ok],
-        title: this.il8n.change_passwd_incorrect_passwd_title,
-        message: this.il8n.change_passwd_incorrect_passwd_message
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_incorrect_passwd_title,
+        message: il8n.change_passwd_incorrect_passwd_message
       });
       return;
     }
     if (newPassword !== passwordConfirm) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: [this.il8n.ok],
-        title: this.il8n.change_passwd_passwd_mismatch_title,
-        message: this.il8n.change_passwd_passwd_mismatch_message
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_mismatch_title,
+        message: il8n.change_passwd_passwd_mismatch_message
       });
       return;
     }
@@ -92,16 +92,16 @@ export default class FirstStartup extends Component<Props, State> {
     if (saved) {
       remote.dialog.showMessageBox(null, {
         type: 'info',
-        buttons: [this.il8n.ok],
-        title: this.il8n.change_passwd_passwd_change_success_title,
-        message: this.il8n.change_passwd_passwd_change_success_message
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_change_success_title,
+        message: il8n.change_passwd_passwd_change_success_message
       });
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: [this.il8n.ok],
-        title: this.il8n.change_passwd_passwd_change_unsuccess_title,
-        message: this.il8n.change_passwd_passwd_change_unsuccess_message
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_change_unsuccess_title,
+        message: il8n.change_passwd_passwd_change_unsuccess_message
       });
     }
   }
@@ -152,26 +152,28 @@ export default class FirstStartup extends Component<Props, State> {
           <div className="fullwindow">
             <div className="mid-div">
               <div className="box loginbox has-background-light passwordchangebox">
-                <h1 className="title has-text-centered">{this.il8n.welcome_to_proton}</h1>
+                <h1 className="title has-text-centered">
+                  {il8n.welcome_to_proton}
+                </h1>
                 <button
                   className="button is-large is-fullwidth"
                   onClick={this.openExisting}
                 >
-                  {this.il8n.open_existing_wallet}
+                  {il8n.open_existing_wallet}
                 </button>
                 <br />
                 <button
                   className="button is-large is-fullwidth"
                   onClick={this.createNew}
                 >
-                  {this.il8n.create_new_wallet}
+                  {il8n.create_new_wallet}
                 </button>
                 <br />
                 <button
                   className="button is-large is-fullwidth"
                   onClick={this.importFromKeysOrSeed}
                 >
-                  {this.il8n.import_keys_seed}
+                  {il8n.import_keys_seed}
                 </button>
               </div>
             </div>
@@ -182,27 +184,27 @@ export default class FirstStartup extends Component<Props, State> {
             <div className="mid-div">
               <div className="box loginbox has-background-black passwordchangebox">
                 <h1 className="title has-text-centered has-text-danger">
-                  {this.il8n.welcome_to_proton}
+                  {il8n.welcome_to_proton}
                 </h1>
                 <button
                   className="button is-large is-fullwidth is-dark"
                   onClick={this.openExisting}
                 >
-                  {this.il8n.open_existing_wallet}
+                  {il8n.open_existing_wallet}
                 </button>
                 <br />
                 <button
                   className="button is-large is-fullwidth is-dark"
                   onClick={this.createNew}
                 >
-                  {this.il8n.create_new_wallet}
+                  {il8n.create_new_wallet}
                 </button>
                 <br />
                 <button
                   className="button is-large is-fullwidth is-dark"
                   onClick={this.importFromKeysOrSeed}
                 >
-                  {this.il8n.import_keys_seed}
+                  {il8n.import_keys_seed}
                 </button>
               </div>
             </div>

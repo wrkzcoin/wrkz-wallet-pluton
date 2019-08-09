@@ -1,8 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
-import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter,il8n } from '../index';
+import { session, eventEmitter, il8n } from '../index';
 
 type Props = {};
 
@@ -50,7 +48,7 @@ export default class NodeFee extends Component<Props, State> {
                 darkmode ? 'tag is-dark is-large' : 'tag is-white is-large'
               }
             >
-              {this.il8n.node_fee}
+              {il8n.node_fee}
             </span>
             <span className="tag is-danger is-large">
               {session.atomicToHuman(nodeFee, true)}{' '}

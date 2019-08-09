@@ -31,7 +31,7 @@
   "private_view_key_input_placeholder": "Enter your private view key...",
   "password": "Password",
   "password_input_placeholder": "Enter your wallet password...",
-  "attempting_to_login": "attempting log to ",
+  "attempting_login_to": "attempting login to ",
   "login": "Login",
   "balance_colon": "Balance:",
   "change_passwd_incorrect_passwd_title": "Password incorrect!",
@@ -54,5 +54,15 @@
   "open_existing_wallet": "Open an Existing Wallet",
   "create_new_wallet": "Create a New Wallet",
   "import_keys_seed": "Import from Keys or Seed",
-  "node_fee": "Node Fee:"
+  "node_fee": "Node Fee:",
+  "send_to_address": "Send to Address",
+  "send_to_address_input_placeholder": "Enter a TurtleCoin address to send funds to",
+  "amount_to_send": "Amount to Send",
+  "amount_to_send_input_placeholder": "How much TRTL to send (eg. 100)",
+  "total_with_fees": "Total with Fees",
+  "total_with_fees_input_placeholder": "The total amount including fees",
+  "payment_id": "Payment ID (Optional)",
+  "payment_id_input_placeholder": "Enter a payment ID (Optional)",
+  "generate_payment_id": "Generate Random Payment ID",
+  "send_all": "Send All"
 }

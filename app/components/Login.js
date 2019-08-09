@@ -114,7 +114,8 @@ export default class Login extends Component<Props, State> {
                       htmlFor="scanheight"
                       id="help for scan height field"
                     >
-                      {il8n.attempting_login_to}{walletFile}
+                      {il8n.attempting_login_to}
+                      {walletFile}
                     </label>
                   </div>
                   <div className="buttons is-right">
@@ -161,7 +162,8 @@ export default class Login extends Component<Props, State> {
                       </div>
                     </label>
                     <label className="help has-text-white" htmlFor="scanheight">
-                      {il8n.attempting_login_to}{walletFile}
+                      {il8n.attempting_login_to}
+                      {walletFile}
                     </label>
                   </div>
                   <div className="buttons is-right">

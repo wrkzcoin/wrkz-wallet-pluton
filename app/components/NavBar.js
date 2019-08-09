@@ -81,7 +81,9 @@ export default class NavBar extends Component<Props, State> {
                       {activePage === 'wallet' && (
                         <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
                       )}
-                      {activePage !== 'wallet' && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
+                      {activePage !== 'wallet' && (
+                        <p>&nbsp;&nbsp;{il8n.wallet}</p>
+                      )}
                     </Link>
 
                     <Link className="navbar-item" to={routes.SEND}>
@@ -97,7 +99,9 @@ export default class NavBar extends Component<Props, State> {
                       {activePage === 'receive' && (
                         <strong>&nbsp;&nbsp;{il8n.receive}</strong>
                       )}
-                      {activePage !== 'receive' && <p>&nbsp;&nbsp;{il8n.receive}</p>}
+                      {activePage !== 'receive' && (
+                        <p>&nbsp;&nbsp;{il8n.receive}</p>
+                      )}
                     </Link>
                   </div>
 
@@ -143,7 +147,9 @@ export default class NavBar extends Component<Props, State> {
                       {activePage === 'wallet' && (
                         <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
                       )}
-                      {activePage !== 'wallet' && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
+                      {activePage !== 'wallet' && (
+                        <p>&nbsp;&nbsp;{il8n.wallet}</p>
+                      )}
                     </Link>
 
                     <Link className="navbar-item" to={routes.SEND}>
@@ -159,7 +165,9 @@ export default class NavBar extends Component<Props, State> {
                       {activePage === 'receive' && (
                         <strong>&nbsp;&nbsp;{il8n.receive}</strong>
                       )}
-                      {activePage !== 'receive' && <p>&nbsp;&nbsp;{il8n.receive}</p>}
+                      {activePage !== 'receive' && (
+                        <p>&nbsp;&nbsp;{il8n.receive}</p>
+                      )}
                     </Link>
                   </div>
 

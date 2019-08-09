@@ -188,7 +188,13 @@ export default class Send extends Component<Props, State> {
       type: 'warning',
       buttons: [il8n.cancel, il8n.ok],
       title: il8n.send_tx_confirmation_title,
-      message: il8n.send_tx_confirmation_l1 + totalTransactionAmount + " " +  session.wallet.config.ticker + " to " + sendToAddress + displayIfPaymentID + il8n.send_tx_confirmation_l2 + session.wallet.config.ticker + displayIfNodeFee + il8n.send_tx_confirmation_l3
+      message: `${il8n.send_tx_confirmation_l1 + totalTransactionAmount} ${
+        session.wallet.config.ticker
+      } to ${sendToAddress}${displayIfPaymentID}${
+        il8n.send_tx_confirmation_l2
+      }${session.wallet.config.ticker}${displayIfNodeFee}${
+        il8n.send_tx_confirmation_l3
+      }`
     });
 
     if (userSelection !== 1) {
@@ -278,12 +284,12 @@ export default class Send extends Component<Props, State> {
               <form onSubmit={this.handleSubmit}>
                 <div className="field">
                   <label className="label" htmlFor="address">
-                    {this.il8n.send_to_address}
+                    {il8n.send_to_address}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder={this.il8n.send_to_address_input_placeholder}
+                        placeholder={il8n.send_to_address_input_placeholder}
                         id="label"
                       />
                     </div>
@@ -294,13 +300,11 @@ export default class Send extends Component<Props, State> {
                     <div className="columns">
                       <div className="column">
                         <label className="label" htmlFor="amount">
-                          {this.il8n.amount_to_send}
+                          {il8n.amount_to_send}
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder={`How much ${
-                              session.wallet.config.ticker
-                            } to send (eg. 100)`}
+                            placeholder={il8n.amount_to_send_input_placeholder}
                             id="amount"
                             value={enteredAmount}
                             onChange={this.handleAmountChange}
@@ -311,17 +315,17 @@ export default class Send extends Component<Props, State> {
                             role="button"
                             tabIndex={0}
                           >
-                            {this.il8n.send_all}
+                            {il8n.send_all}
                           </a>
                         </label>
                       </div>
                       <div className="column">
                         <label className="label" htmlFor="totalamount">
-                          {this.il8n.total_with_fees}
+                          {il8n.total_with_fees}
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder={this.il8n.total_with_fees_input_placeholder}
+                            placeholder={il8n.total_with_fees_input_placeholder}
                             id="totalamount"
                             value={totalAmount}
                             onChange={this.handleTotalAmountChange}
@@ -333,12 +337,12 @@ export default class Send extends Component<Props, State> {
                 </div>
                 <div className="field">
                   <label className="label" htmlFor="paymentid">
-                    {this.il8n.payment_id}
+                    {il8n.payment_id}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder={this.il8n.payment_id_input_placeholder}
+                        placeholder={il8n.payment_id_input_placeholder}
                         id="paymentid"
                         value={paymentID}
                         onChange={this.handlePaymentIDChange}
@@ -350,7 +354,7 @@ export default class Send extends Component<Props, State> {
                         tabIndex={0}
                       >
                         {' '}
-                        {this.il8n.generate_payment_id}
+                        {il8n.generate_payment_id}
                       </a>
                     </div>
                   </label>
@@ -361,7 +365,7 @@ export default class Send extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large "
                     >
-                      {this.il8n.send}
+                      {il8n.send}
                     </button>
                   )}
                   {transactionInProgress && (
@@ -369,7 +373,7 @@ export default class Send extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large is-loading is-disabled"
                     >
-                      {this.il8n.send}
+                      {il8n.send}
                     </button>
                   )}
 
@@ -378,7 +382,7 @@ export default class Send extends Component<Props, State> {
                     className="button is-large"
                     onClick={this.resetPaymentID}
                   >
-                    {this.il8n.clear}
+                    {il8n.clear}
                   </button>
                 </div>
               </form>
@@ -400,12 +404,12 @@ export default class Send extends Component<Props, State> {
               <form onSubmit={this.handleSubmit}>
                 <div className="field">
                   <label className="label has-text-white" htmlFor="address">
-                    {this.il8n.send_to_address}
+                    {il8n.send_to_address}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder={this.il8n.send_to_address_input_placeholder}
+                        placeholder={il8n.send_to_address_input_placeholder}
                         id="label"
                       />
                     </div>
@@ -419,7 +423,7 @@ export default class Send extends Component<Props, State> {
                           className="label has-text-white"
                           htmlFor="amount"
                         >
-                          {this.il8n.amount_to_send}
+                          {il8n.amount_to_send}
                           <input
                             className="input is-large"
                             type="text"
@@ -436,7 +440,7 @@ export default class Send extends Component<Props, State> {
                             role="button"
                             tabIndex={0}
                           >
-                            {this.il8n.send_all}
+                            {il8n.send_all}
                           </a>
                         </label>
                       </div>
@@ -445,11 +449,11 @@ export default class Send extends Component<Props, State> {
                           className="label has-text-white"
                           htmlFor="totalamount"
                         >
-                          {this.il8n.total_with_fees}
+                          {il8n.total_with_fees}
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder={this.il8n.total_with_fees_input_placeholder}
+                            placeholder={il8n.total_with_fees_input_placeholder}
                             id="totalamount"
                             value={totalAmount}
                             onChange={this.handleTotalAmountChange}
@@ -461,12 +465,12 @@ export default class Send extends Component<Props, State> {
                 </div>
                 <div className="field">
                   <label className="label has-text-white" htmlFor="paymentid">
-                    {this.il8n.payment_id}
+                    {il8n.payment_id}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder={this.il8n.payment_id_input_placeholder}
+                        placeholder={il8n.payment_id_input_placeholder}
                         id="paymentid"
                         value={paymentID}
                         onChange={this.handlePaymentIDChange}
@@ -477,7 +481,7 @@ export default class Send extends Component<Props, State> {
                         role="button"
                         tabIndex={0}
                       >
-                        {this.il8n.generate_payment_id}
+                        {il8n.generate_payment_id}
                       </a>
                     </div>
                   </label>
@@ -488,7 +492,7 @@ export default class Send extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large "
                     >
-                      {this.il8n.send}
+                      {il8n.send}
                     </button>
                   )}
                   {transactionInProgress && (
@@ -496,7 +500,7 @@ export default class Send extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large is-loading is-disabled"
                     >
-                      {this.il8n.send}
+                      {il8n.send}
                     </button>
                   )}
 
@@ -505,7 +509,7 @@ export default class Send extends Component<Props, State> {
                     className="button is-large is-black"
                     onClick={this.resetPaymentID}
                   >
-                    {this.il8n.clear}
+                    {il8n.clear}
                   </button>
                 </div>
               </form>

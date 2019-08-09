@@ -69,7 +69,7 @@ export default class Balance extends Component<Props, State> {
           <span className={
             darkmode
               ? 'tag is-dark is-large'
-              : 'tag is-white is-large'}>{this.il8n.balance_colon}</span>
+              : 'tag is-white is-large'}>{il8n.balance_colon}</span>
           <span
             className={
               lockedBalance > 0
