@@ -96,32 +96,36 @@ export default class Send extends Component<Props, State> {
   };
 
   handleAmountChange = (event: any) => {
-    const amount = event.target.value;
-    if (amount === '') {
+    let enteredAmount = event.target.value;
+    if (enteredAmount === '') {
       this.setState({
-        enteredAmount: amount,
-        totalAmount: amount
+        enteredAmount: '',
+        totalAmount: ''
       });
       return;
     }
-    if (Number.isNaN(amount)) {
+    if (enteredAmount === '.') {
+      enteredAmount = '0.';
+    }
+
+    const regex = /^\d*(\.(\d\d?)?)?$/;
+    if (!regex.test(enteredAmount) === true) {
       return;
     }
-    if (amount < 0) {
-      return;
-    }
-    const totalAmount = session.atomicToHuman(
-      Number(amount * 100) + 10 + Number(session.daemon.feeAmount),
-      false
-    );
+
+    const totalAmount = (
+      parseFloat(enteredAmount) +
+      0.1 +
+      parseFloat(session.daemon.feeAmount / 100)
+    ).toFixed(2);
     this.setState({
-      enteredAmount: amount,
+      enteredAmount,
       totalAmount
     });
   };
 
   handleTotalAmountChange = (event: any) => {
-    const totalAmount = event.target.value;
+    let totalAmount = event.target.value;
     if (totalAmount === '') {
       this.setState({
         enteredAmount: '',
@@ -129,18 +133,25 @@ export default class Send extends Component<Props, State> {
       });
       return;
     }
-    if (Number.isNaN(totalAmount)) {
+    if (totalAmount === '.') {
+      totalAmount = '0.';
+    }
+
+    const regex = /^\d*(\.(\d\d?)?)?$/;
+    if (!regex.test(totalAmount) === true) {
       return;
     }
-    if (totalAmount < 0) {
-      return;
-    }
-    const amount = session.atomicToHuman(
-      Number(totalAmount * 100) - 10 - Number(session.daemon.feeAmount),
-      false
-    );
+
+    const subtractFee =
+      Number(totalAmount) * 100 - 10 - parseInt(session.daemon.feeAmount, 10);
+
+    const enteredAmount =
+      subtractFee < 0
+        ? ''
+        : session.atomicToHuman(subtractFee, false).toFixed(2);
+
     this.setState({
-      enteredAmount: amount,
+      enteredAmount,
       totalAmount
     });
   };
@@ -244,9 +255,17 @@ export default class Send extends Component<Props, State> {
 
   sendAll = () => {
     const { unlockedBalance } = this.state;
+    const totalAmount =
+      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
+        ? 0
+        : unlockedBalance;
+    const enteredAmount =
+      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
+        ? 0
+        : totalAmount - 10 - parseInt(session.daemon.feeAmount, 10);
     this.setState({
-      enteredAmount: session.atomicToHuman(unlockedBalance - 10, false),
-      totalAmount: session.atomicToHuman(unlockedBalance, false)
+      totalAmount: session.atomicToHuman(totalAmount, false),
+      enteredAmount: session.atomicToHuman(enteredAmount, false)
     });
   };
 
