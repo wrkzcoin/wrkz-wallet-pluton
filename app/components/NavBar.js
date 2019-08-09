@@ -94,7 +94,7 @@ export default class NavBar extends Component<Props, State> {
                       {activePage !== 'send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
                     </Link>
 
-                    <Link className="navbar-item" to={routes.COUNTER}>
+                    <Link className="navbar-item" to={routes.RECEIVE}>
                       <i className="fa fa-arrow-circle-down" />
                       {activePage === 'receive' && (
                         <strong>&nbsp;&nbsp;{il8n.receive}</strong>
@@ -160,7 +160,7 @@ export default class NavBar extends Component<Props, State> {
                       {activePage !== 'send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
                     </Link>
 
-                    <Link className="navbar-item" to={routes.COUNTER}>
+                    <Link className="navbar-item" to={routes.RECEIVE}>
                       <i className="fa fa-arrow-circle-down" />
                       {activePage === 'receive' && (
                         <strong>&nbsp;&nbsp;{il8n.receive}</strong>

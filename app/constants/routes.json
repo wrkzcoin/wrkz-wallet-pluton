@@ -1,6 +1,6 @@
 {
   "HOME": "/",
-  "COUNTER": "/counter",
+  "RECEIVE": "/receive",
   "SEND": "/send",
   "IMPORT": "/import",
   "IMPORTKEY": "/importkey",

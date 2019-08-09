@@ -1,5 +1,5 @@
 // @flow
-import { INCREMENT_COUNTER, DECREMENT_COUNTER } from '../actions/counter';
+import { INCREMENT_COUNTER, DECREMENT_COUNTER } from '../actions/receive';
 import type { Action } from './types';
 
 export default function counter(state: number = 0, action: Action) {
