@@ -178,7 +178,7 @@ ipcRenderer.on('exportToCSV', function(evt, route) {
     type: 'info',
     buttons: [il8n.ok],
     title: il8n.change_passwd_passwd_change_success_title,
-    message: il8n.exported_csv + savePath
+    message: `${il8n.exported_csv} ${savePath} ${il8n.dot_csv}`
   });
 });
 
@@ -288,8 +288,8 @@ function handleNew() {
     remote.dialog.showMessageBox(null, {
       type: 'info',
       buttons: ['OK'],
-      title: 'Created!',
-      message: il8n.title_created
+      title: il8n.title_created,
+      message: il8n.created_successfully
     });
     const savedSuccessfully = session.handleWalletOpen(savePath);
     if (savedSuccessfully === true) {

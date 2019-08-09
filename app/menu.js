@@ -64,7 +64,7 @@ export default class MenuBuilder {
           selector: 'hide:'
         },
         {
-          label: `${hide_others}`,
+          label: `${il8n.hide_others}`,
           accelerator: 'Command+Shift+H',
           selector: 'hideOtherApplications:'
         },
