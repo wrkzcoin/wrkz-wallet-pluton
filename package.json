@@ -264,6 +264,7 @@
     "react-dom": "^16.8.6",
     "react-hot-loader": "^4.8.2",
     "react-loading": "^2.0.3",
+    "react-localization": "^1.0.15",
     "react-redux": "^6.0.1",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",

@@ -1,8 +1,10 @@
+/* eslint-disable global-require */
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
 import path from 'path';
 import React, { Fragment } from 'react';
+import LocalizedStrings from 'react-localization';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { ipcRenderer, remote, clipboard } from 'electron';
@@ -15,6 +17,11 @@ import WalletSession from './wallet/session';
 import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
+
+export const il8n = new LocalizedStrings({
+  en: require('./il8n/en.json'),
+  fr: require('./il8n/fr.json')
+});
 
 export function savedInInstallDir(savePath) {
   const installationDirectory = path.resolve(remote.app.getAppPath(), '../../');
@@ -99,10 +106,9 @@ ipcRenderer.on('handleClose', () => {
 eventEmitter.on('updateRequired', updateFile => {
   const userResponse = remote.dialog.showMessageBox(null, {
     type: 'info',
-    buttons: ['Cancel', 'OK'],
-    title: 'Update Required!',
-    message:
-      "There's an update to Proton wallet. Would you like to download it?"
+    buttons: [il8n.cancel, il8n.ok],
+    title: il8n.update_required,
+    message: `${il8n.new_update}`
   });
   if (userResponse === 1) {
     remote.shell.openExternal(updateFile);
@@ -124,17 +130,16 @@ ipcRenderer.on('handleSave', () => {
   if (saved) {
     remote.dialog.showMessageBox(null, {
       type: 'info',
-      buttons: ['OK'],
-      title: 'Saved!',
-      message: 'The wallet was saved successfully.'
+      buttons: [il8n.ok],
+      title: il8n.change_passwd_passwd_change_success_title,
+      message: il8n.saved_successfully
     });
   } else {
     remote.dialog.showMessageBox(null, {
       type: 'error',
-      buttons: ['OK'],
-      title: 'Error!',
-      message:
-        'The wallet was not saved successfully. Check directory permissions and try again.'
+      buttons: [il8n.ok],
+      title: [il8n.change_passwd_passwd_change_unsuccess_title],
+      message: il8n.not_saved_successfully
     });
   }
 });
@@ -150,9 +155,9 @@ ipcRenderer.on('handleSaveAs', () => {
   session.saveWallet(savePath);
   remote.dialog.showMessageBox(null, {
     type: 'info',
-    buttons: ['OK'],
-    title: 'Saved!',
-    message: 'Your wallet was saved successfully.'
+    buttons: [il8n.ok],
+    title: il8n.change_passwd_passwd_change_success_title,
+    message: il8n.saved_successfully
   });
 });
 
@@ -168,9 +173,9 @@ ipcRenderer.on('exportToCSV', () => {
   session.exportToCSV(savePath);
   remote.dialog.showMessageBox(null, {
     type: 'info',
-    buttons: ['OK'],
-    title: 'Saved!',
-    message: `Your transactions were successfully exported to ${savePath}.csv`
+    buttons: [il8n.ok],
+    title: il8n.change_passwd_passwd_change_success_title,
+    message: `${il8n.exported_csv} ${savePath} ${il8n.dot_csv}`
   });
 });
 
@@ -192,9 +197,9 @@ function handleOpen() {
     log.debug(`Failed to open wallet: ${error.toString()}`);
     remote.dialog.showMessageBox(null, {
       type: 'error',
-      buttons: ['OK'],
-      title: 'Error opening wallet!',
-      message: error.toString()
+      buttons: [il8n.ok],
+      title: il8n.title_error_opening_wallet,
+      message: il8n.error_opening_wallet
     });
     return;
   }
@@ -215,16 +220,16 @@ function handleOpen() {
   } else {
     remote.dialog.showMessageBox(null, {
       type: 'error',
-      buttons: ['OK'],
-      title: 'Error opening wallet!',
-      message: 'The wallet was not opened successfully. Try again.'
+      buttons: [il8n.ok],
+      title: il8n.title_error_opening_wallet,
+      message: il8n.error_opening_wallet
     });
   }
 }
 
 eventEmitter.on('sendNotification', function sendNotification(amount) {
   const notif = new window.Notification('Transaction Received!', {
-    body: `You've just received ${amount} ${session.wallet.config.ticker}`
+    body: `${il8n.just_received} ${amount} ${session.wallet.config.ticker}`
   });
   if (notif) {
     log.debug(
@@ -265,10 +270,9 @@ function handleNew() {
   if (savedInInstallDir(savePath)) {
     remote.dialog.showMessageBox(null, {
       type: 'error',
-      buttons: ['OK'],
-      title: 'Can not save to installation directory',
-      message:
-        'You can not save the wallet in the installation directory. The windows installer will delete all files in the directory upon upgrading the application, so it is not allowed.'
+      buttons: [il8n.ok],
+      title: il8n.title_no_saving_in_install_dir,
+      message: il8n.no_saving_in_install_dir
     });
     return;
   }
@@ -277,17 +281,15 @@ function handleNew() {
     remote.dialog.showMessageBox(null, {
       type: 'error',
       buttons: ['OK'],
-      title: 'Error saving wallet!',
-      message:
-        'The wallet was not created successfully. Check your directory permissions and try again.'
+      title: il8n.title_error_creating_wallet,
+      message: il8n.not_created_successfully
     });
   } else {
     remote.dialog.showMessageBox(null, {
       type: 'info',
       buttons: ['OK'],
-      title: 'Created!',
-      message:
-        'Your new wallet was created successfully. Go to Wallet > Password and add a password to the wallet if desired.'
+      title: il8n.title_created,
+      message: il8n.created_successfully
     });
     const savedSuccessfully = session.handleWalletOpen(savePath);
     if (savedSuccessfully === true) {
@@ -300,8 +302,8 @@ function handleNew() {
       remote.dialog.showMessageBox(null, {
         type: 'error',
         buttons: ['OK'],
-        title: 'Error opening wallet!',
-        message: 'The wallet was not opened successfully. Try again.'
+        title: il8n.title_error_opening_wallet,
+        message: il8n.error_opening_wallet
       });
     }
   }
@@ -322,18 +324,18 @@ ipcRenderer.on('handleBackup', () => {
   const msg =
     // eslint-disable-next-line prefer-template
     publicAddress +
-    `\n\nPrivate Spend Key:\n\n` +
+    `\n\n${il8n.private_spend_key_colon}\n\n` +
     privateSpendKey +
-    `\n\nPrivate View Key:\n\n` +
+    `\n\n${il8n.private_view_key_colon}\n\n` +
     privateViewKey +
-    `\n\nMnemonic Seed:\n\n` +
+    `\n\n${il8n.mnemonic_seed_colon}\n\n` +
     mnemonicSeed +
-    `\n\nPlease save these keys safely and securely. \nIf you lose your keys, you will not be able to recover your funds.`;
+    `\n\n${il8n.please_save_your_keys}`;
 
   const userSelection = remote.dialog.showMessageBox(null, {
     type: 'info',
-    buttons: ['Copy to Clipboard', 'Cancel'],
-    title: 'Seed',
+    buttons: [il8n.copy_to_clipboard, il8n.cancel],
+    title: il8n.backup,
     message: msg
   });
   if (userSelection === 0) {

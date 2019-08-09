@@ -8452,6 +8452,11 @@ loaders.css@^0.1.2:
   resolved "https://registry.yarnpkg.com/loaders.css/-/loaders.css-0.1.2.tgz#3a9fb43726c73334a38142af9d0629019b658743"
   integrity sha1-Op+0NybHMzSjgUKvnQYpAZtlh0M=
 
+localized-strings@^0.2.0:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/localized-strings/-/localized-strings-0.2.3.tgz#6caed1bc0476668331ed4e96729676ae8f7a0295"
+  integrity sha512-uWO3E2jDynMBsJIglBMhALO3f1DnfOFzCSoCt+fPLGx94PXU1KfbgBx04J4xfjPwozRowAHk8bfaw8bgeKTTCQ==
+
 locate-path@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-2.0.0.tgz#2b568b265eec944c6d9c0de9c3dbbbca0354cd8e"
@@ -10902,6 +10907,13 @@ react-loading@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/react-loading/-/react-loading-2.0.3.tgz#e8138fb0c3e4674e481b320802ac7048ae14ffb9"
   integrity sha512-Vdqy79zq+bpeWJqC+xjltUjuGApyoItPgL0vgVfcJHhqwU7bAMKzysfGW/ADu6i0z0JiOCRJjo+IkFNkRNbA3A==
+
+react-localization@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/react-localization/-/react-localization-1.0.15.tgz#624bd0b514100488a84204e20b398750313d1708"
+  integrity sha512-s+yK3EqPUhN8kAfUIoA5m0a0iGOvxB3DrvngYnSZNLRQRX+yS7LYfTuKT66KVa3Cr6EP4iGRtw4XRqpsi1ZLjw==
+  dependencies:
+    localized-strings "^0.2.0"
 
 react-redux@^6.0.1:
   version "6.0.1"

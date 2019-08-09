@@ -10,7 +10,8 @@ import {
   session,
   directories,
   eventEmitter,
-  savedInInstallDir
+  savedInInstallDir,
+  il8n
 } from '../index';
 
 type Props = {};
@@ -60,9 +61,8 @@ export default class Send extends Component<Props, States> {
       remote.dialog.showMessageBox(null, {
         type: 'error',
         buttons: ['OK'],
-        title: 'Can not save to installation directory',
-        message:
-          'You can not save the wallet in the installation directory. The windows installer will delete all files in the directory upon upgrading the application, so it is not allowed.'
+        title: il8n.import_save_wallet_title,
+        message: il8n.import_save_wallet_message
       });
       return;
     }
@@ -74,10 +74,9 @@ export default class Send extends Component<Props, States> {
     if (importedSuccessfully === true) {
       remote.dialog.showMessageBox(null, {
         type: 'info',
-        buttons: ['OK'],
-        title: 'Wallet imported successfully!',
-        message:
-          'The wallet was imported successfully. Go to Wallet > Password and add a password to the wallet if desired.'
+        buttons: [il8n.ok],
+        title: il8n.import_import_wallet_title,
+        message: il8n.import_import_wallet_message
       });
       const programDirectory = directories[0];
       const modifyConfig = config;
@@ -97,9 +96,9 @@ export default class Send extends Component<Props, States> {
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: ['OK'],
-        title: 'Error importing wallet!',
-        message: 'The wallet was not imported successfully. Try again.'
+        buttons: [il8n.ok],
+        title: il8n.import_import_wallet_error_title,
+        message: il8n.import_import_wallet_error_message
       });
     }
   }
@@ -117,22 +116,22 @@ export default class Send extends Component<Props, States> {
               <form onSubmit={this.handleSubmit}>
                 <div className="field">
                   <label className="label" htmlFor="seed">
-                    Mnemonic Seed
+                    {il8n.mnemonic_seed}
                     <textarea
                       className="textarea is-large"
-                      placeholder="Enter your seed here."
+                      placeholder={il8n.mnemonic_seed_input_placeholder}
                       id="seed"
                     />
                   </label>
                 </div>
                 <div className="field">
                   <label className="label" htmlFor="scanheight">
-                    Scan Height (Optional)
+                    {il8n.scan_height}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder="Block height to start scanning from. Defaults to 0."
+                        placeholder={il8n.scan_height_input_placeholder}
                         id="scanheight"
                       />
                     </div>
@@ -140,10 +139,10 @@ export default class Send extends Component<Props, States> {
                 </div>
                 <div className="buttons">
                   <button type="submit" className="button is-success is-large ">
-                    Import
+                    {il8n.import}
                   </button>
                   <button type="reset" className="button is-large">
-                    Clear
+                    {il8n.clear}
                   </button>
                 </div>
               </form>
@@ -158,22 +157,22 @@ export default class Send extends Component<Props, States> {
               <form onSubmit={this.handleSubmit}>
                 <div className="field">
                   <label className="label has-text-white" htmlFor="seed">
-                    Mnemonic Seed
+                    {il8n.mnemonic_seed}
                     <textarea
                       className="textarea is-large"
-                      placeholder="Enter your seed here."
+                      placeholder={il8n.mnemonic_seed_input_placeholder}
                       id="seed"
                     />
                   </label>
                 </div>
                 <div className="field">
                   <label className="label has-text-white" htmlFor="scanheight">
-                    Scan Height (Optional)
+                    {il8n.scan_height}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder="Block height to start scanning from. Defaults to 0."
+                        placeholder={il8n.scan_height_input_placeholder}
                         id="scanheight"
                       />
                     </div>
@@ -181,10 +180,10 @@ export default class Send extends Component<Props, States> {
                 </div>
                 <div className="buttons">
                   <button type="submit" className="button is-success is-large ">
-                    Import
+                    {il8n.import}
                   </button>
                   <button type="reset" className="button is-large is-black">
-                    Clear
+                    {il8n.reset}
                   </button>
                 </div>
               </form>

@@ -1,10 +1,14 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-undef */
 // @flow
 import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
 import log from 'electron-log';
 import npmPackage from '../package.json';
-// import { session, config } from './index';
+import LocalizedStrings from 'react-localization';
+
+
+export const il8n = new LocalizedStrings({
+  en:require('./il8n/en-menu.json')
+});
+
 
 const { version: currentVersion } = npmPackage;
 const { productName } = npmPackage;
@@ -37,18 +41,6 @@ export default class MenuBuilder {
 
   setupDevelopmentEnvironment() {
     this.mainWindow.openDevTools();
-    this.mainWindow.webContents.on('context-menu', (e, props) => {
-      const { x, y } = props;
-
-      Menu.buildFromTemplate([
-        {
-          label: 'Inspect element',
-          click: () => {
-            this.mainWindow.inspectElement(x, y);
-          }
-        }
-      ]).popup(this.mainWindow);
-    });
   }
 
   buildDarwinTemplate() {
@@ -56,7 +48,7 @@ export default class MenuBuilder {
       label: `${productName}`,
       submenu: [
         {
-          label: `About ${productName}`,
+          label: `${il8n.about} ${productName}`,
           click: () => {
             shell.openExternal(
               'http://github.com/turtlecoin/turtle-wallet-proton#readme'
@@ -65,19 +57,19 @@ export default class MenuBuilder {
         },
         { type: 'separator' },
         {
-          label: `Hide ${productName}`,
+          label: `${il8n.hide} ${productName}`,
           accelerator: 'Command+H',
           selector: 'hide:'
         },
         {
-          label: 'Hide Others',
+          label: `${il8n.hide_others}`,
           accelerator: 'Command+Shift+H',
           selector: 'hideOtherApplications:'
         },
-        { label: 'Show All', selector: 'unhideAllApplications:' },
+        { label: il8n.show_all, selector: 'unhideAllApplications:' },
         { type: 'separator' },
         {
-          label: 'Quit',
+          label: il8n.quit,
           accelerator: 'Command+Q',
           click: () => {
             app.quit();
@@ -86,7 +78,7 @@ export default class MenuBuilder {
       ]
     };
     const subMenuFile = {
-      label: 'File',
+      label: il8n.file,
       submenu: [
         {
           label: 'Open',
@@ -96,33 +88,33 @@ export default class MenuBuilder {
           }
         },
         {
-          label: 'New',
+          label: il8n.new,
           accelerator: 'Command+N',
           click: () => {
             this.handleNew();
           }
         },
         {
-          label: 'Restore',
+          label: il8n.restore,
           click: () => {
             this.handleRestore();
           }
         },
         {
-          label: 'Save',
+          label: il8n.save,
           accelerator: 'Command+S',
           click: () => {
             this.handleSave();
           }
         },
         {
-          label: 'Save a Copy',
+          label: il8n.save_copy,
           click: () => {
             this.handleSaveAs();
           }
         },
         {
-          label: 'Close',
+          label: il8n.close,
           accelerator: 'Command+W',
           click: () => {
             this.mainWindow.close();
@@ -131,40 +123,40 @@ export default class MenuBuilder {
       ]
     };
     const subMenuEdit = {
-      label: 'Edit',
+      label: il8n.edit,
       submenu: [
-        { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-        { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
+        { label: il8n.undo, accelerator: 'Command+Z', selector: 'undo:' },
+        { label: il8n.redo, accelerator: 'Shift+Command+Z', selector: 'redo:' },
         { type: 'separator' },
-        { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-        { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-        { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
+        { label: il8n.cut, accelerator: 'Command+X', selector: 'cut:' },
+        { label: il8n.copy, accelerator: 'Command+C', selector: 'copy:' },
+        { label: il8n.paste, accelerator: 'Command+V', selector: 'paste:' },
         {
-          label: 'Select All',
+          label: il8n.select_all,
           accelerator: 'Command+A',
           selector: 'selectAll:'
         }
       ]
     };
     const subMenuViewDev = {
-      label: 'View',
+      label: il8n.view,
       submenu: [
         {
-          label: 'Reload',
+          label: il8n.reload,
           accelerator: 'Command+R',
           click: () => {
             this.mainWindow.webContents.reload();
           }
         },
         {
-          label: 'Toggle Full Screen',
+          label: il8n.toggle_fullscreen,
           accelerator: 'Ctrl+Command+F',
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
           }
         },
         {
-          label: 'Toggle Developer Tools',
+          label: il8n.toggle_devtools,
           accelerator: 'Alt+Command+I',
           click: () => {
             this.mainWindow.toggleDevTools();
@@ -173,7 +165,7 @@ export default class MenuBuilder {
       ]
     };
     const subMenuViewProd = {
-      label: 'View',
+      label: il8n.view,
       submenu: [
         {
           label: 'Toggle Full Screen',
@@ -185,16 +177,16 @@ export default class MenuBuilder {
       ]
     };
     const subMenuWallet = {
-      label: 'Wallet',
+      label: il8n.wallet,
       submenu: [
         {
-          label: 'Password',
+          label: il8n.password,
           click: () => {
             this.handlePasswordChange();
           }
         },
         {
-          label: 'Backup',
+          label: il8n.backup,
           click: () => {
             this.handleBackup();
           }
@@ -202,23 +194,23 @@ export default class MenuBuilder {
       ]
     };
     const subMenuWindow = {
-      label: 'Window',
+      label: il8n.window,
       submenu: [
         {
-          label: 'Minimize',
+          label: il8n.minimize,
           accelerator: 'Command+M',
           selector: 'performMiniaturize:'
         },
-        { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
+        { label: il8n.close, accelerator: 'Command+W', selector: 'performClose:' },
         { type: 'separator' },
-        { label: 'Bring All to Front', selector: 'arrangeInFront:' }
+        { label: il8n.bring_all_front, selector: 'arrangeInFront:' }
       ]
     };
     const subMenuTools = {
-      label: 'Tools',
+      label: il8n.tools,
       submenu: [
         {
-          label: '&Export to CSV',
+          label: il8n.export_csv,
           click: () => {
             this.handleExportToCsv();
           }
@@ -226,19 +218,19 @@ export default class MenuBuilder {
       ]
     };
     const subMenuHelp = {
-      label: 'Help',
+      label: il8n.help,
       submenu: [
         {
           label: `${currentVersion}`
         },
         {
-          label: 'Support',
+          label: il8n.support,
           click() {
             shell.openExternal('https://discord.gg/P7urHQs');
           }
         },
         {
-          label: 'Report Bug',
+          label: il8n.report_bug,
           click() {
             shell.openExternal(
               'https://github.com/turtlecoin/turtle-wallet-proton/issues'
@@ -246,7 +238,7 @@ export default class MenuBuilder {
           }
         },
         {
-          label: 'Feature Request',
+          label: il8n.feature_request,
           click() {
             shell.openExternal(
               'https://github.com/turtlecoin/turtle-wallet-proton/issues'
@@ -305,9 +297,9 @@ export default class MenuBuilder {
     // seed will be 0, keys will be 1
     const userSelection = dialog.showMessageBox(null, {
       type: 'info',
-      buttons: ['Cancel', 'Seed', 'Keys'],
-      title: 'Seed',
-      message: 'Would you like to restore from seed or keys?'
+      buttons: [il8n.cancel, il8n.seed, il8n.keys],
+      title: il8n.restore,
+      message: il8n.seed_or_keys
     });
     if (userSelection === 1) {
       log.debug('User selected to import from seed...');
@@ -321,43 +313,43 @@ export default class MenuBuilder {
   buildDefaultTemplate() {
     const templateDefault = [
       {
-        label: '&File',
+        label: il8n.file,
         submenu: [
           {
-            label: '&Open',
+            label: il8n.open,
             accelerator: 'Ctrl+O',
             click: () => {
               this.handleOpen();
             }
           },
           {
-            label: '&New',
+            label: il8n.new,
             accelerator: 'Ctrl+N',
             click: () => {
               this.handleNew();
             }
           },
           {
-            label: '&Restore',
+            label: il8n.restore,
             click: () => {
               this.handleRestore();
             }
           },
           {
-            label: '&Save',
+            label: il8n.save,
             accelerator: 'Ctrl+S',
             click: () => {
               this.handleSave();
             }
           },
           {
-            label: '&Save a Copy',
+            label: il8n.save_copy,
             click: () => {
               this.handleSaveAs();
             }
           },
           {
-            label: '&Close',
+            label: il8n.close,
             accelerator: 'Ctrl+W',
             click: () => {
               this.mainWindow.close();
@@ -366,16 +358,16 @@ export default class MenuBuilder {
         ]
       },
       {
-        label: '&Wallet',
+        label: il8n.wallet,
         submenu: [
           {
-            label: '&Password',
+            label: il8n.password,
             click: () => {
               this.handlePasswordChange();
             }
           },
           {
-            label: '&Backup',
+            label: il8n.backup,
             click: () => {
               this.handleBackup();
             }
@@ -383,19 +375,19 @@ export default class MenuBuilder {
         ]
       },
       {
-        label: '&View',
+        label: il8n.view,
         submenu:
           process.env.NODE_ENV === 'development'
             ? [
                 {
-                  label: '&Reload',
+                  label: il8n.reload,
                   accelerator: 'Ctrl+R',
                   click: () => {
                     this.mainWindow.webContents.reload();
                   }
                 },
                 {
-                  label: 'Toggle &Full Screen',
+                  label: il8n.toggle_fullscreen,
                   accelerator: 'F11',
                   click: () => {
                     this.mainWindow.setFullScreen(
@@ -404,7 +396,7 @@ export default class MenuBuilder {
                   }
                 },
                 {
-                  label: 'Toggle &Developer Tools',
+                  label: il8n.toggle_devtools,
                   accelerator: 'Alt+Ctrl+I',
                   click: () => {
                     this.mainWindow.toggleDevTools();
@@ -413,7 +405,7 @@ export default class MenuBuilder {
               ]
             : [
                 {
-                  label: 'Toggle &Full Screen',
+                  label: il8n.toggle_fullscreen,
                   accelerator: 'F11',
                   click: () => {
                     this.mainWindow.setFullScreen(
@@ -424,10 +416,10 @@ export default class MenuBuilder {
               ]
       },
       {
-        label: '&Tools',
+        label: il8n.tools,
         submenu: [
           {
-            label: '&Export to CSV',
+            label: il8n.export_csv,
             click: () => {
               this.handleExportToCsv();
             }
@@ -435,19 +427,19 @@ export default class MenuBuilder {
         ]
       },
       {
-        label: 'Help',
+        label: il8n.help,
         submenu: [
           {
             label: `${currentVersion}`
           },
           {
-            label: 'Support',
+            label: il8n.support,
             click() {
               shell.openExternal('https://discord.gg/P7urHQs');
             }
           },
           {
-            label: 'About',
+            label: il8n.about,
             click() {
               shell.openExternal(
                 'http://github.com/turtlecoin/turtle-wallet-proton#readme'
@@ -455,7 +447,7 @@ export default class MenuBuilder {
             }
           },
           {
-            label: 'Report Bug',
+            label: il8n.report_bug,
             click() {
               shell.openExternal(
                 'https://github.com/turtlecoin/turtle-wallet-proton/issues'
@@ -463,7 +455,7 @@ export default class MenuBuilder {
             }
           },
           {
-            label: 'Feature Request',
+            label: il8n.feature_request,
             click() {
               shell.openExternal(
                 'https://github.com/turtlecoin/turtle-wallet-proton/issues'

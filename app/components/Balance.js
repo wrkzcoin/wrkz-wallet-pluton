@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
-import { session } from '../index';
+import { session, il8n } from '../index';
 
 type Props = {};
 
@@ -75,7 +75,7 @@ export default class Balance extends Component<Props, State> {
           <span className={
             darkmode
               ? 'tag is-dark is-large'
-              : 'tag is-white is-large'}>Balance:</span>
+              : 'tag is-white is-large'}>{il8n.balance_colon}</span>
           <span
             className={
               lockedBalance > 0

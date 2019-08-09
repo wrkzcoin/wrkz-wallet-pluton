@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import log from 'electron-log';
-import { session, eventEmitter } from '../index';
+import { session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -83,32 +83,36 @@ export default class Send extends Component<Props, State> {
   };
 
   handleAmountChange = (event: any) => {
-    const amount = event.target.value;
-    if (amount === '') {
+    let enteredAmount = event.target.value;
+    if (enteredAmount === '') {
       this.setState({
-        enteredAmount: amount,
-        totalAmount: amount
+        enteredAmount: '',
+        totalAmount: ''
       });
       return;
     }
-    if (Number.isNaN(amount)) {
+    if (enteredAmount === '.') {
+      enteredAmount = '0.';
+    }
+
+    const regex = /^\d*(\.(\d\d?)?)?$/;
+    if (!regex.test(enteredAmount) === true) {
       return;
     }
-    if (amount < 0) {
-      return;
-    }
-    const totalAmount = session.atomicToHuman(
-      Number(amount * 100) + 10 + Number(session.daemon.feeAmount),
-      false
-    );
+
+    const totalAmount = (
+      parseFloat(enteredAmount) +
+      0.1 +
+      parseFloat(session.daemon.feeAmount / 100)
+    ).toFixed(2);
     this.setState({
-      enteredAmount: amount,
+      enteredAmount,
       totalAmount
     });
   };
 
   handleTotalAmountChange = (event: any) => {
-    const totalAmount = event.target.value;
+    let totalAmount = event.target.value;
     if (totalAmount === '') {
       this.setState({
         enteredAmount: '',
@@ -116,18 +120,25 @@ export default class Send extends Component<Props, State> {
       });
       return;
     }
-    if (Number.isNaN(totalAmount)) {
+    if (totalAmount === '.') {
+      totalAmount = '0.';
+    }
+
+    const regex = /^\d*(\.(\d\d?)?)?$/;
+    if (!regex.test(totalAmount) === true) {
       return;
     }
-    if (totalAmount < 0) {
-      return;
-    }
-    const amount = session.atomicToHuman(
-      Number(totalAmount * 100) - 10 - Number(session.daemon.feeAmount),
-      false
-    );
+
+    const subtractFee =
+      Number(totalAmount) * 100 - 10 - parseInt(session.daemon.feeAmount, 10);
+
+    const enteredAmount =
+      subtractFee < 0
+        ? ''
+        : session.atomicToHuman(subtractFee, false).toFixed(2);
+
     this.setState({
-      enteredAmount: amount,
+      enteredAmount,
       totalAmount
     });
   };
@@ -173,13 +184,15 @@ export default class Send extends Component<Props, State> {
 
     const userSelection = remote.dialog.showMessageBox(null, {
       type: 'warning',
-      buttons: ['Cancel', 'OK'],
-      title: 'Please Confirm Transaction',
-      message: `You are about to send ${totalTransactionAmount} ${
+      buttons: [il8n.cancel, il8n.ok],
+      title: il8n.send_tx_confirmation_title,
+      message: `${il8n.send_tx_confirmation_l1 + totalTransactionAmount} ${
         session.wallet.config.ticker
-      } to ${sendToAddress}${displayIfPaymentID} which includes a network fee of 0.10 ${
-        session.wallet.config.ticker
-      }${displayIfNodeFee}. Do you wish to proceed?`
+      } to ${sendToAddress}${displayIfPaymentID}${
+        il8n.send_tx_confirmation_l2
+      }${session.wallet.config.ticker}${displayIfNodeFee}${
+        il8n.send_tx_confirmation_l3
+      }`
     });
 
     if (userSelection !== 1) {
@@ -197,16 +210,16 @@ export default class Send extends Component<Props, State> {
     if (hash) {
       remote.dialog.showMessageBox(null, {
         type: 'info',
-        buttons: ['OK'],
-        title: 'Transaction Sent!',
-        message: `Your transaction was sent successfully.\nTransaction hash: ${hash}`
+        buttons: [il8n.ok],
+        title: il8n.send_tx_complete.title,
+        message: il8n.send_tx_complete_message + hash
       });
       eventEmitter.emit('transactionComplete');
     } else if (err) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: ['OK'],
-        title: 'Transaction Error',
+        buttons: [il8n.ok],
+        title: il8n.send_tx_error_title,
         message: err.toString()
       });
       eventEmitter.emit('transactionCancel');
@@ -229,9 +242,17 @@ export default class Send extends Component<Props, State> {
 
   sendAll = () => {
     const { unlockedBalance } = this.state;
+    const totalAmount =
+      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
+        ? 0
+        : unlockedBalance;
+    const enteredAmount =
+      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
+        ? 0
+        : totalAmount - 10 - parseInt(session.daemon.feeAmount, 10);
     this.setState({
-      enteredAmount: session.atomicToHuman(unlockedBalance - 10, false),
-      totalAmount: session.atomicToHuman(unlockedBalance, false)
+      totalAmount: session.atomicToHuman(totalAmount, false),
+      enteredAmount: session.atomicToHuman(enteredAmount, false)
     });
   };
 
@@ -266,12 +287,12 @@ export default class Send extends Component<Props, State> {
               <form onSubmit={this.handleSubmit}>
                 <div className="field">
                   <label className="label" htmlFor="address">
-                    Send to Address
+                    {il8n.send_to_address}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder="Enter a TurtleCoin address to send funds to."
+                        placeholder={il8n.send_to_address_input_placeholder}
                         id="label"
                       />
                     </div>
@@ -282,13 +303,11 @@ export default class Send extends Component<Props, State> {
                     <div className="columns">
                       <div className="column">
                         <label className="label" htmlFor="amount">
-                          Amount to Send
+                          {il8n.amount_to_send}
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder={`How much ${
-                              session.wallet.config.ticker
-                            } to send (eg. 100)`}
+                            placeholder={il8n.amount_to_send_input_placeholder}
                             id="amount"
                             value={enteredAmount}
                             onChange={this.handleAmountChange}
@@ -299,17 +318,17 @@ export default class Send extends Component<Props, State> {
                             role="button"
                             tabIndex={0}
                           >
-                            Send All
+                            {il8n.send_all}
                           </a>
                         </label>
                       </div>
                       <div className="column">
                         <label className="label" htmlFor="totalamount">
-                          Total with Fees
+                          {il8n.total_with_fees}
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder="The total amount including fees"
+                            placeholder={il8n.total_with_fees_input_placeholder}
                             id="totalamount"
                             value={totalAmount}
                             onChange={this.handleTotalAmountChange}
@@ -321,12 +340,12 @@ export default class Send extends Component<Props, State> {
                 </div>
                 <div className="field">
                   <label className="label" htmlFor="paymentid">
-                    Payment ID (Optional)&nbsp;&nbsp;&nbsp;
+                    {il8n.payment_id}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder="Enter a payment ID"
+                        placeholder={il8n.payment_id_input_placeholder}
                         id="paymentid"
                         value={paymentID}
                         onChange={this.handlePaymentIDChange}
@@ -338,7 +357,7 @@ export default class Send extends Component<Props, State> {
                         tabIndex={0}
                       >
                         {' '}
-                        Generate Random Payment ID
+                        {il8n.generate_payment_id}
                       </a>
                     </div>
                   </label>
@@ -349,7 +368,7 @@ export default class Send extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large "
                     >
-                      Send
+                      {il8n.send}
                     </button>
                   )}
                   {transactionInProgress && (
@@ -357,7 +376,7 @@ export default class Send extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large is-loading is-disabled"
                     >
-                      Send
+                      {il8n.send}
                     </button>
                   )}
 
@@ -366,7 +385,7 @@ export default class Send extends Component<Props, State> {
                     className="button is-large"
                     onClick={this.resetPaymentID}
                   >
-                    Clear
+                    {il8n.clear}
                   </button>
                 </div>
               </form>
@@ -388,12 +407,12 @@ export default class Send extends Component<Props, State> {
               <form onSubmit={this.handleSubmit}>
                 <div className="field">
                   <label className="label has-text-white" htmlFor="address">
-                    Send to Address
+                    {il8n.send_to_address}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder="Enter a TurtleCoin address to send funds to."
+                        placeholder={il8n.send_to_address_input_placeholder}
                         id="label"
                       />
                     </div>
@@ -407,7 +426,7 @@ export default class Send extends Component<Props, State> {
                           className="label has-text-white"
                           htmlFor="amount"
                         >
-                          Amount to Send
+                          {il8n.amount_to_send}
                           <input
                             className="input is-large"
                             type="text"
@@ -424,7 +443,7 @@ export default class Send extends Component<Props, State> {
                             role="button"
                             tabIndex={0}
                           >
-                            Send All
+                            {il8n.send_all}
                           </a>
                         </label>
                       </div>
@@ -433,11 +452,11 @@ export default class Send extends Component<Props, State> {
                           className="label has-text-white"
                           htmlFor="totalamount"
                         >
-                          Total with Fees
+                          {il8n.total_with_fees}
                           <input
                             className="input is-large"
                             type="text"
-                            placeholder="The total amount including fees"
+                            placeholder={il8n.total_with_fees_input_placeholder}
                             id="totalamount"
                             value={totalAmount}
                             onChange={this.handleTotalAmountChange}
@@ -449,12 +468,12 @@ export default class Send extends Component<Props, State> {
                 </div>
                 <div className="field">
                   <label className="label has-text-white" htmlFor="paymentid">
-                    Payment ID (Optional)&nbsp;&nbsp;&nbsp;
+                    {il8n.payment_id}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="text"
-                        placeholder="Enter a payment ID"
+                        placeholder={il8n.payment_id_input_placeholder}
                         id="paymentid"
                         value={paymentID}
                         onChange={this.handlePaymentIDChange}
@@ -465,7 +484,7 @@ export default class Send extends Component<Props, State> {
                         role="button"
                         tabIndex={0}
                       >
-                        Generate Random Payment ID
+                        {il8n.generate_payment_id}
                       </a>
                     </div>
                   </label>
@@ -476,7 +495,7 @@ export default class Send extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large "
                     >
-                      Send
+                      {il8n.send}
                     </button>
                   )}
                   {transactionInProgress && (
@@ -484,7 +503,7 @@ export default class Send extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large is-loading is-disabled"
                     >
-                      Send
+                      {il8n.send}
                     </button>
                   )}
 
@@ -493,7 +512,7 @@ export default class Send extends Component<Props, State> {
                     className="button is-large is-black"
                     onClick={this.resetPaymentID}
                   >
-                    Clear
+                    {il8n.clear}
                   </button>
                 </div>
               </form>
