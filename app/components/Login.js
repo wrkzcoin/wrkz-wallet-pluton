@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import { session, eventEmitter, loginCounter } from '../index';
+import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
 
 type Props = {};
@@ -95,7 +95,7 @@ export default class Login extends Component<Props, State> {
                 <form onSubmit={this.handleSubmit}>
                   <div className="field">
                     <label className="label" htmlFor="scanheight">
-                      Password
+                      {il8n.password}
                       <div className="control">
                         <input
                           ref={input => input && input.focus()}
@@ -105,7 +105,7 @@ export default class Login extends Component<Props, State> {
                               : 'input is-large'
                           }
                           type="password"
-                          placeholder="Enter your wallet password..."
+                          placeholder={il8n.password_input_placeholder}
                         />
                       </div>
                     </label>
@@ -114,7 +114,8 @@ export default class Login extends Component<Props, State> {
                       htmlFor="scanheight"
                       id="help for scan height field"
                     >
-                      attempting login to {walletFile}
+                      {il8n.attempting_login_to}
+                      {walletFile}
                     </label>
                   </div>
                   <div className="buttons is-right">
@@ -122,7 +123,7 @@ export default class Login extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large"
                     >
-                      Login
+                      {il8n.login}
                     </button>
                   </div>
                 </form>
@@ -146,7 +147,7 @@ export default class Login extends Component<Props, State> {
                       className="label has-text-white"
                       htmlFor="scanheight"
                     >
-                      Password
+                      {il8n.password}
                       <div className="control">
                         <input
                           ref={input => input && input.focus()}
@@ -156,12 +157,13 @@ export default class Login extends Component<Props, State> {
                               : 'input is-large'
                           }
                           type="password"
-                          placeholder="Enter your wallet password..."
+                          placeholder={il8n.password_input_placeholder}
                         />
                       </div>
                     </label>
                     <label className="help has-text-white" htmlFor="scanheight">
-                      attempting login to {walletFile}
+                      {il8n.attempting_login_to}
+                      {walletFile}
                     </label>
                   </div>
                   <div className="buttons is-right">
@@ -169,7 +171,7 @@ export default class Login extends Component<Props, State> {
                       type="submit"
                       className="button is-success is-large"
                     >
-                      Login
+                      {il8n.login}
                     </button>
                   </div>
                 </form>

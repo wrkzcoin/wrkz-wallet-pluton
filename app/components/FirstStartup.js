@@ -3,7 +3,7 @@ import { remote } from 'electron';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import log from 'electron-log';
-import { config, session, eventEmitter } from '../index';
+import { config, session, eventEmitter, il8n } from '../index';
 import Redirector from './Redirector';
 
 // import styles from './Send.css';
@@ -72,19 +72,18 @@ export default class FirstStartup extends Component<Props, State> {
     if (oldPassword !== session.walletPassword) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: ['OK'],
-        title: 'Password incorrect!',
-        message:
-          'You did not enter your current password correctly. Please try again.'
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_incorrect_passwd_title,
+        message: il8n.change_passwd_incorrect_passwd_message
       });
       return;
     }
     if (newPassword !== passwordConfirm) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: ['OK'],
-        title: 'Passwords do not match!',
-        message: 'You did not enter the same password. Please try again.'
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_mismatch_title,
+        message: il8n.change_passwd_passwd_mismatch_message
       });
       return;
     }
@@ -93,16 +92,16 @@ export default class FirstStartup extends Component<Props, State> {
     if (saved) {
       remote.dialog.showMessageBox(null, {
         type: 'info',
-        buttons: ['OK'],
-        title: 'Saved!',
-        message: 'The password was changed successfully.'
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_change_success_title,
+        message: il8n.change_passwd_passwd_change_success_message
       });
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: ['OK'],
-        title: 'Error!',
-        message: 'The password was not changed successfully. Try again.'
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_change_unsuccess_title,
+        message: il8n.change_passwd_passwd_change_unsuccess_message
       });
     }
   }
@@ -153,26 +152,28 @@ export default class FirstStartup extends Component<Props, State> {
           <div className="fullwindow">
             <div className="mid-div">
               <div className="box loginbox has-background-light passwordchangebox">
-                <h1 className="title has-text-centered">Welcome to Proton!</h1>
+                <h1 className="title has-text-centered">
+                  {il8n.welcome_to_proton}
+                </h1>
                 <button
                   className="button is-large is-fullwidth"
                   onClick={this.openExisting}
                 >
-                  Open an Existing Wallet
+                  {il8n.open_existing_wallet}
                 </button>
                 <br />
                 <button
                   className="button is-large is-fullwidth"
                   onClick={this.createNew}
                 >
-                  Create a New Wallet
+                  {il8n.create_new_wallet}
                 </button>
                 <br />
                 <button
                   className="button is-large is-fullwidth"
                   onClick={this.importFromKeysOrSeed}
                 >
-                  Import from Keys or Seed
+                  {il8n.import_keys_seed}
                 </button>
               </div>
             </div>
@@ -183,27 +184,27 @@ export default class FirstStartup extends Component<Props, State> {
             <div className="mid-div">
               <div className="box loginbox has-background-black passwordchangebox">
                 <h1 className="title has-text-centered has-text-danger">
-                  Welcome to Proton!
+                  {il8n.welcome_to_proton}
                 </h1>
                 <button
                   className="button is-large is-fullwidth is-dark"
                   onClick={this.openExisting}
                 >
-                  Open an Existing Wallet
+                  {il8n.open_existing_wallet}
                 </button>
                 <br />
                 <button
                   className="button is-large is-fullwidth is-dark"
                   onClick={this.createNew}
                 >
-                  Create a New Wallet
+                  {il8n.create_new_wallet}
                 </button>
                 <br />
                 <button
                   className="button is-large is-fullwidth is-dark"
                   onClick={this.importFromKeysOrSeed}
                 >
-                  Import from Keys or Seed
+                  {il8n.import_keys_seed}
                 </button>
               </div>
             </div>

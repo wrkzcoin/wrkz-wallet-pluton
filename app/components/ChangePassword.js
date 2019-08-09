@@ -2,7 +2,7 @@
 import { remote } from 'electron';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import { config, session, eventEmitter } from '../index';
+import { config, session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import Redirector from './Redirector';
 
@@ -64,19 +64,18 @@ export default class ChangePassword extends Component<Props, State> {
     if (oldPassword !== session.walletPassword) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: ['OK'],
-        title: 'Password incorrect!',
-        message:
-          'You did not enter your current password correctly. Please try again.'
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_incorrect_passwd_title,
+        message: il8n.change_passwd_incorrect_passwd_message
       });
       return;
     }
     if (newPassword !== passwordConfirm) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: ['OK'],
-        title: 'Passwords do not match!',
-        message: 'You did not enter the same password. Please try again.'
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_mismatch_title,
+        message: il8n.change_passwd_passwd_mismatch_message
       });
       return;
     }
@@ -85,17 +84,17 @@ export default class ChangePassword extends Component<Props, State> {
     if (saved) {
       remote.dialog.showMessageBox(null, {
         type: 'info',
-        buttons: ['OK'],
-        title: 'Saved!',
-        message: 'The password was changed successfully.'
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_change_success_title,
+        message: il8n.change_passwd_passwd_change_success_message
       });
       this.handleInitialize();
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: ['OK'],
-        title: 'Error!',
-        message: 'The password was not changed successfully. Try again.'
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_change_unsuccess_title,
+        message: il8n.change_passwd_passwd_change_unsuccess_message
       });
     }
   };
@@ -120,12 +119,14 @@ export default class ChangePassword extends Component<Props, State> {
                 {session.walletPassword !== '' && (
                   <div className="field">
                     <label className="label" htmlFor="scanheight">
-                      Enter Current Password
+                      {il8n.change_passwd_enter_current_passwd}
                       <div className="control">
                         <input
                           className="input is-large"
                           type="password"
-                          placeholder="Enter your current password..."
+                          placeholder={
+                            il8n.change_passwd_enter_current_passwd_input_placeholder
+                          }
                         />
                       </div>
                     </label>
@@ -134,12 +135,14 @@ export default class ChangePassword extends Component<Props, State> {
                 {session.walletPassword === '' && (
                   <div className="field">
                     <label className="label" htmlFor="scanheight">
-                      Enter Current Password
+                      {il8n.change_passwd_enter_current_passwd}
                       <div className="control">
                         <input
                           className="input is-large"
                           type="password"
-                          placeholder="This wallet doesn't have a password"
+                          placeholder={
+                            il8n.change_passwd_enter_current_passwd_no_passwd_input_placeholder
+                          }
                           disabled
                         />
                       </div>
@@ -148,31 +151,35 @@ export default class ChangePassword extends Component<Props, State> {
                 )}
                 <div className="field">
                   <label className="label" htmlFor="scanheight">
-                    Enter New Password
+                    {il8n.change_passwd_enter_new_passwd}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="password"
-                        placeholder="Enter your new password..."
+                        placeholder={
+                          il8n.change_passwd_enter_new_passwd_input_placeholder
+                        }
                       />
                     </div>
                   </label>
                 </div>
                 <div className="field">
                   <label className="label" htmlFor="scanheight">
-                    Confirm Password
+                    {il8n.change_passwd_confirm_new_passwd}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="password"
-                        placeholder="Enter your new password again to confirm..."
+                        placeholder={
+                          il8n.change_passwd_confirm_new_passwd_input_placeholder
+                        }
                       />
                     </div>
                   </label>
                 </div>
                 <div className="buttons is-right">
                   <button type="submit" className="button is-success is-large">
-                    Change
+                    {il8n.change}
                   </button>
                 </div>
               </form>
@@ -191,12 +198,14 @@ export default class ChangePassword extends Component<Props, State> {
                       className="label has-text-white"
                       htmlFor="scanheight"
                     >
-                      Enter Current Password
+                      {il8n.change_passwd_enter_current_passwd}
                       <div className="control">
                         <input
                           className="input is-large"
                           type="password"
-                          placeholder="Enter your current password..."
+                          placeholder={
+                            il8n.change_passwd_enter_current_passwd_input_placeholder
+                          }
                         />
                       </div>
                     </label>
@@ -208,12 +217,14 @@ export default class ChangePassword extends Component<Props, State> {
                       className="label has-text-white"
                       htmlFor="scanheight"
                     >
-                      Enter Current Password
+                      {il8n.change_passwd_enter_current_passwd}
                       <div className="control">
                         <input
                           className="input is-large"
                           type="password"
-                          placeholder="This wallet doesn't have a password"
+                          placeholder={
+                            il8n.change_passwd_enter_current_passwd_no_passwd_input_placeholder
+                          }
                           disabled
                         />
                       </div>
@@ -222,31 +233,35 @@ export default class ChangePassword extends Component<Props, State> {
                 )}
                 <div className="field">
                   <label className="label has-text-white" htmlFor="scanheight">
-                    Enter New Password
+                    {il8n.change_passwd_enter_new_passwd}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="password"
-                        placeholder="Enter your new password..."
+                        placeholder={
+                          il8n.change_passwd_enter_new_passwd_input_placeholder
+                        }
                       />
                     </div>
                   </label>
                 </div>
                 <div className="field">
                   <label className="label has-text-white" htmlFor="scanheight">
-                    Confirm Password
+                    {il8n.change_passwd_confirm_new_passwd}
                     <div className="control">
                       <input
                         className="input is-large"
                         type="password"
-                        placeholder="Enter your new password again to confirm..."
+                        placeholder={
+                          il8n.change_passwd_confirm_new_passwd_input_placeholder
+                        }
                       />
                     </div>
                   </label>
                 </div>
                 <div className="buttons is-right">
                   <button type="submit" className="button is-success is-large">
-                    Change
+                    {il8n.change}
                   </button>
                 </div>
               </form>

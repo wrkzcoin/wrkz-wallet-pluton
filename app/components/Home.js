@@ -4,7 +4,7 @@ import log from 'electron-log';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
-import { session, loginCounter, eventEmitter } from '../index';
+import { session, loginCounter, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -179,10 +179,10 @@ export default class Home extends Component<Props, State> {
               <table className="table is-striped is-hoverable is-fullwidth is-family-monospace">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Hash</th>
-                    <th className="has-text-right">Amount</th>
-                    <th className="has-text-right">Balance</th>
+                    <th>{il8n.date}</th>
+                    <th>{il8n.hash}</th>
+                    <th className="has-text-right">{il8n.amount}</th>
+                    <th className="has-text-right">{il8n.balance}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -192,12 +192,14 @@ export default class Home extends Component<Props, State> {
                         <td
                           data-tip={
                             tx[0] === 0
-                              ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!'
-                              : `Block ${tx[4]}`
+                              ? il8n.unconfirmed_tx_30_sec_confirm
+                              : `${il8n.block} ${tx[4]}`
                           }
                         >
                           {tx[0] === 0 && (
-                            <p className="has-text-danger">Unconfirmed</p>
+                            <p className="has-text-danger">
+                              {il8n.unconfirmed}
+                            </p>
                           )}
                           {tx[0] > 0 && (
                             <p>{session.convertTimestamp(tx[0])}</p>
@@ -237,21 +239,21 @@ export default class Home extends Component<Props, State> {
                         className="button is-success"
                         onClick={this.handleShowAll}
                       >
-                        Show all
+                        {il8n.show_all}
                       </button>
                       <button
                         type="submit"
                         className="button is-warning"
                         onClick={this.handleLoadMore}
                       >
-                        Load more
+                        {il8n.load_more}
                       </button>
                       <button
                         type="submit"
                         className="button is-danger"
                         onClick={this.resetDefault}
                       >
-                        Reset
+                        {il8n.reset}
                       </button>
                     </div>
                   </div>
@@ -282,10 +284,14 @@ export default class Home extends Component<Props, State> {
               <table className="table is-striped is-hoverable is-fullwidth is-family-monospace table-darkmode">
                 <thead>
                   <tr>
-                    <th className="has-text-white">Date</th>
-                    <th className="has-text-white">Hash</th>
-                    <th className="has-text-white has-text-right">Amount</th>
-                    <th className="has-text-white has-text-right">Balance</th>
+                    <th className="has-text-white">{il8n.date}</th>
+                    <th className="has-text-white">{il8n.hash}</th>
+                    <th className="has-text-white has-text-right">
+                      {il8n.amount}
+                    </th>
+                    <th className="has-text-white has-text-right">
+                      {il8n.balance}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -295,12 +301,14 @@ export default class Home extends Component<Props, State> {
                         <td
                           data-tip={
                             tx[0] === 0
-                              ? 'This transaction is unconfirmed. Should be confirmed within 30 seconds!'
-                              : `Block ${tx[4]}`
+                              ? il8n.unconfirmed_tx_30_sec_confirm
+                              : `${il8n.block} ${tx[4]}`
                           }
                         >
                           {tx[0] === 0 && (
-                            <p className="has-text-danger">Unconfirmed</p>
+                            <p className="has-text-danger">
+                              {il8n.unconfirmed}
+                            </p>
                           )}
                           {tx[0] > 0 && (
                             <p>{session.convertTimestamp(tx[0])}</p>
@@ -340,21 +348,21 @@ export default class Home extends Component<Props, State> {
                         className="button is-success"
                         onClick={this.handleShowAll}
                       >
-                        Show all
+                        {il8n.show_all}
                       </button>
                       <button
                         type="submit"
                         className="button is-warning"
                         onClick={this.handleLoadMore}
                       >
-                        Load more
+                        {il8n.load_more}
                       </button>
                       <button
                         type="submit"
                         className="button is-danger"
                         onClick={this.resetDefault}
                       >
-                        Reset
+                        {il8n.reset}
                       </button>
                     </div>
                   </div>

@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
 import log from 'electron-log';
-import { session, eventEmitter } from '../index';
+import { session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -158,8 +158,8 @@ export default class Settings extends Component<Props, State> {
       remote.dialog.showMessageBox(null, {
         type: 'error',
         buttons: ['OK'],
-        title: 'Not a valid number',
-        message: `Please input a valid block height.`
+        title: il8n.not_a_valid_number,
+        message: il8n.please_enter_valid_number
       });
       this.setState({
         scanHeight: ''
@@ -172,8 +172,12 @@ export default class Settings extends Component<Props, State> {
       title: 'This could take a while...',
       message:
         fromStartHeight === true
-          ? `You are about to resan your wallet from block ${scanHeight}, which is the original start height of your wallet. Are you sure you want to do this? Rescanning can take a very long time.`
-          : `You are about to rescan your wallet from block ${scanHeight}. Are you sure you want to do this? Rescanning can take a very long time.`
+          ? `${il8n.about_to_rescan_beginning} ${scanHeight} ${
+              il8n.about_to_rescan_end_1
+            }`
+          : `${il8n.about_to_rescan_beginning} ${scanHeight} ${
+              il8n.about_to_rescan_end_2
+            }`
     });
     if (userConfirm !== 1) {
       return;
@@ -186,8 +190,8 @@ export default class Settings extends Component<Props, State> {
     remote.dialog.showMessageBox(null, {
       type: 'info',
       buttons: ['OK'],
-      title: 'Reset completed successfully.',
-      message: `Your wallet is now syncing again from block ${scanHeight}.`
+      title: `${il8n.reset_complete}`,
+      message: `${il8n.syncing_again_from}${scanHeight}.`
     });
   };
 
@@ -233,8 +237,10 @@ export default class Settings extends Component<Props, State> {
     remote.dialog.showMessageBox(null, {
       type: 'info',
       buttons: ['OK'],
-      title: 'Rewind completed successfully.',
-      message: `Your wallet has been rewound to block ${rewindHeight}, and will sync again from there.`
+      title: `${il8n.rewind_complete}`,
+      message: ` ${il8n.has_been_rewound_beginning}${rewindHeight}${
+        il8n.has_been_rewound_end
+      }`
     });
   };
 
@@ -282,7 +288,7 @@ export default class Settings extends Component<Props, State> {
                 <div className="column">
                   <form onSubmit={this.changeNode}>
                     <p className="has-text-weight-bold">
-                      Connected Node (node:port)
+                      {il8n.connected_node}
                     </p>
                     <div className="field has-addons is-expanded">
                       <div className="control is-expanded has-icons-left">
@@ -324,20 +330,22 @@ export default class Settings extends Component<Props, State> {
                             role="button"
                             tabIndex={0}
                           >
-                            Find node...
+                            {il8n.find_node}
                           </a>
                         </p>
                       </div>
                       {nodeChangeInProgress === true && (
                         <div className="control">
                           <button className="button is-success is-loading">
-                            Connect
+                            {il8n.connect}
                           </button>
                         </div>
                       )}
                       {nodeChangeInProgress === false && (
                         <div className="control">
-                          <button className="button is-success">Connect</button>
+                          <button className="button is-success">
+                            {il8n.connect}
+                          </button>
                         </div>
                       )}
                     </div>
@@ -346,7 +354,9 @@ export default class Settings extends Component<Props, State> {
                   <br />
                   {wallet && (
                     <form onSubmit={this.rewindWallet}>
-                      <p className="has-text-weight-bold">Rewind Wallet</p>
+                      <p className="has-text-weight-bold">
+                        {il8n.rewind_wallet}
+                      </p>
                       <div className="field has-addons">
                         <div className="control is-expanded">
                           <input
@@ -356,10 +366,7 @@ export default class Settings extends Component<Props, State> {
                             value={rewindHeight}
                             onChange={this.handleRewindHeightChange}
                           />
-                          <p className="help">
-                            Rewinds wallet, keeping previous transactions, to a
-                            block height and picks up scanning from there.
-                          </p>
+                          <p className="help">{il8n.rewind_wallet_help}</p>
                         </div>
                         <div className="control">
                           <button
@@ -369,7 +376,7 @@ export default class Settings extends Component<Props, State> {
                                 : 'button is-warning'
                             }
                           >
-                            Rewind
+                            {il8n.rewind}
                           </button>
                         </div>
                       </div>
@@ -378,7 +385,9 @@ export default class Settings extends Component<Props, State> {
                   <br />
                   {wallet && (
                     <form onSubmit={this.rescanWallet}>
-                      <p className="has-text-weight-bold">Rescan Wallet</p>
+                      <p className="has-text-weight-bold">
+                        {il8n.rescan_wallet}
+                      </p>
                       <div className="field has-addons">
                         <div className="control is-expanded">
                           <input
@@ -388,15 +397,12 @@ export default class Settings extends Component<Props, State> {
                             value={scanHeight}
                             onChange={this.handleScanHeightChange}
                           />
-                          <p className="help">
-                            Completely wipes all transactions from history and
-                            rescans the wallet from the specified block. If left
-                            blank, defaults to the last block wallet was scanned
-                            from.
-                          </p>
+                          <p className="help">{il8n.rescan_wallet_help}</p>
                         </div>
                         <div className="control">
-                          <button className="button is-danger">Rescan</button>
+                          <button className="button is-danger">
+                            {il8n.rescan}
+                          </button>
                         </div>
                       </div>
                     </form>
@@ -407,7 +413,7 @@ export default class Settings extends Component<Props, State> {
                   <br />
                   <p className="buttons is-right">
                     <span>
-                      Enable dark mode &nbsp;&nbsp;
+                      {il8n.enable_dark_mode} &nbsp;&nbsp;
                       <a
                         className="button is-dark"
                         onClick={this.darkModeOn}
@@ -442,7 +448,7 @@ export default class Settings extends Component<Props, State> {
                 <div className="column">
                   <form onSubmit={this.changeNode}>
                     <p className="has-text-weight-bold has-text-white">
-                      Connected Node (node:port)
+                      {il8n.connected_node}
                     </p>
                     <div className="field has-addons is-expanded">
                       <div className="control is-expanded has-icons-left">
@@ -484,20 +490,22 @@ export default class Settings extends Component<Props, State> {
                             role="button"
                             tabIndex={0}
                           >
-                            Find node...
+                            {il8n.find_node}
                           </a>
                         </p>
                       </div>
                       {nodeChangeInProgress === true && (
                         <div className="control">
                           <button className="button is-success is-loading">
-                            Connect
+                            {il8n.connect}
                           </button>
                         </div>
                       )}
                       {nodeChangeInProgress === false && (
                         <div className="control">
-                          <button className="button is-success">Connect</button>
+                          <button className="button is-success">
+                            {il8n.connect}
+                          </button>
                         </div>
                       )}
                     </div>
@@ -506,7 +514,7 @@ export default class Settings extends Component<Props, State> {
                   {wallet && (
                     <form onSubmit={this.rewindWallet}>
                       <p className="has-text-white has-text-weight-bold">
-                        Rewind Wallet
+                        {il8n.rewind_wallet}
                       </p>
                       <div className="field has-addons">
                         <div className="control is-expanded">
@@ -518,8 +526,7 @@ export default class Settings extends Component<Props, State> {
                             onChange={this.handleRewindHeightChange}
                           />
                           <p className="help has-text-white">
-                            Rewinds wallet, keeping previous transactions, to a
-                            block height and picks up scanning from there.
+                            {il8n.rewind_wallet_help}
                           </p>
                         </div>
                         <div className="control">
@@ -530,8 +537,7 @@ export default class Settings extends Component<Props, State> {
                                 : 'button is-warning'
                             }
                           >
-                            {' '}
-                            Rewind
+                            {il8n.rewind}
                           </button>
                         </div>
                       </div>
@@ -541,7 +547,7 @@ export default class Settings extends Component<Props, State> {
                   {wallet && (
                     <form onSubmit={this.rescanWallet}>
                       <p className="has-text-white has-text-weight-bold">
-                        Rescan Wallet
+                        {il8n.rescan_wallet}
                       </p>
                       <div className="field has-addons">
                         <div className="control is-expanded">
@@ -553,14 +559,13 @@ export default class Settings extends Component<Props, State> {
                             onChange={this.handleScanHeightChange}
                           />
                           <p className="help has-text-white">
-                            Completely wipes all transactions from history and
-                            rescans the wallet from the specified block. If left
-                            blank, defaults to the last block wallet was scanned
-                            from.
+                            {il8n.rescan_wallet_help}
                           </p>
                         </div>
                         <div className="control">
-                          <button className="button is-danger">Rescan</button>
+                          <button className="button is-danger">
+                            {il8n.rescan}
+                          </button>
                         </div>
                       </div>
                     </form>
@@ -571,7 +576,7 @@ export default class Settings extends Component<Props, State> {
                   <br />
                   <p className="buttons is-right">
                     <span className="has-text-white">
-                      Enable light mode &nbsp;&nbsp;
+                      {il8n.enable_light_mode} &nbsp;&nbsp;
                       <a
                         className="button is-info"
                         onClick={this.darkModeOff}
