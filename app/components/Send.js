@@ -172,7 +172,7 @@ export default class Send extends Component<Props, State> {
     let displayIfNodeFee;
 
     if (session.daemon.feeAmount > 0) {
-      displayIfNodeFee = ` and a node fee of ${session.atomicToHuman(
+      displayIfNodeFee = `and a node fee of ${session.atomicToHuman(
         session.daemon.feeAmount
       )} ${session.wallet.config.ticker}`;
     } else {
@@ -186,13 +186,11 @@ export default class Send extends Component<Props, State> {
     const userSelection = remote.dialog.showMessageBox(null, {
       type: 'warning',
       buttons: [il8n.cancel, il8n.ok],
-      title: il8n.send_tx_confirmation_title,
-      message: `${il8n.send_tx_confirmation_l1 + totalTransactionAmount} ${
+      title: il8n.title_please_confirm_transaction,
+      message: `${il8n.about_to_send_1} ${totalTransactionAmount} ${
         session.wallet.config.ticker
-      } to ${sendToAddress}${displayIfPaymentID}${
-        il8n.send_tx_confirmation_l2
-      }${session.wallet.config.ticker}${displayIfNodeFee}${
-        il8n.send_tx_confirmation_l3
+      } ${il8n.to} ${sendToAddress} ${displayIfPaymentID} ${displayIfNodeFee} ${
+        il8n.about_to_send_2
       }`
     });
 
@@ -212,8 +210,8 @@ export default class Send extends Component<Props, State> {
       remote.dialog.showMessageBox(null, {
         type: 'info',
         buttons: [il8n.ok],
-        title: il8n.send_tx_complete.title,
-        message: il8n.send_tx_complete_message + hash
+        title: il8n.send_tx_complete_title,
+        message: `${il8n.send_tx_complete} ${hash}`
       });
       eventEmitter.emit('transactionComplete');
     } else if (err) {
