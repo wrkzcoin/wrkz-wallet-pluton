@@ -3,6 +3,7 @@ import { remote } from 'electron';
 import React, { Component } from 'react';
 import { config, session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
+import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 
@@ -152,7 +153,7 @@ export default class ChangePassword extends Component<Props, State> {
               </div>
             </form>
           </div>
-          <div className={`footerbar ${fillColor}`} />
+          <BottomBar />
         </div>
       </div>
     );

@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
-import sleep from '../utils/sleep';
 
 type Props = {};
 

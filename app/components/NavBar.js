@@ -58,10 +58,9 @@ class NavBar extends Component<Props, State> {
   };
 
   render() {
+    // prettier-ignore
+    const { location: { pathname } } = this.props;
     const { darkMode } = this.state;
-    const {
-      location: { pathname }
-    } = this.props;
     const {
       backgroundColor,
       fillColor,
@@ -74,11 +73,12 @@ class NavBar extends Component<Props, State> {
       <div>
         <div
           className={
-            session.firstLoadOnLogin
+            session.firstLoadOnLogin && pathname === '/'
               ? `headerbar-slidedown ${fillColor}`
               : `headerbar ${fillColor}`
           }
         >
+          {session.wallet && (
           <nav
             className={`navbar ${elementBaseColor}`}
             role="navigation"
@@ -93,45 +93,77 @@ class NavBar extends Component<Props, State> {
                   />
                 </div>
               </div>
-              <div className="navbar-start">
-                <Link className="navbar-item" to={routes.HOME}>
-                  <i className="fa fa-credit-card" />
-                  {pathname === '/' && (
-                    <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
-                  )}
-                  {pathname !== '/' && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
-                </Link>
+                <div className="navbar-start">
+                  <Link className="navbar-item" to={routes.HOME}>
+                    <i className="fa fa-credit-card" />
+                    {pathname === '/' && (
+                      <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
+                    )}
+                    {pathname !== '/' && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
+                  </Link>
 
-                <Link className="navbar-item" to={routes.SEND}>
-                  <i className="fa fa-paper-plane" />
-                  {pathname === '/send' && (
-                    <strong>&nbsp;&nbsp;{il8n.send}</strong>
-                  )}
-                  {pathname !== '/send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
-                </Link>
+                  <Link className="navbar-item" to={routes.SEND}>
+                    <i className="fa fa-paper-plane" />
+                    {pathname === '/send' && (
+                      <strong>&nbsp;&nbsp;{il8n.send}</strong>
+                    )}
+                    {pathname !== '/send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
+                  </Link>
 
-                <Link className="navbar-item" to={routes.RECEIVE}>
-                  <i className="fa fa-arrow-circle-down" />
-                  {pathname === '/receive' && (
-                    <strong>&nbsp;&nbsp;{il8n.receive}</strong>
-                  )}
-                  {pathname !== '/receive' && <p>&nbsp;&nbsp;{il8n.receive}</p>}
-                </Link>
-              </div>
-
-              <div className="navbar-end">
-                <div className="navbar-item">
-                  <Link className="buttons" to={routes.SETTINGS}>
-                    <span
-                      className={`button icon is-large ${settingsCogColor}`}
-                    >
-                      <i className="fa fa-cog" />
-                    </span>
+                  <Link className="navbar-item" to={routes.RECEIVE}>
+                    <i className="fa fa-arrow-circle-down" />
+                    {pathname === '/receive' && (
+                      <strong>&nbsp;&nbsp;{il8n.receive}</strong>
+                    )}
+                    {pathname !== '/receive' && (
+                      <p>&nbsp;&nbsp;{il8n.receive}</p>
+                    )}
                   </Link>
                 </div>
-              </div>
+                <div className="navbar-end">
+                  <div className="navbar-item">
+                    <Link className="buttons" to={routes.SETTINGS}>
+                      <span
+                        className={`button icon is-large ${settingsCogColor}`}
+                      >
+                        <i className="fa fa-cog" />
+                      </span>
+                    </Link>
+                  </div>
+                </div>
             </div>
           </nav>
+          )}
+          {!session.wallet && (
+            <nav
+            className={`navbar ${elementBaseColor}`}
+            role="navigation"
+            aria-label="main navigation"
+            >
+            <div id="navbarNoWallet" className="navbar-menu">
+            <div className="navbar-brand">
+            <div className="navbar-item">
+              <img
+                src="images/icon_color_64x64.png"
+                alt="proton wallet logo in green"
+              />
+            </div>
+          </div>
+          <div className="navbar-end">
+          <div className="navbar-item">
+            <Link className="buttons" to={routes.SETTINGS}>
+              <span
+                className={`icon button is-large is-danger`}
+              >
+                <i className="fas fa-chevron-left" />
+              </span>
+            </Link>
+          </div>
+        </div>
+
+          </div>
+          </nav>
+          )}
         </div>
       </div>
     );

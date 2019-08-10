@@ -8,10 +8,6 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 let displayedTransactionCount: number = 50;
 
 type Props = {};
@@ -70,8 +66,7 @@ export default class Home extends Component<Props, State> {
     }
   }
 
-  async switchOffAnimation() {
-    await sleep(1000);
+  switchOffAnimation() {
     session.firstLoadOnLogin = false;
   }
 

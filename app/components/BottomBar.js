@@ -1,17 +1,26 @@
 // @flow
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { session, eventEmitter } from '../index';
 import SyncStatus from './SyncStatus';
 import Balance from './Balance';
 import NodeFee from './NodeFee';
 
-type Props = {};
+type Location = {
+  hash: string,
+  pathname: string,
+  search: string
+};
+
+type Props = {
+  location: Location
+};
 
 type State = {
   darkmode: boolean
 };
 
-export default class BottomBar extends Component<Props, State> {
+class BottomBar extends Component<Props, State> {
   props: Props;
 
   state: State;
@@ -48,6 +57,8 @@ export default class BottomBar extends Component<Props, State> {
   };
 
   render() {
+    // prettier-ignore
+    const { location: { pathname } } = this.props;
     const { darkmode } = this.state;
 
     return (
@@ -55,20 +66,25 @@ export default class BottomBar extends Component<Props, State> {
         className={
           // eslint-disable-next-line no-nested-ternary
           darkmode
-            ? session.firstLoadOnLogin
+            ? session.firstLoadOnLogin && pathname === '/'
               ? 'footerbar-slideup has-background-black'
               : 'footerbar has-background-black'
-            : session.firstLoadOnLogin
+            : session.firstLoadOnLogin && pathname === '/'
             ? 'footerbar-slideup has-background-light'
             : 'footerbar has-background-light'
         }
       >
+        {session.wallet && (
         <div className="field is-grouped is-grouped-multiline is-grouped-right">
           <NodeFee />
           <SyncStatus />
           <Balance />
         </div>
+        )}
       </div>
     );
   }
 }
+
+// $FlowFixMe
+export default withRouter(BottomBar);

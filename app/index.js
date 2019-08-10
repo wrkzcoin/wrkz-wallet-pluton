@@ -117,10 +117,6 @@ eventEmitter.on('updateRequired', updateFile => {
 });
 
 ipcRenderer.on('handleSaveSilent', () => {
-  if (!session.wallet) {
-    eventEmitter.emit('refreshLogin');
-    return;
-  }
   if (!session.loginFailed && !session.firstStartup) {
     const saved = session.saveWallet(session.walletFile);
     if (saved) {

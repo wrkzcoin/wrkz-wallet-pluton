@@ -4,6 +4,7 @@ import fs from 'fs';
 import React, { Component } from 'react';
 import log from 'electron-log';
 import NavBar from './NavBar';
+import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 import {
@@ -153,7 +154,7 @@ export default class Send extends Component<Props, States> {
               </div>
             </form>
           </div>
-          <div className={`footerbar ${fillColor}`} />
+          <BottomBar />
         </div>
       </div>
     );
