@@ -109,9 +109,7 @@ export default class Send extends Component<Props, State> {
 
   render() {
     const { darkMode } = this.state;
-    const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
-      darkMode
-    );
+    const { backgroundColor, textColor, elementBaseColor } = uiType(darkMode);
 
     return (
       <div>
@@ -128,7 +126,6 @@ export default class Send extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.private_spend_key_input_placeholder}
-                      id="scanheight"
                     />
                   </div>
                 </label>
@@ -141,7 +138,6 @@ export default class Send extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.private_view_key_input_placeholder}
-                      id="scanheight"
                     />
                   </div>
                 </label>
@@ -154,7 +150,6 @@ export default class Send extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.scan_height_input_placeholder}
-                      id="scanheight"
                     />
                   </div>
                 </label>

@@ -28,13 +28,13 @@ export default class Login extends Component<Props, State> {
     }
   }
 
-  switchAnimation() {
-    loginCounter.userLoginAttempted = true;
-  }
-
   componentDidMount() {}
 
   componentWillUnmount() {}
+
+  switchAnimation() {
+    loginCounter.userLoginAttempted = true;
+  }
 
   async handleSubmit(event: any) {
     // We're preventing the default refresh of the page that occurs on form submit
