@@ -117,6 +117,10 @@ eventEmitter.on('updateRequired', updateFile => {
 });
 
 ipcRenderer.on('handleSaveSilent', () => {
+  if (!session.wallet) {
+    eventEmitter.emit('refreshLogin');
+    return;
+  }
   if (!session.loginFailed && !session.firstStartup) {
     const saved = session.saveWallet(session.walletFile);
     if (saved) {
@@ -126,6 +130,10 @@ ipcRenderer.on('handleSaveSilent', () => {
 });
 
 ipcRenderer.on('handleSave', () => {
+  if (!session.wallet) {
+    eventEmitter.emit('refreshLogin');
+    return;
+  }
   const saved = session.saveWallet(session.walletFile);
   if (saved) {
     remote.dialog.showMessageBox(null, {
@@ -145,6 +153,10 @@ ipcRenderer.on('handleSave', () => {
 });
 
 ipcRenderer.on('handleSaveAs', () => {
+  if (!session.wallet) {
+    eventEmitter.emit('refreshLogin');
+    return;
+  }
   const options = {
     defaultPath: remote.app.getPath('documents')
   };
@@ -162,6 +174,10 @@ ipcRenderer.on('handleSaveAs', () => {
 });
 
 ipcRenderer.on('exportToCSV', () => {
+  if (!session.wallet) {
+    eventEmitter.emit('refreshLogin');
+    return;
+  }
   const options = {
     defaultPath: remote.app.getPath('documents')
   };
@@ -312,6 +328,10 @@ ipcRenderer.on('handleNew', handleNew);
 eventEmitter.on('handleNew', handleNew);
 
 ipcRenderer.on('handleBackup', () => {
+  if (!session.wallet) {
+    eventEmitter.emit('refreshLogin');
+    return;
+  }
   const publicAddress = session.wallet.getPrimaryAddress();
   const [
     privateSpendKey,
@@ -351,6 +371,7 @@ async function startWallet() {
     await session.wallet.start();
   } catch {
     log.debug('Password required, redirecting to login...');
+    loginCounter.isLoggedIn = true;
     eventEmitter.emit('loginFailed');
   }
   eventEmitter.emit('gotNodeFee');

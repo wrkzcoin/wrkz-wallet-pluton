@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
+import sleep from '../utils/sleep';
 
 type Props = {};
 
@@ -22,6 +23,14 @@ export default class Login extends Component<Props, State> {
       walletFile: session.walletFile,
       wrongPassword: loginCounter.userLoginAttempted
     };
+    const { wrongPassword } = this.state;
+    if (!wrongPassword) {
+      this.switchAnimation();
+    }
+  }
+
+  switchAnimation() {
+    loginCounter.userLoginAttempted = true;
   }
 
   componentDidMount() {}

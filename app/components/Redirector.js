@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
 import { Redirect, withRouter } from 'react-router-dom';
-import { session, eventEmitter } from '../index';
+import { session, eventEmitter, loginCounter } from '../index';
+import log from 'electron-log';
 
 type State = {
   home: boolean,
@@ -11,7 +12,8 @@ type State = {
   changePassword: boolean,
   firstStartup: boolean,
   loginFailed: boolean,
-  login: boolean
+  login: boolean,
+  isLoggedIn: boolean
 };
 
 type Location = {
@@ -38,7 +40,8 @@ class Redirector extends Component<Props, State> {
       changePassword: false,
       firstStartup: session.firstStartup,
       loginFailed: session.loginFailed,
-      login: false
+      login: false,
+      isLoggedIn: loginCounter.isLoggedIn
     };
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
     this.goToImportFromKey = this.goToImportFromKey.bind(this);
@@ -113,7 +116,8 @@ class Redirector extends Component<Props, State> {
       loginFailed,
       firstStartup,
       home,
-      login
+      login,
+      isLoggedIn
     } = this.state;
     if (home === true && pathname !== '/') {
       return <Redirect to="/" />;
@@ -134,12 +138,23 @@ class Redirector extends Component<Props, State> {
       loginFailed === true &&
       pathname !== '/login' &&
       pathname !== '/import' &&
-      pathname !== '/importkey'
+      pathname !== '/importkey' &&
+      pathname !== '/firststartup'
     ) {
       return <Redirect to="/login" />;
     }
 
     if (login === true) {
+      return <Redirect to="/login" />;
+    }
+
+    if (
+      isLoggedIn === false &&
+      pathname !== '/login' &&
+      pathname !== '/import' &&
+      pathname !== '/importkey' &&
+      pathname !== '/firststartup'
+    ) {
       return <Redirect to="/login" />;
     }
 

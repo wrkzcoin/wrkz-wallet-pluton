@@ -3,7 +3,7 @@ import { WalletBackend, Daemon, LogLevel } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
 import { createObjectCsvWriter } from 'csv-writer';
-import { config, directories, eventEmitter } from '../index';
+import { config, directories, eventEmitter, loginCounter } from '../index';
 
 export default class WalletSession {
   loginFailed: boolean;
@@ -75,6 +75,7 @@ export default class WalletSession {
       }
     }
     if (!this.loginFailed && !this.firstStartup) {
+      loginCounter.isLoggedIn = true;
       log.debug(`Opened wallet file at ${this.walletFile}`);
       this.wallet = openWallet;
       this.syncStatus = this.getSyncStatus();
