@@ -122,9 +122,7 @@ export default class Home extends Component<Props, State> {
 
   render() {
     const { darkMode, transactions, totalTransactionCount } = this.state;
-    const { backgroundColor, fillColor, textColor, tableMode } = uiType(
-      darkMode
-    );
+    const { backgroundColor, textColor, tableMode } = uiType(darkMode);
 
     return (
       <div>

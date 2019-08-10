@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
 import { Redirect, withRouter } from 'react-router-dom';
 import { session, eventEmitter, loginCounter } from '../index';
-import log from 'electron-log';
 
 type State = {
   home: boolean,
@@ -54,6 +53,7 @@ class Redirector extends Component<Props, State> {
     ipcRenderer.on('importSeed', this.goToImportFromSeed);
     ipcRenderer.on('importKey', this.goToImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.goToPasswordChange);
+    eventEmitter.on('handlePasswordChange', this.goToPasswordChange);
     eventEmitter.on('openNewWallet', this.goToHome);
     eventEmitter.on('initializeNewSession', this.goToHome);
     eventEmitter.on('refreshLogin', this.goToHome);
@@ -64,6 +64,7 @@ class Redirector extends Component<Props, State> {
     ipcRenderer.off('importSeed', this.goToImportFromSeed);
     ipcRenderer.off('importKey', this.goToImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.goToPasswordChange);
+    eventEmitter.off('handlePasswordChange', this.goToPasswordChange);
     eventEmitter.off('openNewWallet', this.goToHome);
     eventEmitter.off('initializeNewSession', this.goToHome);
     eventEmitter.off('refreshLogin', this.goToHome);

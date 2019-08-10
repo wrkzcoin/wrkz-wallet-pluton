@@ -96,7 +96,7 @@ export default class Send extends Component<Props, State> {
         }
       );
       log.debug('Wrote config file to disk.');
-      eventEmitter.emit('initializeNewSession');
+      eventEmitter.emit('handlePasswordChange');
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
@@ -109,9 +109,7 @@ export default class Send extends Component<Props, State> {
 
   render() {
     const { darkMode } = this.state;
-    const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
-      darkMode
-    );
+    const { backgroundColor, textColor, elementBaseColor } = uiType(darkMode);
 
     return (
       <div>

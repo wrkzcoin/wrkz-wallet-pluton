@@ -307,8 +307,7 @@ function handleNew() {
       session = null;
       session = new WalletSession();
       startWallet();
-      eventEmitter.emit('refreshLogin');
-      eventEmitter.emit('openNewWallet');
+      eventEmitter.emit('handlePasswordChange');
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
