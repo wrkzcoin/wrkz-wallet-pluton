@@ -267,7 +267,9 @@ export default class Send extends Component<Props, State> {
       transactionInProgress
     } = this.state;
 
-    const { backgroundColor, textColor, elementBaseColor } = uiType(darkMode);
+    const { backgroundColor, textColor, elementBaseColor, linkColor } = uiType(
+      darkMode
+    );
 
     if (transactionComplete === true) {
       return <Redirect to="/" />;
@@ -319,6 +321,7 @@ export default class Send extends Component<Props, State> {
                           onKeyPress={this.sendAll}
                           role="button"
                           tabIndex={0}
+                          className={linkColor}
                         >
                           {il8n.send_all}
                         </a>
@@ -358,6 +361,7 @@ export default class Send extends Component<Props, State> {
                       onKeyPress={this.generatePaymentID}
                       role="button"
                       tabIndex={0}
+                      className={linkColor}
                     >
                       {il8n.generate_payment_id}
                     </a>

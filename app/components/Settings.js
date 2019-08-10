@@ -241,7 +241,7 @@ export default class Settings extends Component<Props, State> {
       scanHeight
     } = this.state;
 
-    const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
+    const { backgroundColor, fillColor, textColor, elementBaseColor, linkColor } = uiType(
       darkMode
     );
 
@@ -303,6 +303,7 @@ export default class Settings extends Component<Props, State> {
                           onKeyPress={this.findNode}
                           role="button"
                           tabIndex={0}
+                          className={linkColor}
                         >
                           {il8n.find_node}
                         </a>

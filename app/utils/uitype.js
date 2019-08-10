@@ -15,6 +15,8 @@ export default function uiType(darkMode) {
 
   const settingsCogColor = darkMode === true ? 'is-dark' : '';
 
+  const linkColor = darkMode === true ? 'darklink' : '';
+
   const response = {
     backgroundColor,
     fillColor,
@@ -22,7 +24,8 @@ export default function uiType(darkMode) {
     redTitleColor,
     elementBaseColor,
     tableMode,
-    settingsCogColor
+    settingsCogColor,
+    linkColor
   };
 
   return response;
