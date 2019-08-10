@@ -5,7 +5,6 @@ import { Link, withRouter } from 'react-router-dom';
 import routes from '../constants/routes';
 import { session, eventEmitter, il8n } from '../index';
 import uiType from '../utils/uitype';
-import log from 'electron-log';
 
 type Location = {
   hash: string,
@@ -61,13 +60,7 @@ class NavBar extends Component<Props, State> {
     // prettier-ignore
     const { location: { pathname } } = this.props;
     const { darkMode } = this.state;
-    const {
-      backgroundColor,
-      fillColor,
-      textColor,
-      elementBaseColor,
-      settingsCogColor
-    } = uiType(darkMode);
+    const { fillColor, elementBaseColor, settingsCogColor } = uiType(darkMode);
 
     return (
       <div>
@@ -79,20 +72,20 @@ class NavBar extends Component<Props, State> {
           }
         >
           {session.wallet && (
-          <nav
-            className={`navbar ${elementBaseColor}`}
-            role="navigation"
-            aria-label="main navigation"
-          >
-            <div id="navbarBasicExample" className="navbar-menu">
-              <div className="navbar-brand">
-                <div className="navbar-item">
-                  <img
-                    src="images/icon_color_64x64.png"
-                    alt="proton wallet logo in green"
-                  />
+            <nav
+              className={`navbar ${elementBaseColor}`}
+              role="navigation"
+              aria-label="main navigation"
+            >
+              <div id="navbarBasicExample" className="navbar-menu">
+                <div className="navbar-brand">
+                  <div className="navbar-item">
+                    <img
+                      src="images/icon_color_64x64.png"
+                      alt="proton wallet logo in green"
+                    />
+                  </div>
                 </div>
-              </div>
                 <div className="navbar-start">
                   <Link className="navbar-item" to={routes.HOME}>
                     <i className="fa fa-credit-card" />
@@ -131,38 +124,27 @@ class NavBar extends Component<Props, State> {
                     </Link>
                   </div>
                 </div>
-            </div>
-          </nav>
+              </div>
+            </nav>
           )}
           {!session.wallet && (
             <nav
-            className={`navbar ${elementBaseColor}`}
-            role="navigation"
-            aria-label="main navigation"
+              className={`navbar ${elementBaseColor}`}
+              role="navigation"
+              aria-label="main navigation"
             >
-            <div id="navbarNoWallet" className="navbar-menu">
-            <div className="navbar-brand">
-            <div className="navbar-item">
-              <img
-                src="images/icon_color_64x64.png"
-                alt="proton wallet logo in green"
-              />
-            </div>
-          </div>
-          <div className="navbar-end">
-          <div className="navbar-item">
-            <Link className="buttons" to={routes.SETTINGS}>
-              <span
-                className={`icon button is-large is-danger`}
-              >
-                <i className="fas fa-chevron-left" />
-              </span>
-            </Link>
-          </div>
-        </div>
-
-          </div>
-          </nav>
+              <div id="navbarNoWallet" className="navbar-menu">
+                <div className="navbar-brand">
+                  <div className="navbar-item">
+                    <Link className="buttons" to={routes.SETTINGS}>
+                      <span className="icon button is-large is-danger">
+                        <i className="fas fa-chevron-left" />
+                      </span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </nav>
           )}
         </div>
       </div>

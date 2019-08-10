@@ -267,9 +267,7 @@ export default class Send extends Component<Props, State> {
       transactionInProgress
     } = this.state;
 
-    const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
-      darkMode
-    );
+    const { backgroundColor, textColor, elementBaseColor } = uiType(darkMode);
 
     if (transactionComplete === true) {
       return <Redirect to="/" />;
