@@ -41,13 +41,13 @@ export default class NodeFee extends Component<Props, State> {
     this.setState({
       darkMode: true
     });
-  }
+  };
 
   darkModeOff = () => {
     this.setState({
       darkMode: false
     });
-  }
+  };
 
   refreshNodeFee = () => {
     this.setState({

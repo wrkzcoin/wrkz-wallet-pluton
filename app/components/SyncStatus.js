@@ -51,13 +51,13 @@ export default class SyncStatus extends Component<Props, State> {
     this.setState({
       darkMode: true
     });
-  }
+  };
 
   darkModeOff = () => {
     this.setState({
       darkMode: false
     });
-  }
+  };
 
   render() {
     const { darkMode, syncStatus } = this.state;

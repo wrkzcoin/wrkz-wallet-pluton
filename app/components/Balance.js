@@ -61,13 +61,13 @@ export default class Balance extends Component<Props, State> {
     this.setState({
       darkMode: true
     });
-  }
+  };
 
   darkModeOff = () => {
     this.setState({
       darkMode: false
     });
-  }
+  };
 
   render() {
     const { darkMode, unlockedBalance, lockedBalance } = this.state;
