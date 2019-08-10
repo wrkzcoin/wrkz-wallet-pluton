@@ -241,9 +241,7 @@ export default class Settings extends Component<Props, State> {
       scanHeight
     } = this.state;
 
-    const { backgroundColor, fillColor, textColor, elementBaseColor, linkColor } = uiType(
-      darkMode
-    );
+    const { backgroundColor, textColor, linkColor } = uiType(darkMode);
 
     return (
       <div>

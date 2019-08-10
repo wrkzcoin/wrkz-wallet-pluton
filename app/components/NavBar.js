@@ -2,8 +2,9 @@
 
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import log from 'electron-log';
 import routes from '../constants/routes';
-import { session, eventEmitter, il8n } from '../index';
+import { session, eventEmitter, il8n, loginCounter } from '../index';
 import uiType from '../utils/uitype';
 
 type Location = {
@@ -32,6 +33,7 @@ class NavBar extends Component<Props, State> {
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
+    this.logOut = this.logOut.bind(this);
   }
 
   componentDidMount() {
@@ -54,6 +56,11 @@ class NavBar extends Component<Props, State> {
     this.setState({
       darkMode: false
     });
+  };
+
+  logOut = () => {
+    loginCounter.isLoggedIn = false;
+    log.debug('User locked wallet.');
   };
 
   render() {
@@ -114,6 +121,21 @@ class NavBar extends Component<Props, State> {
                   </Link>
                 </div>
                 <div className="navbar-end">
+                  {session.walletPassword !== '' && (
+                    <div className="navbar-item">
+                      <Link className="buttons" to={routes.LOGIN}>
+                        <span
+                          className="button icon is-large is-danger"
+                          onClick={this.logOut}
+                          onKeyPress={this.logOut}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <i className="fa fa-lock" />
+                        </span>
+                      </Link>
+                    </div>
+                  )}
                   <div className="navbar-item">
                     <Link className="buttons" to={routes.SETTINGS}>
                       <span
