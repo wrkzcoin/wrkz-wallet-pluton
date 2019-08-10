@@ -111,9 +111,13 @@ app.on('ready', async () => {
     height: 605,
     minWidth: 1210,
     minHeight: 605,
-    nodeIntegration: true,
     backgroundColor: '#121212',
-    icon: path.join(__dirname, 'images/icon.png')
+    icon: path.join(__dirname, 'images/icon.png'),
+    webPreferences: {
+      nativeWindowOpen: true,
+      nodeIntegrationInWorker: true,
+      nodeIntegration: true
+    }
   });
 
   if (os.platform() !== 'darwin') {

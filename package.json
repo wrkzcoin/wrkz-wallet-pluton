@@ -61,7 +61,8 @@
             "package.json"
         ],
         "dmg": {
-            "contents": [{
+            "contents": [
+                {
                     "x": 130,
                     "y": 220
                 },
@@ -109,7 +110,8 @@
         "email": "extrahash@protonmail.com",
         "url": "http://getproton.org"
     },
-    "contributors": [{
+    "contributors": [
+        {
             "name": "Vikram Rangaraj",
             "email": "vikr01@icloud.com",
             "url": "https://github.com/vikr01"
