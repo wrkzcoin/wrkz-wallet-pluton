@@ -2,13 +2,13 @@
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import ReactTooltip from 'react-tooltip';
-import { session } from '../index';
+import { session, eventEmitter } from '../index';
 
 type Props = {};
 
 type State = {
   syncStatus: number,
-  darkmode: boolean
+  darkMode: boolean
 };
 
 export default class SyncStatus extends Component<Props, State> {
@@ -22,15 +22,22 @@ export default class SyncStatus extends Component<Props, State> {
     super(props);
     this.state = {
       syncStatus: session.getSyncStatus(),
-      darkmode: session.darkMode
+      darkMode: session.darkMode
     };
     this.syncInterval = setInterval(() => this.refresh(), 1000);
+    this.darkModeOn = this.darkModeOn.bind(this);
+    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    eventEmitter.on('darkmodeon', this.darkModeOn);
+    eventEmitter.on('darkmodeoff', this.darkModeOff);
+  }
 
   componentWillUnmount() {
     clearInterval(this.syncInterval);
+    eventEmitter.off('darkmodeon', this.darkModeOn);
+    eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
 
   refresh() {
@@ -40,8 +47,20 @@ export default class SyncStatus extends Component<Props, State> {
     ReactTooltip.rebuild();
   }
 
+  darkModeOn = () => {
+    this.setState({
+      darkMode: true
+    });
+  }
+
+  darkModeOff = () => {
+    this.setState({
+      darkMode: false
+    });
+  }
+
   render() {
-    const { darkmode, syncStatus } = this.state;
+    const { darkMode, syncStatus } = this.state;
 
     let syncTooltip;
 
@@ -60,7 +79,7 @@ export default class SyncStatus extends Component<Props, State> {
         <div className="tags has-addons">
           <span
             className={
-              darkmode ? 'tag is-dark is-large' : 'tag is-white is-large'
+              darkMode ? 'tag is-dark is-large' : 'tag is-white is-large'
             }
           >
             Sync:

@@ -38,7 +38,7 @@ export function savedInInstallDir(savePath) {
 export let config = iConfig;
 
 export const eventEmitter = new EventEmitter();
-eventEmitter.setMaxListeners(2);
+eventEmitter.setMaxListeners(5);
 
 export const updater = new AutoUpdater();
 updater.getLatestVersion();

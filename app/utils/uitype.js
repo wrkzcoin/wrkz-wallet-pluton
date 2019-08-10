@@ -9,7 +9,21 @@ export default function uiType(darkMode) {
 
   const redTitleColor = darkMode === true ? 'has-text-danger' : '';
 
-  const response = { backgroundColor, fillColor, textColor, redTitleColor };
+  const elementBaseColor = darkMode === true ? 'is-black' : 'is-light';
+
+  const tableMode = darkMode === true ? 'table-darkmode' : '';
+
+  const settingsCogColor = darkMode === true ? 'is-dark' : '';
+
+  const response = {
+    backgroundColor,
+    fillColor,
+    textColor,
+    redTitleColor,
+    elementBaseColor,
+    tableMode,
+    settingsCogColor
+  };
 
   return response;
 }

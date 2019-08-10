@@ -9,6 +9,7 @@ import { session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
+import uiType from '../utils/uitype';
 
 type Props = {};
 
@@ -266,6 +267,10 @@ export default class Send extends Component<Props, State> {
       transactionInProgress
     } = this.state;
 
+    const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
+      darkMode
+    );
+
     if (transactionComplete === true) {
       return <Redirect to="/" />;
     }
@@ -273,253 +278,125 @@ export default class Send extends Component<Props, State> {
     return (
       <div>
         <Redirector />
-        {darkMode === false && (
-          <div className="wholescreen">
-            <ReactTooltip
-              effect="solid"
-              border
-              type="dark"
-              multiline
-              place="top"
-            />
-            <NavBar />
-            <div className="maincontent">
-              <form onSubmit={this.handleSubmit}>
-                <div className="field">
-                  <label className="label" htmlFor="address">
-                    {il8n.send_to_address}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.send_to_address_input_placeholder}
-                        id="label"
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="field">
+        <div className={`wholescreen ${backgroundColor}`}>
+          <ReactTooltip
+            effect="solid"
+            border
+            type="light"
+            multiline
+            place="top"
+          />
+          <NavBar />
+          <div className={`maincontent ${backgroundColor}`}>
+            <form onSubmit={this.handleSubmit}>
+              <div className="field">
+                <label className={`label ${textColor}`} htmlFor="address">
+                  {il8n.send_to_address}
                   <div className="control">
-                    <div className="columns">
-                      <div className="column">
-                        <label className="label" htmlFor="amount">
-                          {il8n.amount_to_send}
-                          <input
-                            className="input is-large"
-                            type="text"
-                            placeholder={il8n.amount_to_send_input_placeholder}
-                            id="amount"
-                            value={enteredAmount}
-                            onChange={this.handleAmountChange}
-                          />
-                          <a
-                            onClick={this.sendAll}
-                            onKeyPress={this.sendAll}
-                            role="button"
-                            tabIndex={0}
-                          >
-                            {il8n.send_all}
-                          </a>
-                        </label>
-                      </div>
-                      <div className="column">
-                        <label className="label" htmlFor="totalamount">
-                          {il8n.total_with_fees}
-                          <input
-                            className="input is-large"
-                            type="text"
-                            placeholder={il8n.total_with_fees_input_placeholder}
-                            id="totalamount"
-                            value={totalAmount}
-                            onChange={this.handleTotalAmountChange}
-                          />
-                        </label>
-                      </div>
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder={il8n.send_to_address_input_placeholder}
+                      id="label"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="field">
+                <div className="control">
+                  <div className="columns">
+                    <div className="column">
+                      <label className={`label ${textColor}`} htmlFor="amount">
+                        {il8n.amount_to_send}
+                        <input
+                          className="input is-large"
+                          type="text"
+                          placeholder={`How much ${
+                            session.wallet.config.ticker
+                          } to send (eg. 100)`}
+                          id="amount"
+                          value={enteredAmount}
+                          onChange={this.handleAmountChange}
+                        />
+                        <a
+                          onClick={this.sendAll}
+                          onKeyPress={this.sendAll}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          {il8n.send_all}
+                        </a>
+                      </label>
+                    </div>
+                    <div className="column">
+                      <label
+                        className={`label ${textColor}`}
+                        htmlFor="totalamount"
+                      >
+                        {il8n.total_with_fees}
+                        <input
+                          className="input is-large"
+                          type="text"
+                          placeholder={il8n.total_with_fees_input_placeholder}
+                          id="totalamount"
+                          value={totalAmount}
+                          onChange={this.handleTotalAmountChange}
+                        />
+                      </label>
                     </div>
                   </div>
                 </div>
-                <div className="field">
-                  <label className="label" htmlFor="paymentid">
-                    {il8n.payment_id}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.payment_id_input_placeholder}
-                        id="paymentid"
-                        value={paymentID}
-                        onChange={this.handlePaymentIDChange}
-                      />
-                      <a
-                        onClick={this.generatePaymentID}
-                        onKeyPress={this.generatePaymentID}
-                        role="button"
-                        tabIndex={0}
-                      >
-                        {' '}
-                        {il8n.generate_payment_id}
-                      </a>
-                    </div>
-                  </label>
-                </div>
-                <div className="buttons">
-                  {!transactionInProgress && (
-                    <button
-                      type="submit"
-                      className="button is-success is-large "
-                    >
-                      {il8n.send}
-                    </button>
-                  )}
-                  {transactionInProgress && (
-                    <button
-                      type="submit"
-                      className="button is-success is-large is-loading is-disabled"
-                    >
-                      {il8n.send}
-                    </button>
-                  )}
-
-                  <button
-                    type="reset"
-                    className="button is-large"
-                    onClick={this.resetPaymentID}
-                  >
-                    {il8n.clear}
-                  </button>
-                </div>
-              </form>
-            </div>
-            <BottomBar />
-          </div>
-        )}
-        {darkMode === true && (
-          <div className="wholescreen has-background-dark">
-            <ReactTooltip
-              effect="solid"
-              border
-              type="light"
-              multiline
-              place="top"
-            />
-            <NavBar />
-            <div className="maincontent has-background-dark">
-              <form onSubmit={this.handleSubmit}>
-                <div className="field">
-                  <label className="label has-text-white" htmlFor="address">
-                    {il8n.send_to_address}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.send_to_address_input_placeholder}
-                        id="label"
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="field">
+              </div>
+              <div className="field">
+                <label className={`label ${textColor}`} htmlFor="paymentid">
+                  {il8n.payment_id}
                   <div className="control">
-                    <div className="columns">
-                      <div className="column">
-                        <label
-                          className="label has-text-white"
-                          htmlFor="amount"
-                        >
-                          {il8n.amount_to_send}
-                          <input
-                            className="input is-large"
-                            type="text"
-                            placeholder={`How much ${
-                              session.wallet.config.ticker
-                            } to send (eg. 100)`}
-                            id="amount"
-                            value={enteredAmount}
-                            onChange={this.handleAmountChange}
-                          />
-                          <a
-                            onClick={this.sendAll}
-                            onKeyPress={this.sendAll}
-                            role="button"
-                            tabIndex={0}
-                          >
-                            {il8n.send_all}
-                          </a>
-                        </label>
-                      </div>
-                      <div className="column">
-                        <label
-                          className="label has-text-white"
-                          htmlFor="totalamount"
-                        >
-                          {il8n.total_with_fees}
-                          <input
-                            className="input is-large"
-                            type="text"
-                            placeholder={il8n.total_with_fees_input_placeholder}
-                            id="totalamount"
-                            value={totalAmount}
-                            onChange={this.handleTotalAmountChange}
-                          />
-                        </label>
-                      </div>
-                    </div>
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder={il8n.payment_id_input_placeholder}
+                      id="paymentid"
+                      value={paymentID}
+                      onChange={this.handlePaymentIDChange}
+                    />
+                    <a
+                      onClick={this.generatePaymentID}
+                      onKeyPress={this.generatePaymentID}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      {il8n.generate_payment_id}
+                    </a>
                   </div>
-                </div>
-                <div className="field">
-                  <label className="label has-text-white" htmlFor="paymentid">
-                    {il8n.payment_id}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.payment_id_input_placeholder}
-                        id="paymentid"
-                        value={paymentID}
-                        onChange={this.handlePaymentIDChange}
-                      />
-                      <a
-                        onClick={this.generatePaymentID}
-                        onKeyPress={this.generatePaymentID}
-                        role="button"
-                        tabIndex={0}
-                      >
-                        {il8n.generate_payment_id}
-                      </a>
-                    </div>
-                  </label>
-                </div>
-                <div className="buttons">
-                  {!transactionInProgress && (
-                    <button
-                      type="submit"
-                      className="button is-success is-large "
-                    >
-                      {il8n.send}
-                    </button>
-                  )}
-                  {transactionInProgress && (
-                    <button
-                      type="submit"
-                      className="button is-success is-large is-loading is-disabled"
-                    >
-                      {il8n.send}
-                    </button>
-                  )}
-
-                  <button
-                    type="reset"
-                    className="button is-large is-black"
-                    onClick={this.resetPaymentID}
-                  >
-                    {il8n.clear}
+                </label>
+              </div>
+              <div className="buttons">
+                {!transactionInProgress && (
+                  <button type="submit" className="button is-success is-large">
+                    {il8n.send}
                   </button>
-                </div>
-              </form>
-            </div>
-            <BottomBar />
+                )}
+                {transactionInProgress && (
+                  <button
+                    type="submit"
+                    className="button is-success is-large is-loading is-disabled"
+                  >
+                    {il8n.send}
+                  </button>
+                )}
+
+                <button
+                  type="reset"
+                  className={`button is-large ${elementBaseColor}`}
+                  onClick={this.resetPaymentID}
+                >
+                  {il8n.clear}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
+          <BottomBar />
+        </div>
       </div>
     );
   }

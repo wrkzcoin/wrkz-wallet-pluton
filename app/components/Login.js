@@ -4,7 +4,6 @@ import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 
-
 type Props = {};
 
 type State = {

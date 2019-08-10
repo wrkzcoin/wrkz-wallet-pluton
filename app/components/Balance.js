@@ -2,14 +2,14 @@
 import React, { Component } from 'react';
 import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
-import { session, il8n } from '../index';
+import { session, il8n, eventEmitter } from '../index';
 
 type Props = {};
 
 type State = {
   unlockedBalance: number,
   lockedBalance: number,
-  darkmode: boolean
+  darkMode: boolean
 };
 
 export default class Balance extends Component<Props, State> {
@@ -22,11 +22,13 @@ export default class Balance extends Component<Props, State> {
     this.state = {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      darkmode: session.darkMode
+      darkMode: session.darkMode
     };
     this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
       this
     );
+    this.darkModeOn = this.darkModeOn.bind(this);
+    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
   componentDidMount() {
@@ -34,12 +36,16 @@ export default class Balance extends Component<Props, State> {
       session.wallet.setMaxListeners(2);
       session.wallet.on('transaction', this.refreshBalanceOnNewTransaction);
     }
+    eventEmitter.on('darkmodeon', this.darkModeOn);
+    eventEmitter.on('darkmodeoff', this.darkModeOff);
   }
 
   componentWillUnmount() {
     if (session.wallet !== undefined) {
       session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
     }
+    eventEmitter.off('darkmodeon', this.darkModeOn);
+    eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
 
   refreshBalanceOnNewTransaction = () => {
@@ -51,8 +57,20 @@ export default class Balance extends Component<Props, State> {
     ReactTooltip.rebuild();
   };
 
+  darkModeOn = () => {
+    this.setState({
+      darkMode: true
+    });
+  }
+
+  darkModeOff = () => {
+    this.setState({
+      darkMode: false
+    });
+  }
+
   render() {
-    const { darkmode, unlockedBalance, lockedBalance } = this.state;
+    const { darkMode, unlockedBalance, lockedBalance } = this.state;
 
     let balanceTooltip;
 
@@ -73,7 +91,7 @@ export default class Balance extends Component<Props, State> {
       <div className="control statusicons">
         <div className="tags has-addons">
           <span className={
-            darkmode
+            darkMode
               ? 'tag is-dark is-large'
               : 'tag is-white is-large'}>{il8n.balance_colon}</span>
           <span

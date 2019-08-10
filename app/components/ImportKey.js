@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import log from 'electron-log';
 import NavBar from './NavBar';
 import Redirector from './Redirector';
+import uiType from '../utils/uitype';
 import {
   config,
   session,
@@ -107,124 +108,71 @@ export default class Send extends Component<Props, State> {
 
   render() {
     const { darkMode } = this.state;
+    const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
+      darkMode
+    );
 
     return (
       <div>
         <Redirector />
-        {darkMode === false && (
-          <div className="wholescreen">
-            <NavBar />
-            <div className="maincontent">
-              <form onSubmit={this.handleSubmit}>
-                <div className="field">
-                  <label className="label" htmlFor="scanheight">
-                    {il8n.private_spend_key}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.private_spend_key_input_placeholder}
-                        id="scanheight"
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="field">
-                  <label className="label" htmlFor="scanheight">
-                    {il8n.private_view_key}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.private_view_key_input_placeholder}
-                        id="scanheight"
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="field">
-                  <label className="label" htmlFor="scanheight">
-                    {il8n.scan_height}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.scan_height_input_placeholder}
-                        id="scanheight"
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="buttons">
-                  <button type="submit" className="button is-success is-large ">
-                    {il8n.import}
-                  </button>
-                  <button type="reset" className="button is-large">
-                    {il8n.clear}
-                  </button>
-                </div>
-              </form>
-            </div>
-            <div className="footerbar has-background-light" />
+        <div className={`wholescreen ${backgroundColor}`}>
+          <NavBar />
+          <div className={`maincontent ${backgroundColor}`}>
+            <form onSubmit={this.handleSubmit}>
+              <div className="field">
+                <label className={`label ${textColor}`} htmlFor="scanheight">
+                  {il8n.private_spend_key}
+                  <div className="control">
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder={il8n.private_spend_key_input_placeholder}
+                      id="scanheight"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="field">
+                <label className={`label ${textColor}`} htmlFor="scanheight">
+                  {il8n.private_view_key}
+                  <div className="control">
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder={il8n.private_view_key_input_placeholder}
+                      id="scanheight"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="field">
+                <label className={`label ${textColor}`} htmlFor="scanheight">
+                  {il8n.scan_height}
+                  <div className="control">
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder={il8n.scan_height_input_placeholder}
+                      id="scanheight"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="buttons">
+                <button type="submit" className="button is-success is-large ">
+                  {il8n.import}
+                </button>
+                <button
+                  type="reset"
+                  className={`button is-large ${elementBaseColor}`}
+                >
+                  {il8n.clear}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-        {darkMode === true && (
-          <div className="wholescreen has-background-dark">
-            <NavBar />
-            <div className="maincontent has-background-dark">
-              <form onSubmit={this.handleSubmit}>
-                <div className="field">
-                  <label className="label has-text-white" htmlFor="scanheight">
-                    {il8n.private_spend_key}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.private_spend_key_input_placeholder}
-                        id="scanheight"
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="field">
-                  <label className="label has-text-white" htmlFor="scanheight">
-                    {il8n.private_view_key}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.private_view_key_input_placeholder}
-                        id="scanheight"
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="field">
-                  <label className="label has-text-white" htmlFor="scanheight">
-                    {il8n.scan_height}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="text"
-                        placeholder={il8n.scan_height_input_placeholder}
-                        id="scanheight"
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="buttons">
-                  <button type="submit" className="button is-success is-large ">
-                    {il8n.import}
-                  </button>
-                  <button type="reset" className="button is-large is-black">
-                    {il8n.clear}
-                  </button>
-                </div>
-              </form>
-            </div>
-            <div className="footerbar has-background-black" />
-          </div>
-        )}
+          <div className="footerbar has-background-black" />
+        </div>
       </div>
     );
   }

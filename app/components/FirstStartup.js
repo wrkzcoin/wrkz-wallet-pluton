@@ -103,8 +103,13 @@ export default class FirstStartup extends Component<Props, State> {
 
   render() {
     const { darkMode } = this.state;
-    const { backgroundColor, fillColor, textColor, redTitleColor, buttonColor } = uiType(darkMode);
-
+    const {
+      backgroundColor,
+      fillColor,
+      textColor,
+      redTitleColor,
+      buttonColor
+    } = uiType(darkMode);
 
     return (
       <div>
