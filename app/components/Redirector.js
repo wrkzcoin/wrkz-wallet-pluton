@@ -58,6 +58,7 @@ class Redirector extends Component<Props, State> {
     eventEmitter.on('initializeNewSession', this.goToHome);
     eventEmitter.on('refreshLogin', this.goToHome);
     eventEmitter.on('loginFailed', this.goToLogin);
+    eventEmitter.on('goHome', this.goToHome);
   }
 
   componentWillUnmount() {
@@ -69,6 +70,7 @@ class Redirector extends Component<Props, State> {
     eventEmitter.off('initializeNewSession', this.goToHome);
     eventEmitter.off('refreshLogin', this.goToHome);
     eventEmitter.off('loginFailed', this.goToLogin);
+    eventEmitter.off('goHome', this.goToHome);
   }
 
   goToLogin = () => {

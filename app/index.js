@@ -323,7 +323,7 @@ ipcRenderer.on('handleNew', handleNew);
 eventEmitter.on('handleNew', handleNew);
 
 ipcRenderer.on('handleBackup', () => {
-  if (!session.wallet) {
+  if (!session.wallet || !loginCounter.isLoggedIn) {
     eventEmitter.emit('refreshLogin');
     return;
   }

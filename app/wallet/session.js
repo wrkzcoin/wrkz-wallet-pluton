@@ -75,6 +75,7 @@ export default class WalletSession {
       }
     }
     if (!this.loginFailed && !this.firstStartup) {
+      this.loginFailed = false;
       loginCounter.isLoggedIn = true;
       log.debug(`Opened wallet file at ${this.walletFile}`);
       this.wallet = openWallet;

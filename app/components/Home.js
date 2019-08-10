@@ -2,7 +2,7 @@
 import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
-import { session, loginCounter, eventEmitter, il8n } from '../index';
+import { session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -48,9 +48,6 @@ export default class Home extends Component<Props, State> {
     }
     if (firstLoadOnLogin && loginFailed === false) {
       this.switchOffAnimation();
-    }
-    if (!loginFailed) {
-      loginCounter.userLoginAttempted = false;
     }
   }
 

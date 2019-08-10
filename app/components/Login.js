@@ -23,9 +23,10 @@ export default class Login extends Component<Props, State> {
       wrongPassword: loginCounter.userLoginAttempted
     };
     const { wrongPassword } = this.state;
-    if (!wrongPassword) {
+    if (!wrongPassword && !session.wallet) {
       this.switchAnimation();
     }
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {}
@@ -36,17 +37,27 @@ export default class Login extends Component<Props, State> {
     loginCounter.userLoginAttempted = true;
   }
 
-  async handleSubmit(event: any) {
-    // We're preventing the default refresh of the page that occurs on form submit
+  handleSubmit = async (event: any) => {
+    // We're preventing the default refresh of the app that occurs on form submit
     event.preventDefault();
-    loginCounter.userLoginAttempted = true;
     eventEmitter.emit('loginInProgress');
     const password = event.target[0].value;
     if (password === undefined) {
       return;
     }
-    eventEmitter.emit('initializeNewSession', password);
-  }
+    if (!session.wallet) {
+      eventEmitter.emit('initializeNewSession', password);
+    } else {
+      if (password === session.walletPassword) {
+        loginCounter.isLoggedIn = true;
+        eventEmitter.emit('goHome');
+      }
+      if (password !== session.walletPassword) {
+        loginCounter.userLoginAttempted = true;
+        eventEmitter.emit('refreshLogin');
+      }
+    }
+  };
 
   render() {
     const { darkMode, wrongPassword, walletFile } = this.state;

@@ -60,6 +60,8 @@ class NavBar extends Component<Props, State> {
 
   logOut = () => {
     loginCounter.isLoggedIn = false;
+    loginCounter.userLoginAttempted = false;
+    session.loginFailed = false;
     log.debug('User locked wallet.');
   };
 
@@ -78,7 +80,7 @@ class NavBar extends Component<Props, State> {
               : `headerbar ${fillColor}`
           }
         >
-          {session.wallet && (
+          {session.wallet && loginCounter.isLoggedIn && (
             <nav
               className={`navbar ${elementBaseColor}`}
               role="navigation"
@@ -149,25 +151,27 @@ class NavBar extends Component<Props, State> {
               </div>
             </nav>
           )}
-          {!session.wallet && (
-            <nav
-              className={`navbar ${elementBaseColor}`}
-              role="navigation"
-              aria-label="main navigation"
-            >
-              <div className="navbar-menu">
-                <div className="navbar-brand">
-                  <div className="navbar-item">
-                    <Link className="buttons" to={routes.SETTINGS}>
-                      <span className="icon button is-large is-danger">
-                        <i className="fas fa-chevron-left" />
-                      </span>
-                    </Link>
+          {!session.wallet ||
+            (!loginCounter.isLoggedIn && (
+              <nav
+                className={`navbar ${elementBaseColor}`}
+                role="navigation"
+                aria-label="main navigation"
+              >
+                <div className="navbar-menu">
+                  <div className="navbar-brand" />
+                  <div className="navbar-end">
+                    <div className="navbar-item">
+                      <Link className="buttons" to={routes.SETTINGS}>
+                        <span className="icon button is-large is-danger">
+                          <i className="fas fa-chevron-left" />
+                        </span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </nav>
-          )}
+              </nav>
+            ))}
         </div>
       </div>
     );
