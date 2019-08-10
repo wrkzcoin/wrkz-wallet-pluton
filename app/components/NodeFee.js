@@ -6,7 +6,7 @@ type Props = {};
 
 type State = {
   nodeFee: number,
-  darkmode: boolean
+  darkMode: boolean
 };
 
 export default class NodeFee extends Component<Props, State> {
@@ -18,18 +18,36 @@ export default class NodeFee extends Component<Props, State> {
     super(props);
     this.state = {
       nodeFee: session.daemon.feeAmount || 0,
-      darkmode: session.darkMode
+      darkMode: session.darkMode
     };
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
+    this.darkModeOn = this.darkModeOn.bind(this);
+    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
   componentDidMount() {
     eventEmitter.on('gotNodeFee', this.refreshNodeFee);
+    eventEmitter.on('darkmodeon', this.darkModeOn);
+    eventEmitter.on('darkmodeoff', this.darkModeOff);
   }
 
   componentWillUnmount() {
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
+    eventEmitter.off('darkmodeon', this.darkModeOn);
+    eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
+
+  darkModeOn = () => {
+    this.setState({
+      darkMode: true
+    });
+  };
+
+  darkModeOff = () => {
+    this.setState({
+      darkMode: false
+    });
+  };
 
   refreshNodeFee = () => {
     this.setState({
@@ -38,14 +56,14 @@ export default class NodeFee extends Component<Props, State> {
   };
 
   render() {
-    const { darkmode, nodeFee } = this.state;
+    const { darkMode, nodeFee } = this.state;
     if (nodeFee > 0) {
       return (
         <div className="control statusicons">
           <div className="tags has-addons">
             <span
               className={
-                darkmode ? 'tag is-dark is-large' : 'tag is-white is-large'
+                darkMode ? 'tag is-dark is-large' : 'tag is-white is-large'
               }
             >
               {il8n.node_fee}

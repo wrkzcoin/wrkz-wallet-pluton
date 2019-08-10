@@ -49,6 +49,7 @@ export default class BottomBar extends Component<Props, State> {
 
   render() {
     const { darkmode } = this.state;
+
     return (
       <div
         className={

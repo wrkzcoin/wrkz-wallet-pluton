@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import log from 'electron-log';
 import { config, session, eventEmitter, il8n } from '../index';
 import Redirector from './Redirector';
+import uiType from '../utils/uitype';
 
 // import styles from './Send.css';
 
@@ -102,72 +103,46 @@ export default class FirstStartup extends Component<Props, State> {
 
   render() {
     const { darkMode } = this.state;
+    const {
+      backgroundColor,
+      fillColor,
+      textColor,
+      redTitleColor,
+      buttonColor
+    } = uiType(darkMode);
 
     return (
       <div>
         <Redirector />
-        {darkMode === false && (
-          <div className="fullwindow">
-            <div className="mid-div">
-              <div className="box loginbox has-background-light passwordchangebox">
-                <h1 className="title has-text-centered">
-                  {il8n.welcome_to_proton}
-                </h1>
-                <button
-                  className="button is-large is-fullwidth"
-                  onClick={this.openExisting}
-                >
-                  {il8n.open_existing_wallet}
-                </button>
-                <br />
-                <button
-                  className="button is-large is-fullwidth"
-                  onClick={this.createNew}
-                >
-                  {il8n.create_new_wallet}
-                </button>
-                <br />
-                <button
-                  className="button is-large is-fullwidth"
-                  onClick={this.importFromKeysOrSeed}
-                >
-                  {il8n.import_keys_seed}
-                </button>
-              </div>
+        <div className={`fullwindow outer-div ${backgroundColor}`}>
+          <div className="mid-div">
+            <div className={`box loginbox passwordchangebox ${fillColor}`}>
+              <h1 className={`title has-text-centered ${redTitleColor}`}>
+                {il8n.welcome_to_proton}
+              </h1>
+              <button
+                className={`button is-large is-fullwidth ${buttonColor}`}
+                onClick={this.openExisting}
+              >
+                {il8n.open_existing_wallet}
+              </button>
+              <br />
+              <button
+                className={`button is-large is-fullwidth ${buttonColor}`}
+                onClick={this.createNew}
+              >
+                {il8n.create_new_wallet}
+              </button>
+              <br />
+              <button
+                className={`button is-large is-fullwidth ${buttonColor}`}
+                onClick={this.importFromKeysOrSeed}
+              >
+                {il8n.import_keys_seed}
+              </button>
             </div>
           </div>
-        )}
-        {darkMode === true && (
-          <div className="fullwindow has-background-dark">
-            <div className="mid-div">
-              <div className="box loginbox has-background-black passwordchangebox">
-                <h1 className="title has-text-centered has-text-danger">
-                  {il8n.welcome_to_proton}
-                </h1>
-                <button
-                  className="button is-large is-fullwidth is-dark"
-                  onClick={this.openExisting}
-                >
-                  {il8n.open_existing_wallet}
-                </button>
-                <br />
-                <button
-                  className="button is-large is-fullwidth is-dark"
-                  onClick={this.createNew}
-                >
-                  {il8n.create_new_wallet}
-                </button>
-                <br />
-                <button
-                  className="button is-large is-fullwidth is-dark"
-                  onClick={this.importFromKeysOrSeed}
-                >
-                  {il8n.import_keys_seed}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     );
   }

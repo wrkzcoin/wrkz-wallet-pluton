@@ -10,7 +10,8 @@ type State = {
   importSeed: boolean,
   changePassword: boolean,
   firstStartup: boolean,
-  loginFailed: boolean
+  loginFailed: boolean,
+  login: boolean
 };
 
 type Location = {
@@ -36,12 +37,14 @@ class Redirector extends Component<Props, State> {
       importSeed: false,
       changePassword: false,
       firstStartup: session.firstStartup,
-      loginFailed: session.loginFailed
+      loginFailed: session.loginFailed,
+      login: false
     };
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
     this.goToImportFromKey = this.goToImportFromKey.bind(this);
     this.goToPasswordChange = this.goToPasswordChange.bind(this);
     this.goToHome = this.goToHome.bind(this);
+    this.goToLogin = this.goToLogin.bind(this);
   }
 
   componentDidMount() {
@@ -51,6 +54,7 @@ class Redirector extends Component<Props, State> {
     eventEmitter.on('openNewWallet', this.goToHome);
     eventEmitter.on('initializeNewSession', this.goToHome);
     eventEmitter.on('refreshLogin', this.goToHome);
+    eventEmitter.on('loginFailed', this.goToLogin);
   }
 
   componentWillUnmount() {
@@ -59,7 +63,15 @@ class Redirector extends Component<Props, State> {
     ipcRenderer.off('handlePasswordChange', this.goToPasswordChange);
     eventEmitter.off('openNewWallet', this.goToHome);
     eventEmitter.off('initializeNewSession', this.goToHome);
+    eventEmitter.off('refreshLogin', this.goToHome);
+    eventEmitter.off('loginFailed', this.goToLogin);
   }
+
+  goToLogin = () => {
+    this.setState({
+      login: true
+    });
+  };
 
   goToHome = () => {
     this.setState({
@@ -100,7 +112,8 @@ class Redirector extends Component<Props, State> {
       importSeed,
       loginFailed,
       firstStartup,
-      home
+      home,
+      login
     } = this.state;
     if (home === true && pathname !== '/') {
       return <Redirect to="/" />;
@@ -123,6 +136,10 @@ class Redirector extends Component<Props, State> {
       pathname !== '/import' &&
       pathname !== '/importkey'
     ) {
+      return <Redirect to="/login" />;
+    }
+
+    if (login === true) {
       return <Redirect to="/login" />;
     }
 

@@ -6,6 +6,7 @@ import { session, loginCounter, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
+import uiType from '../utils/uitype';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -18,7 +19,7 @@ type Props = {};
 type State = {
   transactions: Array<any>,
   totalTransactionCount: number,
-  darkmode: boolean
+  darkMode: boolean
 };
 
 export default class Home extends Component<Props, State> {
@@ -35,7 +36,7 @@ export default class Home extends Component<Props, State> {
         false
       ),
       totalTransactionCount: session.getTransactions().length,
-      darkmode: session.darkMode
+      darkMode: session.darkMode
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
@@ -125,224 +126,118 @@ export default class Home extends Component<Props, State> {
   };
 
   render() {
-    const { darkmode, transactions, totalTransactionCount } = this.state;
+    const { darkMode, transactions, totalTransactionCount } = this.state;
+    const { backgroundColor, fillColor, textColor, tableMode } = uiType(
+      darkMode
+    );
 
     return (
       <div>
         <Redirector />
-        {darkmode === false && (
-          <div className="wholescreen">
-            <ReactTooltip
-              effect="solid"
-              border
-              type="dark"
-              multiline
-              place="top"
-            />
-            <NavBar />
-            <div
-              className={
-                session.firstLoadOnLogin
-                  ? 'maincontent-homescreen-fadein'
-                  : 'maincontent-homescreen'
-              }
+        <div className={`wholescreen ${backgroundColor}`}>
+          <ReactTooltip
+            effect="solid"
+            border
+            type="light"
+            multiline
+            place="top"
+          />
+          <NavBar />
+          <div
+            className={
+              session.firstLoadOnLogin
+                ? `maincontent-homescreen-fadein ${backgroundColor}`
+                : `maincontent-homescreen ${backgroundColor}`
+            }
+          >
+            <table
+              className={`table is-striped is-hoverable is-fullwidth is-family-monospace ${tableMode}`}
             >
-              <table className="table is-striped is-hoverable is-fullwidth is-family-monospace">
-                <thead>
-                  <tr>
-                    <th>{il8n.date}</th>
-                    <th>{il8n.hash}</th>
-                    <th className="has-text-right">{il8n.amount}</th>
-                    <th className="has-text-right">{il8n.balance}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {transactions.map(tx => {
-                    return (
-                      <tr key={tx[1]}>
-                        <td
-                          data-tip={
-                            tx[0] === 0
-                              ? il8n.unconfirmed_tx_30_sec_confirm
-                              : `${il8n.block} ${tx[4]}`
-                          }
-                        >
-                          {tx[0] === 0 && (
-                            <p className="has-text-danger">
-                              {il8n.unconfirmed}
-                            </p>
-                          )}
-                          {tx[0] > 0 && (
-                            <p>{session.convertTimestamp(tx[0])}</p>
-                          )}
-                        </td>
-                        <td>{tx[1]}</td>
-                        {tx[2] < 0 && (
-                          <td>
-                            <p className="has-text-danger has-text-right">
-                              {session.atomicToHuman(tx[2], true)}
-                            </p>
-                          </td>
+              <thead>
+                <tr>
+                  <th className={textColor}>{il8n.date}</th>
+                  <th className={textColor}>{il8n.hash}</th>
+                  <th className={`has-text-right ${textColor}`}>
+                    {il8n.amount}
+                  </th>
+                  <th className={`has-text-right ${textColor}`}>
+                    {il8n.balance}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {transactions.map(tx => {
+                  return (
+                    <tr key={tx[1]}>
+                      <td
+                        data-tip={
+                          tx[0] === 0
+                            ? il8n.unconfirmed_tx_30_sec_confirm
+                            : `${il8n.block} ${tx[4]}`
+                        }
+                      >
+                        {tx[0] === 0 && (
+                          <p className="has-text-danger">{il8n.unconfirmed}</p>
                         )}
-                        {tx[2] > 0 && (
-                          <td>
-                            <p className="has-text-right">
-                              {session.atomicToHuman(tx[2], true)}
-                            </p>
-                          </td>
-                        )}
+                        {tx[0] > 0 && <p>{session.convertTimestamp(tx[0])}</p>}
+                      </td>
+                      <td>{tx[1]}</td>
+                      {tx[2] < 0 && (
                         <td>
-                          <p className="has-text-right">
-                            {session.atomicToHuman(tx[3], true)}
+                          <p className="has-text-danger has-text-right">
+                            {session.atomicToHuman(tx[2], true)}
                           </p>
                         </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              {totalTransactionCount > 50 && (
-                <form>
-                  <div className="field">
-                    <div className="buttons">
-                      <button
-                        type="submit"
-                        className="button is-success"
-                        onClick={this.handleShowAll}
-                      >
-                        {il8n.show_all}
-                      </button>
-                      <button
-                        type="submit"
-                        className="button is-warning"
-                        onClick={this.handleLoadMore}
-                      >
-                        {il8n.load_more}
-                      </button>
-                      <button
-                        type="submit"
-                        className="button is-danger"
-                        onClick={this.resetDefault}
-                      >
-                        {il8n.reset}
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              )}
-            </div>
-            <BottomBar />
-          </div>
-        )}
-        {darkmode === true && (
-          <div className="wholescreen has-background-dark">
-            <ReactTooltip
-              effect="solid"
-              border
-              type="light"
-              multiline
-              place="top"
-            />
-            <NavBar />
-            <div
-              className={
-                session.firstLoadOnLogin
-                  ? 'maincontent-homescreen-fadein has-background-dark'
-                  : 'maincontent-homescreen has-background-dark'
-              }
-            >
-              {' '}
-              <table className="table is-striped is-hoverable is-fullwidth is-family-monospace table-darkmode">
-                <thead>
-                  <tr>
-                    <th className="has-text-white">{il8n.date}</th>
-                    <th className="has-text-white">{il8n.hash}</th>
-                    <th className="has-text-white has-text-right">
-                      {il8n.amount}
-                    </th>
-                    <th className="has-text-white has-text-right">
-                      {il8n.balance}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {transactions.map(tx => {
-                    return (
-                      <tr key={tx[1]}>
-                        <td
-                          data-tip={
-                            tx[0] === 0
-                              ? il8n.unconfirmed_tx_30_sec_confirm
-                              : `${il8n.block} ${tx[4]}`
-                          }
-                        >
-                          {tx[0] === 0 && (
-                            <p className="has-text-danger">
-                              {il8n.unconfirmed}
-                            </p>
-                          )}
-                          {tx[0] > 0 && (
-                            <p>{session.convertTimestamp(tx[0])}</p>
-                          )}
-                        </td>
-                        <td>{tx[1]}</td>
-                        {tx[2] < 0 && (
-                          <td>
-                            <p className="has-text-danger has-text-right">
-                              {session.atomicToHuman(tx[2], true)}
-                            </p>
-                          </td>
-                        )}
-                        {tx[2] > 0 && (
-                          <td>
-                            <p className="has-text-right">
-                              {session.atomicToHuman(tx[2], true)}
-                            </p>
-                          </td>
-                        )}
+                      )}
+                      {tx[2] > 0 && (
                         <td>
                           <p className="has-text-right">
-                            {session.atomicToHuman(tx[3], true)}
+                            {session.atomicToHuman(tx[2], true)}
                           </p>
                         </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              {totalTransactionCount > 50 && (
-                <form>
-                  <div className="field">
-                    <div className="buttons">
-                      <button
-                        type="submit"
-                        className="button is-success"
-                        onClick={this.handleShowAll}
-                      >
-                        {il8n.show_all}
-                      </button>
-                      <button
-                        type="submit"
-                        className="button is-warning"
-                        onClick={this.handleLoadMore}
-                      >
-                        {il8n.load_more}
-                      </button>
-                      <button
-                        type="submit"
-                        className="button is-danger"
-                        onClick={this.resetDefault}
-                      >
-                        {il8n.reset}
-                      </button>
-                    </div>
+                      )}
+                      <td>
+                        <p className="has-text-right">
+                          {session.atomicToHuman(tx[3], true)}
+                        </p>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {totalTransactionCount > 50 && (
+              <form>
+                <div className="field">
+                  <div className="buttons">
+                    <button
+                      type="submit"
+                      className="button is-success"
+                      onClick={this.handleShowAll}
+                    >
+                      {il8n.show_all}
+                    </button>
+                    <button
+                      type="submit"
+                      className="button is-warning"
+                      onClick={this.handleLoadMore}
+                    >
+                      {il8n.load_more}
+                    </button>
+                    <button
+                      type="submit"
+                      className="button is-danger"
+                      onClick={this.resetDefault}
+                    >
+                      {il8n.reset}
+                    </button>
                   </div>
-                </form>
-              )}
-            </div>
-            <BottomBar />
+                </div>
+              </form>
+            )}
           </div>
-        )}
+          <BottomBar />
+        </div>
       </div>
     );
   }

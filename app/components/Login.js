@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
+import uiType from '../utils/uitype';
 
 type Props = {};
 
@@ -41,107 +42,51 @@ export default class Login extends Component<Props, State> {
 
   render() {
     const { darkMode, wrongPassword, walletFile } = this.state;
+    const { backgroundColor, fillColor, textColor } = uiType(darkMode);
 
     return (
       <div>
         <Redirector />
-        {darkMode === false && (
-          <div className="fullwindow">
-            <div className="mid-div">
-              <div
-                className={
-                  wrongPassword
-                    ? 'box loginbox-fail has-background-light inner-div'
-                    : 'box loginbox has-background-light inner-div'
-                }
-              >
-                <form onSubmit={this.handleSubmit}>
-                  <div className="field">
-                    <label className="label" htmlFor="scanheight">
-                      {il8n.password}
-                      <div className="control">
-                        <input
-                          ref={input => input && input.focus()}
-                          className={
-                            wrongPassword
-                              ? 'input is-large is-danger'
-                              : 'input is-large'
-                          }
-                          type="password"
-                          placeholder={il8n.password_input_placeholder}
-                        />
-                      </div>
-                    </label>
-                    <label
-                      className="help"
-                      htmlFor="scanheight"
-                      id="help for scan height field"
-                    >
-                      {il8n.attempting_login_to}
-                      {walletFile}
-                    </label>
-                  </div>
-                  <div className="buttons is-right">
-                    <button
-                      type="submit"
-                      className="button is-success is-large"
-                    >
-                      {il8n.login}
-                    </button>
-                  </div>
-                </form>
-              </div>
+        <div className={`fullwindow outer-div ${backgroundColor}`}>
+          <div className="mid-div">
+            <div
+              className={
+                wrongPassword
+                  ? `box loginbox-fail inner-div ${fillColor}`
+                  : `box loginbox inner-div ${fillColor}`
+              }
+            >
+              <form onSubmit={this.handleSubmit}>
+                <div className="field">
+                  <label className={`label ${textColor}`} htmlFor="scanheight">
+                    {il8n.password}
+                    <div className="control">
+                      <input
+                        ref={input => input && input.focus()}
+                        className={
+                          wrongPassword
+                            ? 'input is-large is-danger'
+                            : 'input is-large'
+                        }
+                        type="password"
+                        placeholder={il8n.password_input_placeholder}
+                      />
+                    </div>
+                  </label>
+                  <label className={`help ${textColor}`} htmlFor="scanheight">
+                    {il8n.attempting_login_to}
+                    {walletFile}
+                  </label>
+                </div>
+                <div className="buttons is-right">
+                  <button type="submit" className="button is-success is-large">
+                    {il8n.login}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
-        )}
-        {darkMode === true && (
-          <div className="fullwindow has-background-dark outer-div">
-            <div className="mid-div">
-              <div
-                className={
-                  wrongPassword
-                    ? 'box loginbox-fail has-background-black inner-div'
-                    : 'box loginbox has-background-black inner-div'
-                }
-              >
-                <form onSubmit={this.handleSubmit}>
-                  <div className="field">
-                    <label
-                      className="label has-text-white"
-                      htmlFor="scanheight"
-                    >
-                      {il8n.password}
-                      <div className="control">
-                        <input
-                          ref={input => input && input.focus()}
-                          className={
-                            wrongPassword
-                              ? 'input is-large is-danger'
-                              : 'input is-large'
-                          }
-                          type="password"
-                          placeholder={il8n.password_input_placeholder}
-                        />
-                      </div>
-                    </label>
-                    <label className="help has-text-white" htmlFor="scanheight">
-                      {il8n.attempting_login_to}
-                      {walletFile}
-                    </label>
-                  </div>
-                  <div className="buttons is-right">
-                    <button
-                      type="submit"
-                      className="button is-success is-large"
-                    >
-                      {il8n.login}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     );
   }

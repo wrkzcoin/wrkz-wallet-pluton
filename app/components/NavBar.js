@@ -1,16 +1,27 @@
+// @flow
+
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import routes from '../constants/routes';
 import { session, eventEmitter, il8n } from '../index';
+import uiType from '../utils/uitype';
+import log from 'electron-log';
 
-type Props = {};
-
-type State = {
-  darkMode: boolean,
-  activePage?: string
+type Location = {
+  hash: string,
+  pathname: string,
+  search: string
 };
 
-export default class NavBar extends Component<Props, State> {
+type Props = {
+  location: Location
+};
+
+type State = {
+  darkMode: boolean
+};
+
+class NavBar extends Component<Props, State> {
   props: Props;
 
   state: State;
@@ -18,8 +29,7 @@ export default class NavBar extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
-      activePage: null
+      darkMode: session.darkMode
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
@@ -35,157 +45,98 @@ export default class NavBar extends Component<Props, State> {
     eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
 
-  darkModeOn() {
+  darkModeOn = () => {
     this.setState({
       darkMode: true
     });
-  }
+  };
 
-  darkModeOff() {
+  darkModeOff = () => {
     this.setState({
       darkMode: false
     });
-  }
+  };
 
   render() {
-    const { darkMode, activePage } = this.state;
+    const { darkMode } = this.state;
+    const {
+      location: { pathname }
+    } = this.props;
+    const {
+      backgroundColor,
+      fillColor,
+      textColor,
+      elementBaseColor,
+      settingsCogColor
+    } = uiType(darkMode);
 
     return (
-      <React-Fragment>
-        <div>
-          {darkMode === false && (
-            <div
-              className={
-                session.firstLoadOnLogin
-                  ? 'headerbar-slidedown has-background-light'
-                  : 'headerbar has-background-light'
-              }
-            >
-              <nav
-                className="navbar is-light"
-                role="navigation"
-                aria-label="main navigation"
-              >
-                <div id="navbarBasicExample" className="navbar-menu">
-                  <div className="navbar-brand">
-                    <div className="navbar-item">
-                      <img
-                        src="images/icon_black_64x64.png"
-                        alt="proton logo"
-                      />
-                    </div>
-                  </div>
-                  <div className="navbar-start">
-                    <Link className="navbar-item" to={routes.HOME}>
-                      <i className="fa fa-credit-card" />
-                      {activePage === 'wallet' && (
-                        <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
-                      )}
-                      {activePage !== 'wallet' && (
-                        <p>&nbsp;&nbsp;{il8n.wallet}</p>
-                      )}
-                    </Link>
-
-                    <Link className="navbar-item" to={routes.SEND}>
-                      <i className="fa fa-paper-plane" />
-                      {activePage === 'send' && (
-                        <strong>&nbsp;&nbsp;{il8n.send}</strong>
-                      )}
-                      {activePage !== 'send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
-                    </Link>
-
-                    <Link className="navbar-item" to={routes.RECEIVE}>
-                      <i className="fa fa-arrow-circle-down" />
-                      {activePage === 'receive' && (
-                        <strong>&nbsp;&nbsp;{il8n.receive}</strong>
-                      )}
-                      {activePage !== 'receive' && (
-                        <p>&nbsp;&nbsp;{il8n.receive}</p>
-                      )}
-                    </Link>
-                  </div>
-
-                  <div className="navbar-end">
-                    <div className="navbar-item">
-                      <Link className="buttons" to={routes.SETTINGS}>
-                        <span className="button icon is-large">
-                          <i className="fa fa-cog" />
-                        </span>
-                      </Link>
-                    </div>
-                  </div>
+      <div>
+        <div
+          className={
+            session.firstLoadOnLogin
+              ? `headerbar-slidedown ${fillColor}`
+              : `headerbar ${fillColor}`
+          }
+        >
+          <nav
+            className={`navbar ${elementBaseColor}`}
+            role="navigation"
+            aria-label="main navigation"
+          >
+            <div id="navbarBasicExample" className="navbar-menu">
+              <div className="navbar-brand">
+                <div className="navbar-item">
+                  <img
+                    src="images/icon_color_64x64.png"
+                    alt="proton wallet logo in green"
+                  />
                 </div>
-              </nav>
-            </div>
-          )}
-          {darkMode === true && (
-            <div
-              className={
-                session.firstLoadOnLogin
-                  ? 'headerbar-slidedown has-background-black'
-                  : 'headerbar has-background-black'
-              }
-            >
-              {' '}
-              <nav
-                className="navbar is-black"
-                role="navigation"
-                aria-label="main navigation"
-              >
-                <div id="navbarBasicExample" className="navbar-menu">
-                  <div className="navbar-brand">
-                    <div className="navbar-item">
-                      <img
-                        src="images/icon_color_64x64.png"
-                        alt="proton wallet logo in green"
-                      />
-                    </div>
-                  </div>
-                  <div className="navbar-start">
-                    <Link className="navbar-item" to={routes.HOME}>
-                      <i className="fa fa-credit-card" />
-                      {activePage === 'wallet' && (
-                        <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
-                      )}
-                      {activePage !== 'wallet' && (
-                        <p>&nbsp;&nbsp;{il8n.wallet}</p>
-                      )}
-                    </Link>
+              </div>
+              <div className="navbar-start">
+                <Link className="navbar-item" to={routes.HOME}>
+                  <i className="fa fa-credit-card" />
+                  {pathname === '/' && (
+                    <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
+                  )}
+                  {pathname !== '/' && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
+                </Link>
 
-                    <Link className="navbar-item" to={routes.SEND}>
-                      <i className="fa fa-paper-plane" />
-                      {activePage === 'send' && (
-                        <strong>&nbsp;&nbsp;{il8n.send}</strong>
-                      )}
-                      {activePage !== 'send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
-                    </Link>
+                <Link className="navbar-item" to={routes.SEND}>
+                  <i className="fa fa-paper-plane" />
+                  {pathname === '/send' && (
+                    <strong>&nbsp;&nbsp;{il8n.send}</strong>
+                  )}
+                  {pathname !== '/send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
+                </Link>
 
-                    <Link className="navbar-item" to={routes.RECEIVE}>
-                      <i className="fa fa-arrow-circle-down" />
-                      {activePage === 'receive' && (
-                        <strong>&nbsp;&nbsp;{il8n.receive}</strong>
-                      )}
-                      {activePage !== 'receive' && (
-                        <p>&nbsp;&nbsp;{il8n.receive}</p>
-                      )}
-                    </Link>
-                  </div>
+                <Link className="navbar-item" to={routes.RECEIVE}>
+                  <i className="fa fa-arrow-circle-down" />
+                  {pathname === '/receive' && (
+                    <strong>&nbsp;&nbsp;{il8n.receive}</strong>
+                  )}
+                  {pathname !== '/receive' && <p>&nbsp;&nbsp;{il8n.receive}</p>}
+                </Link>
+              </div>
 
-                  <div className="navbar-end">
-                    <div className="navbar-item">
-                      <Link className="buttons" to={routes.SETTINGS}>
-                        <span className="button icon is-large is-dark">
-                          <i className="fa fa-cog" />
-                        </span>
-                      </Link>
-                    </div>
-                  </div>
+              <div className="navbar-end">
+                <div className="navbar-item">
+                  <Link className="buttons" to={routes.SETTINGS}>
+                    <span
+                      className={`button icon is-large ${settingsCogColor}`}
+                    >
+                      <i className="fa fa-cog" />
+                    </span>
+                  </Link>
                 </div>
-              </nav>
+              </div>
             </div>
-          )}
+          </nav>
         </div>
-      </React-Fragment>
+      </div>
     );
   }
 }
+
+// $FlowFixMe
+export default withRouter(NavBar);

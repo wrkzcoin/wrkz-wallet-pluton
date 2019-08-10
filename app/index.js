@@ -38,7 +38,7 @@ export function savedInInstallDir(savePath) {
 export let config = iConfig;
 
 export const eventEmitter = new EventEmitter();
-eventEmitter.setMaxListeners(2);
+eventEmitter.setMaxListeners(5);
 
 export const updater = new AutoUpdater();
 updater.getLatestVersion();
@@ -206,7 +206,6 @@ function handleOpen() {
   if (error !== undefined) {
     if (error.errorCode === 5) {
       log.debug('Login to wallet failed, firing event...');
-      eventEmitter.emit('loginFailed');
     }
   }
   const selectedPath = getPaths[0];
@@ -352,6 +351,7 @@ async function startWallet() {
     await session.wallet.start();
   } catch {
     log.debug('Password required, redirecting to login...');
+    eventEmitter.emit('loginFailed');
   }
   eventEmitter.emit('gotNodeFee');
 }

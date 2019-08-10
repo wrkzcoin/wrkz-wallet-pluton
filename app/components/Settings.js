@@ -7,6 +7,7 @@ import { session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
+import uiType from '../utils/uitype';
 
 type Props = {};
 
@@ -240,148 +241,171 @@ export default class Settings extends Component<Props, State> {
       scanHeight
     } = this.state;
 
+    const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
+      darkMode
+    );
+
     return (
       <div>
         <Redirector />
-        {darkMode === false && (
-          <div className="wholescreen">
-            <ReactTooltip
-              effect="solid"
-              border
-              type="dark"
-              multiline
-              place="top"
-            />
-            <NavBar />
-            <div className="maincontent">
-              <div className="columns">
-                <div className="column">
-                  <form onSubmit={this.changeNode}>
-                    <p className="has-text-weight-bold">
-                      {il8n.connected_node}
+        <div className={`wholescreen ${backgroundColor}`}>
+          <ReactTooltip
+            effect="solid"
+            border
+            type="light"
+            multiline
+            place="top"
+          />
+          <NavBar />
+          <div className={`maincontent ${backgroundColor}`}>
+            <div className="columns">
+              <div className="column">
+                <form onSubmit={this.changeNode}>
+                  <p className={`has-text-weight-bold ${textColor}`}>
+                    {il8n.connected_node}
+                  </p>
+                  <div className="field has-addons is-expanded">
+                    <div className="control is-expanded has-icons-left">
+                      {nodeChangeInProgress === false && (
+                        <input
+                          className="input has-icons-left"
+                          type="text"
+                          value={connectednode}
+                          onChange={this.handleNodeInputChange}
+                        />
+                      )}
+                      {ssl === true && (
+                        <span className="icon is-small is-left">
+                          <i className="fas fa-lock" />
+                        </span>
+                      )}
+                      {ssl === false && (
+                        <span className="icon is-small is-left">
+                          <i className="fas fa-unlock" />
+                        </span>
+                      )}
+                      {nodeChangeInProgress === true && (
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="connecting..."
+                          onChange={this.handleNodeInputChange}
+                        />
+                      )}
+                      {nodeChangeInProgress === true && (
+                        <span className="icon is-small is-left">
+                          <i className="fas fa-sync fa-spin" />
+                        </span>
+                      )}
+                      <p className="help">
+                        <a
+                          onClick={this.findNode}
+                          onKeyPress={this.findNode}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          {il8n.find_node}
+                        </a>
+                      </p>
+                    </div>
+                    {nodeChangeInProgress === true && (
+                      <div className="control">
+                        <button className="button is-success is-loading">
+                          {il8n.connect}
+                        </button>
+                      </div>
+                    )}
+                    {nodeChangeInProgress === false && (
+                      <div className="control">
+                        <button className="button is-success">
+                          {il8n.connect}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </form>
+                <br />
+                {wallet && (
+                  <form onSubmit={this.rewindWallet}>
+                    <p className={`has-text-weight-bold ${textColor}`}>
+                      {il8n.rewind_wallet}
                     </p>
-                    <div className="field has-addons is-expanded">
-                      <div className="control is-expanded has-icons-left">
-                        {nodeChangeInProgress === false && (
-                          <input
-                            className="input has-icons-left"
-                            type="text"
-                            value={connectednode}
-                            onChange={this.handleNodeInputChange}
-                          />
-                        )}
-                        {ssl === true && (
-                          <span className="icon is-small is-left">
-                            <i className="fas fa-lock" />
-                          </span>
-                        )}
-                        {ssl === false && (
-                          <span className="icon is-small is-left">
-                            <i className="fas fa-unlock" />
-                          </span>
-                        )}
-                        {nodeChangeInProgress === true && (
-                          <input
-                            className="input"
-                            type="text"
-                            placeholder="connecting..."
-                            onChange={this.handleNodeInputChange}
-                          />
-                        )}
-                        {nodeChangeInProgress === true && (
-                          <span className="icon is-small is-left">
-                            <i className="fas fa-sync fa-spin" />
-                          </span>
-                        )}
-                        <p className="help">
-                          <a
-                            onClick={this.findNode}
-                            onKeyPress={this.findNode}
-                            role="button"
-                            tabIndex={0}
-                          >
-                            {il8n.find_node}
-                          </a>
+                    <div className="field has-addons">
+                      <div className="control is-expanded">
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="Enter a height to scan from..."
+                          value={rewindHeight}
+                          onChange={this.handleRewindHeightChange}
+                        />
+                        <p className={`help ${textColor}`}>
+                          {il8n.rewind_wallet_help}
                         </p>
                       </div>
-                      {nodeChangeInProgress === true && (
-                        <div className="control">
-                          <button className="button is-success is-loading">
-                            {il8n.connect}
-                          </button>
-                        </div>
-                      )}
-                      {nodeChangeInProgress === false && (
-                        <div className="control">
-                          <button className="button is-success">
-                            {il8n.connect}
-                          </button>
-                        </div>
-                      )}
+                      <div className="control">
+                        <button
+                          className={
+                            rewindInProgress
+                              ? 'button is-warning is-loading'
+                              : 'button is-warning'
+                          }
+                        >
+                          {il8n.rewind}
+                        </button>
+                      </div>
                     </div>
                   </form>
-
-                  <br />
-                  {wallet && (
-                    <form onSubmit={this.rewindWallet}>
-                      <p className="has-text-weight-bold">
-                        {il8n.rewind_wallet}
-                      </p>
-                      <div className="field has-addons">
-                        <div className="control is-expanded">
-                          <input
-                            className="input"
-                            type="text"
-                            placeholder="Enter a height to scan from..."
-                            value={rewindHeight}
-                            onChange={this.handleRewindHeightChange}
-                          />
-                          <p className="help">{il8n.rewind_wallet_help}</p>
-                        </div>
-                        <div className="control">
-                          <button
-                            className={
-                              rewindInProgress
-                                ? 'button is-warning is-loading'
-                                : 'button is-warning'
-                            }
-                          >
-                            {il8n.rewind}
-                          </button>
-                        </div>
+                )}
+                <br />
+                {wallet && (
+                  <form onSubmit={this.rescanWallet}>
+                    <p className={`has-text-weight-bold ${textColor}`}>
+                      {il8n.rescan_wallet}
+                    </p>
+                    <div className="field has-addons">
+                      <div className="control is-expanded">
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="Enter a height to scan from..."
+                          value={scanHeight}
+                          onChange={this.handleScanHeightChange}
+                        />
+                        <p className={`help ${textColor}`}>
+                          {il8n.rescan_wallet_help}
+                        </p>
                       </div>
-                    </form>
-                  )}
-                  <br />
-                  {wallet && (
-                    <form onSubmit={this.rescanWallet}>
-                      <p className="has-text-weight-bold">
-                        {il8n.rescan_wallet}
-                      </p>
-                      <div className="field has-addons">
-                        <div className="control is-expanded">
-                          <input
-                            className="input"
-                            type="text"
-                            placeholder="Enter a height to scan from..."
-                            value={scanHeight}
-                            onChange={this.handleScanHeightChange}
-                          />
-                          <p className="help">{il8n.rescan_wallet_help}</p>
-                        </div>
-                        <div className="control">
-                          <button className="button is-danger">
-                            {il8n.rescan}
-                          </button>
-                        </div>
+                      <div className="control">
+                        <button className="button is-danger">
+                          {il8n.rescan}
+                        </button>
                       </div>
-                    </form>
+                    </div>
+                  </form>
+                )}
+              </div>
+              <div className="column" />
+              <div className="column">
+                <br />
+                <p className="buttons is-right">
+                  {darkMode === true && (
+                    <span className={textColor}>
+                      {il8n.enable_light_mode} &nbsp;&nbsp;
+                      <a
+                        className="button is-info"
+                        onClick={this.darkModeOff}
+                        onKeyPress={this.darkModeOff}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="icon is-large has-text-warning">
+                          <i className="fas fa-sun" />
+                        </span>
+                      </a>
+                    </span>
                   )}
-                </div>
-                <div className="column" />
-                <div className="column">
-                  <br />
-                  <p className="buttons is-right">
+                  {darkMode === false && (
                     <span>
                       {il8n.enable_dark_mode} &nbsp;&nbsp;
                       <a
@@ -396,176 +420,13 @@ export default class Settings extends Component<Props, State> {
                         </span>
                       </a>
                     </span>
-                  </p>
-                </div>
+                  )}
+                </p>
               </div>
             </div>
-            <BottomBar />
           </div>
-        )}
-        {darkMode === true && (
-          <div className="wholescreen has-background-dark">
-            <ReactTooltip
-              effect="solid"
-              border
-              type="light"
-              multiline
-              place="top"
-            />
-            <NavBar />
-            <div className="maincontent has-background-dark">
-              <div className="columns">
-                <div className="column">
-                  <form onSubmit={this.changeNode}>
-                    <p className="has-text-weight-bold has-text-white">
-                      {il8n.connected_node}
-                    </p>
-                    <div className="field has-addons is-expanded">
-                      <div className="control is-expanded has-icons-left">
-                        {nodeChangeInProgress === false && (
-                          <input
-                            className="input has-icons-left"
-                            type="text"
-                            value={connectednode}
-                            onChange={this.handleNodeInputChange}
-                          />
-                        )}
-                        {ssl === true && (
-                          <span className="icon is-small is-left">
-                            <i className="fas fa-lock" />
-                          </span>
-                        )}
-                        {ssl === false && (
-                          <span className="icon is-small is-left">
-                            <i className="fas fa-unlock" />
-                          </span>
-                        )}
-                        {nodeChangeInProgress === true && (
-                          <input
-                            className="input"
-                            type="text"
-                            placeholder="connecting..."
-                            onChange={this.handleNodeInputChange}
-                          />
-                        )}
-                        {nodeChangeInProgress === true && (
-                          <span className="icon is-small is-left">
-                            <i className="fas fa-sync fa-spin" />
-                          </span>
-                        )}
-                        <p className="help">
-                          <a
-                            onClick={this.findNode}
-                            onKeyPress={this.findNode}
-                            role="button"
-                            tabIndex={0}
-                          >
-                            {il8n.find_node}
-                          </a>
-                        </p>
-                      </div>
-                      {nodeChangeInProgress === true && (
-                        <div className="control">
-                          <button className="button is-success is-loading">
-                            {il8n.connect}
-                          </button>
-                        </div>
-                      )}
-                      {nodeChangeInProgress === false && (
-                        <div className="control">
-                          <button className="button is-success">
-                            {il8n.connect}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </form>
-                  <br />
-                  {wallet && (
-                    <form onSubmit={this.rewindWallet}>
-                      <p className="has-text-white has-text-weight-bold">
-                        {il8n.rewind_wallet}
-                      </p>
-                      <div className="field has-addons">
-                        <div className="control is-expanded">
-                          <input
-                            className="input"
-                            type="text"
-                            placeholder="Enter a height to scan from..."
-                            value={rewindHeight}
-                            onChange={this.handleRewindHeightChange}
-                          />
-                          <p className="help has-text-white">
-                            {il8n.rewind_wallet_help}
-                          </p>
-                        </div>
-                        <div className="control">
-                          <button
-                            className={
-                              rewindInProgress
-                                ? 'button is-warning is-loading'
-                                : 'button is-warning'
-                            }
-                          >
-                            {il8n.rewind}
-                          </button>
-                        </div>
-                      </div>
-                    </form>
-                  )}
-                  <br />
-                  {wallet && (
-                    <form onSubmit={this.rescanWallet}>
-                      <p className="has-text-white has-text-weight-bold">
-                        {il8n.rescan_wallet}
-                      </p>
-                      <div className="field has-addons">
-                        <div className="control is-expanded">
-                          <input
-                            className="input"
-                            type="text"
-                            placeholder="Enter a height to scan from..."
-                            value={scanHeight}
-                            onChange={this.handleScanHeightChange}
-                          />
-                          <p className="help has-text-white">
-                            {il8n.rescan_wallet_help}
-                          </p>
-                        </div>
-                        <div className="control">
-                          <button className="button is-danger">
-                            {il8n.rescan}
-                          </button>
-                        </div>
-                      </div>
-                    </form>
-                  )}
-                </div>
-                <div className="column" />
-                <div className="column">
-                  <br />
-                  <p className="buttons is-right">
-                    <span className="has-text-white">
-                      {il8n.enable_light_mode} &nbsp;&nbsp;
-                      <a
-                        className="button is-info"
-                        onClick={this.darkModeOff}
-                        onKeyPress={this.darkModeOff}
-                        role="button"
-                        tabIndex={0}
-                      >
-                        <span className="icon is-large has-text-warning">
-                          <i className="fas fa-sun" />
-                        </span>
-                      </a>
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <BottomBar />
-          </div>
-        )}
+          <BottomBar />
+        </div>
       </div>
     );
   }
