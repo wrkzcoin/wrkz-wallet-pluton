@@ -35,7 +35,7 @@ export default class Receive extends Component<Props, State> {
   render() {
     const { copyToClipboard } = this.props;
     const { darkMode } = this.state;
-    const { backgroundColor, fillColor, textColor } = uiType(darkMode);
+    const { backgroundColor, textColor } = uiType(darkMode);
 
     return (
       <div>
@@ -63,7 +63,6 @@ export default class Receive extends Component<Props, State> {
                         className="textarea is-family-monospace is-large"
                         rows="6"
                         value={session.address}
-                        id="receiveaddress"
                         readOnly
                       />
                     </label>

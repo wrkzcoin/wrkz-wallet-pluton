@@ -295,7 +295,6 @@ export default class Send extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.send_to_address_input_placeholder}
-                      id="label"
                     />
                   </div>
                 </label>
@@ -312,7 +311,6 @@ export default class Send extends Component<Props, State> {
                           placeholder={`How much ${
                             session.wallet.config.ticker
                           } to send (eg. 100)`}
-                          id="amount"
                           value={enteredAmount}
                           onChange={this.handleAmountChange}
                         />
@@ -336,7 +334,6 @@ export default class Send extends Component<Props, State> {
                           className="input is-large"
                           type="text"
                           placeholder={il8n.total_with_fees_input_placeholder}
-                          id="totalamount"
                           value={totalAmount}
                           onChange={this.handleTotalAmountChange}
                         />
@@ -353,7 +350,6 @@ export default class Send extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.payment_id_input_placeholder}
-                      id="paymentid"
                       value={paymentID}
                       onChange={this.handlePaymentIDChange}
                     />

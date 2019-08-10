@@ -126,7 +126,6 @@ export default class Send extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.private_spend_key_input_placeholder}
-                      id="scanheight"
                     />
                   </div>
                 </label>
@@ -139,7 +138,6 @@ export default class Send extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.private_view_key_input_placeholder}
-                      id="scanheight"
                     />
                   </div>
                 </label>
@@ -152,7 +150,6 @@ export default class Send extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.scan_height_input_placeholder}
-                      id="scanheight"
                     />
                   </div>
                 </label>

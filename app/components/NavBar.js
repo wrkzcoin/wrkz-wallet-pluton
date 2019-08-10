@@ -77,7 +77,7 @@ class NavBar extends Component<Props, State> {
               role="navigation"
               aria-label="main navigation"
             >
-              <div id="navbarBasicExample" className="navbar-menu">
+              <div className="navbar-menu">
                 <div className="navbar-brand">
                   <div className="navbar-item">
                     <img
@@ -133,7 +133,7 @@ class NavBar extends Component<Props, State> {
               role="navigation"
               aria-label="main navigation"
             >
-              <div id="navbarNoWallet" className="navbar-menu">
+              <div className="navbar-menu">
                 <div className="navbar-brand">
                   <div className="navbar-item">
                     <Link className="buttons" to={routes.SETTINGS}>

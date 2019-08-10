@@ -122,7 +122,6 @@ export default class Send extends Component<Props, States> {
                   <textarea
                     className="textarea is-large"
                     placeholder={il8n.mnemonic_seed_input_placeholder}
-                    id="seed"
                   />
                 </label>
               </div>
@@ -134,7 +133,6 @@ export default class Send extends Component<Props, States> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.scan_height_input_placeholder}
-                      id="scanheight"
                     />
                   </div>
                 </label>
