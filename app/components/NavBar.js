@@ -61,6 +61,7 @@ class NavBar extends Component<Props, State> {
   logOut = () => {
     loginCounter.isLoggedIn = false;
     loginCounter.userLoginAttempted = false;
+    loginCounter.loginsAttempted = 0;
     session.loginFailed = false;
     log.debug('User locked wallet.');
   };

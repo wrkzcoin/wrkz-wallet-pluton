@@ -20,7 +20,7 @@ export default class Login extends Component<Props, State> {
     this.state = {
       darkMode: session.darkMode || false,
       walletFile: session.walletFile,
-      wrongPassword: loginCounter.userLoginAttempted
+      wrongPassword: loginCounter.lastLoginAttemptFailed
     };
     const { wrongPassword } = this.state;
     if (!wrongPassword && !session.wallet) {
@@ -40,7 +40,7 @@ export default class Login extends Component<Props, State> {
   handleSubmit = async (event: any) => {
     // We're preventing the default refresh of the app that occurs on form submit
     event.preventDefault();
-    eventEmitter.emit('loginInProgress');
+    loginCounter.loginsAttempted += loginCounter.loginsAttempted;
     const password = event.target[0].value;
     if (password === undefined) {
       return;
@@ -50,10 +50,12 @@ export default class Login extends Component<Props, State> {
     } else {
       if (password === session.walletPassword) {
         loginCounter.isLoggedIn = true;
+        loginCounter.lastLoginAttemptFailed = false;
         eventEmitter.emit('goHome');
       }
       if (password !== session.walletPassword) {
         loginCounter.userLoginAttempted = true;
+        loginCounter.lastLoginAttemptFailed = true;
         eventEmitter.emit('refreshLogin');
       }
     }
@@ -62,7 +64,6 @@ export default class Login extends Component<Props, State> {
   render() {
     const { darkMode, wrongPassword, walletFile } = this.state;
     const { backgroundColor, fillColor, textColor } = uiType(darkMode);
-
     return (
       <div>
         <Redirector />
@@ -70,7 +71,7 @@ export default class Login extends Component<Props, State> {
           <div className="mid-div">
             <div
               className={
-                wrongPassword
+                wrongPassword && loginCounter.loginsAttempted > 0
                   ? `box loginbox-fail inner-div ${fillColor}`
                   : `box loginbox inner-div ${fillColor}`
               }

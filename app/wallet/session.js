@@ -72,6 +72,9 @@ export default class WalletSession {
         this.firstStartup = true;
       } else if (error.errorCode === 5) {
         this.loginFailed = true;
+        if (loginCounter.loginsAttempted > 0) {
+          loginCounter.lastLoginAttemptFailed = true;
+        }
       }
     }
     if (!this.loginFailed && !this.firstStartup) {

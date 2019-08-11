@@ -199,6 +199,10 @@ function handleOpen() {
   if (getPaths === undefined) {
     return;
   }
+  loginCounter.userLoginAttempted = false;
+  loginCounter.lastLoginAttemptFailed = false;
+  loginCounter.loginsAttempted = 0;
+  session.loginFailed = false;
   session.saveWallet(session.walletFile);
   const [, error] = WalletBackend.openWalletFromFile(
     session.daemon,

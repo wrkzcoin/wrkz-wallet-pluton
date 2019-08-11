@@ -147,7 +147,7 @@ class Redirector extends Component<Props, State> {
       return <Redirect to="/login" />;
     }
 
-    if (login === true) {
+    if (login === true && pathname !== '/login') {
       return <Redirect to="/login" />;
     }
 
