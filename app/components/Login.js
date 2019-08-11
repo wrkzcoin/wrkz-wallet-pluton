@@ -40,7 +40,7 @@ export default class Login extends Component<Props, State> {
   handleSubmit = async (event: any) => {
     // We're preventing the default refresh of the app that occurs on form submit
     event.preventDefault();
-    loginCounter.loginsAttempted += loginCounter.loginsAttempted;
+    loginCounter.loginsAttempted++;
     const password = event.target[0].value;
     if (password === undefined) {
       return;
