@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { session, eventEmitter } from '../index';
+import { session, eventEmitter, loginCounter } from '../index';
 import SyncStatus from './SyncStatus';
 import Balance from './Balance';
 import NodeFee from './NodeFee';
@@ -17,7 +17,8 @@ type Props = {
 };
 
 type State = {
-  darkmode: boolean
+  darkmode: boolean,
+  navBarCount: number
 };
 
 class BottomBar extends Component<Props, State> {
@@ -28,7 +29,8 @@ class BottomBar extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkmode: session.darkMode
+      darkmode: session.darkMode,
+      navBarCount: loginCounter.navBarCount
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
@@ -58,20 +60,19 @@ class BottomBar extends Component<Props, State> {
 
   render() {
     // prettier-ignore
-    const { location: { pathname } } = this.props;
-    const { darkmode } = this.state;
+    const { darkmode, navBarCount } = this.state;
 
     return (
       <div
         className={
           // eslint-disable-next-line no-nested-ternary
           darkmode
-            ? session.firstLoadOnLogin && pathname === '/'
-              ? 'footerbar-slideup has-background-black'
-              : 'footerbar has-background-black'
-            : session.firstLoadOnLogin && pathname === '/'
-            ? 'footerbar-slideup has-background-light'
-            : 'footerbar has-background-light'
+            ? navBarCount > 0
+              ? 'footerbar has-background-black'
+              : 'footerbar-slideup has-background-black'
+            : navBarCount > 0
+            ? 'footerbar has-background-light'
+            : 'footerbar-slideup has-background-light'
         }
       >
         {session.wallet && (

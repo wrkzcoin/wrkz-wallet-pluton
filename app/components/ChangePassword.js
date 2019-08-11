@@ -103,11 +103,14 @@ export default class ChangePassword extends Component<Props, State> {
               )}
               {session.walletPassword === '' && (
                 <div className="field">
-                  <label className={`label ${textColor}`} htmlFor="scanheight">
+                  <label
+                    className={`label ${textColor} is-hidden`}
+                    htmlFor="scanheight"
+                  >
                     {il8n.change_passwd_enter_current_passwd}
                     <div className="control">
                       <input
-                        className="input is-large"
+                        className="input is-large is-hidden"
                         type="password"
                         placeholder={
                           il8n.change_passwd_enter_current_passwd_no_passwd_input_placeholder
@@ -146,11 +149,20 @@ export default class ChangePassword extends Component<Props, State> {
                   </div>
                 </label>
               </div>
-              <div className="buttons is-right">
-                <button type="submit" className="button is-success is-large">
-                  {il8n.change}
-                </button>
-              </div>
+              {session.walletPassword !== '' && (
+                <div className="buttons is-right">
+                  <button type="submit" className="button is-success is-large">
+                    {il8n.change}
+                  </button>
+                </div>
+              )}
+              {session.walletPassword === '' && (
+                <div className="buttons is-right">
+                  <button type="submit" className="button is-success is-large">
+                    {il8n.set_password}
+                  </button>
+                </div>
+              )}
             </form>
           </div>
           <BottomBar />

@@ -18,7 +18,8 @@ type Props = {
 };
 
 type State = {
-  darkMode: boolean
+  darkMode: boolean,
+  navBarCount: number
 };
 
 class NavBar extends Component<Props, State> {
@@ -29,7 +30,8 @@ class NavBar extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode
+      darkMode: session.darkMode,
+      navBarCount: loginCounter.navBarCount
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
@@ -39,6 +41,7 @@ class NavBar extends Component<Props, State> {
   componentDidMount() {
     eventEmitter.on('darkmodeon', this.darkModeOn);
     eventEmitter.on('darkmodeoff', this.darkModeOff);
+    loginCounter.navBarCount++;
   }
 
   componentWillUnmount() {
@@ -69,16 +72,16 @@ class NavBar extends Component<Props, State> {
   render() {
     // prettier-ignore
     const { location: { pathname } } = this.props;
-    const { darkMode } = this.state;
+    const { darkMode, navBarCount } = this.state;
     const { fillColor, elementBaseColor, settingsCogColor } = uiType(darkMode);
 
     return (
       <div>
         <div
           className={
-            session.firstLoadOnLogin && pathname === '/'
-              ? `headerbar-slidedown ${fillColor}`
-              : `headerbar ${fillColor}`
+            navBarCount > 0
+              ? `headerbar ${fillColor}`
+              : `headerbar-slidedown ${fillColor}`
           }
         >
           {session.wallet && loginCounter.isLoggedIn && (

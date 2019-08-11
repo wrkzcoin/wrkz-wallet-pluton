@@ -12,7 +12,8 @@ type State = {
   firstStartup: boolean,
   loginFailed: boolean,
   login: boolean,
-  isLoggedIn: boolean
+  isLoggedIn: boolean,
+  freshRestore: boolean
 };
 
 type Location = {
@@ -40,7 +41,8 @@ class Redirector extends Component<Props, State> {
       firstStartup: session.firstStartup,
       loginFailed: session.loginFailed,
       login: false,
-      isLoggedIn: loginCounter.isLoggedIn
+      isLoggedIn: loginCounter.isLoggedIn,
+      freshRestore: loginCounter.freshRestore
     };
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
     this.goToImportFromKey = this.goToImportFromKey.bind(this);
@@ -120,8 +122,13 @@ class Redirector extends Component<Props, State> {
       firstStartup,
       home,
       login,
-      isLoggedIn
+      isLoggedIn,
+      freshRestore
     } = this.state;
+    if (freshRestore === true && pathname !== '/changepassword') {
+      loginCounter.freshRestore = false;
+      return <Redirect to="/changepassword" />;
+    }
     if (home === true && pathname !== '/') {
       return <Redirect to="/" />;
     }

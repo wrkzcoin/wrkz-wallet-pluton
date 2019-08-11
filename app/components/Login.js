@@ -29,7 +29,9 @@ export default class Login extends Component<Props, State> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    loginCounter.navBarCount = 0;
+  }
 
   componentWillUnmount() {}
 

@@ -13,7 +13,8 @@ import {
   directories,
   eventEmitter,
   savedInInstallDir,
-  il8n
+  il8n,
+  loginCounter
 } from '../index';
 
 type Props = {};
@@ -76,12 +77,6 @@ export default class Send extends Component<Props, State> {
       parseInt(height, 10)
     );
     if (importedSuccessfully === true) {
-      remote.dialog.showMessageBox(null, {
-        type: 'info',
-        buttons: [il8n.ok],
-        title: il8n.import_import_wallet_title,
-        message: il8n.import_import_wallet_message
-      });
       const programDirectory = directories[0];
       const modifyConfig = config;
       modifyConfig.walletFile = savePath;
@@ -96,7 +91,8 @@ export default class Send extends Component<Props, State> {
         }
       );
       log.debug('Wrote config file to disk.');
-      eventEmitter.emit('handlePasswordChange');
+      loginCounter.freshRestore = true;
+      eventEmitter.emit('initializeNewSession');
     } else {
       remote.dialog.showMessageBox(null, {
         type: 'error',
