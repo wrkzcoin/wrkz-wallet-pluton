@@ -289,7 +289,7 @@
     "browserslist": "electron 1.6",
     "husky": {
         "hooks": {
-            "pre-commit": "yarn postlint-fix; postlint-styles-fix; git add --all; lint-staged"
+            "pre-commit": "lint-staged"
         }
     }
 }
