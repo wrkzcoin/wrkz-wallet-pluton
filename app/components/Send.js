@@ -161,6 +161,18 @@ export default class Send extends Component<Props, State> {
       return;
     }
 
+    const notSynced = session.getSyncStatus() < 99.99;
+
+    if (notSynced) {
+      remote.dialog.showMessageBox(null, {
+        type: 'warning',
+        buttons: [il8n.cancel, il8n.ok],
+        title: 'Wallet Not Synced',
+        message:
+          'You are attempting to send a transaction without being synced with the network. This may fail. Would you like to attempt this?'
+      });
+    }
+
     let displayIfPaymentID;
 
     if (paymentID !== '' && paymentID !== undefined) {
@@ -215,12 +227,22 @@ export default class Send extends Component<Props, State> {
       });
       eventEmitter.emit('transactionComplete');
     } else if (err) {
-      remote.dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: [il8n.ok],
-        title: il8n.send_tx_error_title,
-        message: err.toString()
-      });
+      if (notSynced) {
+        remote.dialog.showMessageBox(null, {
+          type: 'warning',
+          buttons: [il8n.cancel, il8n.ok],
+          title: 'Transaction Attempt Failed',
+          message:
+            "You aren't synced with the network, and the transaction failed to send. Please allow the wallet to sync before attempting again."
+        });
+      } else {
+        remote.dialog.showMessageBox(null, {
+          type: 'error',
+          buttons: [il8n.ok],
+          title: il8n.send_tx_error_title,
+          message: err.toString()
+        });
+      }
       eventEmitter.emit('transactionCancel');
     }
   }
