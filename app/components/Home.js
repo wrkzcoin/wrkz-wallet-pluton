@@ -2,7 +2,7 @@
 import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter, il8n } from '../index';
+import { session, eventEmitter, il8n, loginCounter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -135,9 +135,9 @@ export default class Home extends Component<Props, State> {
           <NavBar />
           <div
             className={
-              session.firstLoadOnLogin
-                ? `maincontent-homescreen-fadein ${backgroundColor}`
-                : `maincontent-homescreen ${backgroundColor}`
+              loginCounter.navBarCount > 0
+                ? `maincontent-homescreen ${backgroundColor}`
+                : `maincontent-homescreen-fadein ${backgroundColor}`
             }
           >
             <table

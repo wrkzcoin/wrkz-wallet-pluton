@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import log from 'electron-log';
 import { ipcRenderer } from 'electron';
 import { Redirect, withRouter } from 'react-router-dom';
 import { session, eventEmitter, loginCounter } from '../index';
@@ -31,6 +32,8 @@ class Redirector extends Component<Props, State> {
 
   state: State;
 
+  activityTimer: IntervalID;
+
   constructor(props?: Props) {
     super(props);
     this.state = {
@@ -49,6 +52,10 @@ class Redirector extends Component<Props, State> {
     this.goToPasswordChange = this.goToPasswordChange.bind(this);
     this.goToHome = this.goToHome.bind(this);
     this.goToLogin = this.goToLogin.bind(this);
+    this.logOut = this.logOut.bind(this);
+    if (session.walletPassword !== '' && loginCounter.isLoggedIn) {
+      this.activityTimer = setInterval(() => this.logOut(), 1000 * 60 * 15);
+    }
   }
 
   componentDidMount() {
@@ -61,6 +68,8 @@ class Redirector extends Component<Props, State> {
     eventEmitter.on('refreshLogin', this.goToHome);
     eventEmitter.on('loginFailed', this.goToLogin);
     eventEmitter.on('goHome', this.goToHome);
+    eventEmitter.on('goToLogin', this.goToLogin);
+    eventEmitter.on('logOut', this.logOut);
   }
 
   componentWillUnmount() {
@@ -73,7 +82,19 @@ class Redirector extends Component<Props, State> {
     eventEmitter.off('refreshLogin', this.goToHome);
     eventEmitter.off('loginFailed', this.goToLogin);
     eventEmitter.off('goHome', this.goToHome);
+    eventEmitter.off('goToLogin', this.goToLogin);
+    eventEmitter.off('logOut', this.logOut);
+    clearInterval(this.activityTimer);
   }
+
+  logOut = () => {
+    loginCounter.isLoggedIn = false;
+    loginCounter.userLoginAttempted = false;
+    loginCounter.loginsAttempted = 0;
+    session.loginFailed = false;
+    this.goToLogin();
+    log.debug('User locked wallet.');
+  };
 
   goToLogin = () => {
     this.setState({

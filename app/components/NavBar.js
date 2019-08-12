@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import log from 'electron-log';
 import routes from '../constants/routes';
 import { session, eventEmitter, il8n, loginCounter } from '../index';
 import uiType from '../utils/uitype';
@@ -27,6 +26,8 @@ class NavBar extends Component<Props, State> {
 
   state: State;
 
+  activityTimer: IntervalID;
+
   constructor(props?: Props) {
     super(props);
     this.state = {
@@ -45,6 +46,9 @@ class NavBar extends Component<Props, State> {
   }
 
   componentWillUnmount() {
+    if (session.walletPassword !== '') {
+      clearInterval(this.activityTimer);
+    }
     eventEmitter.off('darkmodeon', this.darkModeOn);
     eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
@@ -62,11 +66,7 @@ class NavBar extends Component<Props, State> {
   };
 
   logOut = () => {
-    loginCounter.isLoggedIn = false;
-    loginCounter.userLoginAttempted = false;
-    loginCounter.loginsAttempted = 0;
-    session.loginFailed = false;
-    log.debug('User locked wallet.');
+    eventEmitter.emit('logOut');
   };
 
   render() {
@@ -100,7 +100,7 @@ class NavBar extends Component<Props, State> {
                   </div>
                 </div>
                 <div className="navbar-start">
-                  <Link className="navbar-item" to={routes.HOME}>
+                  <Link to={routes.HOME} className="navbar-item">
                     <i className="fa fa-credit-card" />
                     {pathname === '/' && (
                       <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
