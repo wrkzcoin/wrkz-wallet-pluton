@@ -32,7 +32,7 @@ class Redirector extends Component<Props, State> {
 
   state: State;
 
-  activityTimer: IntervalID;
+  activityTimer: TimeoutID;
 
   constructor(props?: Props) {
     super(props);
@@ -54,7 +54,7 @@ class Redirector extends Component<Props, State> {
     this.goToLogin = this.goToLogin.bind(this);
     this.logOut = this.logOut.bind(this);
     if (session.walletPassword !== '' && loginCounter.isLoggedIn) {
-      this.activityTimer = setInterval(() => this.logOut(), 1000 * 60 * 15);
+      this.activityTimer = setTimeout(() => this.logOut(), 1000 * 10);
     }
   }
 
@@ -70,6 +70,7 @@ class Redirector extends Component<Props, State> {
     eventEmitter.on('goHome', this.goToHome);
     eventEmitter.on('goToLogin', this.goToLogin);
     eventEmitter.on('logOut', this.logOut);
+    eventEmitter.on('activityDetected', this.resetTimeout);
   }
 
   componentWillUnmount() {
@@ -84,7 +85,8 @@ class Redirector extends Component<Props, State> {
     eventEmitter.off('goHome', this.goToHome);
     eventEmitter.off('goToLogin', this.goToLogin);
     eventEmitter.off('logOut', this.logOut);
-    clearInterval(this.activityTimer);
+    eventEmitter.off('activityDetected', this.resetTimeout);
+    clearTimeout(this.activityTimer);
   }
 
   logOut = () => {
@@ -93,7 +95,14 @@ class Redirector extends Component<Props, State> {
     loginCounter.loginsAttempted = 0;
     session.loginFailed = false;
     this.goToLogin();
-    log.debug('User locked wallet.');
+    log.debug('Wallet was locked.');
+  };
+
+  resetTimeout = () => {
+    if (session.walletPassword !== '' && loginCounter.isLoggedIn) {
+      clearTimeout(this.activityTimer);
+      this.activityTimer = setTimeout(() => this.logOut(), 1000 * 10);
+    }
   };
 
   goToLogin = () => {
@@ -197,5 +206,4 @@ class Redirector extends Component<Props, State> {
   }
 }
 
-// $FlowFixMe
 export default withRouter(Redirector);

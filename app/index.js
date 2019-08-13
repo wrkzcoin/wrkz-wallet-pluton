@@ -378,9 +378,20 @@ async function startWallet() {
   eventEmitter.emit('gotNodeFee');
 }
 
+function activityDetected() {
+  eventEmitter.emit('activityDetected');
+}
+
 render(
   <AppContainer>
-    <Root store={store} history={history} />
+    <div
+      onClick={activityDetected}
+      onKeyPress={activityDetected}
+      role="button"
+      tabIndex={0}
+    >
+      <Root store={store} history={history} />
+    </div>
   </AppContainer>,
   document.getElementById('root')
 );
@@ -391,7 +402,14 @@ if (module.hot) {
     const NextRoot = require('./containers/Root').default;
     render(
       <AppContainer>
-        <NextRoot store={store} history={history} />
+        <div
+          onClick={activityDetected}
+          onKeyPress={activityDetected}
+          role="button"
+          tabIndex={0}
+        >
+          <NextRoot store={store} history={history} />{' '}
+        </div>
       </AppContainer>,
       document.getElementById('root')
     );
