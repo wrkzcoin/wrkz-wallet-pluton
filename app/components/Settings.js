@@ -191,8 +191,8 @@ export default class Settings extends Component<Props, State> {
     const userSelection = remote.dialog.showMessageBox(null, {
       type: 'info',
       buttons: ['Yes', 'No'],
-      title: `Restart Required`,
-      message: `To change this setting, an application restart is required. Would you like to restart now?`
+      title: il8n.title_restart_required,
+      message: il8n.restart_required
     });
     if (userSelection === 0) {
       if (process.env.NODE_ENV === 'development') {
@@ -471,7 +471,7 @@ export default class Settings extends Component<Props, State> {
                   <br />
                   {closeToTray === false && (
                     <span className={textColor}>
-                      Enable close to tray &nbsp;&nbsp;
+                      {il8n.enable_close_to_tray} &nbsp;&nbsp;
                       <a
                         className="button is-success"
                         onClick={this.closeToTrayOn}
@@ -487,7 +487,7 @@ export default class Settings extends Component<Props, State> {
                   )}
                   {closeToTray === true && (
                     <span className={textColor}>
-                      Disable close to tray &nbsp;&nbsp;
+                      {il8n.disable_close_to_tray} &nbsp;&nbsp;
                       <a
                         className="button is-danger"
                         onClick={this.closeToTrayOff}
