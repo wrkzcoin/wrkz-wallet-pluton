@@ -39,7 +39,7 @@ export default class Settings extends Component<Props, State> {
       rewindHeight: '',
       nodeChangeInProgress: false,
       rewindInProgress: false,
-      closeToTray: config.minimizeToTray
+      closeToTray: config.closeToTray || false
     };
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
@@ -187,12 +187,34 @@ export default class Settings extends Component<Props, State> {
     this.setState({
       closeToTray: true
     });
+    session.toggleCloseToTray(true);
+    const userSelection = remote.dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['Yes', 'No'],
+      title: `Restart Required`,
+      message: `To change this setting, an application restart is required. Would you like to restart now?`
+    });
+    if (userSelection === 0) {
+      remote.app.relaunch();
+      remote.app.exit();
+    }
   };
 
   closeToTrayOff = () => {
     this.setState({
       closeToTray: false
     });
+    session.toggleCloseToTray(false);
+    const userSelection = remote.dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: ['Yes', 'No'],
+      title: `Restart Required`,
+      message: `To change this setting, an application restart is required. Would you like to restart now?`
+    });
+    if (userSelection === 0) {
+      remote.app.relaunch();
+      remote.app.exit();
+    }
   };
 
   darkModeOn = () => {

@@ -31,13 +31,14 @@ const directories = [
 const [programDirectory] = directories;
 
 if (fs.existsSync(`${programDirectory}/config.json`)) {
-  const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
+  const rawUserConfig = fs
+    .readFileSync(`${programDirectory}/config.json`)
+    .toString();
   config = JSON.parse(rawUserConfig);
 }
 
 if (config) {
-  log.debug(config);
-  isQuitting = !config.minimizeToTray;
+  isQuitting = !config.closeToTray;
 }
 
 if (os.platform() !== 'win32') {

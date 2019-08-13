@@ -144,6 +144,24 @@ export default class WalletSession {
     log.debug('Wrote config file to disk.');
   }
 
+  toggleCloseToTray(status: boolean) {
+    const programDirectory = directories[0];
+    const modifyConfig = config;
+    modifyConfig.closeToTray = status;
+    log.debug(`Close to tray set to ${status.toString()}`);
+    config.closeToTray = status;
+    fs.writeFileSync(
+      `${programDirectory}/config.json`,
+      JSON.stringify(config, null, 4),
+      err => {
+        if (err) throw err;
+        log.debug(err);
+        return false;
+      }
+    );
+    log.debug('Wrote config file to disk.');
+  }
+
   exportToCSV(savePath: string) {
     const rawTransactions = this.getTransactions(undefined, undefined, false);
     const csvWriter = createObjectCsvWriter({

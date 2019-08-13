@@ -79,7 +79,9 @@ if (!fs.existsSync(`${programDirectory}/config.json`)) {
   );
 } else {
   log.debug("Config file found in user's home directory, using it...");
-  const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
+  const rawUserConfig = fs
+    .readFileSync(`${programDirectory}/config.json`)
+    .toString();
   config = JSON.parse(rawUserConfig);
 }
 
