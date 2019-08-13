@@ -195,6 +195,10 @@ export default class Settings extends Component<Props, State> {
       message: `To change this setting, an application restart is required. Would you like to restart now?`
     });
     if (userSelection === 0) {
+      if (process.env.NODE_ENV === 'development') {
+        log.debug(`Can't relaunch appliation while in dev mode.`);
+        return;
+      }
       remote.app.relaunch();
       remote.app.exit();
     }
@@ -212,6 +216,10 @@ export default class Settings extends Component<Props, State> {
       message: `To change this setting, an application restart is required. Would you like to restart now?`
     });
     if (userSelection === 0) {
+      if (process.env.NODE_ENV === 'development') {
+        log.debug(`Can't relaunch appliation while in dev mode.`);
+        return;
+      }
       remote.app.relaunch();
       remote.app.exit();
     }
