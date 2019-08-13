@@ -19,7 +19,8 @@ type State = {
   scanHeight: string,
   rewindHeight: string,
   nodeChangeInProgress: boolean,
-  rewindInProgress: boolean
+  rewindInProgress: boolean,
+  closeToTray: boolean
 };
 
 export default class Settings extends Component<Props, State> {
@@ -37,7 +38,8 @@ export default class Settings extends Component<Props, State> {
       scanHeight: '',
       rewindHeight: '',
       nodeChangeInProgress: false,
-      rewindInProgress: false
+      rewindInProgress: false,
+      closeToTray: config.minimizeToTray
     };
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
@@ -53,6 +55,8 @@ export default class Settings extends Component<Props, State> {
     this.rescanWallet = this.rescanWallet.bind(this);
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
+    this.closeToTrayOn = this.closeToTrayOn.bind(this);
+    this.closeToTrayOff = this.closeToTrayOff.bind(this);
     this.rewindWallet = this.rewindWallet.bind(this);
     this.handleRewindHeightChange = this.handleRewindHeightChange.bind(this);
   }
@@ -179,6 +183,18 @@ export default class Settings extends Component<Props, State> {
     this.setState({ scanHeight: event.target.value.trim() });
   };
 
+  closeToTrayOn = () => {
+    this.setState({
+      closeToTray: true
+    });
+  };
+
+  closeToTrayOff = () => {
+    this.setState({
+      closeToTray: false
+    });
+  };
+
   darkModeOn = () => {
     this.setState({
       darkMode: true
@@ -238,7 +254,8 @@ export default class Settings extends Component<Props, State> {
       wallet,
       rewindHeight,
       rewindInProgress,
-      scanHeight
+      scanHeight,
+      closeToTray
     } = this.state;
 
     const { backgroundColor, textColor, linkColor } = uiType(darkMode);
@@ -387,7 +404,7 @@ export default class Settings extends Component<Props, State> {
               <div className="column" />
               <div className="column">
                 <br />
-                <p className="is-right">
+                <p className="buttons is-right">
                   {darkMode === true && (
                     <span className={textColor}>
                       {il8n.enable_light_mode} &nbsp;&nbsp;
@@ -422,13 +439,13 @@ export default class Settings extends Component<Props, State> {
                   )}
                   <br />
                   <br />
-                  {config.minimizeToTray === false && (
+                  {closeToTray === false && (
                     <span className={textColor}>
                       Enable close to tray &nbsp;&nbsp;
                       <a
                         className="button is-success"
-                        onClick={this.darkModeOff}
-                        onKeyPress={this.darkModeOff}
+                        onClick={this.closeToTrayOn}
+                        onKeyPress={this.closeToTrayOn}
                         role="button"
                         tabIndex={0}
                       >
@@ -438,13 +455,13 @@ export default class Settings extends Component<Props, State> {
                       </a>
                     </span>
                   )}
-                  {config.minimizeToTray === true && (
+                  {closeToTray === true && (
                     <span className={textColor}>
                       Disable close to tray &nbsp;&nbsp;
                       <a
                         className="button is-danger"
-                        onClick={this.darkModeOff}
-                        onKeyPress={this.darkModeOff}
+                        onClick={this.closeToTrayOff}
+                        onKeyPress={this.closeToTrayOff}
                         role="button"
                         tabIndex={0}
                       >
