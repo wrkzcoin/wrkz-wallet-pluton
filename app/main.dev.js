@@ -10,6 +10,7 @@
  */
 import path from 'path';
 import os from 'os';
+import fs from 'fs';
 import { app, BrowserWindow, Tray, Menu } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -19,6 +20,25 @@ import MenuBuilder from './menu';
 let isQuitting;
 let tray = null;
 let trayIcon = null;
+let config = null;
+const homedir = os.homedir();
+
+const directories = [
+  `${homedir}/.protonwallet`,
+  `${homedir}/.protonwallet/logs`
+];
+
+const [programDirectory] = directories;
+
+if (fs.existsSync(`${programDirectory}/config.json`)) {
+  const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
+  config = JSON.parse(rawUserConfig);
+}
+
+if (config) {
+  log.debug(config);
+  isQuitting = !config.minimizeToTray;
+}
 
 if (os.platform() !== 'win32') {
   trayIcon = path.join(__dirname, 'images/icon_color_64x64.png');

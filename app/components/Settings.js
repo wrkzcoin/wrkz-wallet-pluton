@@ -3,7 +3,7 @@ import { remote } from 'electron';
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
 import log from 'electron-log';
-import { session, eventEmitter, il8n } from '../index';
+import { session, eventEmitter, il8n, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -387,7 +387,7 @@ export default class Settings extends Component<Props, State> {
               <div className="column" />
               <div className="column">
                 <br />
-                <p className="buttons is-right">
+                <p className="is-right">
                   {darkMode === true && (
                     <span className={textColor}>
                       {il8n.enable_light_mode} &nbsp;&nbsp;
@@ -416,6 +416,40 @@ export default class Settings extends Component<Props, State> {
                       >
                         <span className="icon is-large">
                           <i className="fas fa-moon" />
+                        </span>
+                      </a>
+                    </span>
+                  )}
+                  <br />
+                  <br />
+                  {config.minimizeToTray === false && (
+                    <span className={textColor}>
+                      Enable close to tray &nbsp;&nbsp;
+                      <a
+                        className="button is-success"
+                        onClick={this.darkModeOff}
+                        onKeyPress={this.darkModeOff}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="icon is-large">
+                          <i className="fas fa-check" />
+                        </span>
+                      </a>
+                    </span>
+                  )}
+                  {config.minimizeToTray === true && (
+                    <span className={textColor}>
+                      Disable close to tray &nbsp;&nbsp;
+                      <a
+                        className="button is-danger"
+                        onClick={this.darkModeOff}
+                        onKeyPress={this.darkModeOff}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="icon is-large">
+                          <i className="fa fa-times" />
                         </span>
                       </a>
                     </span>
