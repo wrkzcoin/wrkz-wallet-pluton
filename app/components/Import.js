@@ -75,6 +75,12 @@ export default class Send extends Component<Props, States> {
       parseInt(height, 10)
     );
     if (importedSuccessfully === true) {
+      remote.dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: ['OK'],
+        title: il8n.import_import_wallet_title,
+        message: il8n.import_import_wallet_message
+      });
       loginCounter.freshRestore = true;
       const programDirectory = directories[0];
       const modifyConfig = config;
