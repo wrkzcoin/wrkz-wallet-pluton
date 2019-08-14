@@ -62,6 +62,8 @@ class Redirector extends Component<Props, State> {
     ipcRenderer.on('importSeed', this.goToImportFromSeed);
     ipcRenderer.on('importKey', this.goToImportFromKey);
     ipcRenderer.on('handlePasswordChange', this.goToPasswordChange);
+    eventEmitter.on('importSeed', this.goToImportFromSeed);
+    eventEmitter.on('importKey', this.goToImportFromKey);
     eventEmitter.on('handlePasswordChange', this.goToPasswordChange);
     eventEmitter.on('openNewWallet', this.goToHome);
     eventEmitter.on('initializeNewSession', this.goToHome);
@@ -77,6 +79,8 @@ class Redirector extends Component<Props, State> {
     ipcRenderer.off('importSeed', this.goToImportFromSeed);
     ipcRenderer.off('importKey', this.goToImportFromKey);
     ipcRenderer.off('handlePasswordChange', this.goToPasswordChange);
+    eventEmitter.off('importSeed', this.goToImportFromSeed);
+    eventEmitter.off('importKey', this.goToImportFromKey);
     eventEmitter.off('handlePasswordChange', this.goToPasswordChange);
     eventEmitter.off('openNewWallet', this.goToHome);
     eventEmitter.off('initializeNewSession', this.goToHome);

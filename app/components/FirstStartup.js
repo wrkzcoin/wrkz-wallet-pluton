@@ -83,7 +83,7 @@ export default class FirstStartup extends Component<Props, State> {
     eventEmitter.emit('handleNew');
   };
 
-  importFromKeysOrSeed() {
+  importFromKeysOrSeed = () => {
     log.debug('User selected to import wallet.');
     // seed will be 0, keys will be 1
     const userSelection = remote.dialog.showMessageBox(null, {
@@ -100,7 +100,7 @@ export default class FirstStartup extends Component<Props, State> {
       log.debug('User selected to import from keys...');
       eventEmitter.emit('importKey');
     }
-  }
+  };
 
   render() {
     const { darkMode } = this.state;
