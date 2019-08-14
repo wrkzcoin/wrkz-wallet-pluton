@@ -92,7 +92,6 @@ export default class FirstStartup extends Component<Props, State> {
       title: il8n.restore,
       message: il8n.seed_or_keys
     });
-    log.debug(userSelection);
     if (userSelection === 1) {
       log.debug('User selected to import from seed...');
       eventEmitter.emit('importSeed');
