@@ -84,7 +84,7 @@ class NavBar extends Component<Props, State> {
               : `headerbar-slidedown ${fillColor}`
           }
         >
-          {session.wallet && loginCounter.isLoggedIn && (
+          {loginCounter.isLoggedIn && (
             <nav
               className={`navbar ${elementBaseColor}`}
               role="navigation"
@@ -155,27 +155,26 @@ class NavBar extends Component<Props, State> {
               </div>
             </nav>
           )}
-          {!session.wallet ||
-            (!loginCounter.isLoggedIn && (
-              <nav
-                className={`navbar ${elementBaseColor}`}
-                role="navigation"
-                aria-label="main navigation"
-              >
-                <div className="navbar-menu">
-                  <div className="navbar-brand" />
-                  <div className="navbar-end">
-                    <div className="navbar-item">
-                      <Link className="buttons" to={routes.SETTINGS}>
-                        <span className="icon button is-large is-danger">
-                          <i className="fas fa-chevron-left" />
-                        </span>
-                      </Link>
-                    </div>
+          {!loginCounter.isLoggedIn && (
+            <nav
+              className={`navbar ${elementBaseColor}`}
+              role="navigation"
+              aria-label="main navigation"
+            >
+              <div className="navbar-menu">
+                <div className="navbar-brand" />
+                <div className="navbar-end">
+                  <div className="navbar-item">
+                    <Link className="buttons" to={routes.SETTINGS}>
+                      <span className="icon button is-large is-danger">
+                        <i className="fas fa-chevron-left" />
+                      </span>
+                    </Link>
                   </div>
                 </div>
-              </nav>
-            ))}
+              </div>
+            </nav>
+          )}
         </div>
       </div>
     );
