@@ -198,7 +198,12 @@ class Redirector extends Component<Props, State> {
       return <Redirect to="/login" />;
     }
 
-    if (firstStartup === true && pathname !== '/firststartup') {
+    if (
+      firstStartup === true &&
+      pathname !== '/firststartup' &&
+      pathname !== '/import' &&
+      pathname !== '/importkey'
+    ) {
       return <Redirect to="/firststartup" />;
     }
 
@@ -206,4 +211,5 @@ class Redirector extends Component<Props, State> {
   }
 }
 
+// $FlowFixMe
 export default withRouter(Redirector);
