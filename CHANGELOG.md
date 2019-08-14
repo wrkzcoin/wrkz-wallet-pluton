@@ -1,5 +1,9 @@
 ## Changelog
 
+**v0.0.25:**
+
+- Fixes bug where the import seed / key button did not work on the firststartup menu
+
 **v0.0.24:**
 
 - new "lock" button in the navbar, allows you to lock your wallet with a password but it still syncs in the background
