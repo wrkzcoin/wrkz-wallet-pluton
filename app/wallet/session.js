@@ -162,6 +162,24 @@ export default class WalletSession {
     log.debug('Wrote config file to disk.');
   }
 
+  modifyConfig(propertyName: string, value: any) {
+    const programDirectory = directories[0];
+    const modifiedConfig = config;
+    modifiedConfig[propertyName] = value;
+    log.debug(`Config update: ${propertyName} set to ${value.toString()}`);
+    config[propertyName] = value;
+    fs.writeFileSync(
+      `${programDirectory}/config.json`,
+      JSON.stringify(config, null, 4),
+      err => {
+        if (err) throw err;
+        log.debug(err);
+        return false;
+      }
+    );
+    log.debug('Wrote config file to disk.');
+  }
+
   exportToCSV(savePath: string) {
     const rawTransactions = this.getTransactions(undefined, undefined, false);
     const csvWriter = createObjectCsvWriter({

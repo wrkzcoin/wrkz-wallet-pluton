@@ -246,12 +246,14 @@ export default class Settings extends Component<Props, State> {
   };
 
   scanCoinbaseTransactionsOn = () => {
+    session.modifyConfig('scanCoinbaseTransactions', true);
     this.setState({
       scanCoinbaseTransactions: true
     });
   };
 
   scanCoinbaseTransactionsOff = () => {
+    session.modifyConfig('scanCoinbaseTransactions', false);
     this.setState({
       scanCoinbaseTransactions: false
     });
