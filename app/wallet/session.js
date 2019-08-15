@@ -82,6 +82,8 @@ export default class WalletSession {
       loginCounter.isLoggedIn = true;
       log.debug(`Opened wallet file at ${this.walletFile}`);
       this.wallet = openWallet;
+      log.debug(this.wallet);
+
       this.syncStatus = this.getSyncStatus();
       this.address = this.wallet.getPrimaryAddress();
 
@@ -115,6 +117,16 @@ export default class WalletSession {
           'sendNotification',
           this.atomicToHuman(transaction.totalAmount(), true)
         );
+      });
+      eventEmitter.on('scanCoinbaseTransactionsOn', () => {
+        if (this.wallet) {
+          this.wallet.scanCoinbaseTransactions(true);
+        }
+      });
+      eventEmitter.on('scanCoinbaseTransactionsOff', () => {
+        if (this.wallet) {
+          this.wallet.scanCoinbaseTransactions(false);
+        }
       });
     } else {
       this.address = '';

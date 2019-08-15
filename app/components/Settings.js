@@ -250,6 +250,7 @@ export default class Settings extends Component<Props, State> {
     this.setState({
       scanCoinbaseTransactions: true
     });
+    eventEmitter.emit('scanCoinbaseTransactionsOn');
   };
 
   scanCoinbaseTransactionsOff = () => {
@@ -257,6 +258,7 @@ export default class Settings extends Component<Props, State> {
     this.setState({
       scanCoinbaseTransactions: false
     });
+    eventEmitter.emit('scanCoinbaseTransactionsOff');
   };
 
   rewindWallet = async (event: any) => {
