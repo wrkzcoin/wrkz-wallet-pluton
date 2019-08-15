@@ -20,7 +20,8 @@ type State = {
   rewindHeight: string,
   nodeChangeInProgress: boolean,
   rewindInProgress: boolean,
-  closeToTray: boolean
+  closeToTray: boolean,
+  scanCoinbaseTransactions: boolean
 };
 
 export default class Settings extends Component<Props, State> {
@@ -39,7 +40,8 @@ export default class Settings extends Component<Props, State> {
       rewindHeight: '',
       nodeChangeInProgress: false,
       rewindInProgress: false,
-      closeToTray: config.closeToTray || false
+      closeToTray: config.closeToTray || false,
+      scanCoinbaseTransactions: config.scanCoinbaseTransactions || false
     };
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
@@ -243,6 +245,18 @@ export default class Settings extends Component<Props, State> {
     eventEmitter.emit('darkmodeoff');
   };
 
+  scanCoinbaseTransactionsOn = () => {
+    this.setState({
+      scanCoinbaseTransactions: true
+    });
+  };
+
+  scanCoinbaseTransactionsOff = () => {
+    this.setState({
+      scanCoinbaseTransactions: false
+    });
+  };
+
   rewindWallet = async (event: any) => {
     event.preventDefault();
     this.setState({
@@ -285,7 +299,8 @@ export default class Settings extends Component<Props, State> {
       rewindHeight,
       rewindInProgress,
       scanHeight,
-      closeToTray
+      closeToTray,
+      scanCoinbaseTransactions
     } = this.state;
 
     const { backgroundColor, textColor, linkColor } = uiType(darkMode);
@@ -492,6 +507,40 @@ export default class Settings extends Component<Props, State> {
                         className="button is-danger"
                         onClick={this.closeToTrayOff}
                         onKeyPress={this.closeToTrayOff}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="icon is-large">
+                          <i className="fa fa-times" />
+                        </span>
+                      </a>
+                    </span>
+                  )}
+                  <br />
+                  <br />
+                  {scanCoinbaseTransactions === false && (
+                    <span className={textColor}>
+                      Enable scanning coinbase transactions &nbsp;&nbsp;
+                      <a
+                        className="button is-success"
+                        onClick={this.scanCoinbaseTransactionsOn}
+                        onKeyPress={this.scanCoinbaseTransactionsOn}
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="icon is-large">
+                          <i className="fas fa-check" />
+                        </span>
+                      </a>
+                    </span>
+                  )}
+                  {scanCoinbaseTransactions === true && (
+                    <span className={textColor}>
+                      Disable scanning coinbase transactions &nbsp;&nbsp;
+                      <a
+                        className="button is-danger"
+                        onClick={this.scanCoinbaseTransactionsOff}
+                        onKeyPress={this.scanCoinbaseTransactionsOff}
                         role="button"
                         tabIndex={0}
                       >
