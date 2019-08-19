@@ -8,7 +8,6 @@ labels: 'bug'
 
 <!--- Provide a general summary of the issue in the Title above -->
 
-
 ## Expected Behavior
 
 <!--- If you're describing a bug, tell us what should happen -->

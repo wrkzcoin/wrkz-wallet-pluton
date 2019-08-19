@@ -96,13 +96,15 @@ export default class Login extends Component<Props, State> {
                     </div>
                   </label>
                   <label className={`help ${textColor}`} htmlFor="scanheight">
-                    {il8n.attempting_login_to}
-                    {walletFile}
+                    {session.wallet
+                      ? il8n.currently_logged_in
+                      : il8n.attempting_login_to}
+                    <b>{walletFile}</b>
                   </label>
                 </div>
                 <div className="buttons is-right">
                   <button type="submit" className="button is-success is-large">
-                    {il8n.login}
+                    {session.wallet ? il8n.unlock : il8n.login}
                   </button>
                 </div>
               </form>
