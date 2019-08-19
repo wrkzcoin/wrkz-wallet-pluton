@@ -82,8 +82,6 @@ export default class WalletSession {
       loginCounter.isLoggedIn = true;
       log.debug(`Opened wallet file at ${this.walletFile}`);
       this.wallet = openWallet;
-      log.debug(this.wallet);
-
       this.syncStatus = this.getSyncStatus();
       this.address = this.wallet.getPrimaryAddress();
 
