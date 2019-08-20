@@ -74,4 +74,5 @@ $ yarn package
 
 ## License
 
-MIT © [ExtraHash](https://github.com/ExtraHash)
+© [ExtraHash](https://github.com/ExtraHash)
+See included License file for more details.
