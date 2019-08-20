@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
+import SyncStatus from './SyncStatus';
 import uiType from '../utils/uitype';
 
 type Props = {};
@@ -103,6 +104,7 @@ export default class Login extends Component<Props, State> {
                   </label>
                 </div>
                 <div className="buttons is-right">
+                  {session.wallet && <SyncStatus />}
                   <button type="submit" className="button is-success is-large">
                     {session.wallet ? il8n.unlock : il8n.login}
                   </button>

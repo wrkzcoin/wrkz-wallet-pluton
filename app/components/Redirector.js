@@ -54,7 +54,7 @@ class Redirector extends Component<Props, State> {
     this.goToLogin = this.goToLogin.bind(this);
     this.logOut = this.logOut.bind(this);
     if (session.walletPassword !== '' && loginCounter.isLoggedIn) {
-      this.activityTimer = setTimeout(() => this.logOut(), 1000 * 60 * 15);
+      this.activityTimer = setTimeout(() => this.logOut(), 1000 * 60 * 1);
     }
   }
 
