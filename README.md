@@ -24,18 +24,17 @@
 
 ### Dependencies
 
-- Node.JS (Latest LTS version - 10.x)
+#### Note: You will need the following dependencies installed before you can proceed to the "Setup" step:
 
-https://nodejs.org/  
-[Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script) makes installing different versions of node super easy, fully recommended.
+- Node.JS (Latest LTS version - 10.x) https://nodejs.org/  
 
-- Yarn
+- Yarn https://yarnpkg.com/en/
 
-https://yarnpkg.com/en/
+- Git https://git-scm.com/downloads
 
-- Git
+Tip: If you already have a different version of node.js installed besides 10.x, try using [Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script).
 
-https://git-scm.com/downloads
+#### Setup
 
 First, clone the repo via git:
 
