@@ -13,7 +13,7 @@
 </p>
 
 <p>
-  All of the code is released under the MIT license, and are free for anyone to use as they wish. The icons in the ./resources folder, however, are not released under this MIT license, rather they are maintained to be intellectual property of ExtraHash, and may not be used to represent the brand or identity of any other piece of software or group. See the included license file in ./resources/LICENSE for more details.
+  All of the code is released under the GPLv3 license. The icons in the ./resources folder, however, are not released under this MIT license, rather they are maintained to be intellectual property of ExtraHash, and may not be used to represent the brand or identity of any other piece of software or group. See the included license file in ./resources/LICENSE for more details.
 </p>
 
 ## Installing
@@ -24,18 +24,17 @@
 
 ### Dependencies
 
-- Node.JS (Latest LTS version - 10.x)
+#### You will need the following dependencies installed before you can proceed to the "Setup" step:
 
-https://nodejs.org/  
-[Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script) makes installing different versions of node super easy, fully recommended.
+- Node.JS (Latest LTS version - 10.x) https://nodejs.org/  
 
-- Yarn
+- Yarn https://yarnpkg.com/en/
 
-https://yarnpkg.com/en/
+- Git https://git-scm.com/downloads
 
-- Git
+Tip: If you already have a different version of node.js installed besides 10.x, try using [Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script).
 
-https://git-scm.com/downloads
+#### Setup
 
 First, clone the repo via git:
 
@@ -74,4 +73,5 @@ $ yarn package
 
 ## License
 
-MIT © [ExtraHash](https://github.com/ExtraHash)
+© [ExtraHash](https://github.com/ExtraHash)
+See included License file for more details.
