@@ -67,6 +67,7 @@ export default class Login extends Component<Props, State> {
   render() {
     const { darkMode, wrongPassword, walletFile } = this.state;
     const { backgroundColor, fillColor, textColor } = uiType(darkMode);
+    const fadein = loginCounter.loginsAttempted > 0 ? '' : 'fadein';
     return (
       <div>
         <Redirector />
@@ -104,13 +105,17 @@ export default class Login extends Component<Props, State> {
                   </label>
                 </div>
                 <div className="buttons is-right">
-                  {session.wallet && <SyncStatus />}
                   <button type="submit" className="button is-success is-large">
                     {session.wallet ? il8n.unlock : il8n.login}
                   </button>
                 </div>
               </form>
             </div>
+            {session.wallet && (
+              <div className={`locksyncicon ${fadein}`}>
+                <SyncStatus size="is-medium" color="fill" />
+              </div>
+            )}
           </div>
         </div>
       </div>

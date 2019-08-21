@@ -26,7 +26,7 @@
 
 #### You will need the following dependencies installed before you can proceed to the "Setup" step:
 
-- Node.JS (Latest LTS version - 10.x) https://nodejs.org/  
+- Node.JS (Latest LTS version - 10.x) https://nodejs.org/
 
 - Yarn https://yarnpkg.com/en/
 

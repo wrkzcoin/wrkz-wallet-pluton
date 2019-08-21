@@ -78,7 +78,7 @@ class BottomBar extends Component<Props, State> {
         {session.wallet && (
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             <NodeFee />
-            <SyncStatus />
+            <SyncStatus size="is-large" color="background" />
             <Balance />
           </div>
         )}

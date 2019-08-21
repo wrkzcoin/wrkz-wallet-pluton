@@ -10,6 +10,16 @@
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma-extensions/dist/css/bulma-extensions.min.css';
 
+.locksyncicon {
+  position: absolute;
+  top: 16px;
+  right: 0;
+}
+
+.fadein {
+  animation: fadein 2s;
+}
+
 .fullwindow {
   position: absolute;
   display: table;

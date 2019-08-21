@@ -4,7 +4,10 @@ import ReactLoading from 'react-loading';
 import ReactTooltip from 'react-tooltip';
 import { session, eventEmitter } from '../index';
 
-type Props = {};
+type Props = {
+  size: string,
+  color: string
+};
 
 type State = {
   syncStatus: number,
@@ -61,6 +64,15 @@ export default class SyncStatus extends Component<Props, State> {
 
   render() {
     const { darkMode, syncStatus } = this.state;
+    const { size, color } = this.props;
+
+    let tagColor = '';
+    if (color === 'fill') {
+      tagColor = darkMode ? 'is-black' : 'is-white';
+    }
+    if (color === 'background') {
+      tagColor = darkMode ? 'is-dark' : 'is-light';
+    }
 
     let syncTooltip;
 
@@ -79,14 +91,14 @@ export default class SyncStatus extends Component<Props, State> {
         <div className="tags has-addons">
           <span
             className={
-              darkMode ? 'tag is-dark is-large' : 'tag is-white is-large'
+              darkMode ? `tag ${tagColor} ${size}` : `tag ${tagColor} ${size}`
             }
           >
             Sync:
           </span>
           {syncStatus < 100 && session.daemon.networkBlockCount !== 0 && (
             <span
-              className="tag is-warning is-large sync-status"
+              className={`tag is-warning ${size} sync-status`}
               data-tip={syncTooltip}
             >
               {syncStatus}%
@@ -100,7 +112,7 @@ export default class SyncStatus extends Component<Props, State> {
           )}
           {syncStatus === 100 && session.daemon.networkBlockCount !== 0 && (
             <span
-              className="tag is-success is-large sync-status"
+              className={`tag is-success ${size} sync-status`}
               data-tip={syncTooltip}
             >
               {syncStatus}%
@@ -108,7 +120,7 @@ export default class SyncStatus extends Component<Props, State> {
           )}
           {session.daemon.networkBlockCount === 0 && (
             <span
-              className="tag is-danger is-large sync-status"
+              className={`tag is-danger ${size} sync-status`}
               data-tip={syncTooltip}
             >
               <ReactLoading
