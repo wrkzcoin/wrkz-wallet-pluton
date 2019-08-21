@@ -1,10 +1,11 @@
 // @flow
 import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
 import log from 'electron-log';
-import npmPackage from '../package.json';
 import LocalizedStrings from 'react-localization';
+import npmPackage from '../package.json';
 
 export const il8n = new LocalizedStrings({
+  // eslint-disable-next-line global-require
   en: require('./il8n/en-menu.json')
 });
 
@@ -188,6 +189,13 @@ export default class MenuBuilder {
           click: () => {
             this.handleBackup();
           }
+        },
+        {
+          label: il8n.lock,
+          accelerator: 'Command+L',
+          click: () => {
+            this.handleLock();
+          }
         }
       ]
     };
@@ -293,6 +301,10 @@ export default class MenuBuilder {
     this.mainWindow.webContents.send('exportToCSV');
   }
 
+  handleLock() {
+    this.mainWindow.webContents.send('handleLock');
+  }
+
   handleRestore() {
     this.mainWindow.webContents.send('handleSaveSilent');
     log.debug('Import menu selected.');
@@ -372,6 +384,13 @@ export default class MenuBuilder {
             label: il8n.backup,
             click: () => {
               this.handleBackup();
+            }
+          },
+          {
+            label: il8n.lock,
+            accelerator: 'Ctrl+L',
+            click: () => {
+              this.handleLock();
             }
           }
         ]

@@ -150,6 +150,12 @@ ipcRenderer.on('handleSave', () => {
   }
 });
 
+ipcRenderer.on('handleLock', () => {
+  if (loginCounter.isLoggedIn) {
+    eventEmitter.emit('logOut');
+  }
+});
+
 ipcRenderer.on('handleSaveAs', () => {
   if (!session.wallet) {
     eventEmitter.emit('refreshLogin');
