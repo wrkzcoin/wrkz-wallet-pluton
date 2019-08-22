@@ -45,8 +45,22 @@ export default class SyncReminder extends Component<Props, State> {
         {syncStatus < 100 && session.daemon.networkBlockCount !== 0 && (
           <p className="has-text-warning glow">
             {' '}
-            <i className="fas fa-sync fa-spin" /> &nbsp;Your wallet is still
-            syncing...
+            <i className="fas fa-sync fa-spin" /> &nbsp;Don&apos;t panic! Your
+            wallet is still syncing...
+          </p>
+        )}
+        {syncStatus === 100 && session.daemon.networkBlockCount !== 0 && (
+          <p className="has-text-success glow-green">
+            {' '}
+            <i className="fas fa-check-circle" /> &nbsp;Your wallet is fully
+            synced.
+          </p>
+        )}
+        {session.daemon.networkBlockCount === 0 && (
+          <p className="has-text-danger glow-red">
+            {' '}
+            <i className="fas fa-times" /> &nbsp;The connected node appears to
+            be offline.
           </p>
         )}
       </div>

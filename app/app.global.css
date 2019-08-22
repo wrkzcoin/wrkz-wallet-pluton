@@ -127,6 +127,14 @@
   animation: glow 1s ease-in-out infinite alternate;
 }
 
+.glow-green {
+  animation: glow-green 1s ease-in-out infinite alternate;
+}
+
+.glow-red {
+  animation: glow-red 1s ease-in-out infinite alternate;
+}
+
 @keyframes glow {
   from {
     text-shadow: 0 0 2px hsl(48, 100%, 67%);
@@ -136,9 +144,27 @@
   }
 }
 
+@keyframes glow-green {
+  from {
+    text-shadow: 0 0 2px hsl(141, 71%, 48%);
+  }
+  to {
+    text-shadow: 0 0 20px hsl(141, 71%, 48%);
+  }
+}
+
+@keyframes glow-red {
+  from {
+    text-shadow: 0 0 2px hsl(348, 100%, 61%);
+  }
+  to {
+    text-shadow: 0 0 20px hsl(348, 100%, 61%);
+  }
+}
+
 .syncreminder {
-  position: absolute;
-  bottom: 16px;
+  position: relative;
+  bottom: -32px;
 }
 
 .loginbox-fail {

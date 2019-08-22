@@ -13256,10 +13256,10 @@ turtlecoin-utils@^1.0.3:
   optionalDependencies:
     turtlecoin-crypto "^3.0.4"
 
-turtlecoin-wallet-backend@^3.4.8:
-  version "3.4.8"
-  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.8.tgz#6c411425181bd1fddcf8d3c9b583a40b578a8741"
-  integrity sha512-cVcu9GnqoH+shvz3c7t6pc8pZnID1CFYJFV+mnISdCVfSu0i3vI/0pdGdRO/izE3MUgUvAtyNR63EPeRk4vURA==
+turtlecoin-wallet-backend@^3.4.9:
+  version "3.4.9"
+  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.9.tgz#a1e4e1fa77c5fa6cb27ddeb6c7a04a9bac02413e"
+  integrity sha512-VU6of+Wu6LcF2orWqYmUObEB/coYVXJImQ85/0ZU0zHSpRMwH872El9FRxjXMiWi7zgwEZsBM1tkA34FeCsMow==
   dependencies:
     lodash "^4.17.15"
     object-sizeof "^1.4.0"

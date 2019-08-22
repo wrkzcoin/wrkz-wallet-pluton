@@ -105,7 +105,9 @@ export default class Login extends Component<Props, State> {
                 </div>
                 <div className="columns">
                   <div className="column">
-                    <SyncReminder className="syncreminder" />
+                    {session.wallet && (
+                      <SyncReminder className="syncreminder" />
+                    )}
                   </div>
                   <div className="column">
                     <div className="buttons is-right">
