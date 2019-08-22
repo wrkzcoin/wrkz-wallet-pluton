@@ -66,14 +66,6 @@ export default class SyncStatus extends Component<Props, State> {
     const { darkMode, syncStatus } = this.state;
     const { size, color } = this.props;
 
-    let tagColor = '';
-    if (color === 'fill') {
-      tagColor = darkMode ? 'is-black' : 'is-white';
-    }
-    if (color === 'background') {
-      tagColor = darkMode ? 'is-dark' : 'is-light';
-    }
-
     let syncTooltip;
 
     if (session.wallet) {
@@ -91,7 +83,7 @@ export default class SyncStatus extends Component<Props, State> {
         <div className="tags has-addons">
           <span
             className={
-              darkMode ? `tag ${tagColor} ${size}` : `tag ${tagColor} ${size}`
+              darkMode ? `tag ${color} ${size}` : `tag ${color} ${size}`
             }
           >
             Sync:

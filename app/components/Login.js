@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import ReactTooltip from 'react-tooltip';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
 import SyncStatus from './SyncStatus';
@@ -68,9 +69,17 @@ export default class Login extends Component<Props, State> {
     const { darkMode, wrongPassword, walletFile } = this.state;
     const { backgroundColor, fillColor, textColor } = uiType(darkMode);
     const fadein = loginCounter.loginsAttempted > 0 ? '' : 'fadein';
+    const tagColor = darkMode ? 'is-black' : 'is-light';
     return (
       <div>
         <Redirector />
+        <ReactTooltip
+          effect="solid"
+          border
+          type="light"
+          multiline
+          place="bottom"
+        />
         <div className={`fullwindow outer-div ${backgroundColor}`}>
           <div className="mid-div">
             <div
@@ -113,7 +122,7 @@ export default class Login extends Component<Props, State> {
             </div>
             {session.wallet && (
               <div className={`locksyncicon ${fadein}`}>
-                <SyncStatus size="is-medium" color="fill" />
+                <SyncStatus size="is-medium" color={tagColor} />
               </div>
             )}
           </div>

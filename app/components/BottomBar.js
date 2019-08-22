@@ -61,6 +61,7 @@ class BottomBar extends Component<Props, State> {
   render() {
     // prettier-ignore
     const { darkmode, navBarCount } = this.state;
+    const tagColor = darkmode ? 'is-dark' : 'is-white';
 
     return (
       <div
@@ -78,7 +79,7 @@ class BottomBar extends Component<Props, State> {
         {session.wallet && (
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             <NodeFee />
-            <SyncStatus size="is-large" color="background" />
+            <SyncStatus size="is-large" color={tagColor} />
             <Balance />
           </div>
         )}
