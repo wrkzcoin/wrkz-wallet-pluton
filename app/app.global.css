@@ -121,6 +121,26 @@
   animation: fadein 2s;
 }
 
+.glow {
+  -webkit-animation: glow 1s ease-in-out infinite alternate;
+  -moz-animation: glow 1s ease-in-out infinite alternate;
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 2px hsl(48, 100%, 67%);
+  }
+  to {
+    text-shadow: 0 0 20px hsl(48, 100%, 67%);
+  }
+}
+
+.syncreminder {
+  position: absolute;
+  bottom: 16px;
+}
+
 .loginbox-fail {
   margin: 0 auto;
   width: 67%;

@@ -1,9 +1,8 @@
 // @flow
 import React, { Component } from 'react';
-import ReactTooltip from 'react-tooltip';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
-import SyncStatus from './SyncStatus';
+import SyncReminder from './SyncReminder';
 import uiType from '../utils/uitype';
 
 type Props = {};
@@ -68,18 +67,9 @@ export default class Login extends Component<Props, State> {
   render() {
     const { darkMode, wrongPassword, walletFile } = this.state;
     const { backgroundColor, fillColor, textColor } = uiType(darkMode);
-    const fadein = loginCounter.loginsAttempted > 0 ? '' : 'fadein';
-    const tagColor = darkMode ? 'is-black' : 'is-light';
     return (
       <div>
         <Redirector />
-        <ReactTooltip
-          effect="solid"
-          border
-          type="light"
-          multiline
-          place="bottom"
-        />
         <div className={`fullwindow outer-div ${backgroundColor}`}>
           <div className="mid-div">
             <div
@@ -113,18 +103,23 @@ export default class Login extends Component<Props, State> {
                     <b>{walletFile}</b>
                   </label>
                 </div>
-                <div className="buttons is-right">
-                  <button type="submit" className="button is-success is-large">
-                    {session.wallet ? il8n.unlock : il8n.login}
-                  </button>
+                <div className="columns">
+                  <div className="column">
+                    <SyncReminder className="syncreminder" />
+                  </div>
+                  <div className="column">
+                    <div className="buttons is-right">
+                      <button
+                        type="submit"
+                        className="button is-success is-large"
+                      >
+                        {session.wallet ? il8n.unlock : il8n.login}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </form>
             </div>
-            {session.wallet && (
-              <div className={`locksyncicon ${fadein}`}>
-                <SyncStatus size="is-medium" color={tagColor} />
-              </div>
-            )}
           </div>
         </div>
       </div>
