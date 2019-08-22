@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter } from '../index';
+import { session } from '../index';
 
 type Props = {};
 
@@ -22,19 +22,12 @@ export default class SyncReminder extends Component<Props, State> {
       syncStatus: session.getSyncStatus()
     };
     this.syncInterval = setInterval(() => this.refresh(), 1000);
-    this.darkModeOn = this.darkModeOn.bind(this);
-    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
-  componentDidMount() {
-    eventEmitter.on('darkmodeon', this.darkModeOn);
-    eventEmitter.on('darkmodeoff', this.darkModeOff);
-  }
+  componentDidMount() {}
 
   componentWillUnmount() {
     clearInterval(this.syncInterval);
-    eventEmitter.off('darkmodeon', this.darkModeOn);
-    eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
 
   refresh() {
