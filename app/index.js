@@ -69,21 +69,24 @@ directories.forEach(dir => {
 });
 
 if (!fs.existsSync(`${programDirectory}/config.json`)) {
-  fs.writeFile(
-    `${programDirectory}/config.json`,
-    JSON.stringify(config, null, 4),
-    err => {
-      if (err) throw err;
-      log.debug('Config not detected, wrote internal config to disk.');
-    }
-  );
+  log.debug('Config not detected, writing internal config to disk...');
 } else {
   log.debug("Config file found in user's home directory, using it...");
   const rawUserConfig = fs
     .readFileSync(`${programDirectory}/config.json`)
     .toString();
-  config = JSON.parse(rawUserConfig);
+
+  // add possible missing fields using internal config values
+  config = Object.assign(config, JSON.parse(rawUserConfig));
 }
+
+fs.writeFile(
+  `${programDirectory}/config.json`,
+  JSON.stringify(config, null, 4),
+  err => {
+    if (err) throw err;
+  }
+);
 
 export let session = new WalletSession();
 
