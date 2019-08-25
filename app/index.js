@@ -77,7 +77,12 @@ if (!fs.existsSync(`${programDirectory}/config.json`)) {
     .toString();
 
   // add possible missing fields using internal config values
-  config = Object.assign(config, JSON.parse(rawUserConfig));
+
+  try {
+    config = Object.assign(config, JSON.parse(rawUserConfig));
+  } catch {
+    log.debug('User config is not valid JSON!');
+  }
 }
 
 fs.writeFile(

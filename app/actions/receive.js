@@ -39,7 +39,7 @@ export function incrementAsync(delay: number = 1000) {
 }
 
 export function copyToClipboard(text: string) {
-  return (dispatch: Dispatch) => {
+  return () => {
     log.debug(`Address copied to clipboard ${text}`);
     clipboard.writeText(text);
   };

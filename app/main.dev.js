@@ -16,6 +16,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
+import iConfig from './constants/config';
 
 let isQuitting;
 let tray = null;
@@ -34,7 +35,14 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
   const rawUserConfig = fs
     .readFileSync(`${programDirectory}/config.json`)
     .toString();
-  config = JSON.parse(rawUserConfig);
+
+  // check if the user config is valid JSON before parsing it
+  try {
+    config = JSON.parse(rawUserConfig);
+  } catch {
+    // if it isn't, set the internal config to the user config
+    config = iConfig;
+  }
 }
 
 if (config) {
