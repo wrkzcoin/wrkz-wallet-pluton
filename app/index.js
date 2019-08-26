@@ -159,7 +159,7 @@ ipcRenderer.on('handleSave', () => {
 });
 
 ipcRenderer.on('handleLock', () => {
-  if (loginCounter.isLoggedIn) {
+  if (loginCounter.isLoggedIn && session.walletPassword !== '') {
     eventEmitter.emit('logOut');
   }
 });
