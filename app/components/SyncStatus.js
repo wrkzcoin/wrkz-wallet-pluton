@@ -2,16 +2,15 @@
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter } from '../index';
+import { session } from '../index';
 
 type Props = {
   size: string,
-  color: string
+  darkMode: boolean
 };
 
 type State = {
-  syncStatus: number,
-  darkMode: boolean
+  syncStatus: number
 };
 
 export default class SyncStatus extends Component<Props, State> {
@@ -24,23 +23,15 @@ export default class SyncStatus extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      syncStatus: session.getSyncStatus(),
-      darkMode: session.darkMode
+      syncStatus: session.getSyncStatus()
     };
     this.syncInterval = setInterval(() => this.refresh(), 1000);
-    this.darkModeOn = this.darkModeOn.bind(this);
-    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
-  componentDidMount() {
-    eventEmitter.on('darkmodeon', this.darkModeOn);
-    eventEmitter.on('darkmodeoff', this.darkModeOff);
-  }
+  componentDidMount() {}
 
   componentWillUnmount() {
     clearInterval(this.syncInterval);
-    eventEmitter.off('darkmodeon', this.darkModeOn);
-    eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
 
   refresh() {
@@ -50,21 +41,10 @@ export default class SyncStatus extends Component<Props, State> {
     ReactTooltip.rebuild();
   }
 
-  darkModeOn = () => {
-    this.setState({
-      darkMode: true
-    });
-  };
-
-  darkModeOff = () => {
-    this.setState({
-      darkMode: false
-    });
-  };
-
   render() {
-    const { darkMode, syncStatus } = this.state;
-    const { size, color } = this.props;
+    const { syncStatus } = this.state;
+    const { darkMode, size } = this.props;
+    const color = darkMode ? 'is-dark' : 'is-white';
 
     let syncTooltip;
 

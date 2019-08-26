@@ -306,7 +306,7 @@ export default class Send extends Component<Props, State> {
             multiline
             place="top"
           />
-          <NavBar />
+          <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>
             <form onSubmit={this.handleSubmit}>
               <div className="field">
@@ -413,7 +413,7 @@ export default class Send extends Component<Props, State> {
               </div>
             </form>
           </div>
-          <BottomBar />
+          <BottomBar darkMode={darkMode} />
         </div>
       </div>
     );

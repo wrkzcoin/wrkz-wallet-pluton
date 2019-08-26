@@ -13,11 +13,11 @@ type Location = {
 };
 
 type Props = {
-  location: Location
+  location: Location,
+  darkMode: boolean
 };
 
 type State = {
-  darkMode: boolean,
   navBarCount: number
 };
 
@@ -31,17 +31,12 @@ class NavBar extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
       navBarCount: loginCounter.navBarCount
     };
-    this.darkModeOn = this.darkModeOn.bind(this);
-    this.darkModeOff = this.darkModeOff.bind(this);
     this.logOut = this.logOut.bind(this);
   }
 
   componentDidMount() {
-    eventEmitter.on('darkmodeon', this.darkModeOn);
-    eventEmitter.on('darkmodeoff', this.darkModeOff);
     loginCounter.navBarCount++;
   }
 
@@ -49,21 +44,7 @@ class NavBar extends Component<Props, State> {
     if (session.walletPassword !== '') {
       clearInterval(this.activityTimer);
     }
-    eventEmitter.off('darkmodeon', this.darkModeOn);
-    eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
-
-  darkModeOn = () => {
-    this.setState({
-      darkMode: true
-    });
-  };
-
-  darkModeOff = () => {
-    this.setState({
-      darkMode: false
-    });
-  };
 
   logOut = () => {
     eventEmitter.emit('logOut');
@@ -71,8 +52,8 @@ class NavBar extends Component<Props, State> {
 
   render() {
     // prettier-ignore
-    const { location: { pathname } } = this.props;
-    const { darkMode, navBarCount } = this.state;
+    const { location: { pathname }, darkMode } = this.props;
+    const { navBarCount } = this.state;
     const { fillColor, elementBaseColor, settingsCogColor } = uiType(darkMode);
 
     return (

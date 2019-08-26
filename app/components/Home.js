@@ -132,7 +132,7 @@ export default class Home extends Component<Props, State> {
             multiline
             place="top"
           />
-          <NavBar />
+          <NavBar darkMode={darkMode} />
           <div
             className={
               loginCounter.navBarCount > 0
@@ -226,7 +226,7 @@ export default class Home extends Component<Props, State> {
               </form>
             )}
           </div>
-          <BottomBar />
+          <BottomBar darkMode={darkMode} />
         </div>
       </div>
     );

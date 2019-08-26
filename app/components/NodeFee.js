@@ -2,11 +2,13 @@
 import React, { Component } from 'react';
 import { session, eventEmitter, il8n } from '../index';
 
-type Props = {};
+type Props = {
+  size: string,
+  darkMode: boolean
+};
 
 type State = {
-  nodeFee: number,
-  darkMode: boolean
+  nodeFee: number
 };
 
 export default class NodeFee extends Component<Props, State> {
@@ -17,37 +19,18 @@ export default class NodeFee extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      nodeFee: session.daemon.feeAmount || 0,
-      darkMode: session.darkMode
+      nodeFee: session.daemon.feeAmount || 0
     };
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
-    this.darkModeOn = this.darkModeOn.bind(this);
-    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
   componentDidMount() {
     eventEmitter.on('gotNodeFee', this.refreshNodeFee);
-    eventEmitter.on('darkmodeon', this.darkModeOn);
-    eventEmitter.on('darkmodeoff', this.darkModeOff);
   }
 
   componentWillUnmount() {
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
-    eventEmitter.off('darkmodeon', this.darkModeOn);
-    eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
-
-  darkModeOn = () => {
-    this.setState({
-      darkMode: true
-    });
-  };
-
-  darkModeOff = () => {
-    this.setState({
-      darkMode: false
-    });
-  };
 
   refreshNodeFee = () => {
     this.setState({
@@ -56,19 +39,16 @@ export default class NodeFee extends Component<Props, State> {
   };
 
   render() {
-    const { darkMode, nodeFee } = this.state;
+    const { darkMode, size } = this.props;
+    const { nodeFee } = this.state;
+    const color = darkMode ? 'is-dark' : 'is-white';
+
     if (nodeFee > 0) {
       return (
         <div className="control statusicons">
           <div className="tags has-addons">
-            <span
-              className={
-                darkMode ? 'tag is-dark is-large' : 'tag is-white is-large'
-              }
-            >
-              {il8n.node_fee}
-            </span>
-            <span className="tag is-danger is-large">
+            <span className={`tag ${color} ${size}`}>{il8n.node_fee}</span>
+            <span className={`tag is-danger ${size}`}>
               {session.atomicToHuman(nodeFee, true)}{' '}
               {session.wallet.config.ticker}
             </span>

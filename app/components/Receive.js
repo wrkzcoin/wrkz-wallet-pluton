@@ -48,7 +48,7 @@ export default class Receive extends Component<Props, State> {
             multiline
             place="top"
           />
-          <NavBar />
+          <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>
             <div className="columns">
               <div className="column is-three-quarters">
@@ -101,7 +101,7 @@ export default class Receive extends Component<Props, State> {
               </div>
             </div>
           </div>
-          <BottomBar />
+          <BottomBar darkMode={darkMode} />
         </div>
       </div>
     );

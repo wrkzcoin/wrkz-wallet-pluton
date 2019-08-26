@@ -2,14 +2,16 @@
 import React, { Component } from 'react';
 import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
-import { session, il8n, eventEmitter } from '../index';
+import { session, il8n } from '../index';
 
-type Props = {};
+type Props = {
+  size: string,
+  darkMode: boolean
+};
 
 type State = {
   unlockedBalance: number,
-  lockedBalance: number,
-  darkMode: boolean
+  lockedBalance: number
 };
 
 export default class Balance extends Component<Props, State> {
@@ -21,14 +23,11 @@ export default class Balance extends Component<Props, State> {
     super(props);
     this.state = {
       unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance(),
-      darkMode: session.darkMode
+      lockedBalance: session.getLockedBalance()
     };
     this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
       this
     );
-    this.darkModeOn = this.darkModeOn.bind(this);
-    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
   componentDidMount() {
@@ -36,16 +35,12 @@ export default class Balance extends Component<Props, State> {
       session.wallet.setMaxListeners(2);
       session.wallet.on('transaction', this.refreshBalanceOnNewTransaction);
     }
-    eventEmitter.on('darkmodeon', this.darkModeOn);
-    eventEmitter.on('darkmodeoff', this.darkModeOff);
   }
 
   componentWillUnmount() {
     if (session.wallet !== undefined) {
       session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
     }
-    eventEmitter.off('darkmodeon', this.darkModeOn);
-    eventEmitter.off('darkmodeoff', this.darkModeOff);
   }
 
   refreshBalanceOnNewTransaction = () => {
@@ -57,20 +52,10 @@ export default class Balance extends Component<Props, State> {
     ReactTooltip.rebuild();
   };
 
-  darkModeOn = () => {
-    this.setState({
-      darkMode: true
-    });
-  };
-
-  darkModeOff = () => {
-    this.setState({
-      darkMode: false
-    });
-  };
-
   render() {
-    const { darkMode, unlockedBalance, lockedBalance } = this.state;
+    const { darkMode, size } = this.props;
+    const { unlockedBalance, lockedBalance } = this.state;
+    const color = darkMode ? 'is-dark' : 'is-white';
 
     let balanceTooltip;
 
@@ -87,18 +72,14 @@ export default class Balance extends Component<Props, State> {
     }
 
     return (
-      // prettier-ignore
       <div className="control statusicons">
         <div className="tags has-addons">
-          <span className={
-            darkMode
-              ? 'tag is-dark is-large'
-              : 'tag is-white is-large'}>{il8n.balance_colon}</span>
+          <span className={`tag ${color} ${size}`}>{il8n.balance_colon}</span>
           <span
             className={
               lockedBalance > 0
-                ? 'tag is-warning is-large'
-                : 'tag is-info is-large'
+                ? `tag is-warning ${size}`
+                : `tag is-info ${size}`
             }
             data-tip={balanceTooltip}
           >
@@ -108,11 +89,8 @@ export default class Balance extends Component<Props, State> {
               <i className="fa fa-unlock" />
             )}
             &nbsp;
-            {session.atomicToHuman(
-              unlockedBalance + lockedBalance,
-              true
-            )}
-            &nbsp;TRTL
+            {session.atomicToHuman(unlockedBalance + lockedBalance, true)}
+            &nbsp;{session.config.ticker}
           </span>
         </div>
       </div>

@@ -82,7 +82,7 @@ export default class ChangePassword extends Component<Props, State> {
       <div>
         <Redirector />
         <div className={`wholescreen ${fillColor}`}>
-          <NavBar />
+          <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>
             <form onSubmit={this.handleSubmit}>
               {session.walletPassword !== '' && (
@@ -165,7 +165,7 @@ export default class ChangePassword extends Component<Props, State> {
               )}
             </form>
           </div>
-          <BottomBar />
+          <BottomBar darkMode={darkMode} />
         </div>
       </div>
     );

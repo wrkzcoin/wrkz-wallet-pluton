@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { session, eventEmitter, loginCounter } from '../index';
+import { session, loginCounter } from '../index';
 import SyncStatus from './SyncStatus';
 import Balance from './Balance';
 import NodeFee from './NodeFee';
@@ -13,11 +13,11 @@ type Location = {
 };
 
 type Props = {
-  location: Location
+  location: Location,
+  darkMode: boolean
 };
 
 type State = {
-  darkmode: boolean,
   navBarCount: number
 };
 
@@ -29,45 +29,24 @@ class BottomBar extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkmode: session.darkMode,
       navBarCount: loginCounter.navBarCount
     };
-    this.darkModeOn = this.darkModeOn.bind(this);
-    this.darkModeOff = this.darkModeOff.bind(this);
   }
 
-  componentDidMount() {
-    eventEmitter.on('darkmodeon', this.darkModeOn);
-    eventEmitter.on('darkmodeoff', this.darkModeOff);
-  }
+  componentDidMount() {}
 
-  componentWillUnmount() {
-    eventEmitter.off('darkmodeon', this.darkModeOn);
-    eventEmitter.off('darkmodeoff', this.darkModeOff);
-  }
-
-  darkModeOn = () => {
-    this.setState({
-      darkmode: true
-    });
-  };
-
-  darkModeOff = () => {
-    this.setState({
-      darkmode: false
-    });
-  };
+  componentWillUnmount() {}
 
   render() {
     // prettier-ignore
-    const { darkmode, navBarCount } = this.state;
-    const tagColor = darkmode ? 'is-dark' : 'is-white';
+    const { darkMode } = this.props;
+    const { navBarCount } = this.state;
 
     return (
       <div
         className={
           // eslint-disable-next-line no-nested-ternary
-          darkmode
+          darkMode
             ? navBarCount > 0
               ? 'footerbar has-background-black'
               : 'footerbar-slideup has-background-black'
@@ -78,9 +57,9 @@ class BottomBar extends Component<Props, State> {
       >
         {session.wallet && (
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
-            <NodeFee />
-            <SyncStatus size="is-large" color={tagColor} />
-            <Balance />
+            <NodeFee size="is-large" darkMode={darkMode} />
+            <SyncStatus size="is-large" darkMode={darkMode} />
+            <Balance size="is-large" darkMode={darkMode} />
           </div>
         )}
       </div>
