@@ -49,8 +49,7 @@ export default class NodeFee extends Component<Props, State> {
           <div className="tags has-addons">
             <span className={`tag ${color} ${size}`}>{il8n.node_fee}</span>
             <span className={`tag is-danger ${size}`}>
-              {session.atomicToHuman(nodeFee, true)}{' '}
-              {session.wallet.config.ticker}
+              {session.atomicToHuman(nodeFee, true)} {il8n.TRTL}
             </span>
           </div>
         </div>

@@ -62,11 +62,9 @@ export default class Balance extends Component<Props, State> {
     if (session.wallet) {
       balanceTooltip =
         `Unlocked: ${session.atomicToHuman(unlockedBalance, true)} ${
-          session.wallet.config.ticker
+          il8n.TRTL
         }<br>` +
-        `Locked: ${session.atomicToHuman(lockedBalance, true)} ${
-          session.wallet.config.ticker
-        }`;
+        `Locked: ${session.atomicToHuman(lockedBalance, true)} ${il8n.TRTL}`;
     } else {
       balanceTooltip = 'No wallet open!';
     }
@@ -90,7 +88,7 @@ export default class Balance extends Component<Props, State> {
             )}
             &nbsp;
             {session.atomicToHuman(unlockedBalance + lockedBalance, true)}
-            &nbsp;{session.config.ticker}
+            &nbsp;{il8n.TRTL}
           </span>
         </div>
       </div>

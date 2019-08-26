@@ -260,14 +260,10 @@ function handleOpen() {
 
 eventEmitter.on('sendNotification', function sendNotification(amount) {
   const notif = new window.Notification('Transaction Received!', {
-    body: `${il8n.just_received} ${amount} ${session.wallet.config.ticker}`
+    body: `${il8n.just_received} ${amount} ${il8n.TRTL}`
   });
   if (notif) {
-    log.debug(
-      `Sent notification: You've just received ${amount} ${
-        session.wallet.config.ticker
-      }`
-    );
+    log.debug(`Sent notification: You've just received ${amount} TRTL.`);
   }
 });
 

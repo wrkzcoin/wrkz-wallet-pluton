@@ -186,7 +186,7 @@ export default class Send extends Component<Props, State> {
     if (session.daemon.feeAmount > 0) {
       displayIfNodeFee = `and a node fee of ${session.atomicToHuman(
         session.daemon.feeAmount
-      )} ${session.wallet.config.ticker}`;
+      )} ${il8n.TRTL}`;
     } else {
       displayIfNodeFee = '';
     }
@@ -200,7 +200,7 @@ export default class Send extends Component<Props, State> {
       buttons: [il8n.cancel, il8n.ok],
       title: il8n.title_please_confirm_transaction,
       message: `${il8n.about_to_send_1} ${totalTransactionAmount} ${
-        session.wallet.config.ticker
+        il8n.TRTL
       } ${il8n.to} ${sendToAddress} ${displayIfPaymentID} ${displayIfNodeFee} ${
         il8n.about_to_send_2
       }`
@@ -233,7 +233,7 @@ export default class Send extends Component<Props, State> {
           buttons: [il8n.cancel, il8n.ok],
           title: 'Transaction Attempt Failed',
           message:
-            "You aren't synced with the network, and the transaction failed to send. Please allow the wallet to sync before attempting again."
+            "You aren't synced with the network, and the transaction failed to send. Please allow the wallet to completely sync before attempting again."
         });
       } else {
         remote.dialog.showMessageBox(null, {
@@ -331,7 +331,7 @@ export default class Send extends Component<Props, State> {
                           className="input is-large"
                           type="text"
                           placeholder={`How much ${
-                            session.wallet.config.ticker
+                            il8n.TRTL
                           } to send (eg. 100)`}
                           value={enteredAmount}
                           onChange={this.handleAmountChange}

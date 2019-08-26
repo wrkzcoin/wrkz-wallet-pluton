@@ -126,6 +126,7 @@
   "to": "to",
   "total_with_fees": "Total with Fees",
   "total_with_fees_input_placeholder": "The total amount including fees",
+  "TRTL": "TRTL",
   "uncomfirmed_tx_30_sec_confirm": "This transaction is unconfirmed. Should be confirmed within 30 seconds!",
   "unconfirmed": "Unconfirmed",
   "unlock": "Unlock",
