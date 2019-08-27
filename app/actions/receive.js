@@ -1,4 +1,8 @@
 // @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 import { clipboard } from 'electron';
 import log from 'electron-log';
 import type { GetState, Dispatch } from '../reducers/types';

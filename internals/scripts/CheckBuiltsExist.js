@@ -1,5 +1,8 @@
 // @flow
-// Check if the renderer and main bundles are built
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 import path from 'path';
 import chalk from 'chalk';
 import fs from 'fs';

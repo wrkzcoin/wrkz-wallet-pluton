@@ -1,4 +1,8 @@
 // @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 import { WalletBackend, Daemon, LogLevel } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
@@ -32,7 +36,7 @@ export default class WalletSession {
 
   address: string;
 
-  constructor(password: string, daemonHost: string, daemonPort: string) {
+  constructor(password?: string, daemonHost?: string, daemonPort?: string) {
     this.loginFailed = false;
     this.firstStartup = false;
     this.walletPassword = password || '';
@@ -42,7 +46,6 @@ export default class WalletSession {
     this.walletFile = config.walletFile;
     this.darkMode = config.darkMode || false;
     this.firstLoadOnLogin = true;
-    /* put config for turtlecoin-wallet-backend/WalletBackend.ts here */
     this.wbConfig = {
       scanCoinbaseTransactions: config.scanCoinbaseTransactions
     };
@@ -332,7 +335,7 @@ export default class WalletSession {
   getTransactions(
     startIndex?: number,
     numTransactions?: number,
-    includeFusions: boolean
+    includeFusions?: boolean
   ) {
     if (this.loginFailed || this.firstStartup) {
       return [];
@@ -341,7 +344,7 @@ export default class WalletSession {
     const rawTransactions = this.wallet.getTransactions(
       startIndex,
       numTransactions,
-      includeFusions
+      includeFusions || false
     );
     const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
     let balance = parseInt(unlockedBalance + lockedBalance, 10);
@@ -460,8 +463,8 @@ export default class WalletSession {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
-  atomicToHuman(x: number, prettyPrint: boolean) {
-    if (prettyPrint) {
+  atomicToHuman(x: number, prettyPrint?: boolean) {
+    if (prettyPrint || false) {
       // $FlowFixMe
       return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
     }

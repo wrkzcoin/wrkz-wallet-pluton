@@ -1,4 +1,8 @@
 // @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 import request from 'request-promise';
 import log from 'electron-log';
 import semver from 'semver';

@@ -1,8 +1,10 @@
-/* eslint global-require: off, import/no-dynamic-require: off */
+// @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 
-/**
- * Builds the DLL for development electron renderer process
- */
+/* eslint-disable global-require */
 
 import webpack from 'webpack';
 import path from 'path';

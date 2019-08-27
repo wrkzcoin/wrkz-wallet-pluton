@@ -1,3 +1,8 @@
+// @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 import React from 'react';
 import { Switch, Route } from 'react-router';
 import routes from './constants/routes';

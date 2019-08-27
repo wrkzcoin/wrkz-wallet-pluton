@@ -1,6 +1,8 @@
-/**
- * Base webpack config used across other specific configs
- */
+// @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 
 import path from 'path';
 import webpack from 'webpack';

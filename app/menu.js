@@ -1,4 +1,8 @@
 // @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
 import log from 'electron-log';
 import LocalizedStrings from 'react-localization';

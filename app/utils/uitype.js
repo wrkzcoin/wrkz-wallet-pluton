@@ -1,4 +1,9 @@
-export default function uiType(darkMode) {
+// @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
+export default function uiType(darkMode: boolean) {
   const backgroundColor =
     darkMode === true ? 'has-background-dark' : 'has-background-white';
 
@@ -17,6 +22,8 @@ export default function uiType(darkMode) {
 
   const linkColor = darkMode === true ? 'darklink' : '';
 
+  const buttonColor = darkMode === true ? 'is-dark' : '';
+
   const response = {
     backgroundColor,
     fillColor,
@@ -25,7 +32,8 @@ export default function uiType(darkMode) {
     elementBaseColor,
     tableMode,
     settingsCogColor,
-    linkColor
+    linkColor,
+    buttonColor
   };
 
   return response;

@@ -7,6 +7,7 @@
       }
     }
   },
+  "plugins": ["header"],
   "rules": {
     "import/no-mutable-exports": "off",
     "flowtype/no-weak-types": "off",
@@ -22,6 +23,7 @@
     "react/button-has-type": [
       true,
       { "button": true, "submit": true, "reset": true }
-    ]
+    ],
+    "header/header": [2, "app/constants/header.js"]
   }
 }

@@ -1,4 +1,8 @@
 // @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 import { remote } from 'electron';
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
@@ -116,7 +120,7 @@ export default class Settings extends Component<Props, State> {
       // eslint-disable-next-line eqeqeq
       host.trim() == session.daemonHost &&
       // eslint-disable-next-line eqeqeq
-      port.trim() == session.daemonPort
+      port.trim() == session.daemonPort.toString()
     ) {
       return;
     }

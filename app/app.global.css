@@ -1,9 +1,10 @@
 /*
+ * Copyright (C) 2019 ExtraHash
+ *
+ * Please see the included LICENSE file for more information.
+ *
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
-
-
-
  */
 
 @import '~bulma/css/bulma.min.css';

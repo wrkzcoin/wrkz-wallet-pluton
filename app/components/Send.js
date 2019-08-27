@@ -1,4 +1,8 @@
 // @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 import crypto from 'crypto';
 import { remote } from 'electron';
 import React, { Component } from 'react';
@@ -150,7 +154,7 @@ export default class Send extends Component<Props, State> {
 
     eventEmitter.emit('transactionInProgress');
 
-    const [sendToAddress, amount, paymentID, fee] = [
+    const [sendToAddress, amount, paymentID] = [
       event.target[0].value.trim(), // sendToAddress
       session.humanToAtomic(event.target[1].value) || 0, // amount
       event.target[3].value || undefined // paymentID
@@ -215,8 +219,7 @@ export default class Send extends Component<Props, State> {
     const [hash, err] = await session.sendTransaction(
       sendToAddress,
       amount,
-      paymentID,
-      fee
+      paymentID
     );
     if (hash) {
       remote.dialog.showMessageBox(null, {
@@ -272,8 +275,8 @@ export default class Send extends Component<Props, State> {
         ? 0
         : totalAmount - 10 - parseInt(session.daemon.feeAmount, 10);
     this.setState({
-      totalAmount: session.atomicToHuman(totalAmount, false),
-      enteredAmount: session.atomicToHuman(enteredAmount, false)
+      totalAmount: session.atomicToHuman(totalAmount, false).toString(),
+      enteredAmount: session.atomicToHuman(enteredAmount, false).toString()
     });
   };
 

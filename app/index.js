@@ -1,4 +1,9 @@
-/* eslint-disable global-require */
+// @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
+
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
@@ -19,11 +24,13 @@ import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 
 export const il8n = new LocalizedStrings({
+  // eslint-disable-next-line global-require
   en: require('./il8n/en.json'),
+  // eslint-disable-next-line global-require
   fr: require('./il8n/fr.json')
 });
 
-export function savedInInstallDir(savePath) {
+export function savedInInstallDir(savePath: string) {
   const installationDirectory = path.resolve(remote.app.getAppPath(), '../../');
   const saveAttemptDirectory = path.resolve(savePath, '../');
   if (
@@ -103,7 +110,7 @@ if (!session.loginFailed && !session.firstStartup) {
 }
 
 ipcRenderer.on('handleClose', () => {
-  if (!session.loginFailed && !session.firstStartup) {
+  if (session && !session.loginFailed && !session.firstStartup) {
     const saved = session.saveWallet(session.walletFile);
     if (saved) {
       remote.app.exit();
@@ -127,7 +134,7 @@ eventEmitter.on('updateRequired', updateFile => {
 });
 
 ipcRenderer.on('handleSaveSilent', () => {
-  if (!session.loginFailed && !session.firstStartup) {
+  if (session && !session.loginFailed && !session.firstStartup) {
     const saved = session.saveWallet(session.walletFile);
     if (saved) {
       log.debug(`Wallet saved at ${session.walletFile}`);
@@ -136,75 +143,83 @@ ipcRenderer.on('handleSaveSilent', () => {
 });
 
 ipcRenderer.on('handleSave', () => {
-  if (!session.wallet) {
+  if (session && !session.wallet) {
     eventEmitter.emit('refreshLogin');
     return;
   }
-  const saved = session.saveWallet(session.walletFile);
-  if (saved) {
+  if (session) {
+    const saved = session.saveWallet(session.walletFile);
+    if (saved) {
+      remote.dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_change_success_title,
+        message: il8n.saved_successfully
+      });
+    } else {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: [il8n.ok],
+        title: [il8n.change_passwd_passwd_change_unsuccess_title],
+        message: il8n.not_saved_successfully
+      });
+    }
+  }
+});
+
+ipcRenderer.on('handleLock', () => {
+  if (session && loginCounter.isLoggedIn && session.walletPassword !== '') {
+    eventEmitter.emit('logOut');
+  }
+});
+
+ipcRenderer.on('handleSaveAs', () => {
+  if (session && !session.wallet) {
+    eventEmitter.emit('refreshLogin');
+    return;
+  }
+  const options = {
+    defaultPath: remote.app.getPath('documents')
+  };
+  const savePath = remote.dialog.showSaveDialog(null, options);
+  if (savePath === undefined) {
+    return;
+  }
+  if (session) {
+    session.saveWallet(savePath);
     remote.dialog.showMessageBox(null, {
       type: 'info',
       buttons: [il8n.ok],
       title: il8n.change_passwd_passwd_change_success_title,
       message: il8n.saved_successfully
     });
-  } else {
-    remote.dialog.showMessageBox(null, {
-      type: 'error',
-      buttons: [il8n.ok],
-      title: [il8n.change_passwd_passwd_change_unsuccess_title],
-      message: il8n.not_saved_successfully
-    });
   }
-});
-
-ipcRenderer.on('handleLock', () => {
-  if (loginCounter.isLoggedIn && session.walletPassword !== '') {
-    eventEmitter.emit('logOut');
-  }
-});
-
-ipcRenderer.on('handleSaveAs', () => {
-  if (!session.wallet) {
-    eventEmitter.emit('refreshLogin');
-    return;
-  }
-  const options = {
-    defaultPath: remote.app.getPath('documents')
-  };
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
-    return;
-  }
-  session.saveWallet(savePath);
-  remote.dialog.showMessageBox(null, {
-    type: 'info',
-    buttons: [il8n.ok],
-    title: il8n.change_passwd_passwd_change_success_title,
-    message: il8n.saved_successfully
-  });
 });
 
 ipcRenderer.on('exportToCSV', () => {
-  if (!session.wallet) {
+  if (session && !session.wallet) {
     eventEmitter.emit('refreshLogin');
     return;
   }
-  const options = {
-    defaultPath: remote.app.getPath('documents')
-  };
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
-    return;
+  if (session) {
+    const options = {
+      defaultPath: remote.app.getPath('documents')
+    };
+    const savePath = remote.dialog.showSaveDialog(null, options);
+    if (savePath === undefined) {
+      return;
+    }
+    log.debug(`Exporting transactions to csv file at ${savePath}.csv...`);
+    if (session) {
+      session.exportToCSV(savePath);
+      remote.dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: [il8n.ok],
+        title: il8n.change_passwd_passwd_change_success_title,
+        message: `${il8n.exported_csv} ${savePath} ${il8n.dot_csv}`
+      });
+    }
   }
-  log.debug(`Exporting transactions to csv file at ${savePath}.csv...`);
-  session.exportToCSV(savePath);
-  remote.dialog.showMessageBox(null, {
-    type: 'info',
-    buttons: [il8n.ok],
-    title: il8n.change_passwd_passwd_change_success_title,
-    message: `${il8n.exported_csv} ${savePath} ${il8n.dot_csv}`
-  });
 });
 
 function handleOpen() {
@@ -215,46 +230,48 @@ function handleOpen() {
   if (getPaths === undefined) {
     return;
   }
-  loginCounter.userLoginAttempted = false;
-  loginCounter.lastLoginAttemptFailed = false;
-  loginCounter.loginsAttempted = 0;
-  session.loginFailed = false;
-  session.saveWallet(session.walletFile);
-  const [, error] = WalletBackend.openWalletFromFile(
-    session.daemon,
-    getPaths[0],
-    ''
-  );
-  if (error && error.errorCode !== 5) {
-    log.debug(`Failed to open wallet: ${error.toString()}`);
-    remote.dialog.showMessageBox(null, {
-      type: 'error',
-      buttons: [il8n.ok],
-      title: il8n.title_error_opening_wallet,
-      message: il8n.error_opening_wallet
-    });
-    return;
-  }
-  if (error !== undefined) {
-    if (error.errorCode === 5) {
-      log.debug('Login to wallet failed, firing event...');
+  if (session) {
+    loginCounter.userLoginAttempted = false;
+    loginCounter.lastLoginAttemptFailed = false;
+    loginCounter.loginsAttempted = 0;
+    session.loginFailed = false;
+    session.saveWallet(session.walletFile);
+    const [, error] = WalletBackend.openWalletFromFile(
+      session.daemon,
+      getPaths[0],
+      ''
+    );
+    if (error && error.errorCode !== 5) {
+      log.debug(`Failed to open wallet: ${error.toString()}`);
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: [il8n.ok],
+        title: il8n.title_error_opening_wallet,
+        message: il8n.error_opening_wallet
+      });
+      return;
     }
-  }
-  const selectedPath = getPaths[0];
-  const savedSuccessfully = session.handleWalletOpen(selectedPath);
-  if (savedSuccessfully === true) {
-    session = null;
-    session = new WalletSession();
-    startWallet();
-    eventEmitter.emit('refreshLogin');
-    eventEmitter.emit('openNewWallet');
-  } else {
-    remote.dialog.showMessageBox(null, {
-      type: 'error',
-      buttons: [il8n.ok],
-      title: il8n.title_error_opening_wallet,
-      message: il8n.error_opening_wallet
-    });
+    if (error !== undefined) {
+      if (error.errorCode === 5) {
+        log.debug('Login to wallet failed, firing event...');
+      }
+    }
+    const selectedPath = getPaths[0];
+    const savedSuccessfully = session.handleWalletOpen(selectedPath);
+    if (savedSuccessfully === true) {
+      session = null;
+      session = new WalletSession();
+      startWallet();
+      eventEmitter.emit('refreshLogin');
+      eventEmitter.emit('openNewWallet');
+    } else {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: [il8n.ok],
+        title: il8n.title_error_opening_wallet,
+        message: il8n.error_opening_wallet
+      });
+    }
   }
 }
 
@@ -293,44 +310,46 @@ function handleNew() {
   if (savePath === undefined) {
     return;
   }
-  session.saveWallet(session.walletFile);
-  if (savedInInstallDir(savePath)) {
-    remote.dialog.showMessageBox(null, {
-      type: 'error',
-      buttons: [il8n.ok],
-      title: il8n.title_no_saving_in_install_dir,
-      message: il8n.no_saving_in_install_dir
-    });
-    return;
-  }
-  const createdSuccessfuly = session.handleNewWallet(savePath);
-  if (createdSuccessfuly === false) {
-    remote.dialog.showMessageBox(null, {
-      type: 'error',
-      buttons: ['OK'],
-      title: il8n.title_error_creating_wallet,
-      message: il8n.not_created_successfully
-    });
-  } else {
-    remote.dialog.showMessageBox(null, {
-      type: 'info',
-      buttons: ['OK'],
-      title: il8n.title_created,
-      message: il8n.created_successfully
-    });
-    const savedSuccessfully = session.handleWalletOpen(savePath);
-    if (savedSuccessfully === true) {
-      session = null;
-      session = new WalletSession();
-      startWallet();
-      eventEmitter.emit('handlePasswordChange');
-    } else {
+  if (session) {
+    session.saveWallet(session.walletFile);
+    if (savedInInstallDir(savePath)) {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: [il8n.ok],
+        title: il8n.title_no_saving_in_install_dir,
+        message: il8n.no_saving_in_install_dir
+      });
+      return;
+    }
+    const createdSuccessfuly = session.handleNewWallet(savePath);
+    if (createdSuccessfuly === false) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
         buttons: ['OK'],
-        title: il8n.title_error_opening_wallet,
-        message: il8n.error_opening_wallet
+        title: il8n.title_error_creating_wallet,
+        message: il8n.not_created_successfully
       });
+    } else {
+      remote.dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: ['OK'],
+        title: il8n.title_created,
+        message: il8n.created_successfully
+      });
+      const savedSuccessfully = session.handleWalletOpen(savePath);
+      if (savedSuccessfully === true) {
+        session = null;
+        session = new WalletSession();
+        startWallet();
+        eventEmitter.emit('handlePasswordChange');
+      } else {
+        remote.dialog.showMessageBox(null, {
+          type: 'error',
+          buttons: ['OK'],
+          title: il8n.title_error_opening_wallet,
+          message: il8n.error_opening_wallet
+        });
+      }
     }
   }
 }
@@ -339,37 +358,39 @@ ipcRenderer.on('handleNew', handleNew);
 eventEmitter.on('handleNew', handleNew);
 
 ipcRenderer.on('handleBackup', () => {
-  if (!session.wallet || !loginCounter.isLoggedIn) {
+  if ((session && !session.wallet) || !loginCounter.isLoggedIn) {
     eventEmitter.emit('refreshLogin');
     return;
   }
-  const publicAddress = session.wallet.getPrimaryAddress();
-  const [
-    privateSpendKey,
-    privateViewKey
-  ] = session.wallet.getPrimaryAddressPrivateKeys();
-  const [mnemonicSeed, err] = session.wallet.getMnemonicSeed();
-  log.debug(err);
+  if (session) {
+    const publicAddress = session.wallet.getPrimaryAddress();
+    const [
+      privateSpendKey,
+      privateViewKey
+    ] = session.wallet.getPrimaryAddressPrivateKeys();
+    const [mnemonicSeed, err] = session.wallet.getMnemonicSeed();
+    log.debug(err);
 
-  const msg =
-    // eslint-disable-next-line prefer-template
-    publicAddress +
-    `\n\n${il8n.private_spend_key_colon}\n\n` +
-    privateSpendKey +
-    `\n\n${il8n.private_view_key_colon}\n\n` +
-    privateViewKey +
-    `\n\n${il8n.mnemonic_seed_colon}\n\n` +
-    mnemonicSeed +
-    `\n\n${il8n.please_save_your_keys}`;
+    const msg =
+      // eslint-disable-next-line prefer-template
+      publicAddress +
+      `\n\n${il8n.private_spend_key_colon}\n\n` +
+      privateSpendKey +
+      `\n\n${il8n.private_view_key_colon}\n\n` +
+      privateViewKey +
+      `\n\n${il8n.mnemonic_seed_colon}\n\n` +
+      mnemonicSeed +
+      `\n\n${il8n.please_save_your_keys}`;
 
-  const userSelection = remote.dialog.showMessageBox(null, {
-    type: 'info',
-    buttons: [il8n.copy_to_clipboard, il8n.cancel],
-    title: il8n.backup,
-    message: msg
-  });
-  if (userSelection === 0) {
-    clipboard.writeText(msg);
+    const userSelection = remote.dialog.showMessageBox(null, {
+      type: 'info',
+      buttons: [il8n.copy_to_clipboard, il8n.cancel],
+      title: il8n.backup,
+      message: msg
+    });
+    if (userSelection === 0) {
+      clipboard.writeText(msg);
+    }
   }
 });
 
@@ -378,14 +399,16 @@ const store = configureStore();
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
 async function startWallet() {
-  try {
-    await session.wallet.start();
-  } catch {
-    log.debug('Password required, redirecting to login...');
-    loginCounter.isLoggedIn = true;
-    eventEmitter.emit('loginFailed');
+  if (session) {
+    try {
+      await session.wallet.start();
+    } catch {
+      log.debug('Password required, redirecting to login...');
+      loginCounter.isLoggedIn = true;
+      eventEmitter.emit('loginFailed');
+    }
+    eventEmitter.emit('gotNodeFee');
   }
-  eventEmitter.emit('gotNodeFee');
 }
 
 function activityDetected() {
@@ -403,9 +426,11 @@ render(
       <Root store={store} history={history} />
     </div>
   </AppContainer>,
+  // $FlowFixMe
   document.getElementById('root')
 );
 
+// $FlowFixMe
 if (module.hot) {
   module.hot.accept('./containers/Root', () => {
     // eslint-disable-next-line global-require
@@ -421,6 +446,7 @@ if (module.hot) {
           <NextRoot store={store} history={history} />{' '}
         </div>
       </AppContainer>,
+      // $FlowFixMe
       document.getElementById('root')
     );
   });

@@ -1,11 +1,10 @@
-/* eslint global-require: off, import/no-dynamic-require: off */
+// @flow
+//
+// Copyright (C) 2019 ExtraHash
+//
+// Please see the included LICENSE file for more information.
 
-/**
- * Build config for development electron renderer process that uses
- * Hot-Module-Replacement
- *
- * https://webpack.js.org/concepts/hot-module-replacement/
- */
+/* eslint-disable global-require */
 
 import path from 'path';
 import fs from 'fs';
@@ -201,6 +200,7 @@ export default merge.smart(baseConfig, {
       ? null
       : new webpack.DllReferencePlugin({
           context: path.join(__dirname, '..', 'dll'),
+          // eslint-disable-next-line import/no-dynamic-require
           manifest: require(manifest),
           sourceType: 'var'
         }),
