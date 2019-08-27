@@ -17,6 +17,7 @@ const router = routerMiddleware(history);
 const enhancer = applyMiddleware(thunk, router);
 
 function configureStore(initialState?: counterStateType) {
+  // $FlowFixMe
   return createStore<*, counterStateType, *>(
     rootReducer,
     initialState,
