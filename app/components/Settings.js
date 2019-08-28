@@ -372,6 +372,7 @@ export default class Settings extends Component<Props, State> {
                           role="button"
                           tabIndex={0}
                           className={linkColor}
+                          onMouseDown={event => event.preventDefault()}
                         >
                           {il8n.find_node}
                         </a>

@@ -53,7 +53,7 @@ export default class WalletSession {
       scanCoinbaseTransactions: config.scanCoinbaseTransactions
     };
 
-    this.usdPrice = -1;
+    this.usdPrice = 0;
     this.getUSDPrice();
 
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);

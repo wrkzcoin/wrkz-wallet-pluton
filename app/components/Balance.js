@@ -127,6 +127,7 @@ export default class Balance extends Component<Props, State> {
         onKeyPress={this.switchCurrency}
         role="button"
         tabIndex={0}
+        onMouseDown={event => event.preventDefault()}
       >
         <div className="tags has-addons">
           <span className={`tag ${color} ${size}`}>{il8n.balance_colon}</span>
