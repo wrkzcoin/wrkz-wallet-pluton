@@ -54,7 +54,7 @@ export default class WalletSession {
     };
 
     this.usdPrice = 0;
-    this.getUSDPrice();
+    this.getUSDPrice(config.displayCurrency);
 
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
 
@@ -386,9 +386,8 @@ export default class WalletSession {
     return lockedBalance;
   }
 
-  getUSDPrice = async () => {
-    const apiURL =
-      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=turtlecoin&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=7d';
+  getUSDPrice = async (fiat: string) => {
+    const apiURL = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${fiat}&ids=turtlecoin&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=7d`;
 
     const requestOptions = {
       method: 'GET',
