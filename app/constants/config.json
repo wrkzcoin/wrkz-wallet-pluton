@@ -9,5 +9,6 @@
   "daemonPort": 443,
   "isCache": true,
   "useSSL": true,
-  "darkMode": false
+  "darkMode": false,
+  "displayCurrency": "TRTL"
 }

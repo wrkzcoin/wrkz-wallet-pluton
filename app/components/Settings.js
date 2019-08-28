@@ -130,7 +130,7 @@ export default class Settings extends Component<Props, State> {
   };
 
   findNode = () => {
-    remote.shell.openExternal('https://trtl.nodes.pub/');
+    remote.shell.openExternal('https://explorer.turtlecoin.lol/nodes.html');
   };
 
   rescanWallet = async (event: any) => {
@@ -395,7 +395,10 @@ export default class Settings extends Component<Props, State> {
                 </form>
                 <br />
                 {wallet && (
-                  <form onSubmit={this.rewindWallet}>
+                  <form
+                    onSubmit={this.rewindWallet}
+                    data-tip={il8n.rewind_wallet_help}
+                  >
                     <p className={`has-text-weight-bold ${textColor}`}>
                       {il8n.rewind_wallet}
                     </p>
@@ -408,9 +411,6 @@ export default class Settings extends Component<Props, State> {
                           value={rewindHeight}
                           onChange={this.handleRewindHeightChange}
                         />
-                        <p className={`help ${textColor}`}>
-                          {il8n.rewind_wallet_help}
-                        </p>
                       </div>
                       <div className="control">
                         <button
@@ -427,8 +427,12 @@ export default class Settings extends Component<Props, State> {
                   </form>
                 )}
                 <br />
+                <br />
                 {wallet && (
-                  <form onSubmit={this.rescanWallet}>
+                  <form
+                    onSubmit={this.rescanWallet}
+                    data-tip={il8n.rescan_wallet_help}
+                  >
                     <p className={`has-text-weight-bold ${textColor}`}>
                       {il8n.rescan_wallet}
                     </p>
@@ -441,9 +445,6 @@ export default class Settings extends Component<Props, State> {
                           value={scanHeight}
                           onChange={this.handleScanHeightChange}
                         />
-                        <p className={`help ${textColor}`}>
-                          {il8n.rescan_wallet_help}
-                        </p>
                       </div>
                       <div className="control">
                         <button className="button is-danger">

@@ -4,7 +4,6 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import ReactTooltip from 'react-tooltip';
 import { session } from '../index';
 import uiType from '../utils/uitype';
 
@@ -41,7 +40,6 @@ export default class SyncReminder extends Component<Props, State> {
     this.setState(() => ({
       syncStatus: session.getSyncStatus()
     }));
-    ReactTooltip.rebuild();
   }
 
   render() {

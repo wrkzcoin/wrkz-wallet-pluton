@@ -6,7 +6,7 @@
 import log from 'electron-log';
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter, il8n, loginCounter } from '../index';
+import { session, eventEmitter, il8n, loginCounter, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -19,7 +19,9 @@ type Props = {};
 type State = {
   transactions: Array<any>,
   totalTransactionCount: number,
-  darkMode: boolean
+  darkMode: boolean,
+  displayCurrency: string,
+  usdPrice: number
 };
 
 export default class Home extends Component<Props, State> {
@@ -36,12 +38,15 @@ export default class Home extends Component<Props, State> {
         false
       ),
       totalTransactionCount: session.getTransactions().length,
-      darkMode: session.darkMode
+      darkMode: session.darkMode,
+      displayCurrency: config.displayCurrency,
+      usdPrice: session.usdPrice
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
     );
     this.openNewWallet = this.openNewWallet.bind(this);
+    this.modifyCurrency = this.modifyCurrency.bind(this);
   }
 
   componentDidMount() {
@@ -53,6 +58,8 @@ export default class Home extends Component<Props, State> {
     if (firstLoadOnLogin && loginFailed === false) {
       this.switchOffAnimation();
     }
+    eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.on('modifyCurrency', this.modifyCurrency);
   }
 
   componentWillUnmount() {
@@ -65,7 +72,21 @@ export default class Home extends Component<Props, State> {
     if (wallet) {
       session.wallet.off('transaction', this.refreshListOnNewTransaction);
     }
+    eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.off('modifyCurrency', this.modifyCurrency);
   }
+
+  modifyCurrency = (displayCurrency: string) => {
+    this.setState({
+      displayCurrency
+    });
+  };
+
+  updateFiatPrice = (usdPrice: number) => {
+    this.setState({
+      usdPrice
+    });
+  };
 
   switchOffAnimation() {
     session.firstLoadOnLogin = false;
@@ -122,7 +143,13 @@ export default class Home extends Component<Props, State> {
   };
 
   render() {
-    const { darkMode, transactions, totalTransactionCount } = this.state;
+    const {
+      darkMode,
+      transactions,
+      totalTransactionCount,
+      usdPrice,
+      displayCurrency
+    } = this.state;
     const { backgroundColor, textColor, tableMode } = uiType(darkMode);
 
     return (
@@ -179,20 +206,37 @@ export default class Home extends Component<Props, State> {
                       {tx[2] < 0 && (
                         <td>
                           <p className="has-text-danger has-text-right">
-                            {session.atomicToHuman(tx[2], true)}
+                            {displayCurrency === 'TRTL' &&
+                              session.atomicToHuman(tx[2], true)}
+                            {displayCurrency === 'USD' &&
+                              `-$${(
+                                usdPrice * session.atomicToHuman(tx[2], false)
+                              )
+                                .toFixed(2)
+                                .substring(1)}`}
                           </p>
                         </td>
                       )}
                       {tx[2] > 0 && (
                         <td>
                           <p className="has-text-right">
-                            {session.atomicToHuman(tx[2], true)}
+                            {displayCurrency === 'TRTL' &&
+                              session.atomicToHuman(tx[2], true)}
+                            {displayCurrency === 'USD' &&
+                              `$${(
+                                usdPrice * session.atomicToHuman(tx[2], false)
+                              ).toFixed(2)}`}
                           </p>
                         </td>
                       )}
                       <td>
                         <p className="has-text-right">
-                          {session.atomicToHuman(tx[3], true)}
+                          {displayCurrency === 'TRTL' &&
+                            session.atomicToHuman(tx[3], true)}
+                          {displayCurrency === 'USD' &&
+                            `$${(
+                              usdPrice * session.atomicToHuman(tx[3], false)
+                            ).toFixed(2)}`}
                         </p>
                       </td>
                     </tr>

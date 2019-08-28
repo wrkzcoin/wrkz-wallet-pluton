@@ -3,6 +3,7 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
+import request from 'request-promise';
 import { WalletBackend, Daemon, LogLevel } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
@@ -36,6 +37,8 @@ export default class WalletSession {
 
   address: string;
 
+  usdPrice: number;
+
   constructor(password?: string, daemonHost?: string, daemonPort?: string) {
     this.loginFailed = false;
     this.firstStartup = false;
@@ -49,6 +52,9 @@ export default class WalletSession {
     this.wbConfig = {
       scanCoinbaseTransactions: config.scanCoinbaseTransactions
     };
+
+    this.usdPrice = -1;
+    this.getUSDPrice();
 
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
 
@@ -190,7 +196,6 @@ export default class WalletSession {
         return false;
       }
     );
-    log.debug('Wrote config file to disk.');
   }
 
   exportToCSV(savePath: string) {
@@ -380,6 +385,28 @@ export default class WalletSession {
     const [, lockedBalance] = this.wallet.getBalance(subwallets);
     return lockedBalance;
   }
+
+  getUSDPrice = async () => {
+    const apiURL =
+      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=turtlecoin&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=7d';
+
+    const requestOptions = {
+      method: 'GET',
+      uri: apiURL,
+      headers: {},
+      json: true,
+      gzip: true
+    };
+    try {
+      const result = await request(requestOptions);
+      this.usdPrice = result[0].current_price;
+      eventEmitter.emit('gotFiatPrice', result[0].current_price);
+      return result[0].current_price;
+    } catch (err) {
+      log.debug(`Request failed, CoinGecko API call error: \n`, err);
+      return undefined;
+    }
+  };
 
   getSyncStatus() {
     if (this.loginFailed || this.firstStartup) {
