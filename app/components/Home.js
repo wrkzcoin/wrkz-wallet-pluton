@@ -21,7 +21,7 @@ type State = {
   totalTransactionCount: number,
   darkMode: boolean,
   displayCurrency: string,
-  usdPrice: number
+  fiatPrice: number
 };
 
 export default class Home extends Component<Props, State> {
@@ -40,7 +40,7 @@ export default class Home extends Component<Props, State> {
       totalTransactionCount: session.getTransactions().length,
       darkMode: session.darkMode,
       displayCurrency: config.displayCurrency,
-      usdPrice: session.usdPrice
+      fiatPrice: session.fiatPrice
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
@@ -82,9 +82,9 @@ export default class Home extends Component<Props, State> {
     });
   };
 
-  updateFiatPrice = (usdPrice: number) => {
+  updateFiatPrice = (fiatPrice: number) => {
     this.setState({
-      usdPrice
+      fiatPrice
     });
   };
 
@@ -147,7 +147,7 @@ export default class Home extends Component<Props, State> {
       darkMode,
       transactions,
       totalTransactionCount,
-      usdPrice,
+      fiatPrice,
       displayCurrency
     } = this.state;
     const { backgroundColor, textColor, tableMode } = uiType(darkMode);
@@ -208,12 +208,16 @@ export default class Home extends Component<Props, State> {
                           <p className="has-text-danger has-text-right">
                             {displayCurrency === 'TRTL' &&
                               session.atomicToHuman(tx[2], true)}
-                            {displayCurrency === 'USD' &&
+                            {displayCurrency === 'fiat' &&
+                              fiatPrice !== 0 &&
                               `-$${(
-                                usdPrice * session.atomicToHuman(tx[2], false)
+                                fiatPrice * session.atomicToHuman(tx[2], false)
                               )
                                 .toFixed(2)
                                 .substring(1)}`}
+                            {displayCurrency === 'fiat' &&
+                              fiatPrice === 0 &&
+                              ''}
                           </p>
                         </td>
                       )}
@@ -222,9 +226,9 @@ export default class Home extends Component<Props, State> {
                           <p className="has-text-right">
                             {displayCurrency === 'TRTL' &&
                               session.atomicToHuman(tx[2], true)}
-                            {displayCurrency === 'USD' &&
+                            {displayCurrency === 'fiat' &&
                               `$${(
-                                usdPrice * session.atomicToHuman(tx[2], false)
+                                fiatPrice * session.atomicToHuman(tx[2], false)
                               ).toFixed(2)}`}
                           </p>
                         </td>
@@ -233,9 +237,9 @@ export default class Home extends Component<Props, State> {
                         <p className="has-text-right">
                           {displayCurrency === 'TRTL' &&
                             session.atomicToHuman(tx[3], true)}
-                          {displayCurrency === 'USD' &&
+                          {displayCurrency === 'fiat' &&
                             `$${(
-                              usdPrice * session.atomicToHuman(tx[3], false)
+                              fiatPrice * session.atomicToHuman(tx[3], false)
                             ).toFixed(2)}`}
                         </p>
                       </td>

@@ -26,7 +26,7 @@ type State = {
   transactionInProgress: boolean,
   transactionComplete: boolean,
   displayCurrency: string,
-  usdPrice: number
+  fiatPrice: number
 };
 
 export default class Send extends Component<Props, State> {
@@ -45,7 +45,7 @@ export default class Send extends Component<Props, State> {
       transactionInProgress: false,
       transactionComplete: false,
       displayCurrency: config.displayCurrency,
-      usdPrice: session.usdPrice
+      fiatPrice: session.fiatPrice
     };
     this.transactionComplete = this.transactionComplete.bind(this);
     this.generatePaymentID = this.generatePaymentID.bind(this);
@@ -85,9 +85,9 @@ export default class Send extends Component<Props, State> {
     this.resetAmounts();
   };
 
-  updateFiatPrice = (usdPrice: number) => {
+  updateFiatPrice = (fiatPrice: number) => {
     this.setState({
-      usdPrice
+      fiatPrice
     });
   };
 
@@ -111,7 +111,7 @@ export default class Send extends Component<Props, State> {
   };
 
   handleAmountChange = (event: any) => {
-    const { displayCurrency, usdPrice } = this.state;
+    const { displayCurrency, fiatPrice } = this.state;
     let enteredAmount = event.target.value;
     if (enteredAmount === '') {
       this.setState({
@@ -129,7 +129,7 @@ export default class Send extends Component<Props, State> {
       return;
     }
 
-    const fee = displayCurrency === 'TRTL' ? 0.1 : 0.1 * usdPrice;
+    const fee = displayCurrency === 'TRTL' ? 0.1 : 0.1 * fiatPrice;
 
     const totalAmount = (
       parseFloat(enteredAmount) +
@@ -178,7 +178,7 @@ export default class Send extends Component<Props, State> {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
 
-    const { displayCurrency, usdPrice } = this.state;
+    const { displayCurrency, fiatPrice } = this.state;
 
     eventEmitter.emit('transactionInProgress');
 
@@ -186,7 +186,7 @@ export default class Send extends Component<Props, State> {
       event.target[0].value.trim(), // sendToAddress
       displayCurrency === 'TRTL'
         ? session.humanToAtomic(event.target[1].value) || 0
-        : session.humanToAtomic(event.target[1].value / usdPrice), // amount
+        : session.humanToAtomic(event.target[1].value / fiatPrice), // amount
       event.target[3].value || undefined // paymentID
     ];
 
@@ -299,7 +299,7 @@ export default class Send extends Component<Props, State> {
   };
 
   sendAll = () => {
-    const { unlockedBalance, usdPrice, displayCurrency } = this.state;
+    const { unlockedBalance, fiatPrice, displayCurrency } = this.state;
 
     const totalAmount =
       unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
@@ -313,11 +313,11 @@ export default class Send extends Component<Props, State> {
       totalAmount:
         displayCurrency === 'TRTL'
           ? session.atomicToHuman(totalAmount, false).toString()
-          : session.atomicToHuman(totalAmount * usdPrice, false).toString(),
+          : session.atomicToHuman(totalAmount * fiatPrice, false).toString(),
       enteredAmount:
         displayCurrency === 'TRTL'
           ? session.atomicToHuman(enteredAmount, false).toString()
-          : session.atomicToHuman(enteredAmount * usdPrice, false).toString()
+          : session.atomicToHuman(enteredAmount * fiatPrice, false).toString()
     });
   };
 
@@ -380,7 +380,7 @@ export default class Send extends Component<Props, State> {
                           className="input is-large"
                           type="text"
                           placeholder={`How much ${displayCurrency} to send (eg. ${
-                            displayCurrency === 'USD' ? '$' : ''
+                            displayCurrency === 'fiat' ? '$' : ''
                           }100)`}
                           value={enteredAmount}
                           onChange={this.handleAmountChange}
