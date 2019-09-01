@@ -4,6 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import ReactLoading from 'react-loading';
 import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
 import { session, il8n, eventEmitter, config } from '../index';
@@ -164,12 +165,22 @@ export default class Balance extends Component<Props, State> {
               ) : (
                 <i className="fa fa-unlock" />
               )}
-              &nbsp; $
-              {(
-                usdPrice *
-                session.atomicToHuman(unlockedBalance + lockedBalance, false)
-              ).toFixed(2)}
-              &nbsp;{il8n.TRTL}
+              &nbsp;
+              {usdPrice !== 0 ? (
+                // eslint-disable-next-line prefer-template
+                '$' +
+                (
+                  usdPrice *
+                  session.atomicToHuman(unlockedBalance + lockedBalance, false)
+                ).toFixed(2)
+              ) : (
+                <ReactLoading
+                  type="bubbles"
+                  color="#F5F5F5"
+                  height={30}
+                  width={30}
+                />
+              )}
             </span>
           )}
         </div>
