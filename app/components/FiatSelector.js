@@ -88,6 +88,7 @@ export default class FiatSelector extends Component<Props, State> {
                   onKeyPress={this.changeCurrency}
                   role="button"
                   tabIndex={0}
+                  key={currency.ticker}
                 >
                   <div className="columns">
                     <div className="column">
