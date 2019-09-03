@@ -11,5 +11,5 @@
   "useSSL": true,
   "darkMode": false,
   "displayCurrency": "TRTL",
-  "selectedFiat": "USD"
+  "selectedFiat": "usd"
 }
