@@ -10,5 +10,6 @@
   "isCache": true,
   "useSSL": true,
   "darkMode": false,
-  "displayCurrency": "TRTL"
+  "displayCurrency": "TRTL",
+  "selectedFiat": "USD"
 }

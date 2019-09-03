@@ -37,7 +37,7 @@ export default class WalletSession {
 
   address: string;
 
-  usdPrice: number;
+  fiatPrice: number;
 
   constructor(password?: string, daemonHost?: string, daemonPort?: string) {
     this.loginFailed = false;
@@ -53,8 +53,8 @@ export default class WalletSession {
       scanCoinbaseTransactions: config.scanCoinbaseTransactions
     };
 
-    this.usdPrice = 0;
-    this.getUSDPrice(config.displayCurrency);
+    this.fiatPrice = 0;
+    this.getFiatPrice(config.selectedFiat);
 
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
 
@@ -386,7 +386,7 @@ export default class WalletSession {
     return lockedBalance;
   }
 
-  getUSDPrice = async (fiat: string) => {
+  getFiatPrice = async (fiat: string) => {
     const apiURL = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${fiat}&ids=turtlecoin&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=7d`;
 
     const requestOptions = {
@@ -398,7 +398,7 @@ export default class WalletSession {
     };
     try {
       const result = await request(requestOptions);
-      this.usdPrice = result[0].current_price;
+      this.fiatPrice = result[0].current_price;
       eventEmitter.emit('gotFiatPrice', result[0].current_price);
       return result[0].current_price;
     } catch (err) {

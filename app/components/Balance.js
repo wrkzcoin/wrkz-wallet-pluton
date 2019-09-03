@@ -17,7 +17,7 @@ type Props = {
 type State = {
   unlockedBalance: number,
   lockedBalance: number,
-  usdPrice: number,
+  fiatPrice: number,
   displayCurrency: string
 };
 
@@ -31,7 +31,7 @@ export default class Balance extends Component<Props, State> {
     this.state = {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
-      usdPrice: session.usdPrice,
+      fiatPrice: session.fiatPrice,
       displayCurrency: config.displayCurrency
     };
     this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
@@ -56,9 +56,9 @@ export default class Balance extends Component<Props, State> {
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
   }
 
-  updateFiatPrice = (usdPrice: number) => {
+  updateFiatPrice = (fiatPrice: number) => {
     this.setState({
-      usdPrice
+      fiatPrice
     });
   };
 
@@ -75,12 +75,12 @@ export default class Balance extends Component<Props, State> {
     const { displayCurrency } = this.state;
     if (displayCurrency === 'TRTL') {
       this.setState({
-        displayCurrency: 'USD'
+        displayCurrency: 'fiat'
       });
-      session.modifyConfig('displayCurrency', 'USD');
-      eventEmitter.emit('modifyCurrency', 'USD');
+      session.modifyConfig('displayCurrency', 'fiat');
+      eventEmitter.emit('modifyCurrency', 'fiat');
     }
-    if (displayCurrency === 'USD') {
+    if (displayCurrency === 'fiat') {
       this.setState({
         displayCurrency: 'TRTL'
       });
@@ -95,7 +95,7 @@ export default class Balance extends Component<Props, State> {
     const {
       unlockedBalance,
       lockedBalance,
-      usdPrice,
+      fiatPrice,
       displayCurrency
     } = this.state;
     const color = darkMode ? 'is-dark' : 'is-white';
@@ -108,14 +108,14 @@ export default class Balance extends Component<Props, State> {
           il8n.TRTL
         }<br>` +
         `Locked: ${session.atomicToHuman(lockedBalance, true)} ${il8n.TRTL}`;
-    } else if (session.wallet && displayCurrency === 'USD') {
+    } else if (session.wallet && displayCurrency === 'fiat') {
       balanceTooltip =
         `Unlocked: $${(
-          usdPrice * session.atomicToHuman(unlockedBalance, false)
+          fiatPrice * session.atomicToHuman(unlockedBalance, false)
         ).toFixed(2)}
         <br>` +
         `Locked: $${(
-          usdPrice * session.atomicToHuman(lockedBalance, false)
+          fiatPrice * session.atomicToHuman(lockedBalance, false)
         ).toFixed(2)}`;
     } else {
       balanceTooltip = 'No wallet open!';
@@ -151,7 +151,7 @@ export default class Balance extends Component<Props, State> {
               &nbsp;{il8n.TRTL}
             </span>
           )}
-          {displayCurrency === 'USD' && (
+          {displayCurrency === 'fiat' && (
             <span
               className={
                 lockedBalance > 0
@@ -166,11 +166,11 @@ export default class Balance extends Component<Props, State> {
                 <i className="fa fa-unlock" />
               )}
               &nbsp;
-              {usdPrice !== 0 ? (
+              {fiatPrice !== 0 ? (
                 // eslint-disable-next-line prefer-template
                 '$' +
                 (
-                  usdPrice *
+                  fiatPrice *
                   session.atomicToHuman(unlockedBalance + lockedBalance, false)
                 ).toFixed(2)
               ) : (
