@@ -18,7 +18,10 @@ type State = {
   unlockedBalance: number,
   lockedBalance: number,
   fiatPrice: number,
-  displayCurrency: string
+  displayCurrency: string,
+  fiatSymbol: string,
+  symbolLocation: string,
+  fiatDecimals: number
 };
 
 export default class Balance extends Component<Props, State> {
@@ -32,7 +35,10 @@ export default class Balance extends Component<Props, State> {
       unlockedBalance: session.getUnlockedBalance(),
       lockedBalance: session.getLockedBalance(),
       fiatPrice: session.fiatPrice,
-      displayCurrency: config.displayCurrency
+      displayCurrency: config.displayCurrency,
+      fiatSymbol: config.fiatSymbol,
+      symbolLocation: config.symbolLocation,
+      fiatDecimals: config.fiatDecimals
     };
     this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
       this
@@ -58,7 +64,10 @@ export default class Balance extends Component<Props, State> {
 
   updateFiatPrice = (fiatPrice: number) => {
     this.setState({
-      fiatPrice
+      fiatPrice,
+      fiatSymbol: config.fiatSymbol,
+      symbolLocation: config.symbolLocation,
+      fiatDecimals: config.fiatDecimals
     });
   };
 
@@ -96,7 +105,10 @@ export default class Balance extends Component<Props, State> {
       unlockedBalance,
       lockedBalance,
       fiatPrice,
-      displayCurrency
+      displayCurrency,
+      fiatSymbol,
+      symbolLocation,
+      fiatDecimals
     } = this.state;
     const color = darkMode ? 'is-dark' : 'is-white';
 
@@ -108,15 +120,32 @@ export default class Balance extends Component<Props, State> {
           il8n.TRTL
         }<br>` +
         `Locked: ${session.atomicToHuman(lockedBalance, true)} ${il8n.TRTL}`;
-    } else if (session.wallet && displayCurrency === 'fiat') {
+    } else if (
+      session.wallet &&
+      symbolLocation === 'prefix' &&
+      displayCurrency === 'fiat'
+    ) {
       balanceTooltip =
-        `Unlocked: $${(
+        `Unlocked: ${fiatSymbol}${(
           fiatPrice * session.atomicToHuman(unlockedBalance, false)
-        ).toFixed(2)}
+        ).toFixed(fiatDecimals)}
         <br>` +
-        `Locked: $${(
+        `Locked: ${fiatSymbol}${(
           fiatPrice * session.atomicToHuman(lockedBalance, false)
-        ).toFixed(2)}`;
+        ).toFixed(fiatDecimals)}`;
+    } else if (
+      session.wallet &&
+      symbolLocation === 'suffix' &&
+      displayCurrency === 'fiat'
+    ) {
+      balanceTooltip =
+        `Unlocked: ${(
+          fiatPrice * session.atomicToHuman(unlockedBalance, false)
+        ).toFixed(fiatDecimals)}${fiatSymbol}
+        <br>` +
+        `Locked: ${(
+          fiatPrice * session.atomicToHuman(lockedBalance, false)
+        ).toFixed(fiatDecimals)}${fiatSymbol}`;
     } else {
       balanceTooltip = 'No wallet open!';
     }
@@ -151,7 +180,7 @@ export default class Balance extends Component<Props, State> {
               &nbsp;{il8n.TRTL}
             </span>
           )}
-          {displayCurrency === 'fiat' && (
+          {displayCurrency === 'fiat' && symbolLocation === 'prefix' && (
             <span
               className={
                 lockedBalance > 0
@@ -168,11 +197,43 @@ export default class Balance extends Component<Props, State> {
               &nbsp;
               {fiatPrice !== 0 ? (
                 // eslint-disable-next-line prefer-template
-                '$' +
+                fiatSymbol +
                 (
                   fiatPrice *
                   session.atomicToHuman(unlockedBalance + lockedBalance, false)
-                ).toFixed(2)
+                ).toFixed(fiatDecimals)
+              ) : (
+                <ReactLoading
+                  type="bubbles"
+                  color="#F5F5F5"
+                  height={30}
+                  width={30}
+                />
+              )}
+            </span>
+          )}
+          {displayCurrency === 'fiat' && symbolLocation === 'suffix' && (
+            <span
+              className={
+                lockedBalance > 0
+                  ? `tag is-warning ${size}`
+                  : `tag is-info ${size}`
+              }
+              data-tip={balanceTooltip}
+            >
+              {lockedBalance > 0 ? (
+                <i className="fa fa-lock" />
+              ) : (
+                <i className="fa fa-unlock" />
+              )}
+              &nbsp;
+              {fiatPrice !== 0 ? (
+                // eslint-disable-next-line prefer-template
+
+                (
+                  fiatPrice *
+                  session.atomicToHuman(unlockedBalance + lockedBalance, false)
+                ).toFixed(fiatDecimals) + fiatSymbol
               ) : (
                 <ReactLoading
                   type="bubbles"

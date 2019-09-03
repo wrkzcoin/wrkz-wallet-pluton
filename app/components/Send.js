@@ -26,7 +26,9 @@ type State = {
   transactionInProgress: boolean,
   transactionComplete: boolean,
   displayCurrency: string,
-  fiatPrice: number
+  fiatPrice: number,
+  fiatSymbol: string,
+  symbolLocation: string
 };
 
 export default class Send extends Component<Props, State> {
@@ -45,7 +47,9 @@ export default class Send extends Component<Props, State> {
       transactionInProgress: false,
       transactionComplete: false,
       displayCurrency: config.displayCurrency,
-      fiatPrice: session.fiatPrice
+      fiatPrice: session.fiatPrice,
+      fiatSymbol: config.fiatSymbol,
+      symbolLocation: config.symbolLocation
     };
     this.transactionComplete = this.transactionComplete.bind(this);
     this.generatePaymentID = this.generatePaymentID.bind(this);
@@ -333,8 +337,13 @@ export default class Send extends Component<Props, State> {
       totalAmount,
       paymentID,
       transactionInProgress,
-      displayCurrency
+      displayCurrency,
+      fiatSymbol,
+      symbolLocation
     } = this.state;
+
+    const exampleAmount =
+      symbolLocation === 'prefix' ? `${fiatSymbol}100` : `100${fiatSymbol}`;
 
     const { backgroundColor, textColor, elementBaseColor, linkColor } = uiType(
       darkMode
@@ -379,9 +388,11 @@ export default class Send extends Component<Props, State> {
                         <input
                           className="input is-large"
                           type="text"
-                          placeholder={`How much ${displayCurrency} to send (eg. ${
-                            displayCurrency === 'fiat' ? '$' : ''
-                          }100)`}
+                          placeholder={`How much to send (eg. ${
+                            displayCurrency === 'fiat'
+                              ? exampleAmount
+                              : '100 TRTL'
+                          })`}
                           value={enteredAmount}
                           onChange={this.handleAmountChange}
                         />

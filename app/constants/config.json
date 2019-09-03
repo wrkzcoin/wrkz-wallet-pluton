@@ -13,5 +13,6 @@
   "displayCurrency": "TRTL",
   "selectedFiat": "usd",
   "fiatSymbol": "$",
-  "symbolLocation": "prefix"
+  "symbolLocation": "prefix",
+  "fiatDecimals": 2
 }

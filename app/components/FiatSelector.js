@@ -38,7 +38,8 @@ export default class FiatSelector extends Component<Props, State> {
   changeCurrency = (
     selectedFiat: string,
     fiatSymbol: string,
-    symbolLocation: string
+    symbolLocation: string,
+    fiatDecimals: number
   ) => {
     log.debug(
       `User has selected ${selectedFiat} as alternate display currency.`
@@ -46,6 +47,7 @@ export default class FiatSelector extends Component<Props, State> {
     session.modifyConfig('selectedFiat', selectedFiat);
     session.modifyConfig('fiatSymbol', fiatSymbol);
     session.modifyConfig('symbolLocation', symbolLocation);
+    session.modifyConfig('fiatDecimals', fiatDecimals);
     session.getFiatPrice(selectedFiat);
     this.setState({
       selectedFiat,
@@ -94,7 +96,8 @@ export default class FiatSelector extends Component<Props, State> {
                     this.changeCurrency(
                       currency.ticker,
                       currency.symbol,
-                      currency.symbolLocation
+                      currency.symbolLocation,
+                      currency.decimals
                     )
                   }
                   onKeyPress={this.changeCurrency}

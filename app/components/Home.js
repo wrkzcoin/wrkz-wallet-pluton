@@ -23,7 +23,8 @@ type State = {
   displayCurrency: string,
   fiatPrice: number,
   fiatSymbol: string,
-  symbolLocation: string
+  symbolLocation: string,
+  fiatDecimals: number
 };
 
 export default class Home extends Component<Props, State> {
@@ -44,7 +45,8 @@ export default class Home extends Component<Props, State> {
       displayCurrency: config.displayCurrency,
       fiatPrice: session.fiatPrice,
       fiatSymbol: config.fiatSymbol,
-      symbolLocation: config.symbolLocation
+      symbolLocation: config.symbolLocation,
+      fiatDecimals: config.fiatDecimals
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
@@ -154,7 +156,8 @@ export default class Home extends Component<Props, State> {
       fiatPrice,
       displayCurrency,
       fiatSymbol,
-      symbolLocation
+      symbolLocation,
+      fiatDecimals
     } = this.state;
     const { backgroundColor, textColor, tableMode } = uiType(darkMode);
 
@@ -220,7 +223,7 @@ export default class Home extends Component<Props, State> {
                               `-${fiatSymbol}${(
                                 fiatPrice * session.atomicToHuman(tx[2], false)
                               )
-                                .toFixed(2)
+                                .toFixed(fiatDecimals)
                                 .substring(1)}`}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'suffix' &&
@@ -245,12 +248,12 @@ export default class Home extends Component<Props, State> {
                               symbolLocation === 'prefix' &&
                               `${fiatSymbol}${(
                                 fiatPrice * session.atomicToHuman(tx[2], false)
-                              ).toFixed(2)}`}
+                              ).toFixed(fiatDecimals)}`}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'suffix' &&
                               `${(
                                 fiatPrice * session.atomicToHuman(tx[2], false)
-                              ).toFixed(2)}${fiatSymbol}`}
+                              ).toFixed(fiatDecimals)}${fiatSymbol}`}
                           </p>
                         </td>
                       )}
@@ -262,12 +265,12 @@ export default class Home extends Component<Props, State> {
                             symbolLocation === 'prefix' &&
                             `${fiatSymbol}${(
                               fiatPrice * session.atomicToHuman(tx[3], false)
-                            ).toFixed(2)}`}
+                            ).toFixed(fiatDecimals)}`}
                           {displayCurrency === 'fiat' &&
                             symbolLocation === 'suffix' &&
                             `${(
                               fiatPrice * session.atomicToHuman(tx[3], false)
-                            ).toFixed(2)}${fiatSymbol}`}
+                            ).toFixed(fiatDecimals)}${fiatSymbol}`}
                         </p>
                       </td>
                     </tr>
