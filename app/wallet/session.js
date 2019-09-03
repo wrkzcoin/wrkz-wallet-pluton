@@ -29,6 +29,8 @@ export default class WalletSession {
 
   wbConfig: any;
 
+  selectedFiat: string;
+
   daemon: any;
 
   wallet: any;
@@ -53,8 +55,11 @@ export default class WalletSession {
       scanCoinbaseTransactions: config.scanCoinbaseTransactions
     };
 
+    this.selectedFiat = config.selectedFiat;
+
     this.fiatPrice = 0;
-    this.getFiatPrice(config.selectedFiat);
+
+    this.getFiatPrice(this.selectedFiat);
 
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
 

@@ -5,13 +5,14 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import log from 'electron-log';
-import { config } from '../index';
+import { config, session } from '../index';
 import currencies from '../constants/currencies.json';
 
 type Props = {};
 
 type State = {
-  selectedFiat: string
+  selectedFiat: string,
+  active: boolean
 };
 
 export default class FiatSelector extends Component<Props, State> {
@@ -22,28 +23,54 @@ export default class FiatSelector extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      selectedFiat: config.selectedFiat
+      selectedFiat: config.selectedFiat,
+      active: false
     };
+
+    this.toggleMenu = this.toggleMenu.bind(this);
+    this.changeCurrency = this.changeCurrency.bind(this);
   }
 
   componentDidMount() {}
 
   componentWillUnmount() {}
 
-  changeCurrency() {
-    log.debug('works');
-  }
+  changeCurrency = (selectedFiat: string) => {
+    log.debug(
+      `User has selected ${selectedFiat} as alternate display currency.`
+    );
+    session.modifyConfig('selectedFiat', selectedFiat);
+    session.getFiatPrice(selectedFiat);
+    this.setState({
+      selectedFiat,
+      active: false
+    });
+  };
+
+  toggleMenu = () => {
+    const { active } = this.state;
+    this.setState({
+      active: !active
+    });
+  };
 
   render() {
-    const { selectedFiat } = this.state;
+    const { selectedFiat, active } = this.state;
+    const isActive = active ? 'is-active' : '';
 
     return (
-      <div className="dropdown is-hoverable">
-        <div className="dropdown-trigger">
+      <div className={`dropdown ${isActive}`}>
+        <div
+          className="dropdown-trigger"
+          onClick={this.toggleMenu}
+          onKeyPress={this.toggleMenu}
+          role="button"
+          tabIndex={0}
+        >
           <button
             className="button"
             aria-haspopup="true"
-            aria-controls="dropdown-menu4"
+            aria-controls="dropdown-menu3"
           >
             <span>{selectedFiat.toUpperCase()}</span>
             <span className="icon is-small">
@@ -57,7 +84,7 @@ export default class FiatSelector extends Component<Props, State> {
               return (
                 <div
                   className="dropdown-item"
-                  onClick={this.changeCurrency}
+                  onClick={() => this.changeCurrency(currency.ticker)}
                   onKeyPress={this.changeCurrency}
                   role="button"
                   tabIndex={0}
