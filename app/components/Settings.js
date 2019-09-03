@@ -11,6 +11,7 @@ import { session, eventEmitter, il8n, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
+import FiatSelector from './FiatSelector';
 import uiType from '../utils/uitype';
 
 type Props = {};
@@ -456,7 +457,12 @@ export default class Settings extends Component<Props, State> {
                   </form>
                 )}
               </div>
-              <div className="column" />
+              <div className="column">
+                <p className={`has-text-weight-bold ${textColor}`}>
+                  Alternate Display Currency:
+                </p>
+                <FiatSelector />
+              </div>
               <div className="column">
                 <br />
                 <p className="buttons is-right">

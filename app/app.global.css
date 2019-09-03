@@ -362,3 +362,9 @@ html {
   background-color: darkgrey;
   outline: 1px solid slategrey;
 }
+
+.dropdown-content {
+  max-height: 13em;
+  overflow: auto;
+  user-select: none;
+}
