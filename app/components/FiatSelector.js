@@ -35,11 +35,17 @@ export default class FiatSelector extends Component<Props, State> {
 
   componentWillUnmount() {}
 
-  changeCurrency = (selectedFiat: string) => {
+  changeCurrency = (
+    selectedFiat: string,
+    fiatSymbol: string,
+    symbolLocation: string
+  ) => {
     log.debug(
       `User has selected ${selectedFiat} as alternate display currency.`
     );
     session.modifyConfig('selectedFiat', selectedFiat);
+    session.modifyConfig('fiatSymbol', fiatSymbol);
+    session.modifyConfig('symbolLocation', symbolLocation);
     session.getFiatPrice(selectedFiat);
     this.setState({
       selectedFiat,
@@ -84,7 +90,13 @@ export default class FiatSelector extends Component<Props, State> {
               return (
                 <div
                   className="dropdown-item"
-                  onClick={() => this.changeCurrency(currency.ticker)}
+                  onClick={() =>
+                    this.changeCurrency(
+                      currency.ticker,
+                      currency.symbol,
+                      currency.symbolLocation
+                    )
+                  }
                   onKeyPress={this.changeCurrency}
                   role="button"
                   tabIndex={0}

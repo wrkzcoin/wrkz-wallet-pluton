@@ -21,7 +21,9 @@ type State = {
   totalTransactionCount: number,
   darkMode: boolean,
   displayCurrency: string,
-  fiatPrice: number
+  fiatPrice: number,
+  fiatSymbol: string,
+  symbolLocation: string
 };
 
 export default class Home extends Component<Props, State> {
@@ -40,7 +42,9 @@ export default class Home extends Component<Props, State> {
       totalTransactionCount: session.getTransactions().length,
       darkMode: session.darkMode,
       displayCurrency: config.displayCurrency,
-      fiatPrice: session.fiatPrice
+      fiatPrice: session.fiatPrice,
+      fiatSymbol: config.fiatSymbol,
+      symbolLocation: config.symbolLocation
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
@@ -148,7 +152,9 @@ export default class Home extends Component<Props, State> {
       transactions,
       totalTransactionCount,
       fiatPrice,
-      displayCurrency
+      displayCurrency,
+      fiatSymbol,
+      symbolLocation
     } = this.state;
     const { backgroundColor, textColor, tableMode } = uiType(darkMode);
 
@@ -209,12 +215,21 @@ export default class Home extends Component<Props, State> {
                             {displayCurrency === 'TRTL' &&
                               session.atomicToHuman(tx[2], true)}
                             {displayCurrency === 'fiat' &&
+                              symbolLocation === 'prefix' &&
                               fiatPrice !== 0 &&
-                              `-$${(
+                              `-${fiatSymbol}${(
                                 fiatPrice * session.atomicToHuman(tx[2], false)
                               )
                                 .toFixed(2)
                                 .substring(1)}`}
+                            {displayCurrency === 'fiat' &&
+                              symbolLocation === 'suffix' &&
+                              fiatPrice !== 0 &&
+                              `-${(
+                                fiatPrice * session.atomicToHuman(tx[2], false)
+                              )
+                                .toFixed(2)
+                                .substring(1)}${fiatSymbol}`}
                             {displayCurrency === 'fiat' &&
                               fiatPrice === 0 &&
                               ''}
@@ -227,9 +242,15 @@ export default class Home extends Component<Props, State> {
                             {displayCurrency === 'TRTL' &&
                               session.atomicToHuman(tx[2], true)}
                             {displayCurrency === 'fiat' &&
-                              `$${(
+                              symbolLocation === 'prefix' &&
+                              `${fiatSymbol}${(
                                 fiatPrice * session.atomicToHuman(tx[2], false)
                               ).toFixed(2)}`}
+                            {displayCurrency === 'fiat' &&
+                              symbolLocation === 'suffix' &&
+                              `${(
+                                fiatPrice * session.atomicToHuman(tx[2], false)
+                              ).toFixed(2)}${fiatSymbol}`}
                           </p>
                         </td>
                       )}
@@ -238,9 +259,15 @@ export default class Home extends Component<Props, State> {
                           {displayCurrency === 'TRTL' &&
                             session.atomicToHuman(tx[3], true)}
                           {displayCurrency === 'fiat' &&
-                            `$${(
+                            symbolLocation === 'prefix' &&
+                            `${fiatSymbol}${(
                               fiatPrice * session.atomicToHuman(tx[3], false)
                             ).toFixed(2)}`}
+                          {displayCurrency === 'fiat' &&
+                            symbolLocation === 'suffix' &&
+                            `${(
+                              fiatPrice * session.atomicToHuman(tx[3], false)
+                            ).toFixed(2)}${fiatSymbol}`}
                         </p>
                       </td>
                     </tr>

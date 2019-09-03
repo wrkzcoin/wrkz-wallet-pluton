@@ -11,5 +11,7 @@
   "useSSL": true,
   "darkMode": false,
   "displayCurrency": "TRTL",
-  "selectedFiat": "usd"
+  "selectedFiat": "usd",
+  "fiatSymbol": "$",
+  "symbolLocation": "prefix"
 }
