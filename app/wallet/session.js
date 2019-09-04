@@ -130,6 +130,9 @@ export default class WalletSession {
           this.atomicToHuman(transaction.totalAmount(), true)
         );
       });
+      this.wallet.on('deadnode', () => {
+        eventEmitter.emit('deadNode');
+      });
       eventEmitter.on('scanCoinbaseTransactionsOn', () => {
         if (this.wallet) {
           this.wallet.scanCoinbaseTransactions(true);
