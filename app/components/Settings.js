@@ -12,6 +12,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import FiatSelector from './FiatSelector';
+import TimeoutSelector from './TimeoutSelector';
 import uiType from '../utils/uitype';
 
 type Props = {};
@@ -462,6 +463,13 @@ export default class Settings extends Component<Props, State> {
                   Alternate Display Currency:
                 </p>
                 <FiatSelector />
+                <br />
+                <br />
+                <br />
+                <p className={`has-text-weight-bold ${textColor}`}>
+                  Autolock Time Interval (in minutes):
+                </p>
+                <TimeoutSelector />
               </div>
               <div className="column">
                 <br />

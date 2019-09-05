@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import log from 'electron-log';
 import { ipcRenderer } from 'electron';
 import { Redirect, withRouter } from 'react-router-dom';
-import { session, eventEmitter, loginCounter } from '../index';
+import { session, eventEmitter, loginCounter, config } from '../index';
 
 type State = {
   home: boolean,
@@ -18,7 +18,9 @@ type State = {
   loginFailed: boolean,
   login: boolean,
   isLoggedIn: boolean,
-  freshRestore: boolean
+  freshRestore: boolean,
+  autoLockInterval: number,
+  autoLockEnabled: boolean
 };
 
 type Location = {
@@ -49,16 +51,27 @@ class Redirector extends Component<Props, State> {
       loginFailed: session.loginFailed,
       login: false,
       isLoggedIn: loginCounter.isLoggedIn,
-      freshRestore: loginCounter.freshRestore
+      freshRestore: loginCounter.freshRestore,
+      autoLockInterval: config.autoLockInterval,
+      autoLockEnabled: config.autoLockEnabled
     };
+    const { autoLockInterval, autoLockEnabled } = this.state;
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
     this.goToImportFromKey = this.goToImportFromKey.bind(this);
     this.goToPasswordChange = this.goToPasswordChange.bind(this);
     this.goToHome = this.goToHome.bind(this);
     this.goToLogin = this.goToLogin.bind(this);
     this.logOut = this.logOut.bind(this);
-    if (session.walletPassword !== '' && loginCounter.isLoggedIn) {
-      this.activityTimer = setTimeout(() => this.logOut(), 1000 * 60 * 15);
+    this.setAutoLock = this.setAutoLock.bind(this);
+    if (
+      session.walletPassword !== '' &&
+      loginCounter.isLoggedIn &&
+      autoLockEnabled
+    ) {
+      this.activityTimer = setTimeout(
+        () => this.logOut(),
+        1000 * 60 * autoLockInterval
+      );
     }
   }
 
@@ -77,6 +90,8 @@ class Redirector extends Component<Props, State> {
     eventEmitter.on('goToLogin', this.goToLogin);
     eventEmitter.on('logOut', this.logOut);
     eventEmitter.on('activityDetected', this.resetTimeout);
+    eventEmitter.on('newLockInterval', this.resetTimeout);
+    eventEmitter.on('setAutoLock', this.setAutoLock);
   }
 
   componentWillUnmount() {
@@ -94,8 +109,24 @@ class Redirector extends Component<Props, State> {
     eventEmitter.off('goToLogin', this.goToLogin);
     eventEmitter.off('logOut', this.logOut);
     eventEmitter.off('activityDetected', this.resetTimeout);
+    eventEmitter.off('newLockInterval', this.resetTimeout);
+    eventEmitter.off('setAutoLock', this.setAutoLock);
     clearTimeout(this.activityTimer);
   }
+
+  setAutoLock = async (enable: boolean) => {
+    if (enable) {
+      await this.setState({
+        autoLockEnabled: true
+      });
+      this.resetTimeout();
+    } else {
+      await this.setState({
+        autoLockEnabled: false
+      });
+      clearTimeout(this.activityTimer);
+    }
+  };
 
   logOut = () => {
     loginCounter.isLoggedIn = false;
@@ -106,10 +137,23 @@ class Redirector extends Component<Props, State> {
     log.debug('Wallet was locked.');
   };
 
-  resetTimeout = () => {
+  resetTimeout = async (timeout?: number) => {
+    const { autoLockEnabled } = this.state;
+    if (!autoLockEnabled) {
+      return;
+    }
+    if (timeout) {
+      await this.setState({
+        autoLockInterval: timeout
+      });
+    }
+    const { autoLockInterval } = this.state;
     if (session.walletPassword !== '' && loginCounter.isLoggedIn) {
       clearTimeout(this.activityTimer);
-      this.activityTimer = setTimeout(() => this.logOut(), 1000 * 60 * 15);
+      this.activityTimer = setTimeout(
+        () => this.logOut(),
+        1000 * 60 * autoLockInterval
+      );
     }
   };
 
