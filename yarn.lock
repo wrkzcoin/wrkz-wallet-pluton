@@ -9527,7 +9527,7 @@ object-keys@~0.4.0:
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-0.4.0.tgz#28a6aae7428dd2c3a92f3d95f21335dd204e0336"
   integrity sha1-KKaq50KN0sOpLz2V8hM13SBOAzY=
 
-object-sizeof@^1.4.0:
+object-sizeof@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/object-sizeof/-/object-sizeof-1.5.1.tgz#da2ed6ce9c7c0b0f7cf42e8b370f493ec41e0936"
   integrity sha512-htKkjOdWqxZQg5V6/M0tA/yLiYaRize4MzAyzibuR9Q0Jy/WYFRmTH4FYiGTdTXi2hbzxzdnaLv4K8N4VX7YTQ==
@@ -13242,7 +13242,7 @@ tunnel-agent@0.6.0, tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-turtlecoin-crypto@^3.0.4:
+turtlecoin-crypto@^3.0.5:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/turtlecoin-crypto/-/turtlecoin-crypto-3.0.5.tgz#a6a4ebd2775eb26d18eb4e4bd83b00ec7be66796"
   integrity sha512-X8t75lVQHMmFOOSqxz+FdYbkZDtjzwHvFdxVC9aE7AEuhMQjWkjDyV0frwRlKcBeReJG0kmKaqOKVLpPAcVyOg==
@@ -13250,7 +13250,7 @@ turtlecoin-crypto@^3.0.4:
     bindings "^1.5.0"
     nan "^2.14.0"
 
-turtlecoin-rpc@^1.0.1:
+turtlecoin-rpc@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/turtlecoin-rpc/-/turtlecoin-rpc-1.0.2.tgz#e32c456568dffddb891fdabca801f0144ee1c41c"
   integrity sha512-537nW5Xz2hCPus2YmjHKb50dvH4ZkDakJHRbe8ed8EkAwm702yB2MOEShagtGoe2dhkufBfGr2V6rURrYhJA7Q==
@@ -13258,10 +13258,9 @@ turtlecoin-rpc@^1.0.1:
     request "^2.88.0"
     request-promise-native "^1.0.7"
 
-turtlecoin-utils@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/turtlecoin-utils/-/turtlecoin-utils-1.0.3.tgz#6eb98c11699281b73ff15bf51befdc9c143c7dad"
-  integrity sha512-QsEkbgE0FJ2RQUvoG4pXHtBVPpX9gfd53zQ0Dj3cME4lSnirZDpVOmGWnCrTIezZgraJdDXTPjJT7gSvuZthzQ==
+"turtlecoin-utils@https://github.com/turtlecoin/turtlecoin-utils#development":
+  version "1.0.5"
+  resolved "https://github.com/turtlecoin/turtlecoin-utils#0faef4bb0b2291e46bd4ef3c552144550a3c3f11"
   dependencies:
     crc "^3.8.0"
     get-random-values "^1.2.0"
@@ -13269,19 +13268,19 @@ turtlecoin-utils@^1.0.3:
     secure-random-string "^1.1.0"
     varint "^5.0.0"
   optionalDependencies:
-    turtlecoin-crypto "^3.0.4"
+    turtlecoin-crypto "^3.0.5"
 
-turtlecoin-wallet-backend@^3.4.11:
-  version "3.4.11"
-  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.11.tgz#ff3b8f2edbef8429b79fe94087d6d177d946a05d"
-  integrity sha512-PKnapFNdChTxl2QmuRQoRuQx3ersOJSPtaAEakTl2qoW+EKKFNZM8tZTXIwM0D6SbVSCk4TzzCHY18zXs0h1rg==
+turtlecoin-wallet-backend@^3.4.12:
+  version "3.4.12"
+  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-3.4.12.tgz#7566efc40b330d98bd37541e9d4170aec131fa1b"
+  integrity sha512-mEeGHLP0kd8De6eJB6ti04BKEd7jLT6O9+EgY1aeiiTjWGUE7XsxWtAm3adhzMQjdJkZMhhBkT+aF/QauT2G6g==
   dependencies:
     lodash "^4.17.15"
-    object-sizeof "^1.4.0"
+    object-sizeof "^1.5.1"
     pbkdf2 "^3.0.17"
-    turtlecoin-rpc "^1.0.1"
-    turtlecoin-utils "^1.0.3"
-    typescript "^3.5.3"
+    turtlecoin-rpc "^1.0.2"
+    turtlecoin-utils "https://github.com/turtlecoin/turtlecoin-utils#development"
+    typescript "^3.6.2"
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
@@ -13318,7 +13317,7 @@ typescript@^3.3.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.1.tgz#b6691be11a881ffa9a05765a205cb7383f3b63c6"
   integrity sha512-3NSMb2VzDQm8oBTLH6Nj55VVtUEpe/rgkIzMir0qVoLyjDZlnMBva0U6vDiV3IH+sl/Yu6oP5QwsAQtHPmDd2Q==
 
-typescript@^3.5.3:
+typescript@^3.6.2:
   version "3.6.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.2.tgz#105b0f1934119dde543ac8eb71af3a91009efe54"
   integrity sha512-lmQ4L+J6mnu3xweP8+rOrUwzmN+MRAj7TgtJtDaXE5PMyX2kCrklhg3rvOsOIfNeAWMQWO2F1GPc1kMD2vLAfw==
