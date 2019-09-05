@@ -4,7 +4,8 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { config, session, eventEmitter } from '../index';
+import { remote } from 'electron';
+import { config, session, eventEmitter, il8n } from '../index';
 
 type Props = {};
 
@@ -67,6 +68,15 @@ export default class TimeoutSelector extends Component<Props, State> {
       return;
     }
     const interval: number = Number(event.target[0].value);
+    if (interval > 35791) {
+      remote.dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: [il8n.cancel, il8n.ok],
+        title: 'Value Too High!',
+        message: `Because of a javascript limitation, the maximum amount of minutes you can select is 35,791 minutes.`
+      });
+      return;
+    }
     if (interval) session.modifyConfig('autoLockInterval', interval);
     eventEmitter.emit('newLockInterval', interval);
   }
