@@ -205,12 +205,6 @@ export default class Send extends Component<Props, State> {
       (session.getUnlockedBalance() + session.getLockedBalance()) / 100 >
       Number(event.target[1].value);
 
-    log.debug(
-      sufficientFunds,
-      Number(event.target[1].value),
-      (session.getUnlockedBalance() + session.getLockedBalance()) / 100
-    );
-
     const sufficientUnlockedFunds =
       session.getUnlockedBalance() > Number(event.target[1].value) / 100;
 
