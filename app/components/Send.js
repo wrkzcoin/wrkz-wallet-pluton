@@ -201,6 +201,19 @@ export default class Send extends Component<Props, State> {
 
     const notSynced = session.getSyncStatus() < 99.99;
 
+    const sufficientFunds =
+      (session.getUnlockedBalance() + session.getLockedBalance()) / 100 >
+      Number(event.target[1].value);
+
+    log.debug(
+      sufficientFunds,
+      Number(event.target[1].value),
+      (session.getUnlockedBalance() + session.getLockedBalance()) / 100
+    );
+
+    const sufficientUnlockedFunds =
+      session.getUnlockedBalance() > Number(event.target[1].value) / 100;
+
     if (notSynced) {
       remote.dialog.showMessageBox(null, {
         type: 'warning',
@@ -209,6 +222,29 @@ export default class Send extends Component<Props, State> {
         message:
           'You are attempting to send a transaction without being synced with the network. This may fail. Would you like to attempt this?'
       });
+    }
+
+    if (!sufficientFunds) {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: [il8n.cancel, il8n.ok],
+        title: 'Not Enough Funds!',
+        message: "You don't have enough funds to send this transaction."
+      });
+      eventEmitter.emit('transactionCancel');
+      return;
+    }
+
+    if (!sufficientUnlockedFunds) {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: [il8n.cancel, il8n.ok],
+        title: 'Not Enough Unlocked Funds!',
+        message:
+          "You don't have enough unlocked funds to send this transaction. Wait for the funds to unlock and try again."
+      });
+      eventEmitter.emit('transactionCancel');
+      return;
     }
 
     let displayIfPaymentID;
