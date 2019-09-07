@@ -221,7 +221,7 @@ export default class Send extends Component<Props, State> {
     if (!sufficientFunds) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: [il8n.cancel, il8n.ok],
+        buttons: [il8n.ok],
         title: 'Not Enough Funds!',
         message: "You don't have enough funds to send this transaction."
       });
@@ -232,7 +232,7 @@ export default class Send extends Component<Props, State> {
     if (!sufficientUnlockedFunds) {
       remote.dialog.showMessageBox(null, {
         type: 'error',
-        buttons: [il8n.cancel, il8n.ok],
+        buttons: [il8n.ok],
         title: 'Not Enough Unlocked Funds!',
         message:
           "You don't have enough unlocked funds to send this transaction. Wait for the funds to unlock and try again."
