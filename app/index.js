@@ -367,7 +367,7 @@ function handleNew() {
 ipcRenderer.on('handleNew', handleNew);
 eventEmitter.on('handleNew', handleNew);
 
-ipcRenderer.on('handleBackup', () => {
+function handleBackup() {
   if ((session && !session.wallet) || !loginCounter.isLoggedIn) {
     eventEmitter.emit('refreshLogin');
     return;
@@ -379,7 +379,10 @@ ipcRenderer.on('handleBackup', () => {
       privateViewKey
     ] = session.wallet.getPrimaryAddressPrivateKeys();
     const [mnemonicSeed, err] = session.wallet.getMnemonicSeed();
-    log.debug(err);
+    if (err) {
+      log.debug(err);
+      return;
+    }
 
     const msg =
       // eslint-disable-next-line prefer-template
@@ -402,7 +405,10 @@ ipcRenderer.on('handleBackup', () => {
       clipboard.writeText(msg);
     }
   }
-});
+}
+
+ipcRenderer.on('handleBackup', handleBackup);
+eventEmitter.on('handleBackup', handleBackup);
 
 const store = configureStore();
 

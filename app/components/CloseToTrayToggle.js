@@ -82,34 +82,34 @@ export default class CloseToTrayToggle extends Component<Props, State> {
       <div>
         {closeToTray === false && (
           <span className={textColor}>
-            {il8n.enable_close_to_tray} &nbsp;&nbsp;
             <a
-              className="button is-success"
+              className="button is-danger"
               onClick={this.closeToTrayOn}
               onKeyPress={this.closeToTrayOn}
               role="button"
               tabIndex={0}
             >
               <span className="icon is-large">
-                <i className="fas fa-check" />
+                <i className="fas fa-times" />
               </span>
             </a>
+            &nbsp;&nbsp; Close To Tray: <b>Off</b>
           </span>
         )}
         {closeToTray === true && (
           <span className={textColor}>
-            {il8n.disable_close_to_tray} &nbsp;&nbsp;
             <a
-              className="button is-danger"
+              className="button is-success"
               onClick={this.closeToTrayOff}
               onKeyPress={this.closeToTrayOff}
               role="button"
               tabIndex={0}
             >
               <span className="icon is-large">
-                <i className="fa fa-times" />
+                <i className="fa fa-check" />
               </span>
             </a>
+            &nbsp;&nbsp; Close To Tray: <b>On</b>
           </span>
         )}
       </div>

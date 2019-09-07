@@ -95,7 +95,7 @@ export default class Rescanner extends Component<Props, State> {
     const { scanHeight } = this.state;
 
     return (
-      <form onSubmit={this.rescanWallet} data-tip={il8n.rescan_wallet_help}>
+      <form onSubmit={this.rescanWallet}>
         <p className={`has-text-weight-bold ${textColor}`}>
           {il8n.rescan_wallet}
         </p>

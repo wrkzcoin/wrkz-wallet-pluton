@@ -57,34 +57,34 @@ export default class Template extends Component<Props, State> {
       <div>
         {scanCoinbaseTransactions === false && (
           <span className={textColor}>
-            Enable scanning coinbase transactions &nbsp;&nbsp;
             <a
-              className="button is-success"
+              className="button is-danger"
               onClick={this.scanCoinbaseTransactionsOn}
               onKeyPress={this.scanCoinbaseTransactionsOn}
               role="button"
               tabIndex={0}
             >
               <span className="icon is-large">
-                <i className="fas fa-check" />
+                <i className="fas fa-times" />
               </span>
             </a>
+            &nbsp;&nbsp; Scan Coinbase Transactions: <b>Off</b>
           </span>
         )}
         {scanCoinbaseTransactions === true && (
           <span className={textColor}>
-            Disable scanning coinbase transactions &nbsp;&nbsp;
             <a
-              className="button is-danger"
+              className="button is-success"
               onClick={this.scanCoinbaseTransactionsOff}
               onKeyPress={this.scanCoinbaseTransactionsOff}
               role="button"
               tabIndex={0}
             >
               <span className="icon is-large">
-                <i className="fa fa-times" />
+                <i className="fa fa-check" />
               </span>
             </a>
+            &nbsp;&nbsp; Scan Coinbase Transactions: <b>On</b> &nbsp;&nbsp;
           </span>
         )}
       </div>

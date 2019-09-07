@@ -87,55 +87,63 @@ export default class TimeoutSelector extends Component<Props, State> {
   render() {
     const { darkMode } = this.props;
     const { selectedTimeout, timeoutEnabled } = this.state;
-    const { textColor, elementBaseColor } = uiType(darkMode);
+    const { textColor } = uiType(darkMode);
     return (
       <div>
         <p className={`has-text-weight-bold ${textColor}`}>
           Autolock Time Interval (in minutes):
         </p>
         <form onSubmit={this.updateTimeoutInConfig}>
-          <div className="columns">
-            <div className="column is-three-quarters">
-              <div className="field has-addons">
-                <div className="control is-expanded">
-                  <input
-                    className="input"
-                    type="text"
-                    value={selectedTimeout}
-                    onChange={this.handleTimeoutChange}
-                    disabled={!timeoutEnabled}
-                  />
-                </div>
-                <div className="control">
-                  <button
-                    className="button is-success"
-                    disabled={!timeoutEnabled}
-                  >
-                    Change
-                  </button>
-                </div>
-              </div>
+          <div className="field has-addons">
+            <div className="control is-expanded">
+              <input
+                className="input"
+                type="text"
+                value={selectedTimeout}
+                onChange={this.handleTimeoutChange}
+                disabled={!timeoutEnabled}
+              />
             </div>
-            <div className="column is-one-quarter">
-              {timeoutEnabled && (
-                <button
-                  className={`button ${elementBaseColor}`}
-                  onClick={this.disableTimeout}
-                >
-                  Disable
-                </button>
-              )}
-              {!timeoutEnabled && (
-                <button
-                  className={`button ${elementBaseColor}`}
-                  onClick={this.enableTimeout}
-                >
-                  Enable
-                </button>
-              )}
+            <div className="control">
+              <button className="button is-success" disabled={!timeoutEnabled}>
+                Change
+              </button>
             </div>
           </div>
         </form>
+        <br />
+        {timeoutEnabled && (
+          <span className={textColor}>
+            <a
+              className="button is-success"
+              onClick={this.disableTimeout}
+              onKeyPress={this.disableTimeout}
+              role="button"
+              tabIndex={0}
+            >
+              <span className="icon is-large">
+                <i className="fas fa-check" />
+              </span>
+            </a>
+            &nbsp;&nbsp; Inactivity Autolock: <b>On</b>
+          </span>
+        )}
+        {!timeoutEnabled && (
+          <span className={textColor}>
+            <a
+              className="button is-danger"
+              onClick={this.enableTimeout}
+              onKeyPress={this.enableTimeout}
+              role="button"
+              tabIndex={0}
+            >
+              <span className="icon is-large">
+                <i className="fas fa-times" />
+              </span>
+            </a>
+            &nbsp;&nbsp; Inactivity Autolock: <b>Off</b>
+          </span>
+        )}
       </div>
     );
   }

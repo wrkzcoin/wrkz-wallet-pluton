@@ -11,6 +11,14 @@
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma-extensions/dist/css/bulma-extensions.min.css';
 
+.tabs ul {
+  flex-direction: column;
+}
+
+.tabs li {
+  width: 100%;
+}
+
 .locksyncicon {
   position: absolute;
   top: 16px;
