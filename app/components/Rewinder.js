@@ -8,7 +8,9 @@ import { remote } from 'electron';
 import { il8n, session } from '../index';
 import uiType from '../utils/uitype';
 
-type Props = {};
+type Props = {
+  darkMode: boolean
+};
 
 type State = {
   rewindHeight: string,
@@ -67,7 +69,8 @@ export default class Rewinder extends Component<Props, State> {
   };
 
   render() {
-    const { textColor } = uiType(true);
+    const { darkMode } = this.props;
+    const { textColor } = uiType(darkMode);
     const { rewindInProgress, rewindHeight } = this.state;
 
     return (

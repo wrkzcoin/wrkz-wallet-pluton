@@ -8,7 +8,9 @@ import { remote } from 'electron';
 import { config, session, eventEmitter, il8n } from '../index';
 import uiType from '../utils/uitype';
 
-type Props = {};
+type Props = {
+  darkMode: boolean
+};
 
 type State = {
   selectedTimeout: number,
@@ -83,8 +85,9 @@ export default class TimeoutSelector extends Component<Props, State> {
   }
 
   render() {
+    const { darkMode } = this.props;
     const { selectedTimeout, timeoutEnabled } = this.state;
-    const { textColor } = uiType(true);
+    const { textColor, elementBaseColor } = uiType(darkMode);
     return (
       <div>
         <p className={`has-text-weight-bold ${textColor}`}>
@@ -115,12 +118,18 @@ export default class TimeoutSelector extends Component<Props, State> {
             </div>
             <div className="column is-one-quarter">
               {timeoutEnabled && (
-                <button className="button" onClick={this.disableTimeout}>
+                <button
+                  className={`button ${elementBaseColor}`}
+                  onClick={this.disableTimeout}
+                >
                   Disable
                 </button>
               )}
               {!timeoutEnabled && (
-                <button className="button" onClick={this.enableTimeout}>
+                <button
+                  className={`button ${elementBaseColor}`}
+                  onClick={this.enableTimeout}
+                >
                   Enable
                 </button>
               )}

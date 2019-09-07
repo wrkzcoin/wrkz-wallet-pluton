@@ -9,10 +9,14 @@ import log from 'electron-log';
 import { il8n, session } from '../index';
 import uiType from '../utils/uitype';
 
-type Props = {};
+type Props = {
+  darkMode: boolean
+};
+
 type State = {
   scanHeight: string
 };
+
 export default class Rescanner extends Component<Props, State> {
   props: Props;
 
@@ -86,7 +90,8 @@ export default class Rescanner extends Component<Props, State> {
   };
 
   render() {
-    const { textColor } = uiType(true);
+    const { darkMode } = this.props;
+    const { textColor } = uiType(darkMode);
     const { scanHeight } = this.state;
 
     return (

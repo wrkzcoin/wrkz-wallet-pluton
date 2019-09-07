@@ -8,7 +8,9 @@ import { remote } from 'electron';
 import { il8n, session, eventEmitter } from '../index';
 import uiType from '../utils/uitype';
 
-type Props = {};
+type Props = {
+  darkMode: boolean
+};
 
 type State = {
   connectednode: string,
@@ -104,7 +106,8 @@ export default class NodeChanger extends Component<Props, State> {
   };
 
   render() {
-    const { textColor, linkColor } = uiType(true);
+    const { darkMode } = this.props;
+    const { textColor, linkColor } = uiType(darkMode);
     const { nodeChangeInProgress, connectednode, ssl } = this.state;
     return (
       <form onSubmit={this.changeNode}>

@@ -9,7 +9,9 @@ import { config, session } from '../index';
 import currencies from '../constants/currencies.json';
 import uiType from '../utils/uitype';
 
-type Props = {};
+type Props = {
+  darkMode: boolean
+};
 
 type State = {
   selectedFiat: string,
@@ -64,9 +66,10 @@ export default class FiatSelector extends Component<Props, State> {
   };
 
   render() {
+    const { darkMode } = this.props;
     const { selectedFiat, active } = this.state;
     const isActive = active ? 'is-active' : '';
-    const { textColor } = uiType(true);
+    const { textColor } = uiType(darkMode);
 
     return (
       <div>
