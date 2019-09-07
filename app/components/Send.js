@@ -211,10 +211,10 @@ export default class Send extends Component<Props, State> {
     if (notSynced) {
       remote.dialog.showMessageBox(null, {
         type: 'warning',
-        buttons: [il8n.cancel, il8n.ok],
+        buttons: [il8n.ok],
         title: 'Wallet Not Synced',
         message:
-          'You are attempting to send a transaction without being synced with the network. This may fail. Would you like to attempt this?'
+          'You are attempting to send a transaction without being synced with the network. This may fail.'
       });
     }
 
