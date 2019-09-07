@@ -9,6 +9,7 @@ import log from 'electron-log';
 import fs from 'fs';
 import { createObjectCsvWriter } from 'csv-writer';
 import { config, directories, eventEmitter, loginCounter } from '../index';
+import { name, version } from '../../package.json';
 
 export default class WalletSession {
   loginFailed: boolean;
@@ -52,7 +53,8 @@ export default class WalletSession {
     this.darkMode = config.darkMode || false;
     this.firstLoadOnLogin = true;
     this.wbConfig = {
-      scanCoinbaseTransactions: config.scanCoinbaseTransactions
+      scanCoinbaseTransactions: config.scanCoinbaseTransactions,
+      customUserAgentString: `${name}-v${version}`
     };
 
     this.selectedFiat = config.selectedFiat;
