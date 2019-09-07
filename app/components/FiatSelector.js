@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import log from 'electron-log';
 import { config, session } from '../index';
 import currencies from '../constants/currencies.json';
+import uiType from '../utils/uitype';
 
 type Props = {};
 
@@ -65,55 +66,61 @@ export default class FiatSelector extends Component<Props, State> {
   render() {
     const { selectedFiat, active } = this.state;
     const isActive = active ? 'is-active' : '';
+    const { textColor } = uiType(true);
 
     return (
-      <div className={`dropdown ${isActive}`}>
-        <div
-          className="dropdown-trigger"
-          onClick={this.toggleMenu}
-          onKeyPress={this.toggleMenu}
-          role="button"
-          tabIndex={0}
-        >
-          <button
-            className="button"
-            aria-haspopup="true"
-            aria-controls="dropdown-menu3"
+      <div>
+        <p className={`has-text-weight-bold ${textColor}`}>
+          Alternate Display Currency:
+        </p>
+        <div className={`dropdown ${isActive}`}>
+          <div
+            className="dropdown-trigger"
+            onClick={this.toggleMenu}
+            onKeyPress={this.toggleMenu}
+            role="button"
+            tabIndex={0}
           >
-            <span>{selectedFiat.toUpperCase()}</span>
-            <span className="icon is-small">
-              <i className="fas fa-angle-down" aria-hidden="true" />
-            </span>
-          </button>
-        </div>
-        <div className="dropdown-menu" id="dropdown-menu4" role="menu">
-          <div className="dropdown-content">
-            {currencies.map(currency => {
-              return (
-                <div
-                  className="dropdown-item"
-                  onClick={() =>
-                    this.changeCurrency(
-                      currency.ticker,
-                      currency.symbol,
-                      currency.symbolLocation,
-                      currency.decimals
-                    )
-                  }
-                  onKeyPress={this.changeCurrency}
-                  role="button"
-                  tabIndex={0}
-                  key={currency.ticker}
-                >
-                  <div className="columns">
-                    <div className="column">
-                      {currency.ticker.toUpperCase()}
+            <button
+              className="button"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu3"
+            >
+              <span>{selectedFiat.toUpperCase()}</span>
+              <span className="icon is-small">
+                <i className="fas fa-angle-down" aria-hidden="true" />
+              </span>
+            </button>
+          </div>
+          <div className="dropdown-menu" id="dropdown-menu4" role="menu">
+            <div className="dropdown-content">
+              {currencies.map(currency => {
+                return (
+                  <div
+                    className="dropdown-item"
+                    onClick={() =>
+                      this.changeCurrency(
+                        currency.ticker,
+                        currency.symbol,
+                        currency.symbolLocation,
+                        currency.decimals
+                      )
+                    }
+                    onKeyPress={this.changeCurrency}
+                    role="button"
+                    tabIndex={0}
+                    key={currency.ticker}
+                  >
+                    <div className="columns">
+                      <div className="column">
+                        {currency.ticker.toUpperCase()}
+                      </div>
+                      <div className="column">{currency.symbol}</div>
                     </div>
-                    <div className="column">{currency.symbol}</div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

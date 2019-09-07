@@ -6,6 +6,7 @@
 import React, { Component } from 'react';
 import { remote } from 'electron';
 import { config, session, eventEmitter, il8n } from '../index';
+import uiType from '../utils/uitype';
 
 type Props = {};
 
@@ -83,44 +84,50 @@ export default class TimeoutSelector extends Component<Props, State> {
 
   render() {
     const { selectedTimeout, timeoutEnabled } = this.state;
+    const { textColor } = uiType(true);
     return (
-      <form onSubmit={this.updateTimeoutInConfig}>
-        <div className="columns">
-          <div className="column is-three-quarters">
-            <div className="field has-addons">
-              <div className="control is-expanded">
-                <input
-                  className="input"
-                  type="text"
-                  value={selectedTimeout}
-                  onChange={this.handleTimeoutChange}
-                  disabled={!timeoutEnabled}
-                />
-              </div>
-              <div className="control">
-                <button
-                  className="button is-success"
-                  disabled={!timeoutEnabled}
-                >
-                  Change
-                </button>
+      <div>
+        <p className={`has-text-weight-bold ${textColor}`}>
+          Autolock Time Interval (in minutes):
+        </p>
+        <form onSubmit={this.updateTimeoutInConfig}>
+          <div className="columns">
+            <div className="column is-three-quarters">
+              <div className="field has-addons">
+                <div className="control is-expanded">
+                  <input
+                    className="input"
+                    type="text"
+                    value={selectedTimeout}
+                    onChange={this.handleTimeoutChange}
+                    disabled={!timeoutEnabled}
+                  />
+                </div>
+                <div className="control">
+                  <button
+                    className="button is-success"
+                    disabled={!timeoutEnabled}
+                  >
+                    Change
+                  </button>
+                </div>
               </div>
             </div>
+            <div className="column is-one-quarter">
+              {timeoutEnabled && (
+                <button className="button" onClick={this.disableTimeout}>
+                  Disable
+                </button>
+              )}
+              {!timeoutEnabled && (
+                <button className="button" onClick={this.enableTimeout}>
+                  Enable
+                </button>
+              )}
+            </div>
           </div>
-          <div className="column is-one-quarter">
-            {timeoutEnabled && (
-              <button className="button" onClick={this.disableTimeout}>
-                Disable
-              </button>
-            )}
-            {!timeoutEnabled && (
-              <button className="button" onClick={this.enableTimeout}>
-                Enable
-              </button>
-            )}
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     );
   }
 }
