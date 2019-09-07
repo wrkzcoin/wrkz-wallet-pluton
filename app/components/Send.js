@@ -209,13 +209,17 @@ export default class Send extends Component<Props, State> {
       session.getUnlockedBalance() > Number(event.target[1].value) / 100;
 
     if (notSynced) {
-      remote.dialog.showMessageBox(null, {
+      const userSelection = remote.dialog.showMessageBox(null, {
         type: 'warning',
-        buttons: [il8n.ok],
+        buttons: [il8n.ok, il8n.cancel],
         title: 'Wallet Not Synced',
         message:
-          'You are attempting to send a transaction without being synced with the network. This may fail.'
+          'You are attempting to send a transaction without being synced with the network. This may fail. Would you like to proceed?'
       });
+      if (userSelection !== 0) {
+        eventEmitter.emit('transactionCancel');
+        return;
+      }
     }
 
     if (!sufficientFunds) {

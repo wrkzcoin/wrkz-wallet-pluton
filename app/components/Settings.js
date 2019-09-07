@@ -13,7 +13,6 @@ import FiatSelector from './FiatSelector';
 import TimeoutSelector from './TimeoutSelector';
 import NodeChanger from './NodeChanger';
 import uiType from '../utils/uitype';
-import Rewinder from './Rewinder';
 import Rescanner from './Rescanner';
 import DarkModeToggle from './DarkModeToggle';
 import CloseToTrayToggle from './CloseToTrayToggle';
@@ -81,9 +80,6 @@ export default class Settings extends Component<Props, State> {
             <div className="columns">
               <div className="column">
                 <NodeChanger darkMode={darkMode} />
-                <br />
-                <Rewinder darkMode={darkMode} />
-                <br />
                 <br />
                 <Rescanner darkMode={darkMode} />
               </div>
