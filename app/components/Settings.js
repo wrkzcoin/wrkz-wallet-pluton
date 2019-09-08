@@ -80,7 +80,7 @@ export default class Settings extends Component<Props, State> {
 
   render() {
     const { darkMode, activeTab } = this.state;
-    const { backgroundColor, textColor } = uiType(darkMode);
+    const { backgroundColor, textColor, menuActiveColor } = uiType(darkMode);
 
     let platform;
     switch (os.platform()) {
@@ -112,63 +112,88 @@ export default class Settings extends Component<Props, State> {
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>
             <div className="columns">
-              <div className="column is-one-fifth">
-                <aside className="menu">
+              <div className={`column is-one-fifth ${backgroundColor}`}>
+                <aside className="menu settings-menu">
                   <p className={`menu-label ${textColor}`}>Settings</p>
                   <ul className="menu-list">
-                    <li>
+                    <li
+                      className={
+                        activeTab === 'node' ? `${menuActiveColor}` : ''
+                      }
+                    >
                       <a
                         onClick={() => this.setActiveTab('node')}
                         onKeyPress={() => this.setActiveTab('node')}
                         role="button"
                         tabIndex={0}
-                        className={activeTab === 'node' ? 'is-active' : ''}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        Node
+                        <p className={textColor}>Node</p>
                       </a>
                     </li>
-                    <li>
+                    <li
+                      className={
+                        activeTab === 'scan' ? `${menuActiveColor}` : ''
+                      }
+                    >
                       <a
                         onClick={() => this.setActiveTab('scan')}
                         onKeyPress={() => this.setActiveTab('scan')}
                         role="button"
                         tabIndex={0}
-                        className={activeTab === 'scan' ? 'is-active' : ''}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        Scan
+                        <p className={textColor}>Scan</p>
                       </a>
                     </li>
-                    <li>
+                    <li
+                      className={
+                        activeTab === 'display' ? `${menuActiveColor}` : ''
+                      }
+                    >
                       <a
                         onClick={() => this.setActiveTab('display')}
                         onKeyPress={() => this.setActiveTab('display')}
                         role="button"
                         tabIndex={0}
-                        className={activeTab === 'display' ? 'is-active' : ''}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        Display
+                        <p className={textColor}>Display</p>
                       </a>
                     </li>
-                    <li>
+                    <li
+                      className={
+                        activeTab === 'security' ? `${menuActiveColor}` : ''
+                      }
+                    >
                       <a
                         onClick={() => this.setActiveTab('security')}
                         onKeyPress={() => this.setActiveTab('security')}
                         role="button"
                         tabIndex={0}
-                        className={activeTab === 'security' ? 'is-active' : ''}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        Security
+                        <p className={textColor}>Security</p>
                       </a>
                     </li>
-                    <li>
+                    <li
+                      className={
+                        activeTab === 'platform' ? `${menuActiveColor}` : ''
+                      }
+                    >
                       <a
                         onClick={() => this.setActiveTab('platform')}
                         onKeyPress={() => this.setActiveTab('platform')}
                         role="button"
                         tabIndex={0}
-                        className={activeTab === 'platform' ? 'is-active' : ''}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        {platform} Settings
+                        <p className={textColor}>{platform} Settings</p>
                       </a>
                     </li>
                   </ul>
@@ -176,13 +201,11 @@ export default class Settings extends Component<Props, State> {
               </div>
               {activeTab === 'node' && (
                 <div className="column is-one-third">
-                  <p className="menu-label">Node Settings</p>
                   <NodeChanger darkMode={darkMode} />
                 </div>
               )}
               {activeTab === 'scan' && (
                 <div className="column is-one-third">
-                  <p className="menu-label">Scan Settings</p>
                   <Rescanner darkMode={darkMode} />
                   <br />
                   <ScanCoinbaseToggle darkMode={darkMode} />
@@ -190,7 +213,6 @@ export default class Settings extends Component<Props, State> {
               )}
               {activeTab === 'display' && (
                 <div className="column is-one-third">
-                  <p className="menu-label">Display Settings</p>
                   <FiatSelector darkMode={darkMode} />
                   <br />
                   <DarkModeToggle darkMode={darkMode} />
@@ -198,7 +220,6 @@ export default class Settings extends Component<Props, State> {
               )}
               {activeTab === 'security' && (
                 <div className="column is-one-third">
-                  <p className="menu-label">Security Settings</p>
                   <TimeoutSelector darkMode={darkMode} />
                   <br />
                   <button
@@ -219,7 +240,6 @@ export default class Settings extends Component<Props, State> {
               )}
               {activeTab === 'platform' && (
                 <div className="column is-one-third">
-                  <p className="menu-label">{platform} Settings</p>
                   <CloseToTrayToggle darkMode={darkMode} />
                   <br />
                 </div>

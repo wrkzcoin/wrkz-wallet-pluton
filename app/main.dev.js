@@ -7,6 +7,7 @@ import path from 'path';
 import os from 'os';
 import fs from 'fs';
 import { app, BrowserWindow, Tray, Menu } from 'electron';
+import isDev from 'electron-is-dev';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
@@ -118,7 +119,7 @@ app.on('window-all-closed', () => {
 
 contextMenu({
   // eslint-disable-next-line no-unused-vars
-  prepend: (defaultActions, params) => []
+  showInspectElement: isDev
 });
 
 app.on('ready', async () => {
