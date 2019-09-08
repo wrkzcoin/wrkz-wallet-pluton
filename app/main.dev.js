@@ -6,7 +6,7 @@
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
-import { app, BrowserWindow, Tray, Menu } from 'electron';
+import { app, BrowserWindow, Tray, Menu, shell } from 'electron';
 import isDev from 'electron-is-dev';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -118,8 +118,21 @@ app.on('window-all-closed', () => {
 });
 
 contextMenu({
-  // eslint-disable-next-line no-unused-vars
-  showInspectElement: isDev
+  showInspectElement: isDev,
+  prepend: (defaultActions, params) => [
+    {
+      label: 'Search block explorer for this transaction',
+      // Only show it when right-clicking text
+      visible: params.selectionText.trim().length === 64,
+      click: () => {
+        shell.openExternal(
+          `https://explorer.turtlecoin.lol/?search=${encodeURIComponent(
+            params.selectionText
+          )}`
+        );
+      }
+    }
+  ]
 });
 
 app.on('ready', async () => {

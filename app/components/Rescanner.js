@@ -85,7 +85,7 @@ export default class Rescanner extends Component<Props, State> {
       type: 'info',
       buttons: ['OK'],
       title: `${il8n.reset_complete}`,
-      message: `${il8n.syncing_again_from}${scanHeight}.`
+      message: `${il8n.syncing_again_from} ${scanHeight}.`
     });
   };
 
