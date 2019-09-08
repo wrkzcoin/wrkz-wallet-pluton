@@ -14,7 +14,8 @@ type Props = {
 };
 
 type State = {
-  scanHeight: string
+  scanHeight: string,
+  rescanInProgress: boolean
 };
 
 export default class Rescanner extends Component<Props, State> {
@@ -25,8 +26,11 @@ export default class Rescanner extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      scanHeight: ''
+      scanHeight: '',
+      rescanInProgress: false
     };
+    this.setRescanInProgress = this.setRescanInProgress.bind(this);
+    this.rescanWallet = this.rescanWallet.bind(this);
   }
 
   componentWillMount() {}
@@ -37,8 +41,15 @@ export default class Rescanner extends Component<Props, State> {
     this.setState({ scanHeight: event.target.value.trim() });
   };
 
+  setRescanInProgress = (rescanInProgress: boolean) => {
+    this.setState({
+      rescanInProgress
+    });
+  };
+
   rescanWallet = async (event: any) => {
     event.preventDefault();
+    this.setRescanInProgress(true);
     let fromStartHeight = false;
     let scanHeight = event.target[0].value;
     if (scanHeight === '') {
@@ -58,6 +69,7 @@ export default class Rescanner extends Component<Props, State> {
       this.setState({
         scanHeight: ''
       });
+      this.setRescanInProgress(false);
       return;
     }
     const userConfirm = remote.dialog.showMessageBox(null, {
@@ -74,6 +86,7 @@ export default class Rescanner extends Component<Props, State> {
             }`
     });
     if (userConfirm !== 1) {
+      this.setRescanInProgress(false);
       return;
     }
     log.debug(`Resetting wallet from block ${scanHeight}`);
@@ -87,12 +100,13 @@ export default class Rescanner extends Component<Props, State> {
       title: `${il8n.reset_complete}`,
       message: `${il8n.syncing_again_from} ${scanHeight}.`
     });
+    this.setRescanInProgress(false);
   };
 
   render() {
     const { darkMode } = this.props;
     const { textColor } = uiType(darkMode);
-    const { scanHeight } = this.state;
+    const { scanHeight, rescanInProgress } = this.state;
 
     return (
       <form onSubmit={this.rescanWallet}>
@@ -110,7 +124,13 @@ export default class Rescanner extends Component<Props, State> {
             />
           </div>
           <div className="control">
-            <button className="button is-danger">{il8n.rescan}</button>
+            <button
+              className={`button is-danger ${
+                rescanInProgress ? 'is-loading' : ''
+              }`}
+            >
+              {il8n.rescan}
+            </button>
           </div>
         </div>
       </form>

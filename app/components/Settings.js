@@ -240,8 +240,9 @@ export default class Settings extends Component<Props, State> {
               )}
               {activeTab === 'platform' && (
                 <div className="column is-one-third">
-                  <CloseToTrayToggle darkMode={darkMode} />
-                  <br />
+                  <div className="button-settings-page">
+                    <CloseToTrayToggle darkMode={darkMode} />
+                  </div>
                 </div>
               )}
             </div>
