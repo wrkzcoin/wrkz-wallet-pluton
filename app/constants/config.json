@@ -7,8 +7,6 @@
   "logLevel": "DISABLED",
   "daemonHost": "node.getproton.org",
   "daemonPort": 443,
-  "isCache": true,
-  "useSSL": true,
   "darkMode": false,
   "displayCurrency": "TRTL",
   "selectedFiat": "usd",
