@@ -3,14 +3,15 @@
 **v0.0.26**
 
 - transaction errors should now be fixed or at least 95% reduced (thanks zpalm and ibmcd for your assistance troubleshooting)
-- completely redesigned settings menu
 - indicator on the lock screen that your wallet is locked, not just logged out, as well as its sync status
 - ability to disable and configure the time of the autolock (in the settings menu)
 - ability to display transactions in fiat value (click on your balance on the bottom right)
+- completely redesigned settings menu
 - "find node" link updated to the new official TurtleCoin node finder (https://nodes.turtlecoin.lol/)
 - some various UI improvements
 - updated to latest version of wallet-backend
 - "test" transaction button for developers (sends a transaction between 0.01 - 1.00 with a fee of 0.1 and a random payment ID to the primary wallet addresss)
+- possibly other things I am forgetting
 
 This should hopefully fix most of the transaction issues everybody has been having. There are still times that a daemon is busy syncing and may not respond to your request. In the event of this, you should just wait a little while and retry your request. If it continuosly fails, it is likely an issue with the node, so please select another node.
 
