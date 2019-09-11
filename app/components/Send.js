@@ -5,10 +5,11 @@
 // Please see the included LICENSE file for more information.
 import crypto from 'crypto';
 import { remote } from 'electron';
+import isDev from 'electron-is-dev';
+import log from 'electron-log';
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
-import log from 'electron-log';
 import { session, eventEmitter, il8n, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
@@ -28,7 +29,8 @@ type State = {
   displayCurrency: string,
   fiatPrice: number,
   fiatSymbol: string,
-  symbolLocation: string
+  symbolLocation: string,
+  sendToAddress: string
 };
 
 export default class Send extends Component<Props, State> {
@@ -42,6 +44,7 @@ export default class Send extends Component<Props, State> {
       unlockedBalance: session.getUnlockedBalance(),
       enteredAmount: '',
       totalAmount: '',
+      sendToAddress: '',
       paymentID: '',
       darkMode: session.darkMode,
       transactionInProgress: false,
@@ -64,6 +67,7 @@ export default class Send extends Component<Props, State> {
     this.handlePaymentIDChange = this.handlePaymentIDChange.bind(this);
     this.updateFiatPrice = this.updateFiatPrice.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSendToAddressChange = this.handleSendToAddressChange.bind(this);
   }
 
   componentDidMount() {
@@ -146,6 +150,13 @@ export default class Send extends Component<Props, State> {
     });
   };
 
+  handleSendToAddressChange = (event: any) => {
+    const sendToAddress = event.target.value;
+    this.setState({
+      sendToAddress
+    });
+  };
+
   handleTotalAmountChange = (event: any) => {
     let totalAmount = event.target.value;
     if (totalAmount === '') {
@@ -179,6 +190,7 @@ export default class Send extends Component<Props, State> {
   };
 
   handleSubmit = async (event: any) => {
+    log.debug('form was submitted!');
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
 
@@ -322,6 +334,7 @@ export default class Send extends Component<Props, State> {
     const paymentID = crypto.randomBytes(32).toString('hex');
     log.debug(`Generated paymentID: ${paymentID}`);
     this.setState({ paymentID });
+    return paymentID;
   };
 
   handlePaymentIDChange = (event: any) => {
@@ -329,7 +342,12 @@ export default class Send extends Component<Props, State> {
   };
 
   resetPaymentID = () => {
-    this.setState({ paymentID: '', enteredAmount: '', totalAmount: '' });
+    this.setState({
+      paymentID: '',
+      enteredAmount: '',
+      totalAmount: '',
+      sendToAddress: ''
+    });
   };
 
   resetAmounts = () => {
@@ -363,6 +381,45 @@ export default class Send extends Component<Props, State> {
     return Math.floor(x * 100) / 100;
   }
 
+  createTestTransaction = async () => {
+    eventEmitter.emit('transactionInProgress');
+    log.debug('Creating test transaction for you.');
+
+    const sendToAddress = session.wallet.getPrimaryAddress();
+    const amount = Math.floor(Math.random() * 100) + 1;
+    const paymentID = this.generatePaymentID();
+
+    this.setState({
+      enteredAmount: String(amount / 100),
+      totalAmount: String((amount + 10) / 100),
+      sendToAddress
+    });
+
+    const [hash, err] = await session.sendTransaction(
+      sendToAddress,
+      amount,
+      paymentID
+    );
+
+    if (hash) {
+      remote.dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: [il8n.ok],
+        title: il8n.send_tx_complete_title,
+        message: `${il8n.send_tx_complete} ${hash}`
+      });
+      eventEmitter.emit('transactionCancel');
+    } else if (err) {
+      remote.dialog.showMessageBox(null, {
+        type: 'error',
+        buttons: [il8n.ok],
+        title: il8n.send_tx_error_title,
+        message: err.toString()
+      });
+    }
+    eventEmitter.emit('transactionCancel');
+  };
+
   render() {
     const {
       transactionComplete,
@@ -373,7 +430,8 @@ export default class Send extends Component<Props, State> {
       transactionInProgress,
       displayCurrency,
       fiatSymbol,
-      symbolLocation
+      symbolLocation,
+      sendToAddress
     } = this.state;
 
     const exampleAmount =
@@ -409,6 +467,8 @@ export default class Send extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.send_to_address_input_placeholder}
+                      value={sendToAddress}
+                      onChange={this.handleSendToAddressChange}
                     />
                   </div>
                 </label>
@@ -506,6 +566,19 @@ export default class Send extends Component<Props, State> {
                 >
                   {il8n.clear}
                 </button>
+                {isDev && (
+                  <a
+                    className="button is-warning is-large"
+                    onClick={this.createTestTransaction}
+                    onKeyPress={this.createTestTransaction}
+                    role="button"
+                    tabIndex={0}
+                    type="action"
+                    onMouseDown={event => event.preventDefault()}
+                  >
+                    Test
+                  </a>
+                )}
               </div>
             </form>
           </div>

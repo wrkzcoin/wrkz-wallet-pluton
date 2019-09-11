@@ -4,7 +4,12 @@
 //
 // Please see the included LICENSE file for more information.
 import request from 'request-promise';
-import { WalletBackend, Daemon, LogLevel } from 'turtlecoin-wallet-backend';
+import {
+  WalletBackend,
+  Daemon,
+  LogLevel,
+  Config
+} from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import fs from 'fs';
 import { createObjectCsvWriter } from 'csv-writer';
@@ -28,7 +33,7 @@ export default class WalletSession {
 
   firstLoadOnLogin: boolean;
 
-  wbConfig: any;
+  wbConfig: Config;
 
   selectedFiat: string;
 
@@ -54,7 +59,8 @@ export default class WalletSession {
     this.firstLoadOnLogin = true;
     this.wbConfig = {
       scanCoinbaseTransactions: config.scanCoinbaseTransactions,
-      customUserAgentString: `${name}-v${version}`
+      customUserAgentString: `${name}-v${version}`,
+      requestTimeout: 20 * 1000
     };
 
     this.selectedFiat = config.selectedFiat;
@@ -101,18 +107,40 @@ export default class WalletSession {
       this.syncStatus = this.getSyncStatus();
       this.address = this.wallet.getPrimaryAddress();
 
-      if (config.logLevel === 'DEBUG') {
-        this.wallet.setLogLevel(LogLevel.DEBUG);
-        this.wallet.setLoggerCallback(prettyMessage => {
-          const logStream = fs.createWriteStream(
-            `${directories[1]}/protonwallet.log`,
-            {
-              flags: 'a'
-            }
-          );
-          logStream.write(`${prettyMessage}\n`);
-        });
+      let logLevel;
+
+      switch (config.logLevel) {
+        case 'DEBUG':
+          logLevel = LogLevel.DEBUG;
+          break;
+        case 'ERROR':
+          logLevel = LogLevel.ERROR;
+          break;
+        case 'INFO':
+          logLevel = LogLevel.INFO;
+          break;
+        case 'WARNING':
+          logLevel = LogLevel.WARNING;
+          break;
+        case 'TRACE':
+          logLevel = LogLevel.TRACE;
+          break;
+        default:
+          logLevel = LogLevel.DISABLED;
+          break;
       }
+
+      this.wallet.setLogLevel(logLevel);
+
+      this.wallet.setLoggerCallback(prettyMessage => {
+        const logStream = fs.createWriteStream(
+          `${directories[1]}/wallet-backend.log`,
+          {
+            flags: 'a'
+          }
+        );
+        logStream.write(`${prettyMessage}\n`);
+      });
 
       setInterval(() => this.startAutoSave(), 1000 * 60 * 5);
 
