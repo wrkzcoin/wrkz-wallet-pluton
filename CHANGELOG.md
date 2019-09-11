@@ -3,6 +3,7 @@
 **v0.0.26**
 
 - transaction errors should now be fixed or at least 95% reduced (thanks zpalm and ibmcd for your assistance troubleshooting)
+- fixes a bug where auto-optimizing was not occurring
 - indicator on the lock screen that your wallet is locked, not just logged out, as well as its sync status
 - ability to disable and configure the time of the autolock (in the settings menu)
 - ability to display transactions in fiat value (click on your balance on the bottom right)
