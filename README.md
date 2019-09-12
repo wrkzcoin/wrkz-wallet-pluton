@@ -1,4 +1,4 @@
-<img src="https://cdn.discordapp.com/attachments/595762657458651152/599842701978107904/unknown.png">
+<img src="https://raw.githubusercontent.com/turtlecoin/turtle-wallet-proton/development/screenshots/screenshot.png">
 
 #### Master Build Status
 
