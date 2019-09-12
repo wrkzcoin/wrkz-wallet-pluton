@@ -13296,9 +13296,10 @@ turtlecoin-rpc@^1.0.2:
   optionalDependencies:
     turtlecoin-crypto "^3.0.5"
 
-"turtlecoin-wallet-backend@https://github.com/turtlecoin/turtlecoin-wallet-backend-js":
-  version "4.0.0"
-  resolved "https://github.com/turtlecoin/turtlecoin-wallet-backend-js#61c5bf97a54ce99c491008faa55f9eb1f49829b2"
+turtlecoin-wallet-backend@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-4.0.2.tgz#a3e67f59b0ec0253be1d675db3294487a68c7af3"
+  integrity sha512-lpE8dY398kWuDuC70Rkz3dZ4Rd9ZZ+IU+7NAl20YdJ26f28t9B+84ntfTf+5b/StZ881tqgZKFgYrDGQ6GhjUg==
   dependencies:
     lodash "^4.17.15"
     object-sizeof "^1.5.1"
