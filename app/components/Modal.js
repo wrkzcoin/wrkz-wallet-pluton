@@ -15,7 +15,7 @@ export default class Modal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isActive: 'is-active'
+      isActive: ''
     };
     this.toggleModal = this.toggleModal.bind(this);
   }
@@ -36,17 +36,19 @@ export default class Modal extends Component<Props, State> {
 
     return (
       <div className={`modal ${isActive}`}>
-        <div className="modal-background" />
+        <div
+          className="modal-background"
+          onClick={this.toggleModal}
+          onKeyPress={this.toggleModal}
+          role="button"
+          tabIndex={0}
+          onMouseDown={event => event.preventDefault()}
+        />
         <div className="modal-content">
           <div className="box">
             <p>Yes, this is a modal!</p>
           </div>
         </div>
-        <button
-          className="modal-close is-large"
-          aria-label="close"
-          onClick={this.toggleModal}
-        />
       </div>
     );
   }
