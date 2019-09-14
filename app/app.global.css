@@ -276,13 +276,6 @@
   width: 115px;
 }
 
-.modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .is-family-monospace {
   font-family: monospace !important;
 }
