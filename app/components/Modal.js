@@ -4,15 +4,12 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import uiType from '../utils/uitype';
 
 type State = {
   isActive: string
 };
 
-type Props = {
-  darkMode: boolean
-};
+type Props = {};
 
 export default class Modal extends Component<Props, State> {
   constructor(props: Props) {
@@ -35,17 +32,15 @@ export default class Modal extends Component<Props, State> {
   };
 
   render() {
-    const { darkMode } = this.props;
     const { isActive } = this.state;
-    const { textColor } = uiType(darkMode);
 
     return (
       <div className={`modal ${isActive}`}>
         <div className="modal-background" />
         <div className="modal-content">
-          <center>
-            <p className={textColor}>Yes, this is a modal!</p>
-          </center>
+          <div className="box">
+            <p>Yes, this is a modal!</p>
+          </div>
         </div>
         <button
           className="modal-close is-large"
