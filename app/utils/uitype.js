@@ -24,7 +24,9 @@ export default function uiType(darkMode: boolean) {
 
   const buttonColor = darkMode ? 'is-dark' : '';
 
-  const menuActiveColor = darkMode ? 'has-background-black-ter' : '';
+  const menuActiveColor = darkMode
+    ? 'has-background-black-ter'
+    : 'has-background-light';
 
   const response = {
     backgroundColor,
