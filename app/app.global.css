@@ -11,11 +11,6 @@
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma-extensions/dist/css/bulma-extensions.min.css';
 
-@font-face {
-  font-family: monospace;
-  src: local('Source Code Pro');
-}
-
 .button-settings-page {
   position: relative;
   top: 6px;
@@ -282,7 +277,7 @@
 }
 
 .is-family-monospace {
-  font-family: monospace !important;
+  font-family: 'Source Code Pro' !important;
 }
 
 .fades-in {

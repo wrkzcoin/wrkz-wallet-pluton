@@ -90,7 +90,9 @@ class NavBar extends Component<Props, State> {
                   <Link to={routes.HOME} className="navbar-item">
                     <i className="fa fa-credit-card" />
                     {pathname === '/' && (
-                      <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
+                      <p className="sans">
+                        <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
+                      </p>
                     )}
                     {pathname !== '/' && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
                   </Link>

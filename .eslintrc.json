@@ -13,6 +13,7 @@
     "flowtype/no-weak-types": "off",
     "class-methods-use-this": "off",
     "jsx-a11y/label-has-for": "off",
+    "font-family-no-missing-generic-family-keyword": "off",
     "no-plusplus": "off",
     "no-restricted-syntax": [
       "error",

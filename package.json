@@ -280,7 +280,8 @@
     "request-promise": "^4.2.4",
     "semver": "^6.2.0",
     "source-code-pro": "^2.30.2",
-    "turtlecoin-wallet-backend": "^4.0.2"
+    "turtlecoin-wallet-backend": "^4.0.2",
+    "typeface-clear-sans": "^0.0.44"
   },
   "devEngines": {
     "node": ">=10.x",
