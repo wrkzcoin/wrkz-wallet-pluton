@@ -27,7 +27,9 @@ export default class Modal extends Component<Props, State> {
     eventEmitter.on('openModal', message => this.openModal(message));
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    eventEmitter.off('openModal', message => this.openModal(message));
+  }
 
   closeModal = () => {
     this.setState({

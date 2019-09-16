@@ -69,6 +69,7 @@ export default class Send extends Component<Props, State> {
     this.updateFiatPrice = this.updateFiatPrice.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSendToAddressChange = this.handleSendToAddressChange.bind(this);
+    this.confirmTransaction = this.confirmTransaction.bind(this);
   }
 
   componentDidMount() {
@@ -383,7 +384,51 @@ export default class Send extends Component<Props, State> {
   }
 
   confirmTransaction = () => {
-    eventEmitter.emit('openModal', 'Yes, this is a new message!');
+    const { sendToAddress, enteredAmount, totalAmount, paymentID } = this.state;
+    const message = (
+      <div>
+        <p className="title">Confirm Transaction</p>
+        <p className="subtitle">
+          Address:
+          <br />
+          {sendToAddress}
+        </p>
+        <p className="subtitle">
+          Amount:
+          <br />
+          {enteredAmount}
+        </p>
+        {paymentID !== '' && (
+          <p className="subtitle">
+            Payment ID:
+            <br />
+            {paymentID}
+          </p>
+        )}
+        <p className="subtitle">
+          Network Fee:
+          <br />
+          0.1 TRTL
+        </p>
+        {session.daemon.feeAmount !== 0 && (
+          <p className="subtitle">
+            Node Fee:
+            <br />
+            {session.atomicToHuman(session.daemon.feeAmount, true)}
+          </p>
+        )}
+        <p className="subtitle">
+          Total Amount:
+          <br />
+          {totalAmount}
+        </p>
+        <div className="buttons">
+          <div className="button is-success">OK, Send it</div>
+          <div className="button is-danger">Hold on a minute...</div>
+        </div>
+      </div>
+    );
+    eventEmitter.emit('openModal', message);
   };
 
   createTestTransaction = async () => {
