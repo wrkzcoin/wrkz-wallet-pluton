@@ -57,7 +57,7 @@ export default class Modal extends Component<Props, State> {
   confirmModal = () => {
     const { confirmAction } = this.state;
     log.debug(confirmAction);
-    log.debug('confirmed!');
+    eventEmitter.emit(confirmAction);
     this.closeModal();
   };
 

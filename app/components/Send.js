@@ -78,6 +78,7 @@ export default class Send extends Component<Props, State> {
     eventEmitter.on('transactionCancel', this.handleTransactionCancel);
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.on('modifyCurrency', this.modifyCurrency);
+    eventEmitter.on('confirmTransaction', this.sendTransaction);
   }
 
   componentWillUnmount() {
@@ -86,6 +87,7 @@ export default class Send extends Component<Props, State> {
     eventEmitter.off('transactionCancel', this.handleTransactionCancel);
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.off('modifyCurrency', this.modifyCurrency);
+    eventEmitter.off('confirmTransaction', this.sendTransaction);
   }
 
   modifyCurrency = (displayCurrency: string) => {
@@ -189,6 +191,45 @@ export default class Send extends Component<Props, State> {
       enteredAmount,
       totalAmount
     });
+  };
+
+  sendTransaction = async () => {
+    const { sendToAddress, enteredAmount, paymentID } = this.state;
+    const notSynced = session.getSyncStatus() < 99.99;
+
+    eventEmitter.emit('transactionInProgress');
+    const [hash, err] = await session.sendTransaction(
+      sendToAddress,
+      Number(enteredAmount),
+      paymentID
+    );
+    if (hash) {
+      remote.dialog.showMessageBox(null, {
+        type: 'info',
+        buttons: [il8n.ok],
+        title: il8n.send_tx_complete_title,
+        message: `${il8n.send_tx_complete} ${hash}`
+      });
+      eventEmitter.emit('transactionComplete');
+    } else if (err) {
+      if (notSynced) {
+        remote.dialog.showMessageBox(null, {
+          type: 'warning',
+          buttons: [il8n.cancel, il8n.ok],
+          title: 'Transaction Attempt Failed',
+          message:
+            "You aren't synced with the network, and the transaction failed to send. Please allow the wallet to completely sync before attempting again."
+        });
+      } else {
+        remote.dialog.showMessageBox(null, {
+          type: 'error',
+          buttons: [il8n.ok],
+          title: il8n.send_tx_error_title,
+          message: err.toString()
+        });
+      }
+      eventEmitter.emit('transactionCancel');
+    }
   };
 
   handleSubmit = async (event: any) => {
