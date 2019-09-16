@@ -4,6 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import { eventEmitter } from '../index';
 
 type State = {
   isActive: string
@@ -15,38 +16,48 @@ export default class Modal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isActive: ''
+      isActive: '',
+      message: ''
     };
-    this.toggleModal = this.toggleModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.openModal = this.openModal.bind(this);
   }
 
-  componentWillMount() {}
+  componentWillMount() {
+    eventEmitter.on('openModal', message => this.openModal(message));
+  }
 
   componentWillUnmount() {}
 
-  toggleModal = () => {
-    const { isActive } = this.state;
+  closeModal = () => {
     this.setState({
-      isActive: isActive === 'is-active' ? '' : 'is-active'
+      isActive: ''
+    });
+  };
+
+  openModal = (message: string) => {
+    this.setState({
+      isActive: 'is-active',
+      message
     });
   };
 
   render() {
-    const { isActive } = this.state;
+    const { isActive, message } = this.state;
 
     return (
       <div className={`modal ${isActive}`}>
         <div
           className="modal-background"
-          onClick={this.toggleModal}
-          onKeyPress={this.toggleModal}
+          onClick={this.closeModal}
+          onKeyPress={this.closeModal}
           role="button"
           tabIndex={0}
           onMouseDown={event => event.preventDefault()}
         />
         <div className="modal-content">
           <div className="box">
-            <p>Yes, this is a modal!</p>
+            <p>{message}</p>
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ import { session, eventEmitter, il8n, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
+import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 type Props = {};
@@ -381,6 +382,10 @@ export default class Send extends Component<Props, State> {
     return Math.floor(x * 100) / 100;
   }
 
+  confirmTransaction = () => {
+    eventEmitter.emit('openModal', 'Yes, this is a new message!');
+  };
+
   createTestTransaction = async () => {
     eventEmitter.emit('transactionInProgress');
     log.debug('Creating test transaction for you.');
@@ -448,6 +453,7 @@ export default class Send extends Component<Props, State> {
     return (
       <div>
         <Redirector />
+        <Modal />
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
             effect="solid"
@@ -579,6 +585,17 @@ export default class Send extends Component<Props, State> {
                     Test
                   </a>
                 )}
+                <a
+                  className="button is-info is-large"
+                  onClick={this.confirmTransaction}
+                  onKeyPress={this.confirmTransaction}
+                  role="button"
+                  tabIndex={0}
+                  type="action"
+                  onMouseDown={event => event.preventDefault()}
+                >
+                  Modal
+                </a>
               </div>
             </form>
           </div>
