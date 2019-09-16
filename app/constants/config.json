@@ -5,7 +5,7 @@
   "autoSelectDaemon": true,
   "minimizeToTray": false,
   "logLevel": "DISABLED",
-  "daemonHost": "node.getproton.org",
+  "daemonHost": "blockapi.turtlepay.io",
   "daemonPort": 443,
   "darkMode": false,
   "displayCurrency": "TRTL",
