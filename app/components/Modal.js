@@ -4,10 +4,15 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import log from 'electron-log';
 import { eventEmitter } from '../index';
 
 type State = {
-  isActive: string
+  isActive: string,
+  message: any,
+  confirmLabel: string,
+  denyLabel: string,
+  confirmAction: string
 };
 
 type Props = {};
@@ -17,18 +22,30 @@ export default class Modal extends Component<Props, State> {
     super(props);
     this.state = {
       isActive: '',
-      message: ''
+      message: '',
+      confirmLabel: '',
+      denyLabel: '',
+      confirmAction: ''
     };
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
+    this.confirmModal = this.confirmModal.bind(this);
   }
 
   componentWillMount() {
-    eventEmitter.on('openModal', message => this.openModal(message));
+    eventEmitter.on(
+      'openModal',
+      (message, confirmLabel, denyLabel, confirmAction) =>
+        this.openModal(message, confirmLabel, denyLabel, confirmAction)
+    );
   }
 
   componentWillUnmount() {
-    eventEmitter.off('openModal', message => this.openModal(message));
+    eventEmitter.off(
+      'openModal',
+      (message, confirmLabel, denyLabel, confirmAction) =>
+        this.openModal(message, confirmLabel, denyLabel, confirmAction)
+    );
   }
 
   closeModal = () => {
@@ -37,15 +54,30 @@ export default class Modal extends Component<Props, State> {
     });
   };
 
-  openModal = (message: string) => {
+  confirmModal = () => {
+    const { confirmAction } = this.state;
+    log.debug(confirmAction);
+    log.debug('confirmed!');
+    this.closeModal();
+  };
+
+  openModal = (
+    message: string,
+    confirmLabel: string,
+    denyLabel: string,
+    confirmAction: string
+  ) => {
     this.setState({
       isActive: 'is-active',
-      message
+      message,
+      confirmLabel,
+      denyLabel,
+      confirmAction
     });
   };
 
   render() {
-    const { isActive, message } = this.state;
+    const { isActive, message, confirmLabel, denyLabel } = this.state;
 
     return (
       <div className={`modal ${isActive}`}>
@@ -59,7 +91,30 @@ export default class Modal extends Component<Props, State> {
         />
         <div className="modal-content">
           <div className="box">
-            <p>{message}</p>
+            {message}
+            <br />
+            <div className="buttons is-right">
+              <div
+                className="button is-success"
+                onClick={() => this.confirmModal()}
+                onKeyPress={() => this.confirmModal()}
+                role="button"
+                tabIndex={0}
+                onMouseDown={event => event.preventDefault()}
+              >
+                {confirmLabel}
+              </div>
+              <div
+                className="button is-danger"
+                onClick={this.closeModal}
+                onKeyPress={this.closeModal}
+                role="button"
+                tabIndex={0}
+                onMouseDown={event => event.preventDefault()}
+              >
+                {denyLabel}
+              </div>
+            </div>
           </div>
         </div>
       </div>

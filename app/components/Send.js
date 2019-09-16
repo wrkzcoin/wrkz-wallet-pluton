@@ -384,19 +384,19 @@ export default class Send extends Component<Props, State> {
   }
 
   confirmTransaction = () => {
-    const { sendToAddress, enteredAmount, totalAmount, paymentID } = this.state;
+    const { sendToAddress, totalAmount, paymentID } = this.state;
     const message = (
       <div>
         <p className="title">Confirm Transaction</p>
         <p className="subtitle">
-          Address:
+          Send to:
           <br />
           {sendToAddress}
         </p>
         <p className="subtitle">
-          Amount:
+          Amount (w/ fee):
           <br />
-          {enteredAmount}
+          {totalAmount}
         </p>
         {paymentID !== '' && (
           <p className="subtitle">
@@ -405,30 +405,15 @@ export default class Send extends Component<Props, State> {
             {paymentID}
           </p>
         )}
-        <p className="subtitle">
-          Network Fee:
-          <br />
-          0.1 TRTL
-        </p>
-        {session.daemon.feeAmount !== 0 && (
-          <p className="subtitle">
-            Node Fee:
-            <br />
-            {session.atomicToHuman(session.daemon.feeAmount, true)}
-          </p>
-        )}
-        <p className="subtitle">
-          Total Amount:
-          <br />
-          {totalAmount}
-        </p>
-        <div className="buttons">
-          <div className="button is-success">OK, Send it</div>
-          <div className="button is-danger">Hold on a minute...</div>
-        </div>
       </div>
     );
-    eventEmitter.emit('openModal', message);
+    eventEmitter.emit(
+      'openModal',
+      message,
+      'Send it!',
+      'Wait a minute...',
+      'confirmTransaction'
+    );
   };
 
   createTestTransaction = async () => {
