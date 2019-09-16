@@ -477,6 +477,11 @@ export default class WalletSession {
     if (percentSync > 99.99 && percentSync < 100) {
       percentSync = 99.99;
     }
+
+    if (networkHeight - walletHeight === 1) {
+      percentSync = 100.0;
+    }
+
     return this.roundToNearestHundredth(percentSync);
   }
 

@@ -4,7 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import log from 'electron-log';
+import uiType from '../utils/uitype';
 import { eventEmitter } from '../index';
 
 type State = {
@@ -15,7 +15,9 @@ type State = {
   confirmAction: string
 };
 
-type Props = {};
+type Props = {
+  darkMode: boolean
+};
 
 export default class Modal extends Component<Props, State> {
   constructor(props: Props) {
@@ -55,10 +57,9 @@ export default class Modal extends Component<Props, State> {
   };
 
   confirmModal = () => {
-    const { confirmAction } = this.state;
-    log.debug(confirmAction);
-    eventEmitter.emit(confirmAction);
     this.closeModal();
+    const { confirmAction } = this.state;
+    eventEmitter.emit(confirmAction);
   };
 
   openModal = (
@@ -77,10 +78,12 @@ export default class Modal extends Component<Props, State> {
   };
 
   render() {
+    const { darkMode } = this.props;
     const { isActive, message, confirmLabel, denyLabel } = this.state;
+    const { backgroundColor } = uiType(darkMode);
 
     return (
-      <div className={`modal ${isActive}`}>
+      <div className={`modal ${isActive} fadein`}>
         <div
           className="modal-background"
           onClick={this.closeModal}
@@ -90,7 +93,7 @@ export default class Modal extends Component<Props, State> {
           onMouseDown={event => event.preventDefault()}
         />
         <div className="modal-content">
-          <div className="box">
+          <div className={`box ${backgroundColor}`}>
             {message}
             <br />
             <div className="buttons is-right">

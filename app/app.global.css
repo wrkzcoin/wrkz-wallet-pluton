@@ -35,6 +35,10 @@
   animation: fadein 2s;
 }
 
+.modal {
+  animation: fadein 0.25s;
+}
+
 .fullwindow {
   position: absolute;
   display: table;

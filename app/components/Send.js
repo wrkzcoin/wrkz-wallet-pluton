@@ -425,23 +425,32 @@ export default class Send extends Component<Props, State> {
   }
 
   confirmTransaction = () => {
-    const { sendToAddress, totalAmount, paymentID } = this.state;
+    const { sendToAddress, totalAmount, paymentID, darkMode } = this.state;
+
+    if (sendToAddress === '' || totalAmount === '') {
+      return;
+    }
+
+    const { textColor } = uiType(darkMode);
+
     const message = (
       <div>
-        <p className="title">Confirm Transaction</p>
-        <p className="subtitle">
-          Send to:
+        <center>
+          <p className={`title ${textColor}`}>Confirm Transaction</p>
+        </center>
+        <p className={`subtitle ${textColor}`}>
+          <b>Send to:</b>
           <br />
           {sendToAddress}
         </p>
-        <p className="subtitle">
-          Amount (w/ fee):
+        <p className={`subtitle ${textColor}`}>
+          <b>Amount (w/ fee):</b>
           <br />
           {totalAmount}
         </p>
         {paymentID !== '' && (
-          <p className="subtitle">
-            Payment ID:
+          <p className={`subtitle ${textColor}`}>
+            <b>Payment ID:</b>
             <br />
             {paymentID}
           </p>
@@ -524,7 +533,7 @@ export default class Send extends Component<Props, State> {
     return (
       <div>
         <Redirector />
-        <Modal />
+        <Modal darkMode={darkMode} />
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
             effect="solid"
