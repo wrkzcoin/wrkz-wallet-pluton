@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.0.28
+
+- introduces a non-blocking in-window 'modal' component which replaces all native (thread blocking) dialogs
+
+## v0.0.27
+
+- reverts the default remote node change from v0.0.26
+
 ## v0.0.26
 
 - transaction errors should now be fixed or at least 95% reduced (thanks zpalm and ibmcd for your assistance troubleshooting)
