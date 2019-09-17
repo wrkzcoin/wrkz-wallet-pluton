@@ -4,8 +4,8 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { remote } from 'electron';
-import { config, session, eventEmitter, il8n } from '../index';
+import { config, session, eventEmitter } from '../index';
+import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -31,6 +31,7 @@ export default class TimeoutSelector extends Component<Props, State> {
     this.handleTimeoutChange = this.handleTimeoutChange.bind(this);
     this.disableTimeout = this.disableTimeout.bind(this);
     this.enableTimeout = this.enableTimeout.bind(this);
+    this.updateTimeoutInConfig = this.updateTimeoutInConfig.bind(this);
   }
 
   componentDidMount() {}
@@ -65,24 +66,33 @@ export default class TimeoutSelector extends Component<Props, State> {
     });
   };
 
-  updateTimeoutInConfig(event: any) {
+  updateTimeoutInConfig = (event: any) => {
     event.preventDefault();
+    const { darkMode } = this.props;
+    const { textColor } = uiType(darkMode);
     if (event.target[0].value === '' || event.target[0].value === '0') {
       return;
     }
     const interval: number = Number(event.target[0].value);
     if (interval > 35791) {
-      remote.dialog.showMessageBox(null, {
-        type: 'info',
-        buttons: [il8n.cancel, il8n.ok],
-        title: 'Value Too High!',
-        message: `Because of a javascript limitation, the maximum amount of minutes you can select is 35,791 minutes.`
-      });
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Value Too High!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            Because of a JavaScript limitation, the highest you can set this to
+            is 35,791 minutes.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
       return;
     }
     if (interval) session.modifyConfig('autoLockInterval', interval);
     eventEmitter.emit('newLockInterval', interval);
-  }
+  };
 
   render() {
     const { darkMode } = this.props;
@@ -90,6 +100,7 @@ export default class TimeoutSelector extends Component<Props, State> {
     const { textColor } = uiType(darkMode);
     return (
       <div>
+        <Modal darkMode={darkMode} />
         <p className={`has-text-weight-bold ${textColor}`}>
           Autolock Time Interval (in minutes):
         </p>
