@@ -3,12 +3,12 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import { remote } from 'electron';
 import React, { Component } from 'react';
 import { config, session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
+import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 type Props = {};
@@ -35,46 +35,72 @@ export default class ChangePassword extends Component<Props, State> {
   componentWillUnmount() {}
 
   handleSubmit = (event: any) => {
+    const { darkMode } = this.state;
+    const { textColor } = uiType(darkMode);
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
     const oldPassword = event.target[0].value;
     const newPassword = event.target[1].value;
     const passwordConfirm = event.target[2].value;
     if (oldPassword !== session.walletPassword) {
-      remote.dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: [il8n.ok],
-        title: il8n.change_passwd_incorrect_passwd_title,
-        message: il8n.change_passwd_incorrect_passwd_message
-      });
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Incorrect Password!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            You did not enter your current password correctly. Please try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
       return;
     }
     if (newPassword !== passwordConfirm) {
-      remote.dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: [il8n.ok],
-        title: il8n.change_passwd_passwd_mismatch_title,
-        message: il8n.change_passwd_passwd_mismatch_message
-      });
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Password Do Not Match!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            The passwords you entered were not the same. Try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
       return;
     }
     session.walletPassword = newPassword;
     const saved = session.saveWallet(config.walletFile);
     if (saved) {
-      remote.dialog.showMessageBox(null, {
-        type: 'info',
-        buttons: [il8n.ok],
-        title: il8n.change_passwd_passwd_change_success_title,
-        message: il8n.change_passwd_passwd_change_success_message
-      });
-      eventEmitter.emit('openNewWallet');
+      const message = (
+        <div>
+          <center>
+            <p className={`title ${textColor}`}>Success!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            The password was changed successfully. Take care not to forget it.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, 'openNewWallet');
     } else {
-      remote.dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: [il8n.ok],
-        title: il8n.change_passwd_passwd_change_unsuccess_title,
-        message: il8n.change_passwd_passwd_change_unsuccess_message
-      });
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            The password was not changed sucessfully. Check that you have write
+            permissions to the file and try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
     }
   };
 
@@ -85,6 +111,7 @@ export default class ChangePassword extends Component<Props, State> {
     return (
       <div>
         <Redirector />
+        <Modal darkMode={darkMode} />
         <div className={`wholescreen ${fillColor}`}>
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>

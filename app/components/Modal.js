@@ -12,7 +12,9 @@ type State = {
   message: any,
   confirmLabel: string,
   denyLabel: string,
-  confirmAction: string
+  confirmAction: string,
+  extraLabel?: string,
+  extraAction?: string
 };
 
 type Props = {
@@ -27,7 +29,9 @@ export default class Modal extends Component<Props, State> {
       message: '',
       confirmLabel: '',
       denyLabel: '',
-      confirmAction: ''
+      confirmAction: '',
+      extraLabel: '',
+      extraAction: ''
     };
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
@@ -37,16 +41,44 @@ export default class Modal extends Component<Props, State> {
   componentWillMount() {
     eventEmitter.on(
       'openModal',
-      (message, confirmLabel, denyLabel, confirmAction) =>
-        this.openModal(message, confirmLabel, denyLabel, confirmAction)
+      (
+        message,
+        confirmLabel,
+        denyLabel,
+        confirmAction,
+        extraLabel,
+        extraAction
+      ) =>
+        this.openModal(
+          message,
+          confirmLabel,
+          denyLabel,
+          confirmAction,
+          extraLabel,
+          extraAction
+        )
     );
   }
 
   componentWillUnmount() {
     eventEmitter.off(
       'openModal',
-      (message, confirmLabel, denyLabel, confirmAction) =>
-        this.openModal(message, confirmLabel, denyLabel, confirmAction)
+      (
+        message,
+        confirmLabel,
+        denyLabel,
+        confirmAction,
+        extraLabel,
+        extraAction
+      ) =>
+        this.openModal(
+          message,
+          confirmLabel,
+          denyLabel,
+          confirmAction,
+          extraLabel,
+          extraAction
+        )
     );
   }
 
@@ -62,24 +94,43 @@ export default class Modal extends Component<Props, State> {
     eventEmitter.emit(confirmAction);
   };
 
+  extraAction = () => {
+    this.closeModal();
+    const { extraAction } = this.state;
+    if (!extraAction) {
+      return;
+    }
+    eventEmitter.emit(extraAction);
+  };
+
   openModal = (
     message: string,
     confirmLabel: string,
     denyLabel: string,
-    confirmAction: string
+    confirmAction: string,
+    extraLabel?: string,
+    extraAction?: string
   ) => {
     this.setState({
       isActive: 'is-active',
       message,
       confirmLabel,
       denyLabel,
-      confirmAction
+      confirmAction,
+      extraLabel: extraLabel !== '' ? extraLabel : '',
+      extraAction: extraAction !== '' ? extraAction : ''
     });
   };
 
   render() {
     const { darkMode } = this.props;
-    const { isActive, message, confirmLabel, denyLabel } = this.state;
+    const {
+      isActive,
+      message,
+      confirmLabel,
+      denyLabel,
+      extraLabel
+    } = this.state;
     const { backgroundColor } = uiType(darkMode);
 
     return (
@@ -97,16 +148,30 @@ export default class Modal extends Component<Props, State> {
             {message}
             <br />
             <div className="buttons is-right">
-              <div
-                className="button is-success is-large"
-                onClick={() => this.confirmModal()}
-                onKeyPress={() => this.confirmModal()}
-                role="button"
-                tabIndex={0}
-                onMouseDown={event => event.preventDefault()}
-              >
-                {confirmLabel}
-              </div>
+              {confirmLabel && (
+                <div
+                  className="button is-success is-large"
+                  onClick={() => this.confirmModal()}
+                  onKeyPress={() => this.confirmModal()}
+                  role="button"
+                  tabIndex={0}
+                  onMouseDown={event => event.preventDefault()}
+                >
+                  {confirmLabel}
+                </div>
+              )}
+              {extraLabel && (
+                <div
+                  className="button is-success is-large"
+                  onClick={() => this.extraAction()}
+                  onKeyPress={() => this.extraAction()}
+                  role="button"
+                  tabIndex={0}
+                  onMouseDown={event => event.preventDefault()}
+                >
+                  {extraLabel}
+                </div>
+              )}
               {denyLabel && (
                 <div
                   className="button is-danger is-large"
