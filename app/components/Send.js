@@ -352,8 +352,8 @@ export default class Send extends Component<Props, State> {
           'transactionCancel'
         );
       }
-      eventEmitter.emit('transactionCancel');
     }
+    eventEmitter.emit('transactionCancel');
   };
 
   createTestTransaction = async () => {

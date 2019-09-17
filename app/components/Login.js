@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
 import SyncReminder from './SyncReminder';
+import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 type Props = {};
@@ -74,6 +75,7 @@ export default class Login extends Component<Props, State> {
     return (
       <div>
         <Redirector />
+        <Modal darkMode={darkMode} />
         <div className={`fullwindow outer-div ${backgroundColor}`}>
           <div className="mid-div">
             <div

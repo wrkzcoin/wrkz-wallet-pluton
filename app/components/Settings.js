@@ -10,6 +10,7 @@ import { session, eventEmitter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
+import Modal from './Modal';
 import FiatSelector from './FiatSelector';
 import TimeoutSelector from './TimeoutSelector';
 import NodeChanger from './NodeChanger';
@@ -101,6 +102,7 @@ export default class Settings extends Component<Props, State> {
     return (
       <div>
         <Redirector />
+        <Modal darkMode={darkMode} />
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
             effect="solid"

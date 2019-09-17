@@ -84,7 +84,6 @@ if (!fs.existsSync(`${programDirectory}/config.json`)) {
     .toString();
 
   // add possible missing fields using internal config values
-
   try {
     config = Object.assign(config, JSON.parse(rawUserConfig));
   } catch {

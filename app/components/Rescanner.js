@@ -6,7 +6,6 @@
 import React, { Component } from 'react';
 import log from 'electron-log';
 import { il8n, session, eventEmitter } from '../index';
-import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -133,7 +132,6 @@ export default class Rescanner extends Component<Props, State> {
 
     return (
       <form onSubmit={this.confirmRescan}>
-        <Modal darkMode={darkMode} />
         <p className={`has-text-weight-bold ${textColor}`}>
           {il8n.rescan_wallet}
         </p>
