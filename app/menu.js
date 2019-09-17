@@ -3,7 +3,7 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
+import { app, Menu, shell, BrowserWindow } from 'electron';
 import log from 'electron-log';
 import LocalizedStrings from 'react-localization';
 import npmPackage from '../package.json';
@@ -312,20 +312,7 @@ export default class MenuBuilder {
   handleRestore() {
     this.mainWindow.webContents.send('handleSaveSilent');
     log.debug('Import menu selected.');
-    // seed will be 0, keys will be 1
-    const userSelection = dialog.showMessageBox(null, {
-      type: 'info',
-      buttons: [il8n.cancel, il8n.seed, il8n.keys],
-      title: il8n.restore,
-      message: il8n.seed_or_keys
-    });
-    if (userSelection === 1) {
-      log.debug('User selected to import from seed...');
-      this.mainWindow.webContents.send('importSeed');
-    } else if (userSelection === 2) {
-      log.debug('User selected to import from keys...');
-      this.mainWindow.webContents.send('importKey');
-    }
+    this.mainWindow.webContents.send('handleImport');
   }
 
   buildDefaultTemplate() {

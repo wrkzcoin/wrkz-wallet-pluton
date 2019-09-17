@@ -214,10 +214,8 @@ export default class Send extends Component<Props, State> {
           </center>
           <br />
           <p className={`subtitle ${textColor}`}>
-            The transaction was not successful.
-          </p>
-          <p className={`subtitle ${textColor}`}>
-            You don&apos;t have enough funds!
+            The transaction was not successful. You don&apos;t have enough
+            funds!
           </p>
         </div>
       );
@@ -316,11 +314,8 @@ export default class Send extends Component<Props, State> {
             </center>
             <br />
             <p className={`subtitle ${textColor}`}>
-              The transaction was not successful.
-            </p>
-            <p className={`subtitle ${textColor}`}>
-              The wallet isn&apos;t synced. Wait until you are synced and try
-              again.
+              The transaction was not successful. The wallet isn&apos;t synced.
+              Wait until you are synced and try again.
             </p>
           </div>
         );

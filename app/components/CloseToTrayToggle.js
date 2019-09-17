@@ -4,10 +4,8 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { remote } from 'electron';
-import log from 'electron-log';
 import uiType from '../utils/uitype';
-import { session, il8n, config } from '../index';
+import { session, config, eventEmitter } from '../index';
 
 type State = {
   closeToTray: boolean
@@ -32,45 +30,59 @@ export default class CloseToTrayToggle extends Component<Props, State> {
   componentWillUnmount() {}
 
   closeToTrayOn = () => {
+    const { darkMode } = this.props;
+    const { textColor } = uiType(darkMode);
     this.setState({
       closeToTray: true
     });
     session.toggleCloseToTray(true);
-    const userSelection = remote.dialog.showMessageBox(null, {
-      type: 'info',
-      buttons: ['Yes', 'No'],
-      title: il8n.title_restart_required,
-      message: il8n.restart_required
-    });
-    if (userSelection === 0) {
-      if (process.env.NODE_ENV === 'development') {
-        log.debug(`Can't relaunch application while in dev mode.`);
-        return;
-      }
-      remote.app.relaunch();
-      remote.app.exit();
-    }
+    const message = (
+      <div>
+        <center>
+          <p className={`title ${textColor}`}>Warning!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          Changing this setting requires an application restart. Would you like
+          to restart now?
+        </p>
+      </div>
+    );
+    eventEmitter.emit(
+      'openModal',
+      message,
+      'Restart',
+      'Not Now',
+      'restartApplication'
+    );
   };
 
   closeToTrayOff = () => {
+    const { darkMode } = this.props;
+    const { textColor } = uiType(darkMode);
     this.setState({
       closeToTray: false
     });
     session.toggleCloseToTray(false);
-    const userSelection = remote.dialog.showMessageBox(null, {
-      type: 'info',
-      buttons: ['Yes', 'No'],
-      title: `Restart Required`,
-      message: `To change this setting, an application restart is required. Would you like to restart now?`
-    });
-    if (userSelection === 0) {
-      if (process.env.NODE_ENV === 'development') {
-        log.debug(`Can't relaunch appliation while in dev mode.`);
-        return;
-      }
-      remote.app.relaunch();
-      remote.app.exit();
-    }
+    const message = (
+      <div>
+        <center>
+          <p className={`title ${textColor}`}>Warning!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          Changing this setting requires an application restart. Would you like
+          to restart now?
+        </p>
+      </div>
+    );
+    eventEmitter.emit(
+      'openModal',
+      message,
+      'Restart',
+      'Not Now',
+      'restartApplication'
+    );
   };
 
   render() {

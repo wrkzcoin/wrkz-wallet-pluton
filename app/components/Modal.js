@@ -140,6 +140,7 @@ export default class Modal extends Component<Props, State> {
           onClick={this.closeModal}
           onKeyPress={this.closeModal}
           role="button"
+          type="button"
           tabIndex={0}
           onMouseDown={event => event.preventDefault()}
         />
@@ -149,40 +150,40 @@ export default class Modal extends Component<Props, State> {
             <br />
             <div className="buttons is-right">
               {confirmLabel && (
-                <div
+                <button
                   className="button is-success is-large"
                   onClick={() => this.confirmModal()}
                   onKeyPress={() => this.confirmModal()}
-                  role="button"
+                  type="submit"
                   tabIndex={0}
                   onMouseDown={event => event.preventDefault()}
                 >
                   {confirmLabel}
-                </div>
+                </button>
               )}
               {extraLabel && (
-                <div
-                  className="button is-success is-large"
+                <button
+                  className="button is-warning is-large"
                   onClick={() => this.extraAction()}
                   onKeyPress={() => this.extraAction()}
-                  role="button"
+                  type="button"
                   tabIndex={0}
                   onMouseDown={event => event.preventDefault()}
                 >
                   {extraLabel}
-                </div>
+                </button>
               )}
               {denyLabel && (
-                <div
+                <button
                   className="button is-danger is-large"
                   onClick={this.closeModal}
                   onKeyPress={this.closeModal}
-                  role="button"
+                  type="button"
                   tabIndex={0}
                   onMouseDown={event => event.preventDefault()}
                 >
                   {denyLabel}
-                </div>
+                </button>
               )}
             </div>
           </div>
