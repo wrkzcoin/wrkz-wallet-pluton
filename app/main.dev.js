@@ -13,6 +13,7 @@ import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
 import iConfig from './constants/config';
+import TurtleCoind from './utils/TurtleCoind';
 
 let isQuitting;
 let tray = null;
@@ -41,8 +42,15 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
   }
 }
 
+let useLocalDaemon;
+
 if (config) {
   isQuitting = !config.closeToTray;
+  useLocalDaemon = config.useLocalDaemon;
+}
+
+if (useLocalDaemon) {
+  const localDaemon = new TurtleCoind();
 }
 
 if (os.platform() !== 'win32') {

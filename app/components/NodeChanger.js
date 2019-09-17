@@ -5,7 +5,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { remote } from 'electron';
-import { il8n, session, eventEmitter } from '../index';
+import { il8n, session, eventEmitter, config } from '../index';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -15,7 +15,8 @@ type Props = {
 type State = {
   connectednode: string,
   nodeChangeInProgress: boolean,
-  ssl: boolean
+  ssl: boolean,
+  useLocalDaemon: boolean
 };
 
 export default class NodeChanger extends Component<Props, State> {
@@ -28,7 +29,8 @@ export default class NodeChanger extends Component<Props, State> {
     this.state = {
       connectednode: `${session.daemonHost}:${session.daemonPort}`,
       nodeChangeInProgress: false,
-      ssl: session.daemon.ssl
+      ssl: session.daemon.ssl,
+      useLocalDaemon: config.useLocalDaemon
     };
     this.changeNode = this.changeNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
@@ -37,6 +39,7 @@ export default class NodeChanger extends Component<Props, State> {
       this
     );
     this.handleNodeChangeComplete = this.handleNodeChangeComplete.bind(this);
+    this.toggleLocalDaemon = this.toggleLocalDaemon.bind(this);
   }
 
   componentWillMount() {
@@ -105,14 +108,50 @@ export default class NodeChanger extends Component<Props, State> {
     });
   };
 
+  toggleLocalDaemon = () => {
+    const { darkMode } = this.props;
+    const { useLocalDaemon } = this.state;
+    const { textColor } = uiType(darkMode);
+
+    session.modifyConfig('useLocalDaemon', !useLocalDaemon);
+    this.setState({
+      useLocalDaemon: !useLocalDaemon
+    });
+
+    const message = (
+      <div>
+        <center>
+          <p className={`subtitle ${textColor}`}>Restart Required!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          In order to change this setting, an application restart is required.
+          Would you like to restart now?
+        </p>
+      </div>
+    );
+    eventEmitter.emit(
+      'openModal',
+      message,
+      'Restart',
+      `Not Right Now`,
+      'restartApplication'
+    );
+  };
+
   render() {
     const { darkMode } = this.props;
     const { textColor, linkColor } = uiType(darkMode);
-    const { nodeChangeInProgress, connectednode, ssl } = this.state;
+    const {
+      nodeChangeInProgress,
+      connectednode,
+      ssl,
+      useLocalDaemon
+    } = this.state;
     return (
       <form onSubmit={this.changeNode}>
         <p className={`has-text-weight-bold ${textColor}`}>
-          {il8n.connected_node}
+          Remote Node (node:port)
         </p>
         <div className="field has-addons is-expanded">
           <div className="control is-expanded has-icons-left">
@@ -120,6 +159,7 @@ export default class NodeChanger extends Component<Props, State> {
               <input
                 className="input has-icons-left"
                 type="text"
+                disabled={useLocalDaemon}
                 value={connectednode}
                 onChange={this.handleNodeInputChange}
               />
@@ -138,6 +178,7 @@ export default class NodeChanger extends Component<Props, State> {
               <input
                 className="input"
                 type="text"
+                disabled={useLocalDaemon}
                 placeholder="connecting..."
                 onChange={this.handleNodeInputChange}
               />
@@ -152,6 +193,7 @@ export default class NodeChanger extends Component<Props, State> {
                 onClick={this.findNode}
                 onKeyPress={this.findNode}
                 role="button"
+                disabled={useLocalDaemon}
                 tabIndex={0}
                 className={linkColor}
                 onMouseDown={event => event.preventDefault()}
@@ -162,17 +204,54 @@ export default class NodeChanger extends Component<Props, State> {
           </div>
           {nodeChangeInProgress === true && (
             <div className="control">
-              <button className="button is-success is-loading">
+              <button
+                className="button is-success is-loading"
+                disabled={useLocalDaemon}
+              >
                 {il8n.connect}
               </button>
             </div>
           )}
           {nodeChangeInProgress === false && (
             <div className="control">
-              <button className="button is-success">{il8n.connect}</button>
+              <button className="button is-success" disabled={useLocalDaemon}>
+                {il8n.connect}
+              </button>
             </div>
           )}
         </div>
+        {useLocalDaemon === false && (
+          <span className={textColor}>
+            <a
+              className="button is-danger"
+              onClick={this.toggleLocalDaemon}
+              onKeyPress={this.toggleLocalDaemon}
+              role="button"
+              tabIndex={0}
+            >
+              <span className="icon is-large">
+                <i className="fas fa-times" />
+              </span>
+            </a>
+            &nbsp;&nbsp; Use Local Daemon: <b>Off</b>
+          </span>
+        )}
+        {useLocalDaemon === true && (
+          <span className={textColor}>
+            <a
+              className="button is-success"
+              onClick={this.toggleLocalDaemon}
+              onKeyPress={this.toggleLocalDaemon}
+              role="button"
+              tabIndex={0}
+            >
+              <span className="icon is-large">
+                <i className="fa fa-check" />
+              </span>
+            </a>
+            &nbsp;&nbsp; Use Local Daemon: <b>On</b> &nbsp;&nbsp;
+          </span>
+        )}
       </form>
     );
   }

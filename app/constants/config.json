@@ -14,5 +14,7 @@
   "symbolLocation": "prefix",
   "fiatDecimals": 2,
   "autoLockInterval": 15,
-  "autoLockEnabled": true
+  "autoLockEnabled": true,
+  "turtlecoindPath": "",
+  "useLocalDaemon": false
 }

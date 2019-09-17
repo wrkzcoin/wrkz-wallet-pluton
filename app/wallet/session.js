@@ -69,7 +69,12 @@ export default class WalletSession {
 
     this.getFiatPrice(this.selectedFiat);
 
-    this.daemon = new Daemon(this.daemonHost, this.daemonPort);
+    const { useLocalDaemon } = config;
+
+    this.daemon = new Daemon(
+      useLocalDaemon ? '127.0.0.1' : this.daemonHost,
+      useLocalDaemon ? 11898 : this.daemonPort
+    );
 
     if (this.walletFile === '') {
       this.firstStartup = true;
