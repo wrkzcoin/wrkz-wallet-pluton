@@ -4,9 +4,9 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { remote } from 'electron';
 import log from 'electron-log';
-import { il8n, session } from '../index';
+import { il8n, session, eventEmitter } from '../index';
+import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -30,12 +30,17 @@ export default class Rescanner extends Component<Props, State> {
       rescanInProgress: false
     };
     this.setRescanInProgress = this.setRescanInProgress.bind(this);
+    this.confirmRescan = this.confirmRescan.bind(this);
     this.rescanWallet = this.rescanWallet.bind(this);
   }
 
-  componentWillMount() {}
+  componentWillMount() {
+    eventEmitter.on('rescanWallet', this.rescanWallet);
+  }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    eventEmitter.off('rescanWallet', this.rescanWallet);
+  }
 
   handleScanHeightChange = (event: any) => {
     this.setState({ scanHeight: event.target.value.trim() });
@@ -47,60 +52,78 @@ export default class Rescanner extends Component<Props, State> {
     });
   };
 
-  rescanWallet = async (event: any) => {
-    event.preventDefault();
+  rescanWallet = async () => {
     this.setRescanInProgress(true);
-    let fromStartHeight = false;
-    let scanHeight = event.target[0].value;
-    if (scanHeight === '') {
-      scanHeight = parseInt(session.wallet.walletSynchronizer.startHeight, 10);
-      fromStartHeight = true;
-    } else {
-      scanHeight = parseInt(event.target[0].value, 10);
-    }
-    if (Number.isNaN(scanHeight)) {
-      log.debug('User provided invalid height.');
-      remote.dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: ['OK'],
-        title: il8n.not_a_valid_number,
-        message: il8n.please_enter_valid_number
-      });
-      this.setState({
-        scanHeight: ''
-      });
-      this.setRescanInProgress(false);
-      return;
-    }
-    const userConfirm = remote.dialog.showMessageBox(null, {
-      type: 'warning',
-      buttons: ['Cancel', 'OK'],
-      title: 'This could take a while...',
-      message:
-        fromStartHeight === true
-          ? `${il8n.about_to_rescan_beginning} ${scanHeight} ${
-              il8n.about_to_rescan_end_1
-            }`
-          : `${il8n.about_to_rescan_beginning} ${scanHeight} ${
-              il8n.about_to_rescan_end_2
-            }`
-    });
-    if (userConfirm !== 1) {
-      this.setRescanInProgress(false);
-      return;
-    }
+    const { darkMode } = this.props;
+    const { textColor } = uiType(darkMode);
+    const { scanHeight } = this.state;
     log.debug(`Resetting wallet from block ${scanHeight}`);
     this.setState({
       scanHeight: ''
     });
-    await session.wallet.reset(scanHeight);
-    remote.dialog.showMessageBox(null, {
-      type: 'info',
-      buttons: ['OK'],
-      title: `${il8n.reset_complete}`,
-      message: `${il8n.syncing_again_from} ${scanHeight}.`
-    });
+    await session.wallet.reset(Number(scanHeight));
+    const message = (
+      <div>
+        <center>
+          <p className={`title ${textColor}`}>Success!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          {`Your wallet is now syncing again from block ${scanHeight}. Patience is a virtue!`}
+        </p>
+        <p className={`subtitle ${textColor}`} />
+      </div>
+    );
+    eventEmitter.emit('openModal', message, 'OK', null, null);
     this.setRescanInProgress(false);
+    this.setState({
+      scanHeight: ''
+    });
+  };
+
+  confirmRescan = async (event: any) => {
+    const { darkMode } = this.props;
+    const { textColor } = uiType(darkMode);
+    event.preventDefault();
+    let scanHeight = event.target[0].value;
+    if (scanHeight === '') {
+      return;
+    }
+    scanHeight = parseInt(event.target[0].value, 10);
+
+    if (Number.isNaN(scanHeight)) {
+      log.debug('User provided invalid height.');
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            You haven&apos;t entered a valid block height. The input must be a
+            positive integer. Please try again.
+          </p>
+          <p className={`subtitle ${textColor}`} />
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
+      this.setState({
+        scanHeight: ''
+      });
+      return;
+    }
+    const message = (
+      <div>
+        <center>
+          <p className="title has-text-danger">Rescan Warning!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          {`You are about to rescan your wallet from block ${scanHeight}. Are you sure you want to do this? It could take a very long time.`}
+        </p>
+      </div>
+    );
+    eventEmitter.emit('openModal', message, 'OK', 'Nevermind', 'rescanWallet');
   };
 
   render() {
@@ -109,7 +132,8 @@ export default class Rescanner extends Component<Props, State> {
     const { scanHeight, rescanInProgress } = this.state;
 
     return (
-      <form onSubmit={this.rescanWallet}>
+      <form onSubmit={this.confirmRescan}>
+        <Modal darkMode={darkMode} />
         <p className={`has-text-weight-bold ${textColor}`}>
           {il8n.rescan_wallet}
         </p>
