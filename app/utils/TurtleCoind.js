@@ -11,8 +11,6 @@ export default class TurtleCoind {
 
   child: any;
 
-  init: () => void;
-
   constructor() {
     this.path = 'TurtleCoind';
     this.child;
