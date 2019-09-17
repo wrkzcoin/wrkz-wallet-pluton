@@ -98,7 +98,7 @@ export default class Modal extends Component<Props, State> {
             <br />
             <div className="buttons is-right">
               <div
-                className="button is-success"
+                className="button is-success is-large"
                 onClick={() => this.confirmModal()}
                 onKeyPress={() => this.confirmModal()}
                 role="button"
@@ -107,16 +107,18 @@ export default class Modal extends Component<Props, State> {
               >
                 {confirmLabel}
               </div>
-              <div
-                className="button is-danger"
-                onClick={this.closeModal}
-                onKeyPress={this.closeModal}
-                role="button"
-                tabIndex={0}
-                onMouseDown={event => event.preventDefault()}
-              >
-                {denyLabel}
-              </div>
+              {denyLabel && (
+                <div
+                  className="button is-danger is-large"
+                  onClick={this.closeModal}
+                  onKeyPress={this.closeModal}
+                  role="button"
+                  tabIndex={0}
+                  onMouseDown={event => event.preventDefault()}
+                >
+                  {denyLabel}
+                </div>
+              )}
             </div>
           </div>
         </div>

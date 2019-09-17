@@ -4,7 +4,6 @@
 //
 // Please see the included LICENSE file for more information.
 import crypto from 'crypto';
-import { remote } from 'electron';
 import isDev from 'electron-is-dev';
 import log from 'electron-log';
 import React, { Component } from 'react';
@@ -67,7 +66,6 @@ export default class Send extends Component<Props, State> {
     this.sendAll = this.sendAll.bind(this);
     this.handlePaymentIDChange = this.handlePaymentIDChange.bind(this);
     this.updateFiatPrice = this.updateFiatPrice.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSendToAddressChange = this.handleSendToAddressChange.bind(this);
     this.confirmTransaction = this.confirmTransaction.bind(this);
   }
@@ -193,184 +191,186 @@ export default class Send extends Component<Props, State> {
     });
   };
 
-  sendTransaction = async () => {
-    const { sendToAddress, enteredAmount, paymentID } = this.state;
-    const notSynced = session.getSyncStatus() < 99.99;
+  confirmTransaction = (event: any) => {
+    event.preventDefault();
+    const { sendToAddress, totalAmount, paymentID, darkMode } = this.state;
+    const { textColor } = uiType(darkMode);
+    const sufficientFunds =
+      (session.getUnlockedBalance() + session.getLockedBalance()) / 100 >=
+      Number(totalAmount);
 
+    const sufficientUnlockedFunds =
+      session.getUnlockedBalance() > Number(totalAmount) / 100;
+
+    if (sendToAddress === '' || totalAmount === '') {
+      return;
+    }
+
+    if (!sufficientFunds) {
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            The transaction was not successful.
+          </p>
+          <p className={`subtitle ${textColor}`}>
+            You don&apos;t have enough funds!
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
+      return;
+    }
+
+    if (!sufficientUnlockedFunds) {
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            The transaction was not successful.
+          </p>
+          <p className={`subtitle ${textColor}`}>
+            You don&apos;t have enough unlocked funds! Wait until your funds
+            unlock then try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
+      return;
+    }
+
+    const message = (
+      <div>
+        <center>
+          <p className={`title ${textColor}`}>Confirm Transaction</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          <b>Send to:</b>
+          <br />
+          {sendToAddress}
+        </p>
+        <p className={`subtitle ${textColor}`}>
+          <b>Amount (w/ fee):</b>
+          <br />
+          {totalAmount}
+        </p>
+        {paymentID !== '' && (
+          <p className={`subtitle ${textColor}`}>
+            <b>Payment ID:</b>
+            <br />
+            {paymentID}
+          </p>
+        )}
+      </div>
+    );
+    eventEmitter.emit(
+      'openModal',
+      message,
+      'Send it!',
+      'Wait a minute...',
+      'confirmTransaction'
+    );
+  };
+
+  sendTransaction = async () => {
     eventEmitter.emit('transactionInProgress');
+
+    const notSynced = session.getSyncStatus() < 99.99;
+    const { sendToAddress, enteredAmount, paymentID, darkMode } = this.state;
+    const { textColor } = uiType(darkMode);
+
     const [hash, err] = await session.sendTransaction(
       sendToAddress,
-      Number(enteredAmount),
+      Number(enteredAmount) * 100,
       paymentID
     );
     if (hash) {
-      remote.dialog.showMessageBox(null, {
-        type: 'info',
-        buttons: [il8n.ok],
-        title: il8n.send_tx_complete_title,
-        message: `${il8n.send_tx_complete} ${hash}`
-      });
-      eventEmitter.emit('transactionComplete');
+      const message = (
+        <div>
+          <center>
+            <p className={`title ${textColor}`}>Success!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            Transaction succeeded! Transaction hash:
+          </p>
+          <p className={`subtitle ${textColor}`}>{hash}</p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
+      eventEmitter.emit('transaction');
+      this.resetPaymentID();
     } else if (err) {
       if (notSynced) {
-        remote.dialog.showMessageBox(null, {
-          type: 'warning',
-          buttons: [il8n.cancel, il8n.ok],
-          title: 'Transaction Attempt Failed',
-          message:
-            "You aren't synced with the network, and the transaction failed to send. Please allow the wallet to completely sync before attempting again."
-        });
+        const message = (
+          <div>
+            <center>
+              <p className="title has-text-danger">Error!</p>
+            </center>
+            <br />
+            <p className={`subtitle ${textColor}`}>
+              The transaction was not successful.
+            </p>
+            <p className={`subtitle ${textColor}`}>
+              The wallet isn&apos;t synced. Wait until you are synced and try
+              again.
+            </p>
+          </div>
+        );
+        eventEmitter.emit(
+          'openModal',
+          message,
+          'OK',
+          null,
+          'transactionCancel'
+        );
       } else {
-        remote.dialog.showMessageBox(null, {
-          type: 'error',
-          buttons: [il8n.ok],
-          title: il8n.send_tx_error_title,
-          message: err.toString()
-        });
+        const message = (
+          <div>
+            <center>
+              <p className="title has-text-danger">Error!</p>
+            </center>
+            <br />
+            <p className={`subtitle ${textColor}`}>
+              The transaction was not successful.
+            </p>
+            <p className={`subtitle ${textColor}`}>{err.toString()}</p>
+          </div>
+        );
+        eventEmitter.emit(
+          'openModal',
+          message,
+          'OK',
+          null,
+          'transactionCancel'
+        );
       }
       eventEmitter.emit('transactionCancel');
     }
   };
 
-  handleSubmit = async (event: any) => {
-    log.debug('form was submitted!');
-    // We're preventing the default refresh of the page that occurs on form submit
-    event.preventDefault();
+  createTestTransaction = async () => {
+    log.debug('Creating test transaction for you.');
 
-    const { displayCurrency, fiatPrice } = this.state;
+    const sendToAddress = await session.wallet.getPrimaryAddress();
+    const amount = Math.floor(Math.random() * 100) + 1;
+    const paymentID = this.generatePaymentID();
 
-    eventEmitter.emit('transactionInProgress');
-
-    const [sendToAddress, amount, paymentID] = [
-      event.target[0].value.trim(), // sendToAddress
-      displayCurrency === 'TRTL'
-        ? session.humanToAtomic(event.target[1].value) || 0
-        : session.humanToAtomic(event.target[1].value / fiatPrice), // amount
-      event.target[3].value || undefined // paymentID
-    ];
-
-    if (sendToAddress === '' || amount === '') {
-      eventEmitter.emit('transactionCancel');
-      return;
-    }
-
-    const notSynced = session.getSyncStatus() < 99.99;
-
-    const sufficientFunds =
-      (session.getUnlockedBalance() + session.getLockedBalance()) / 100 >
-      Number(event.target[1].value);
-
-    const sufficientUnlockedFunds =
-      session.getUnlockedBalance() > Number(event.target[1].value) / 100;
-
-    if (notSynced) {
-      const userSelection = remote.dialog.showMessageBox(null, {
-        type: 'warning',
-        buttons: [il8n.ok, il8n.cancel],
-        title: 'Wallet Not Synced',
-        message:
-          'You are attempting to send a transaction without being synced with the network. This may fail. Would you like to proceed?'
-      });
-      if (userSelection !== 0) {
-        eventEmitter.emit('transactionCancel');
-        return;
-      }
-    }
-
-    if (!sufficientFunds) {
-      remote.dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: [il8n.ok],
-        title: 'Not Enough Funds!',
-        message: "You don't have enough funds to send this transaction."
-      });
-      eventEmitter.emit('transactionCancel');
-      return;
-    }
-
-    if (!sufficientUnlockedFunds) {
-      remote.dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: [il8n.ok],
-        title: 'Not Enough Unlocked Funds!',
-        message:
-          "You don't have enough unlocked funds to send this transaction. Wait for the funds to unlock and try again."
-      });
-      eventEmitter.emit('transactionCancel');
-      return;
-    }
-
-    let displayIfPaymentID;
-
-    if (paymentID !== '' && paymentID !== undefined) {
-      displayIfPaymentID = ` with a payment ID of ${paymentID}`;
-    } else {
-      displayIfPaymentID = '';
-    }
-
-    let displayIfNodeFee;
-
-    if (session.daemon.feeAmount > 0) {
-      displayIfNodeFee = `and a node fee of ${session.atomicToHuman(
-        session.daemon.feeAmount
-      )} ${il8n.TRTL}`;
-    } else {
-      displayIfNodeFee = '';
-    }
-
-    const totalTransactionAmount = session.atomicToHuman(
-      parseInt(amount, 10) + 10 + parseInt(session.daemon.feeAmount, 10)
-    );
-
-    const userSelection = remote.dialog.showMessageBox(null, {
-      type: 'warning',
-      buttons: [il8n.cancel, il8n.ok],
-      title: il8n.title_please_confirm_transaction,
-      message: `${il8n.about_to_send_1} ${totalTransactionAmount} ${
-        il8n.TRTL
-      } ${il8n.to} ${sendToAddress} ${displayIfPaymentID} ${displayIfNodeFee} ${
-        il8n.about_to_send_2
-      }`
+    await this.setState({
+      enteredAmount: String(amount / 100),
+      totalAmount: String((amount + 10) / 100),
+      sendToAddress,
+      paymentID
     });
 
-    if (userSelection !== 1) {
-      log.debug('Transaction cancelled by user.');
-      eventEmitter.emit('transactionCancel');
-      return;
-    }
-
-    const [hash, err] = await session.sendTransaction(
-      sendToAddress,
-      amount,
-      paymentID
-    );
-    if (hash) {
-      remote.dialog.showMessageBox(null, {
-        type: 'info',
-        buttons: [il8n.ok],
-        title: il8n.send_tx_complete_title,
-        message: `${il8n.send_tx_complete} ${hash}`
-      });
-      eventEmitter.emit('transactionComplete');
-    } else if (err) {
-      if (notSynced) {
-        remote.dialog.showMessageBox(null, {
-          type: 'warning',
-          buttons: [il8n.cancel, il8n.ok],
-          title: 'Transaction Attempt Failed',
-          message:
-            "You aren't synced with the network, and the transaction failed to send. Please allow the wallet to completely sync before attempting again."
-        });
-      } else {
-        remote.dialog.showMessageBox(null, {
-          type: 'error',
-          buttons: [il8n.ok],
-          title: il8n.send_tx_error_title,
-          message: err.toString()
-        });
-      }
-      eventEmitter.emit('transactionCancel');
-    }
+    this.sendTransaction();
   };
 
   generatePaymentID = () => {
@@ -424,87 +424,6 @@ export default class Send extends Component<Props, State> {
     return Math.floor(x * 100) / 100;
   }
 
-  confirmTransaction = () => {
-    const { sendToAddress, totalAmount, paymentID, darkMode } = this.state;
-
-    if (sendToAddress === '' || totalAmount === '') {
-      return;
-    }
-
-    const { textColor } = uiType(darkMode);
-
-    const message = (
-      <div>
-        <center>
-          <p className={`title ${textColor}`}>Confirm Transaction</p>
-        </center>
-        <p className={`subtitle ${textColor}`}>
-          <b>Send to:</b>
-          <br />
-          {sendToAddress}
-        </p>
-        <p className={`subtitle ${textColor}`}>
-          <b>Amount (w/ fee):</b>
-          <br />
-          {totalAmount}
-        </p>
-        {paymentID !== '' && (
-          <p className={`subtitle ${textColor}`}>
-            <b>Payment ID:</b>
-            <br />
-            {paymentID}
-          </p>
-        )}
-      </div>
-    );
-    eventEmitter.emit(
-      'openModal',
-      message,
-      'Send it!',
-      'Wait a minute...',
-      'confirmTransaction'
-    );
-  };
-
-  createTestTransaction = async () => {
-    eventEmitter.emit('transactionInProgress');
-    log.debug('Creating test transaction for you.');
-
-    const sendToAddress = session.wallet.getPrimaryAddress();
-    const amount = Math.floor(Math.random() * 100) + 1;
-    const paymentID = this.generatePaymentID();
-
-    this.setState({
-      enteredAmount: String(amount / 100),
-      totalAmount: String((amount + 10) / 100),
-      sendToAddress
-    });
-
-    const [hash, err] = await session.sendTransaction(
-      sendToAddress,
-      amount,
-      paymentID
-    );
-
-    if (hash) {
-      remote.dialog.showMessageBox(null, {
-        type: 'info',
-        buttons: [il8n.ok],
-        title: il8n.send_tx_complete_title,
-        message: `${il8n.send_tx_complete} ${hash}`
-      });
-      eventEmitter.emit('transactionCancel');
-    } else if (err) {
-      remote.dialog.showMessageBox(null, {
-        type: 'error',
-        buttons: [il8n.ok],
-        title: il8n.send_tx_error_title,
-        message: err.toString()
-      });
-    }
-    eventEmitter.emit('transactionCancel');
-  };
-
   render() {
     const {
       transactionComplete,
@@ -544,7 +463,7 @@ export default class Send extends Component<Props, State> {
           />
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.confirmTransaction}>
               <div className="field">
                 <label className={`label ${textColor}`} htmlFor="address">
                   {il8n.send_to_address}
@@ -665,17 +584,6 @@ export default class Send extends Component<Props, State> {
                     Test
                   </a>
                 )}
-                <a
-                  className="button is-info is-large"
-                  onClick={this.confirmTransaction}
-                  onKeyPress={this.confirmTransaction}
-                  role="button"
-                  tabIndex={0}
-                  type="action"
-                  onMouseDown={event => event.preventDefault()}
-                >
-                  Modal
-                </a>
               </div>
             </form>
           </div>

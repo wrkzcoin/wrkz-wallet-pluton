@@ -51,6 +51,7 @@ export default class Balance extends Component<Props, State> {
     if (session.wallet !== undefined) {
       session.wallet.setMaxListeners(2);
       session.wallet.on('transaction', this.refreshBalanceOnNewTransaction);
+      eventEmitter.on('transaction', this.refreshBalanceOnNewTransaction);
     }
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
   }
@@ -58,6 +59,7 @@ export default class Balance extends Component<Props, State> {
   componentWillUnmount() {
     if (session.wallet !== undefined) {
       session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
+      eventEmitter.off('transaction', this.refreshBalanceOnNewTransaction);
     }
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
   }
