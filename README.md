@@ -1,3 +1,7 @@
+# Proton Wallet
+
+![Download Count](https://img.shields.io/github/downloads/turtlecoin/turtle-wallet-proton/total.svg)
+
 <img src="https://raw.githubusercontent.com/turtlecoin/turtle-wallet-proton/development/screenshots/screenshot.png">
 
 #### Master Build Status
