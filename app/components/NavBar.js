@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import routes from '../constants/routes';
-import { session, eventEmitter, il8n, loginCounter } from '../index';
+import { session, eventEmitter, il8n, loginCounter, config } from '../index';
 import uiType from '../utils/uitype';
 
 type Location = {
@@ -59,6 +59,7 @@ class NavBar extends Component<Props, State> {
     const { location: { pathname }, darkMode } = this.props;
     const { navBarCount } = this.state;
     const { fillColor, elementBaseColor, settingsCogColor } = uiType(darkMode);
+    const { useLocalDaemon } = config;
 
     return (
       <div>
@@ -112,6 +113,15 @@ class NavBar extends Component<Props, State> {
                       <p>&nbsp;&nbsp;{il8n.receive}</p>
                     )}
                   </Link>
+                  {useLocalDaemon && (
+                    <Link className="navbar-item" to={routes.TERMINAL}>
+                      <i className="fas fa-terminal" />
+                      {pathname === '/terminal' && (
+                        <strong>&nbsp;&nbsp;Terminal</strong>
+                      )}
+                      {pathname !== '/terminal' && <p>&nbsp;&nbsp;Terminal</p>}
+                    </Link>
+                  )}
                 </div>
                 <div className="navbar-end">
                   {session.walletPassword !== '' && (

@@ -16,6 +16,8 @@ export default class LoginCounter {
 
   navBarCount: number;
 
+  daemonLog: string[];
+
   constructor() {
     this.userLoginAttempted = false;
     this.isLoggedIn = false;
