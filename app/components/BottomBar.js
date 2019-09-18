@@ -5,8 +5,9 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { session, loginCounter } from '../index';
+import { session, loginCounter, config } from '../index';
 import SyncStatus from './SyncStatus';
+import DaemonSyncStatus from './DaemonSyncStatus';
 import Balance from './Balance';
 import NodeFee from './NodeFee';
 
@@ -45,6 +46,7 @@ class BottomBar extends Component<Props, State> {
     // prettier-ignore
     const { darkMode } = this.props;
     const { navBarCount } = this.state;
+    const { useLocalDaemon } = config;
 
     return (
       <div
@@ -61,7 +63,11 @@ class BottomBar extends Component<Props, State> {
       >
         {session.wallet && (
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
+            {}
             <NodeFee size="is-large" darkMode={darkMode} />
+            {useLocalDaemon && (
+              <DaemonSyncStatus size="is-large" darkMode={darkMode} />
+            )}
             <SyncStatus size="is-large" darkMode={darkMode} />
             <Balance size="is-large" darkMode={darkMode} />
           </div>

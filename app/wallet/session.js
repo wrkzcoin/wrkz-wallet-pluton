@@ -450,6 +450,37 @@ export default class WalletSession {
     }
   };
 
+  getDaemonSyncStatus() {
+    if (this.loginFailed || this.firstStartup) {
+      return 0;
+    }
+    const [walletHeight, daemonHeight] = this.wallet.getSyncStatus();
+    let [, , networkHeight] = this.wallet.getSyncStatus();
+    /* Since we update the daemonHeight in intervals, and we update wallet
+        height by syncing, occasionally wallet height is > network height.
+        Fix that here. */
+    if (
+      daemonHeight > networkHeight &&
+      networkHeight !== 0 &&
+      networkHeight + 10 > daemonHeight
+    ) {
+      networkHeight = daemonHeight;
+    }
+    // Don't divide by zero
+    const syncFill = networkHeight === 0 ? 0 : daemonHeight / networkHeight;
+    let percentSync = 100 * syncFill;
+    // Prevent 100% when just under
+    if (percentSync > 99.99 && percentSync < 100) {
+      percentSync = 99.99;
+    }
+
+    if (networkHeight - walletHeight === 1) {
+      percentSync = 100.0;
+    }
+
+    return this.roundToNearestHundredth(percentSync);
+  }
+
   getSyncStatus() {
     if (this.loginFailed || this.firstStartup) {
       return 0;
@@ -472,12 +503,8 @@ export default class WalletSession {
       networkHeight = walletHeight;
     }
     // Don't divide by zero
-    let syncFill = networkHeight === 0 ? 0 : walletHeight / networkHeight;
+    const syncFill = networkHeight === 0 ? 0 : walletHeight / networkHeight;
     let percentSync = 100 * syncFill;
-    // Prevent bar looking full when it's not
-    if (syncFill > 0.97 && syncFill < 1) {
-      syncFill = 0.97;
-    }
     // Prevent 100% when just under
     if (percentSync > 99.99 && percentSync < 100) {
       percentSync = 99.99;

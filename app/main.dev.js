@@ -43,14 +43,16 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
 }
 
 let useLocalDaemon;
+let localDaemon;
 
 if (config) {
   isQuitting = !config.closeToTray;
+  // eslint-disable-next-line prefer-destructuring
   useLocalDaemon = config.useLocalDaemon;
 }
 
 if (useLocalDaemon) {
-  const localDaemon = new TurtleCoind();
+  localDaemon = new TurtleCoind();
 }
 
 if (os.platform() !== 'win32') {
@@ -117,6 +119,9 @@ if (!isSingleInstance) {
 }
 
 app.on('before-quit', () => {
+  if (useLocalDaemon) {
+    localDaemon.quit();
+  }
   log.debug('Exiting application.');
   isQuitting = true;
 });
