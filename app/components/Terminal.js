@@ -4,22 +4,12 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import path from 'path';
-import os from 'os';
-import { Tail } from 'tail';
-import { session } from '../index';
+import { session, daemonLogger, eventEmitter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import Modal from './Modal';
 import uiType from '../utils/uitype';
-
-const homedir = os.homedir();
-
-const directories = [
-  `${homedir}/.protonwallet`,
-  `${homedir}/.protonwallet/logs`
-];
 
 type Props = {};
 
@@ -33,39 +23,36 @@ export default class Receive extends Component<Props, State> {
 
   state: State;
 
-  terminal: any;
-
-  daemonLogPath: string;
-
   daemonLog: string[];
-
-  daemonLogTail: Tail;
 
   constructor(props?: Props) {
     super(props);
+    this.daemonLog = daemonLogger ? daemonLogger.daemonLog : [];
+    const { darkMode } = session;
+
     this.state = {
-      darkMode: session.darkMode,
-      daemonLog: []
+      darkMode,
+      daemonLog: this.daemonLog
     };
-    this.daemonLog = [];
-    this.daemonLogPath = path.resolve(directories[1], 'TurtleCoind.log');
-    this.daemonLogTail = new Tail(this.daemonLogPath);
-    this.pushToConsole = this.pushToConsole.bind(this);
+
+    this.refreshConsole = this.refreshConsole.bind(this);
   }
 
   componentDidMount() {
-    this.daemonLogTail.on('line', data => this.pushToConsole(data));
+    eventEmitter.on('refreshConsole', this.refreshConsole);
   }
 
   componentWillUnmount() {
-    this.daemonLogTail.off('line', data => this.pushToConsole(data));
+    eventEmitter.off('refreshConsole', this.refreshConsole);
   }
 
-  pushToConsole = (data: string) => {
-    this.daemonLog.unshift(data);
-    this.setState({
-      daemonLog: this.daemonLog
-    });
+  refreshConsole = () => {
+    if (daemonLogger) {
+      const { daemonLog } = daemonLogger;
+      this.setState({
+        daemonLog
+      });
+    }
   };
 
   render() {
@@ -79,10 +66,14 @@ export default class Receive extends Component<Props, State> {
         <div className={`wholescreen ${backgroundColor}`}>
           <NavBar darkMode={darkMode} />
           <div
-            className={`maincontent ${backgroundColor} ${textColor} terminal`}
+            className={`maincontent ${backgroundColor} ${textColor} terminal has-text-small`}
           >
             {daemonLog.map(consoleOut => {
-              return <p className={textColor}>{consoleOut}</p>;
+              return (
+                <p key={consoleOut} className={textColor}>
+                  {consoleOut}
+                </p>
+              );
             })}
           </div>
           <BottomBar darkMode={darkMode} />

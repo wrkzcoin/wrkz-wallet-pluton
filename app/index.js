@@ -24,6 +24,7 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 import uiType from './utils/uitype';
+import DaemonLogger from './wallet/DaemonLogger';
 
 export const il8n = new LocalizedStrings({
   // eslint-disable-next-line global-require
@@ -49,6 +50,13 @@ export let config = iConfig;
 export const eventEmitter = new EventEmitter();
 eventEmitter.setMaxListeners(5);
 
+const homedir = os.homedir();
+
+export const directories = [
+  `${homedir}/.protonwallet`,
+  `${homedir}/.protonwallet/logs`
+];
+
 export const updater = new AutoUpdater();
 updater.getLatestVersion();
 
@@ -57,13 +65,6 @@ export const loginCounter = new LoginCounter();
 remote.app.setAppUserModelId('wallet.proton.extra');
 
 log.debug(`Proton wallet started...`);
-
-const homedir = os.homedir();
-
-export const directories = [
-  `${homedir}/.protonwallet`,
-  `${homedir}/.protonwallet/logs`
-];
 
 const [programDirectory] = directories;
 
@@ -101,7 +102,10 @@ fs.writeFile(
   }
 );
 
-const { darkMode } = config;
+const { darkMode, useLocalDaemon } = config;
+
+export const daemonLogger = useLocalDaemon ? new DaemonLogger() : null;
+
 const { textColor } = uiType(darkMode);
 
 export let session = new WalletSession();
