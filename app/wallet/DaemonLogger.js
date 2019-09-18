@@ -25,6 +25,5 @@ export default class DaemonLogger {
   pushToLog = (data: string) => {
     this.daemonLog.unshift(data);
     eventEmitter.emit('refreshConsole');
-    console.log(data);
   };
 }
