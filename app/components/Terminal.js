@@ -66,11 +66,14 @@ export default class Receive extends Component<Props, State> {
         <div className={`wholescreen ${backgroundColor}`}>
           <NavBar darkMode={darkMode} />
           <div
-            className={`maincontent ${backgroundColor} ${textColor} terminal has-text-small`}
+            className={`maincontent ${backgroundColor} ${textColor} terminal`}
           >
             {daemonLog.map(consoleOut => {
               return (
-                <p key={consoleOut} className={textColor}>
+                <p
+                  key={consoleOut}
+                  className={`${textColor} is-family-monospace`}
+                >
                   {consoleOut}
                 </p>
               );
