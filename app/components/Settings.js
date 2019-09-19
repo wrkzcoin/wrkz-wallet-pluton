@@ -227,10 +227,11 @@ export default class Settings extends Component<Props, State> {
                   <button
                     className="button is-warning"
                     onClick={this.handlePasswordChange}
-                  ><span class="icon is-small">
-                  <i class="fa fa-shield-alt" />
-                </span>&nbsp;&nbsp;
-                    Change Wallet Password
+                  >
+                    <span class="icon is-small">
+                      <i class="fa fa-shield-alt" />
+                    </span>
+                    &nbsp;&nbsp; Change Wallet Password
                   </button>
                   <br />
                   <br />
@@ -238,10 +239,10 @@ export default class Settings extends Component<Props, State> {
                     className="button is-danger"
                     onClick={this.handleBackup}
                   >
-                  <span class="icon is-small">
-              <i class="fas fa-key" />
-            </span>&nbsp;&nbsp;
-                    Backup Wallet Keys/Seed
+                    <span class="icon is-small">
+                      <i class="fas fa-key" />
+                    </span>
+                    &nbsp;&nbsp; Backup Wallet Keys/Seed
                   </button>
                 </div>
               )}

@@ -228,18 +228,20 @@ export default class NodeChanger extends Component<Props, State> {
                 className="button is-success is-loading"
                 disabled={useLocalDaemon}
               >
-              <span class="icon is-small">
-              <i class="fa fa-network-wired" />
-            </span>&nbsp;&nbsp;{il8n.connect}
+                <span class="icon is-small">
+                  <i class="fa fa-network-wired" />
+                </span>
+                &nbsp;&nbsp;{il8n.connect}
               </button>
             </div>
           )}
           {nodeChangeInProgress === false && (
             <div className="control">
               <button className="button is-success" disabled={useLocalDaemon}>
-              <span class="icon is-small">
-              <i class="fa fa-network-wired" />
-            </span>&nbsp;&nbsp;{il8n.connect}
+                <span class="icon is-small">
+                  <i class="fa fa-network-wired" />
+                </span>
+                &nbsp;&nbsp;{il8n.connect}
               </button>
             </div>
           )}
