@@ -79,10 +79,6 @@ export default class Receive extends Component<Props, State> {
               consoleOut = consoleOut.replace('[daemon]', '');
               consoleOut = consoleOut.replace('[node_server]', '');
 
-
-
-
-
               if (isProtocol || isCheckpoints) {
                 logColor = 'has-text-success has-text-weight-bold';
               }
