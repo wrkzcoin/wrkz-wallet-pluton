@@ -67,17 +67,18 @@ export default class Receive extends Component<Props, State> {
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${fillColor} ${textColor} terminal`}>
             {daemonLog.map(consoleOut => {
+              let logText = consoleOut;
               let logColor = textColor;
               const isProtocol = consoleOut.includes('[protocol]');
               const isCheckpoints = consoleOut.includes('[checkpoints]');
               const stopSignalSent = consoleOut.includes('Stop signal sent');
               const isError = consoleOut.includes('ERROR');
 
-              consoleOut = consoleOut.replace('[Core]', '');
-              consoleOut = consoleOut.replace('[checkpoints]', '');
-              consoleOut = consoleOut.replace('[protocol]', '');
-              consoleOut = consoleOut.replace('[daemon]', '');
-              consoleOut = consoleOut.replace('[node_server]', '');
+              logText = consoleOut.replace('[Core]', '');
+              logText = consoleOut.replace('[checkpoints]', '');
+              logText = consoleOut.replace('[protocol]', '');
+              logText = consoleOut.replace('[daemon]', '');
+              logText = consoleOut.replace('[node_server]', '');
 
               if (isProtocol || isCheckpoints) {
                 logColor = 'has-text-success has-text-weight-bold';
@@ -96,7 +97,7 @@ export default class Receive extends Component<Props, State> {
                   key={consoleOut}
                   className={`${textColor} is-family-monospace ${logColor}`}
                 >
-                  {consoleOut}
+                  {logText}
                 </p>
               );
             })}

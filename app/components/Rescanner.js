@@ -151,8 +151,8 @@ export default class Rescanner extends Component<Props, State> {
                 rescanInProgress ? 'is-loading' : ''
               }`}
             >
-              <span class="icon is-small">
-                <i class="fa fa-undo" />
+              <span className="icon is-small">
+                <i className="fa fa-undo" />
               </span>
               &nbsp;&nbsp;{il8n.rescan}
             </button>

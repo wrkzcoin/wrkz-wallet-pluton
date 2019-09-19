@@ -6,7 +6,6 @@
 import React, { Component } from 'react';
 import { remote } from 'electron';
 import { il8n, session, eventEmitter, config } from '../index';
-import child from 'child_process';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -228,8 +227,8 @@ export default class NodeChanger extends Component<Props, State> {
                 className="button is-success is-loading"
                 disabled={useLocalDaemon}
               >
-                <span class="icon is-small">
-                  <i class="fa fa-network-wired" />
+                <span className="icon is-small">
+                  <i className="fa fa-network-wired" />
                 </span>
                 &nbsp;&nbsp;{il8n.connect}
               </button>
@@ -238,8 +237,8 @@ export default class NodeChanger extends Component<Props, State> {
           {nodeChangeInProgress === false && (
             <div className="control">
               <button className="button is-success" disabled={useLocalDaemon}>
-                <span class="icon is-small">
-                  <i class="fa fa-network-wired" />
+                <span className="icon is-small">
+                  <i className="fa fa-network-wired" />
                 </span>
                 &nbsp;&nbsp;{il8n.connect}
               </button>
@@ -297,8 +296,8 @@ export default class NodeChanger extends Component<Props, State> {
               className="button is-warning"
               onClick={this.browseForTurtleCoind}
             >
-              <span class="icon is-small">
-                <i class="fas fa-folder-open" />
+              <span className="icon is-small">
+                <i className="fas fa-folder-open" />
               </span>
               &nbsp;&nbsp;Browse
             </button>
