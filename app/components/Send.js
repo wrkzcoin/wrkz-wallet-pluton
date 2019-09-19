@@ -547,7 +547,10 @@ export default class Send extends Component<Props, State> {
               <div className="buttons">
                 {!transactionInProgress && (
                   <button type="submit" className="button is-success is-large">
-                    {il8n.send}
+                    <span class="icon is-small">
+                      <i class="fa fa-paper-plane" />
+                    </span>
+                    &nbsp;&nbsp;{il8n.send}
                   </button>
                 )}
                 {transactionInProgress && (
@@ -564,7 +567,10 @@ export default class Send extends Component<Props, State> {
                   className={`button is-large ${elementBaseColor}`}
                   onClick={this.resetPaymentID}
                 >
-                  {il8n.clear}
+                  <span class="icon is-small">
+                    <i class="fa fa-undo" />
+                  </span>
+                  &nbsp;&nbsp;{il8n.clear}
                 </button>
                 {isDev && (
                   <a
@@ -576,7 +582,10 @@ export default class Send extends Component<Props, State> {
                     type="action"
                     onMouseDown={event => event.preventDefault()}
                   >
-                    Test
+                    <span class="icon is-small">
+                      <i class="fa fa-flask" />
+                    </span>
+                    &nbsp;&nbsp;Test
                   </a>
                 )}
               </div>

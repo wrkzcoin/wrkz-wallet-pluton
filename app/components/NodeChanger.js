@@ -6,6 +6,7 @@
 import React, { Component } from 'react';
 import { remote } from 'electron';
 import { il8n, session, eventEmitter, config } from '../index';
+import child from 'child_process';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -16,7 +17,8 @@ type State = {
   connectednode: string,
   nodeChangeInProgress: boolean,
   ssl: boolean,
-  useLocalDaemon: boolean
+  useLocalDaemon: boolean,
+  turtleCoindPath: string
 };
 
 export default class NodeChanger extends Component<Props, State> {
@@ -30,7 +32,8 @@ export default class NodeChanger extends Component<Props, State> {
       connectednode: `${session.daemonHost}:${session.daemonPort}`,
       nodeChangeInProgress: false,
       ssl: session.daemon.ssl,
-      useLocalDaemon: config.useLocalDaemon
+      useLocalDaemon: config.useLocalDaemon,
+      turtleCoindPath: config.turtleCoindPath
     };
     this.changeNode = this.changeNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
@@ -40,6 +43,7 @@ export default class NodeChanger extends Component<Props, State> {
     );
     this.handleNodeChangeComplete = this.handleNodeChangeComplete.bind(this);
     this.toggleLocalDaemon = this.toggleLocalDaemon.bind(this);
+    this.browseForTurtleCoind = this.browseForTurtleCoind.bind(this);
   }
 
   componentWillMount() {
@@ -53,6 +57,21 @@ export default class NodeChanger extends Component<Props, State> {
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.off('nodeChangeComplete', this.handleNodeChangeComplete);
   }
+
+  browseForTurtleCoind = () => {
+    const options = {
+      defaultPath: remote.app.getPath('documents')
+    };
+    const getPaths = remote.dialog.showOpenDialog(null, options);
+    if (getPaths === undefined) {
+      return;
+    }
+    this.setState({
+      turtleCoindPath: getPaths[0]
+    });
+
+    session.modifyConfig('turtleCoindPath', getPaths[0]);
+  };
 
   changeNode = async (event: any) => {
     event.preventDefault();
@@ -146,7 +165,8 @@ export default class NodeChanger extends Component<Props, State> {
       nodeChangeInProgress,
       connectednode,
       ssl,
-      useLocalDaemon
+      useLocalDaemon,
+      turtleCoindPath
     } = this.state;
     return (
       <form onSubmit={this.changeNode}>
@@ -208,14 +228,18 @@ export default class NodeChanger extends Component<Props, State> {
                 className="button is-success is-loading"
                 disabled={useLocalDaemon}
               >
-                {il8n.connect}
+              <span class="icon is-small">
+              <i class="fa fa-network-wired" />
+            </span>&nbsp;&nbsp;{il8n.connect}
               </button>
             </div>
           )}
           {nodeChangeInProgress === false && (
             <div className="control">
               <button className="button is-success" disabled={useLocalDaemon}>
-                {il8n.connect}
+              <span class="icon is-small">
+              <i class="fa fa-network-wired" />
+            </span>&nbsp;&nbsp;{il8n.connect}
               </button>
             </div>
           )}
@@ -252,6 +276,32 @@ export default class NodeChanger extends Component<Props, State> {
             &nbsp;&nbsp; Use Local Daemon: <b>On</b> &nbsp;&nbsp;
           </span>
         )}
+        <br />
+        <br />
+        <p className={`has-text-weight-bold ${textColor}`}>
+          TurtleCoind location:
+        </p>
+        <div className="field has-addons">
+          <div className="control is-expanded">
+            <input
+              className="input"
+              type="text"
+              value={turtleCoindPath}
+              readOnly
+            />
+          </div>
+          <div className="control">
+            <button
+              className="button is-warning"
+              onClick={this.browseForTurtleCoind}
+            >
+              <span class="icon is-small">
+                <i class="fas fa-folder-open" />
+              </span>
+              &nbsp;&nbsp;Browse
+            </button>
+          </div>
+        </div>
       </form>
     );
   }

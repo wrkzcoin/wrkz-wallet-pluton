@@ -80,7 +80,10 @@ export default class Receive extends Component<Props, State> {
                         className="button is-success is-large"
                         onClick={() => copyToClipboard(session.address)}
                       >
-                        {il8n.copy_to_clipboard}
+                      <span class="icon is-small">
+                      <i class="fa fa-clipboard" />
+                    </span>
+                        &nbsp;&nbsp;{il8n.copy_to_clipboard}
                       </button>
                     </div>
                   </div>

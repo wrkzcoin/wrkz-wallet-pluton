@@ -117,6 +117,9 @@ export default class TimeoutSelector extends Component<Props, State> {
             </div>
             <div className="control">
               <button className="button is-success" disabled={!timeoutEnabled}>
+              <span class="icon is-small">
+              <i class="fa fa-save" />
+            </span>&nbsp;&nbsp;
                 Change
               </button>
             </div>
