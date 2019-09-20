@@ -89,6 +89,8 @@ export default class Receive extends Component<Props, State> {
 
               let logText = consoleOut.replace('[protocol]', '');
               logText = logText.replace('[Core]', '');
+              logText = logText.replace('[daemon]', '');
+              logText = logText.replace('[node_server]', '');
 
               if (isProtocol || isCheckpoints || addedToMainChain) {
                 logColor = 'has-text-success has-text-weight-bold';

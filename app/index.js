@@ -366,6 +366,28 @@ eventEmitter.on('sendNotification', function sendNotification(amount) {
 ipcRenderer.on('handleOpen', handleOpen);
 eventEmitter.on('handleOpen', handleOpen);
 
+ipcRenderer.on('failedDaemonInit', failedDaemonInit);
+
+function failedDaemonInit() {
+  if (session) {
+    session.modifyConfig('useLocalDaemon', false);
+  }
+  const message = (
+    <div>
+      <center>
+        <p className="subtitle has-text-danger">Local Daemon Error!</p>
+      </center>
+      <br />
+      <p className={`subtitle ${textColor}`}>
+        Your daemon failed to initialize, and you have been placed back in
+        remote node mode automatically. Check your TurtleCoind path in settings
+        is accurate and that TurtleCoind has execute permissions, and try again.
+      </p>
+    </div>
+  );
+  eventEmitter.emit('openModal', message, 'OK', null, 'initializeNewSession');
+}
+
 eventEmitter.on('initializeNewNode', (password, daemonHost, daemonPort) => {
   session = null;
   session = new WalletSession(password, daemonHost, daemonPort);

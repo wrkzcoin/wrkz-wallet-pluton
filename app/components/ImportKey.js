@@ -37,13 +37,14 @@ export default class Send extends Component<Props, State> {
     this.state = {
       darkMode: session.darkMode
     };
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {}
 
   componentWillUnmount() {}
 
-  handleSubmit(event: any) {
+  handleSubmit = (event: any) => {
     // We're preventing the default refresh of the page that occurs on form submit
     event.preventDefault();
 
@@ -108,19 +109,6 @@ export default class Send extends Component<Props, State> {
       log.debug('Wrote config file to disk.');
       loginCounter.freshRestore = true;
       eventEmitter.emit('initializeNewSession');
-      const message = (
-        <div>
-          <center>
-            <p className={`title ${textColor}`}>Success!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            The wallet was restored successfully. Please set a password for your
-            wallet.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
     } else {
       const message = (
         <div>
@@ -136,7 +124,7 @@ export default class Send extends Component<Props, State> {
       );
       eventEmitter.emit('openModal', message, 'OK', null, null);
     }
-  }
+  };
 
   render() {
     const { darkMode } = this.state;

@@ -208,6 +208,11 @@ app.on('ready', async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+    if (localDaemon) {
+      if (localDaemon.child.exitCode) {
+        mainWindow.webContents.send('failedDaemonInit');
+      }
+    }
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
