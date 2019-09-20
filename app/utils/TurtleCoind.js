@@ -22,8 +22,10 @@ export default class TurtleCoind {
 
   arguments: string;
 
-  constructor() {
-    this.path = 'TurtleCoind';
+  turtleCoindPath: string;
+
+  constructor(turtleCoindPath: string) {
+    this.path = turtleCoindPath;
     this.arguments = `--log-file ${path.resolve(
       directories[1],
       'TurtleCoind.log'

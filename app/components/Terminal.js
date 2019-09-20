@@ -59,6 +59,7 @@ export default class Receive extends Component<Props, State> {
     const { darkMode, daemonLog } = this.state;
     const { backgroundColor, textColor, fillColor } = uiType(darkMode);
 
+    // note: the css uses flexbox to reverse this DIV (it treats the top as the bottom)
     return (
       <div>
         <Redirector />
@@ -66,30 +67,47 @@ export default class Receive extends Component<Props, State> {
         <div className={`wholescreen ${backgroundColor}`}>
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${fillColor} ${textColor} terminal`}>
+            {false && (
+              <input
+                className="bash-prompt has-text-weight-bold has-icons-left has-text-success is-family-monospace"
+                ref={input => input && input.focus()}
+                type="text"
+              />
+            )}
             {daemonLog.map(consoleOut => {
-              let logText = consoleOut;
               let logColor = textColor;
-              const isProtocol = consoleOut.includes('[protocol]');
+              const isProtocol = consoleOut.includes('TurtleCoin');
               const isCheckpoints = consoleOut.includes('[checkpoints]');
+              const addedToMainChain = consoleOut.includes(
+                'added to main chain'
+              );
               const stopSignalSent = consoleOut.includes('Stop signal sent');
               const isError = consoleOut.includes('ERROR');
+              const isViolet = consoleOut.includes('===');
+              const isAscii =
+                consoleOut.includes('█') || consoleOut.includes('═');
 
-              logText = consoleOut.replace('[Core]', '');
-              logText = consoleOut.replace('[checkpoints]', '');
-              logText = consoleOut.replace('[protocol]', '');
-              logText = consoleOut.replace('[daemon]', '');
-              logText = consoleOut.replace('[node_server]', '');
+              let logText = consoleOut.replace('[protocol]', '');
+              logText = logText.replace('[Core]', '');
 
-              if (isProtocol || isCheckpoints) {
+              if (isProtocol || isCheckpoints || addedToMainChain) {
                 logColor = 'has-text-success has-text-weight-bold';
               }
 
               if (stopSignalSent) {
-                logColor = 'has-text-warning has-text-weight-bold';
+                logColor = 'has-text-primary has-text-weight-bold';
               }
 
               if (isError) {
                 logColor = 'has-text-danger has-text-weight-bold';
+              }
+
+              if (isViolet) {
+                logColor = 'has-text-warning has-text-weight-bold';
+              }
+
+              if (isAscii) {
+                return null;
               }
 
               return (

@@ -48,7 +48,7 @@ export function savedInInstallDir(savePath: string) {
 export let config = iConfig;
 
 export const eventEmitter = new EventEmitter();
-eventEmitter.setMaxListeners(5);
+eventEmitter.setMaxListeners(6);
 
 const homedir = os.homedir();
 

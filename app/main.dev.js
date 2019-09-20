@@ -44,15 +44,18 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
 
 let useLocalDaemon;
 let localDaemon;
+let turtleCoindPath;
 
 if (config) {
   isQuitting = !config.closeToTray;
   // eslint-disable-next-line prefer-destructuring
   useLocalDaemon = config.useLocalDaemon;
+  // eslint-disable-next-line prefer-destructuring
+  turtleCoindPath = config.turtleCoindPath;
 }
 
-if (useLocalDaemon) {
-  localDaemon = new TurtleCoind();
+if (useLocalDaemon && turtleCoindPath) {
+  localDaemon = new TurtleCoind(turtleCoindPath);
 }
 
 if (os.platform() !== 'win32') {

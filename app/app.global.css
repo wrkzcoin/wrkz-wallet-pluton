@@ -11,6 +11,16 @@
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma-extensions/dist/css/bulma-extensions.min.css';
 
+.bash-prompt {
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  border: none;
+  outline: none;
+  height: 30px;
+  transition: height 1s;
+  -webkit-transition: height 1s;
+}
+
 .button-settings-page {
   position: relative;
   top: 6px;
