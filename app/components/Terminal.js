@@ -4,6 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import ReactTooltip from 'react-tooltip';
 import { session, daemonLogger, eventEmitter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
@@ -63,6 +64,13 @@ export default class Receive extends Component<Props, State> {
     return (
       <div>
         <Redirector />
+        <ReactTooltip
+          effect="solid"
+          border
+          type="light"
+          multiline
+          place="top"
+        />
         <Modal darkMode={darkMode} />
         <div className={`wholescreen ${backgroundColor}`}>
           <NavBar darkMode={darkMode} />
