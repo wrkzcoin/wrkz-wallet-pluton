@@ -26,21 +26,34 @@ export default class Receive extends Component<Props, State> {
 
   state: State;
 
+  ref: any;
+
   constructor(props?: Props) {
     super(props);
     this.state = {
       darkMode: session.darkMode
     };
+    this.handleCopiedTip = this.handleCopiedTip.bind(this);
+    this.ref = null;
   }
 
   componentDidMount() {}
 
   componentWillUnmount() {}
 
+  handleCopiedTip = () => {
+    ReactTooltip.show(this.ref);
+    setTimeout(() => {
+      ReactTooltip.hide(this.ref);
+    }, 500);
+  };
+
   render() {
     const { copyToClipboard } = this.props;
     const { darkMode } = this.state;
     const { backgroundColor, textColor } = uiType(darkMode);
+
+    const copiedTip = 'Copied!';
 
     return (
       <div>
@@ -48,11 +61,11 @@ export default class Receive extends Component<Props, State> {
         <Modal darkMode={darkMode} />
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
-            effect="solid"
             border
             type="light"
             multiline
             place="top"
+            effect="solid"
           />
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>
@@ -76,9 +89,17 @@ export default class Receive extends Component<Props, State> {
                   <div className="field">
                     <div className="buttons">
                       <button
+                        // eslint-disable-next-line no-return-assign
+                        ref={ref => (this.ref = ref)}
                         type="button"
                         className="button is-success is-large"
-                        onClick={() => copyToClipboard(session.address)}
+                        onClick={() => {
+                          copyToClipboard(session.address);
+                          this.handleCopiedTip();
+                        }}
+                        data-tip={copiedTip}
+                        data-event="none"
+                        data-effect="float"
                       >
                         <span className="icon is-small">
                           <i className="fa fa-clipboard" />
