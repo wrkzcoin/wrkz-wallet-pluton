@@ -81,7 +81,12 @@ export default class Settings extends Component<Props, State> {
 
   render() {
     const { darkMode, activeTab } = this.state;
-    const { backgroundColor, textColor, menuActiveColor, toolTipColor } = uiType(darkMode);
+    const {
+      backgroundColor,
+      textColor,
+      menuActiveColor,
+      toolTipColor
+    } = uiType(darkMode);
 
     let platform;
     switch (os.platform()) {

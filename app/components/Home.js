@@ -160,7 +160,9 @@ export default class Home extends Component<Props, State> {
       symbolLocation,
       fiatDecimals
     } = this.state;
-    const { backgroundColor, textColor, tableMode, toolTipColor } = uiType(darkMode);
+    const { backgroundColor, textColor, tableMode, toolTipColor } = uiType(
+      darkMode
+    );
 
     return (
       <div>

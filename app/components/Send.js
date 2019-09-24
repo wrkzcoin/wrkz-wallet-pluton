@@ -436,9 +436,13 @@ export default class Send extends Component<Props, State> {
     const exampleAmount =
       symbolLocation === 'prefix' ? `${fiatSymbol}100` : `100${fiatSymbol}`;
 
-    const { backgroundColor, textColor, elementBaseColor, linkColor, toolTipColor } = uiType(
-      darkMode
-    );
+    const {
+      backgroundColor,
+      textColor,
+      elementBaseColor,
+      linkColor,
+      toolTipColor
+    } = uiType(darkMode);
 
     if (transactionComplete === true) {
       return <Redirect to="/" />;
