@@ -436,7 +436,7 @@ export default class Send extends Component<Props, State> {
     const exampleAmount =
       symbolLocation === 'prefix' ? `${fiatSymbol}100` : `100${fiatSymbol}`;
 
-    const { backgroundColor, textColor, elementBaseColor, linkColor } = uiType(
+    const { backgroundColor, textColor, elementBaseColor, linkColor, toolTipColor } = uiType(
       darkMode
     );
 
@@ -451,8 +451,7 @@ export default class Send extends Component<Props, State> {
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
             effect="solid"
-            border
-            type="light"
+            type={toolTipColor}
             multiline
             place="top"
           />

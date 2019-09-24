@@ -51,7 +51,7 @@ export default class Receive extends Component<Props, State> {
   render() {
     const { copyToClipboard } = this.props;
     const { darkMode } = this.state;
-    const { backgroundColor, textColor } = uiType(darkMode);
+    const { backgroundColor, textColor, toolTipColor } = uiType(darkMode);
 
     const copiedTip = 'Copied!';
 
@@ -61,8 +61,7 @@ export default class Receive extends Component<Props, State> {
         <Modal darkMode={darkMode} />
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
-            border
-            type="light"
+            type={toolTipColor}
             multiline
             place="top"
             effect="solid"

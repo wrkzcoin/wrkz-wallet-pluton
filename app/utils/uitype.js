@@ -24,6 +24,8 @@ export default function uiType(darkMode: boolean) {
 
   const buttonColor = darkMode ? 'is-dark' : '';
 
+  const toolTipColor = darkMode ? 'dark' : 'light';
+
   const menuActiveColor = darkMode
     ? 'has-background-black-ter'
     : 'has-background-light';
@@ -38,7 +40,8 @@ export default function uiType(darkMode: boolean) {
     settingsCogColor,
     linkColor,
     buttonColor,
-    menuActiveColor
+    menuActiveColor,
+    toolTipColor
   };
 
   return response;

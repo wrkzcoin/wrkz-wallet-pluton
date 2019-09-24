@@ -58,7 +58,7 @@ export default class Receive extends Component<Props, State> {
 
   render() {
     const { darkMode, daemonLog } = this.state;
-    const { backgroundColor, textColor, fillColor } = uiType(darkMode);
+    const { backgroundColor, textColor, fillColor, toolTipColor } = uiType(darkMode);
 
     // note: the css uses flexbox to reverse this DIV (it treats the top as the bottom)
     return (
@@ -66,8 +66,7 @@ export default class Receive extends Component<Props, State> {
         <Redirector />
         <ReactTooltip
           effect="solid"
-          border
-          type="light"
+          type={toolTipColor}
           multiline
           place="top"
         />

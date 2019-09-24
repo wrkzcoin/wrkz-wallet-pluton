@@ -160,7 +160,7 @@ export default class Home extends Component<Props, State> {
       symbolLocation,
       fiatDecimals
     } = this.state;
-    const { backgroundColor, textColor, tableMode } = uiType(darkMode);
+    const { backgroundColor, textColor, tableMode, toolTipColor } = uiType(darkMode);
 
     return (
       <div>
@@ -169,8 +169,7 @@ export default class Home extends Component<Props, State> {
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
             effect="solid"
-            border
-            type="light"
+            type={toolTipColor}
             multiline
             place="top"
           />

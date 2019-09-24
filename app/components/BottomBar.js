@@ -8,8 +8,10 @@ import { withRouter } from 'react-router-dom';
 import { session, loginCounter, config } from '../index';
 import SyncStatus from './SyncStatus';
 import DaemonSyncStatus from './DaemonSyncStatus';
+import ReactTooltip from 'react-tooltip';
 import Balance from './Balance';
 import NodeFee from './NodeFee';
+import uiType from '../utils/uitype';
 
 type Location = {
   hash: string,
@@ -47,6 +49,7 @@ class BottomBar extends Component<Props, State> {
     const { darkMode } = this.props;
     const { navBarCount } = this.state;
     const { useLocalDaemon } = config;
+    const { toolTipColor } = uiType(darkMode)
 
     return (
       <div
@@ -61,6 +64,12 @@ class BottomBar extends Component<Props, State> {
             : 'footerbar-slideup has-background-light'
         }
       >
+      <ReactTooltip
+        effect="solid"
+        type={toolTipColor}
+        multiline
+        place="top"
+      />
         {session.wallet && (
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
             {}

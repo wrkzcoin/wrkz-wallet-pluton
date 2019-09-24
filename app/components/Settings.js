@@ -81,7 +81,7 @@ export default class Settings extends Component<Props, State> {
 
   render() {
     const { darkMode, activeTab } = this.state;
-    const { backgroundColor, textColor, menuActiveColor } = uiType(darkMode);
+    const { backgroundColor, textColor, menuActiveColor, toolTipColor } = uiType(darkMode);
 
     let platform;
     switch (os.platform()) {
@@ -106,8 +106,7 @@ export default class Settings extends Component<Props, State> {
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
             effect="solid"
-            border
-            type="light"
+            type={toolTipColor}
             multiline
             place="top"
           />
