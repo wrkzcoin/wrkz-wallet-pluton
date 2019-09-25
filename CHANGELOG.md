@@ -3,6 +3,9 @@
 ## v0.0.28
 
 - introduces a non-blocking in-window 'modal' component which replaces all native (thread blocking) dialogs
+- adds a local daemon mode which can be enabled in settings (you must provide a path to turtlecoind)
+- upgrades turtlecoin-wallet-backend for some transaction bugfixes
+- adds some additional dev-only testing actions
 
 ## v0.0.27
 

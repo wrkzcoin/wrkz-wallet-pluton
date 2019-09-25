@@ -639,6 +639,7 @@ export default class Send extends Component<Props, State> {
                       tabIndex={0}
                       type="action"
                       onMouseDown={event => event.preventDefault()}
+                      disabled={looping}
                     >
                       <span className="icon is-small">
                         <i className="fa fa-flask" />
