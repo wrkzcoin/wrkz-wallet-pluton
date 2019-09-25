@@ -6,6 +6,7 @@
 - adds a local daemon mode which can be enabled in settings (you must provide a path to turtlecoind)
 - upgrades turtlecoin-wallet-backend for some transaction bugfixes
 - adds some additional dev-only testing actions
+- pulls in source code pro for monospace font on all OS
 
 ## v0.0.27
 
