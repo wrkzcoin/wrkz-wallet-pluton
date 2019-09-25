@@ -38,7 +38,7 @@ export default class TurtleCoind {
       maxBuffer: 1024 * 500,
       windowsHide: true
     });
-    log.debug(this.child.pid);
+    log.info(`TurtleCoin daemon started, application PID: ${this.child.pid}`);
     this.quit = this.quit.bind(this);
   }
 

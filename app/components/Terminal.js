@@ -4,6 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import { remote } from 'electron';
 import ReactTooltip from 'react-tooltip';
 import { session, daemonLogger, eventEmitter } from '../index';
 import NavBar from './NavBar';
@@ -94,12 +95,21 @@ export default class Receive extends Component<Props, State> {
               const isError = consoleOut.includes('ERROR');
               const isViolet = consoleOut.includes('===');
               const isAscii =
-                consoleOut.includes('█') || consoleOut.includes('═');
+                consoleOut.includes('█') ||
+                consoleOut.includes('═') ||
+                consoleOut.includes('_') ||
+                consoleOut.includes('|');
+
+              const isLink = consoleOut.includes('https://github.com/turtlecoin/turtlecoin/blob/master/LICENSE');
+              const isChatLink = consoleOut.includes('http://chat.turtlecoin.lol');
 
               let logText = consoleOut.replace('[protocol]', '');
               logText = logText.replace('[Core]', '');
               logText = logText.replace('[daemon]', '');
               logText = logText.replace('[node_server]', '');
+              logText = logText.replace('[RocksDBWrapper]', '');
+              logText = logText.replace('http://chat.turtlecoin.lol', '');
+
 
               if (isProtocol || isCheckpoints || addedToMainChain) {
                 logColor = 'has-text-success has-text-weight-bold';
@@ -114,17 +124,32 @@ export default class Receive extends Component<Props, State> {
               }
 
               if (isViolet) {
-                logColor = 'has-text-warning has-text-weight-bold';
+                logColor = 'has-text-violet has-text-weight-bold';
               }
 
               if (isAscii) {
                 return null;
               }
 
+              if (isLink) {
+                return <a className="has-text-link is-family-monospace" onClick={() => remote.shell.openExternal(logText)}>{logText}</a>
+              }
+
+              if (isChatLink) {
+                return (
+                  <p
+                    key={consoleOut}
+                    className="is-family-monospace"
+                  >
+                  {logText} <a className="has-text-link is-family-monospace" onClick={() => remote.shell.openExternal('http://chat.turtlecoin.lol')}>http://chat.turtlecoin.lol</a>
+                </p>
+                )
+              }
+
               return (
                 <p
                   key={consoleOut}
-                  className={`${textColor} is-family-monospace ${logColor}`}
+                  className={`is-family-monospace ${logColor}`}
                 >
                   {logText}
                 </p>

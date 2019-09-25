@@ -22,7 +22,7 @@ export default class DaemonLogger {
 
     const tailOptions = {
       separator: /[\r]{0,1}\n/,
-      fromBeginning: false,
+      fromBeginning: true,
       fsWatchOptions: {},
       follow: true,
       useWatchFile: os.platform() === 'win32',

@@ -68,16 +68,6 @@ log.debug(`Proton wallet started...`);
 
 const [programDirectory] = directories;
 
-log.debug('Checking if program directories are present...');
-directories.forEach(dir => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-    log.debug(`${dir} directories not detected, creating...`);
-  } else if (dir === programDirectory) {
-    log.debug('Directories found. Initializing wallet session...');
-  }
-});
-
 if (!fs.existsSync(`${programDirectory}/config.json`)) {
   log.debug('Config not detected, writing internal config to disk...');
 } else {

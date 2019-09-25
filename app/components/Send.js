@@ -654,7 +654,7 @@ export default class Send extends Component<Props, State> {
                           role="button"
                           tabIndex={0}
                         >
-                          <span className="icon is-large has-text-warning">
+                          <span className="icon is-large">
                             <i className="fas fa-sync fa-spin" />
                           </span>
                         </a>
@@ -671,7 +671,7 @@ export default class Send extends Component<Props, State> {
                           role="button"
                           tabIndex={0}
                         >
-                          <span className="icon is-large has-text-warning">
+                          <span className="icon is-large">
                             <i className="fas fa-check" />
                           </span>
                         </a>
@@ -687,7 +687,7 @@ export default class Send extends Component<Props, State> {
                           role="button"
                           tabIndex={0}
                         >
-                          <span className="icon is-large has-text-warning">
+                          <span className="icon is-large">
                             <i className="fas fa-times" />
                           </span>
                         </a>

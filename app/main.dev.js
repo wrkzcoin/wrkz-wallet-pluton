@@ -42,6 +42,17 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
   }
 }
 
+log.debug('Checking if program directories are present...');
+directories.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+    log.debug(`${dir} directories not detected, creating...`);
+  }
+});
+
+const daemonLogFile = path.resolve(directories[1], 'TurtleCoind.log');
+fs.closeSync(fs.openSync(daemonLogFile, 'w'));
+
 let useLocalDaemon;
 let localDaemon;
 let turtleCoindPath;
