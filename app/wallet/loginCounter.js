@@ -18,6 +18,10 @@ export default class LoginCounter {
 
   daemonLog: string[];
 
+  loopTest: boolean;
+
+  looping: boolean;
+
   constructor() {
     this.userLoginAttempted = false;
     this.isLoggedIn = false;
@@ -25,5 +29,7 @@ export default class LoginCounter {
     this.freshRestore = false;
     this.loginsAttempted = 0;
     this.navBarCount = 0;
+    this.loopTest = false;
+    this.looping = false;
   }
 }

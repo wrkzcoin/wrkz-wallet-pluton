@@ -49,12 +49,14 @@ export default class NodeChanger extends Component<Props, State> {
     eventEmitter.on('newNodeConnected', this.handleNewNode);
     eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.on('nodeChangeComplete', this.handleNodeChangeComplete);
+    eventEmitter.on('toggleLocalDaemon', this.toggleLocalDaemon2);
   }
 
   componentWillUnmount() {
     eventEmitter.off('newNodeConnected', this.handleNewNode);
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.off('nodeChangeComplete', this.handleNodeChangeComplete);
+    eventEmitter.off('toggleLocalDaemon', this.toggleLocalDaemon2);
   }
 
   browseForTurtleCoind = () => {
@@ -126,6 +128,14 @@ export default class NodeChanger extends Component<Props, State> {
     });
   };
 
+  toggleLocalDaemon2 = () => {
+    const { useLocalDaemon } = this.state;
+    session.modifyConfig('useLocalDaemon', !useLocalDaemon);
+    this.setState({
+      useLocalDaemon: !useLocalDaemon
+    });
+  };
+
   toggleLocalDaemon = () => {
     const { darkMode } = this.props;
     const { useLocalDaemon } = this.state;
@@ -152,8 +162,10 @@ export default class NodeChanger extends Component<Props, State> {
       'openModal',
       message,
       'Restart',
-      `Not Right Now`,
-      'restartApplication'
+      null,
+      'restartApplication',
+      'Not Right Now',
+      'toggleLocalDaemon'
     );
   };
 

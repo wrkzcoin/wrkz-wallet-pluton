@@ -36,6 +36,7 @@ export default class Modal extends Component<Props, State> {
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
     this.confirmModal = this.confirmModal.bind(this);
+    this.extraAction = this.extraAction.bind(this);
   }
 
   componentWillMount() {
@@ -165,8 +166,8 @@ export default class Modal extends Component<Props, State> {
               {extraLabel && (
                 <button
                   className="button is-warning is-large"
-                  onClick={() => this.extraAction()}
-                  onKeyPress={() => this.extraAction()}
+                  onClick={this.extraAction}
+                  onKeyPress={this.extraAction}
                   type="button"
                   tabIndex={0}
                   onMouseDown={event => event.preventDefault()}
