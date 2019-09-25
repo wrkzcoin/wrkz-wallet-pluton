@@ -148,7 +148,7 @@ contextMenu({
   showInspectElement: isDev,
   prepend: (defaultActions, params) => [
     {
-      label: 'Search block explorer for this transaction',
+      label: 'Search block explorer for this hash',
       // Only show it when right-clicking text
       visible: params.selectionText.trim().length === 64,
       click: () => {

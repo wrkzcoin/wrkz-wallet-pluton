@@ -100,8 +100,12 @@ export default class Receive extends Component<Props, State> {
                 consoleOut.includes('_') ||
                 consoleOut.includes('|');
 
-              const isLink = consoleOut.includes('https://github.com/turtlecoin/turtlecoin/blob/master/LICENSE');
-              const isChatLink = consoleOut.includes('http://chat.turtlecoin.lol');
+              const isLink = consoleOut.includes(
+                'https://github.com/turtlecoin/turtlecoin/blob/master/LICENSE'
+              );
+              const isChatLink = consoleOut.includes(
+                'http://chat.turtlecoin.lol'
+              );
 
               let logText = consoleOut.replace('[protocol]', '');
               logText = logText.replace('[Core]', '');
@@ -109,7 +113,6 @@ export default class Receive extends Component<Props, State> {
               logText = logText.replace('[node_server]', '');
               logText = logText.replace('[RocksDBWrapper]', '');
               logText = logText.replace('http://chat.turtlecoin.lol', '');
-
 
               if (isProtocol || isCheckpoints || addedToMainChain) {
                 logColor = 'has-text-success has-text-weight-bold';
@@ -132,18 +135,40 @@ export default class Receive extends Component<Props, State> {
               }
 
               if (isLink) {
-                return <a className="has-text-link is-family-monospace" onClick={() => remote.shell.openExternal(logText)}>{logText}</a>
+                return (
+                  <a
+                    className="has-text-link is-family-monospace"
+                    onClick={() => remote.shell.openExternal(logText)}
+                    onKeyPress={() => remote.shell.openExternal(logText)}
+                    role="button"
+                    tabIndex={0}
+                    onMouseDown={event => event.preventDefault()}
+                  >
+                    {logText}
+                  </a>
+                );
               }
 
               if (isChatLink) {
                 return (
-                  <p
-                    key={consoleOut}
-                    className="is-family-monospace"
-                  >
-                  {logText} <a className="has-text-link is-family-monospace" onClick={() => remote.shell.openExternal('http://chat.turtlecoin.lol')}>http://chat.turtlecoin.lol</a>
-                </p>
-                )
+                  <p key={consoleOut} className="is-family-monospace">
+                    {logText}{' '}
+                    <a
+                      className="has-text-link is-family-monospace"
+                      onClick={() =>
+                        remote.shell.openExternal('http://chat.turtlecoin.lol')
+                      }
+                      onKeyPress={() =>
+                        remote.shell.openExternal('http://chat.turtlecoin.lol')
+                      }
+                      role="button"
+                      tabIndex={0}
+                      onMouseDown={event => event.preventDefault()}
+                    >
+                      http://chat.turtlecoin.lol
+                    </a>
+                  </p>
+                );
               }
 
               return (
