@@ -239,13 +239,19 @@ ipcRenderer.on('exportToCSV', () => {
   }
   if (session) {
     const options = {
-      defaultPath: remote.app.getPath('documents')
+      defaultPath: remote.app.getPath('documents'),
+      filters: [
+        {
+          name: 'CSV Text File',
+          extensions: ['csv']
+        }
+      ]
     };
     const savePath = remote.dialog.showSaveDialog(null, options);
     if (savePath === undefined) {
       return;
     }
-    log.debug(`Exporting transactions to csv file at ${savePath}.csv...`);
+    log.debug(`Exporting transactions to csv file at ${savePath}`);
     if (session) {
       session.exportToCSV(savePath);
       const message = (
@@ -255,7 +261,7 @@ ipcRenderer.on('exportToCSV', () => {
           </center>
           <br />
           <p className={`subtitle ${textColor}`}>
-            Your transaction history has been exported to a .csv file at{' '}
+            Your transaction history has been exported to a .csv file at
             {savePath}
           </p>
         </div>

@@ -244,7 +244,7 @@ export default class WalletSession {
   exportToCSV(savePath: string) {
     const rawTransactions = this.getTransactions(undefined, undefined, false);
     const csvWriter = createObjectCsvWriter({
-      path: `${savePath}.csv`,
+      path: savePath,
       header: [
         { id: 'date', title: 'Date' },
         { id: 'blockHeight', title: 'Block Height' },
