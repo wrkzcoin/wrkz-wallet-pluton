@@ -208,14 +208,17 @@ export default class Receive extends Component<Props, State> {
                     <div className="field has-addons is-expanded">
                       <div className="control is-expanded">
                         <input
-                          className={`input ${paymentIDHighlight}`}
+                          className={`input ${paymentIDHighlight} is-family-monospace`}
                           value={paymentID}
                           onChange={this.handlePaymentIDChange}
                         />
                       </div>
                       <div className="control">
                         <button type="submit" className="button is-success">
-                          Choose
+                          <span className="icon is-small">
+                            <i className="fa fa-flask" />
+                          </span>
+                          &nbsp;&nbsp;Generate
                         </button>
                       </div>
                     </div>
