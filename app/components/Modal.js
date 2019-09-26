@@ -37,6 +37,7 @@ export default class Modal extends Component<Props, State> {
     this.openModal = this.openModal.bind(this);
     this.confirmModal = this.confirmModal.bind(this);
     this.extraAction = this.extraAction.bind(this);
+    this.handleEsc = this.handleEsc.bind(this);
   }
 
   componentWillMount() {
@@ -89,6 +90,12 @@ export default class Modal extends Component<Props, State> {
     });
   };
 
+  handleEsc = (event: any) => {
+    if (event.key === 'Escape') {
+      this.closeModal();
+    }
+  };
+
   confirmModal = () => {
     this.closeModal();
     const { confirmAction } = this.state;
@@ -135,7 +142,13 @@ export default class Modal extends Component<Props, State> {
     const { backgroundColor } = uiType(darkMode);
 
     return (
-      <div className={`modal ${isActive} fadein`}>
+      <div
+        className={`modal ${isActive} fadein`}
+        onKeyDown={event => this.handleEsc(event)}
+        role="button"
+        tabIndex={0}
+        onMouseDown={event => event.preventDefault()}
+      >
         <div
           className="modal-background"
           onClick={this.closeModal}
