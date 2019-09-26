@@ -3,9 +3,14 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
+import crypto from 'crypto';
 import React, { Component } from 'react';
 import QRCode from 'qrcode.react';
 import ReactTooltip from 'react-tooltip';
+import {
+  createIntegratedAddress,
+  validatePaymentID
+} from 'turtlecoin-wallet-backend';
 import { session, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
@@ -18,7 +23,11 @@ type Props = {
 };
 
 type State = {
-  darkMode: boolean
+  darkMode: boolean,
+  sessionAddress: string,
+  paymentID: string,
+  usingIntegratedAddress: boolean,
+  paymentIDHighlight: string
 };
 
 export default class Receive extends Component<Props, State> {
@@ -31,9 +40,16 @@ export default class Receive extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode
+      darkMode: session.darkMode,
+      sessionAddress: session.address,
+      paymentID: '',
+      usingIntegratedAddress: false,
+      paymentIDHighlight: ''
     };
     this.handleCopiedTip = this.handleCopiedTip.bind(this);
+    this.generateIntegratedAddress = this.generateIntegratedAddress.bind(this);
+    this.resetForm = this.resetForm.bind(this);
+    this.handlePaymentIDChange = this.handlePaymentIDChange.bind(this);
     this.ref = null;
   }
 
@@ -48,10 +64,65 @@ export default class Receive extends Component<Props, State> {
     }, 500);
   };
 
+  generateIntegratedAddress = (specifiedID?: string) => {
+    const paymentID = specifiedID || crypto.randomBytes(32).toString('hex');
+    const integratedAddress = createIntegratedAddress(
+      session.address,
+      paymentID
+    );
+    this.setState({
+      usingIntegratedAddress: true,
+      sessionAddress: integratedAddress,
+      paymentID
+    });
+  };
+
+  resetForm = () => {
+    this.setState({
+      usingIntegratedAddress: false,
+      sessionAddress: session.address,
+      paymentID: ''
+    });
+  };
+
+  handlePaymentIDChange = (event: any) => {
+    const enteredID = event.target.value;
+    this.setState({
+      paymentID: enteredID
+    });
+  };
+
+  handleIDSubmit = (event: any) => {
+    event.preventDefault();
+    const { paymentID } = this.state;
+    const { errorCode } = validatePaymentID(paymentID);
+    if (errorCode === 0) {
+      this.generateIntegratedAddress(paymentID);
+      this.setState({
+        paymentIDHighlight: 'is-success'
+      });
+    } else {
+      this.setState({
+        paymentIDHighlight: 'is-danger'
+      });
+    }
+  };
+
   render() {
     const { copyToClipboard } = this.props;
-    const { darkMode } = this.state;
-    const { backgroundColor, textColor, toolTipColor } = uiType(darkMode);
+    const {
+      darkMode,
+      sessionAddress,
+      paymentID,
+      usingIntegratedAddress,
+      paymentIDHighlight
+    } = this.state;
+    const {
+      backgroundColor,
+      textColor,
+      toolTipColor,
+      elementBaseColor
+    } = uiType(darkMode);
 
     const copiedTip = 'Copied!';
 
@@ -80,7 +151,7 @@ export default class Receive extends Component<Props, State> {
                       <textarea
                         className="textarea is-family-monospace is-large"
                         rows="6"
-                        value={session.address}
+                        value={sessionAddress}
                         readOnly
                       />
                     </label>
@@ -93,7 +164,7 @@ export default class Receive extends Component<Props, State> {
                         type="button"
                         className="button is-success is-large"
                         onClick={() => {
-                          copyToClipboard(session.address);
+                          copyToClipboard(sessionAddress);
                           this.handleCopiedTip();
                         }}
                         data-tip={copiedTip}
@@ -105,9 +176,51 @@ export default class Receive extends Component<Props, State> {
                         </span>
                         &nbsp;&nbsp;{il8n.copy_to_clipboard}
                       </button>
+                      <button
+                        type="button"
+                        className="button is-warning is-large"
+                        onClick={() => this.generateIntegratedAddress()}
+                      >
+                        <span className="icon is-small">
+                          <i className="fas fa-user" />
+                        </span>
+                        &nbsp;&nbsp;Create Integrated Address
+                      </button>
+                      <button
+                        type="button"
+                        className={`button is-large ${elementBaseColor}`}
+                        onClick={this.resetForm}
+                      >
+                        <span className="icon is-small">
+                          <i className="fa fa-undo" />
+                        </span>
+                        &nbsp;&nbsp;Reset
+                      </button>
                     </div>
                   </div>
                 </form>
+                <br />
+                {usingIntegratedAddress && (
+                  <form onSubmit={this.handleIDSubmit}>
+                    <p className={`help ${textColor}`}>
+                      Payment ID used for Generation:
+                    </p>
+                    <div className="field has-addons is-expanded">
+                      <div className="control is-expanded">
+                        <input
+                          className={`input ${paymentIDHighlight}`}
+                          value={paymentID}
+                          onChange={this.handlePaymentIDChange}
+                        />
+                      </div>
+                      <div className="control">
+                        <button type="submit" className="button is-success">
+                          Choose
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                )}
               </div>
               <div className="column">
                 <div className="field">
@@ -118,7 +231,7 @@ export default class Receive extends Component<Props, State> {
                     <center>
                       <span>
                         <QRCode
-                          value={session.address}
+                          value={sessionAddress}
                           renderAs="svg"
                           bgColor="#f5f5f5"
                           size={200}
