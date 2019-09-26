@@ -273,7 +273,13 @@ ipcRenderer.on('exportToCSV', () => {
 
 function handleOpen() {
   const options = {
-    defaultPath: remote.app.getPath('documents')
+    defaultPath: remote.app.getPath('documents'),
+    filters: [
+      {
+        name: 'TurtleCoin Wallet File (v0)',
+        extensions: ['wallet']
+      }
+    ]
   };
   const getPaths = remote.dialog.showOpenDialog(null, options);
   if (getPaths === undefined) {
@@ -401,7 +407,13 @@ eventEmitter.on('initializeNewSession', password => {
 
 function handleNew() {
   const options = {
-    defaultPath: remote.app.getPath('documents')
+    defaultPath: remote.app.getPath('documents'),
+    filters: [
+      {
+        name: 'TurtleCoin Wallet File (v0)',
+        extensions: ['wallet']
+      }
+    ]
   };
   const savePath = remote.dialog.showSaveDialog(null, options);
   if (savePath === undefined) {
@@ -535,7 +547,13 @@ function backupToFile() {
     `\n\n${il8n.please_save_your_keys}`;
 
   const options = {
-    defaultPath: remote.app.getPath('documents')
+    defaultPath: remote.app.getPath('documents'),
+    filters: [
+      {
+        name: 'Text File',
+        extensions: ['txt']
+      }
+    ]
   };
   const savePath = remote.dialog.showSaveDialog(null, options);
   if (savePath === undefined) {

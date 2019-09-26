@@ -85,6 +85,9 @@ export default class Receive extends Component<Props, State> {
               />
             )}
             {daemonLog.map(consoleOut => {
+              if (consoleOut.trim() === '') {
+                return null;
+              }
               let logColor = textColor;
               const isProtocol = consoleOut.includes('TurtleCoin');
               const isCheckpoints = consoleOut.includes('[checkpoints]');
@@ -137,6 +140,7 @@ export default class Receive extends Component<Props, State> {
               if (isLink) {
                 return (
                   <a
+                    key={consoleOut}
                     className="has-text-link is-family-monospace"
                     onClick={() => remote.shell.openExternal(logText)}
                     onKeyPress={() => remote.shell.openExternal(logText)}

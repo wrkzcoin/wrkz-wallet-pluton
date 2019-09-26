@@ -306,6 +306,7 @@ export default class Send extends Component<Props, State> {
     );
     if (!loopTest) {
       if (hash) {
+        eventEmitter.emit('transaction');
         const message = (
           <div>
             <center>
@@ -371,7 +372,6 @@ export default class Send extends Component<Props, State> {
         }
       }
     }
-    eventEmitter.emit('transaction');
     eventEmitter.emit('transactionCancel');
   };
 

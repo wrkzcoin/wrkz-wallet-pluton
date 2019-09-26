@@ -62,7 +62,13 @@ export default class Send extends Component<Props, States> {
       height = '0';
     }
     const options = {
-      defaultPath: remote.app.getPath('documents')
+      defaultPath: remote.app.getPath('documents'),
+      filters: [
+        {
+          name: 'TurtleCoin Wallet File (v0)',
+          extensions: ['wallet']
+        }
+      ]
     };
     const savePath = remote.dialog.showSaveDialog(null, options);
     if (savePath === undefined) {
