@@ -1,6 +1,10 @@
 # Proton Wallet
 
 ![Download Count](https://img.shields.io/github/downloads/turtlecoin/turtle-wallet-proton/total.svg)
+![Open Issue Count](https://img.shields.io/github/issues/turtlecoin/turtle-wallet-proton)
+![Commit Activity](https://img.shields.io/github/commit-activity/m/turtlecoin/turtle-wallet-proton)
+![License](https://img.shields.io/github/license/turtlecoin/turtle-wallet-proton)
+![Version](https://img.shields.io/github/v/release/turtlecoin/turtle-wallet-proton)
 
 <img src="https://raw.githubusercontent.com/turtlecoin/turtle-wallet-proton/development/screenshots/screenshot.png">
 
