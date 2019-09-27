@@ -22,6 +22,8 @@ export default class LoginCounter {
 
   looping: boolean;
 
+  lastSettingsTab: string;
+
   constructor() {
     this.userLoginAttempted = false;
     this.isLoggedIn = false;
@@ -31,5 +33,6 @@ export default class LoginCounter {
     this.navBarCount = 0;
     this.loopTest = false;
     this.looping = false;
+    this.lastSettingsTab = 'node';
   }
 }

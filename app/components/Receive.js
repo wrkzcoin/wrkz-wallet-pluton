@@ -239,7 +239,7 @@ export default class Receive extends Component<Props, State> {
                         Payment ID used for Generation:
                       </p>
                       <div className="field has-addons is-expanded">
-                        <div classNa me="control is-expanded">
+                        <div className="control is-expanded">
                           <input
                             className={`input ${paymentIDHighlight} is-family-monospace`}
                             value={paymentID}

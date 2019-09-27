@@ -4,9 +4,10 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import log from 'electron-log';
 import os from 'os';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter } from '../index';
+import { session, eventEmitter, loginCounter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -23,7 +24,11 @@ type Props = {};
 
 type State = {
   darkMode: boolean,
-  activeTab: string
+  activeTab: string,
+  masterSwitch: boolean,
+  inAnimation: string,
+  outAnimation: string,
+  masterSwitch: boolean
 };
 
 export default class Settings extends Component<Props, State> {
@@ -31,15 +36,22 @@ export default class Settings extends Component<Props, State> {
 
   state: State;
 
+  menuFocusStack: string[];
+
   constructor(props?: Props) {
     super(props);
     this.state = {
       darkMode: session.darkMode,
-      activeTab: 'node'
+      activeTab: loginCounter.lastSettingsTab,
+      previousTab: '',
+      inAnimation: '',
+      outAnimation: '',
+      masterSwitch: false
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
     this.setActiveTab = this.setActiveTab.bind(this);
+    this.menuFocusStack = ['node'];
   }
 
   componentDidMount() {
@@ -48,8 +60,10 @@ export default class Settings extends Component<Props, State> {
   }
 
   componentWillUnmount() {
+    const { activeTab } = this.state;
     eventEmitter.off('darkmodeon', this.darkModeOn);
     eventEmitter.off('darkmodeoff', this.darkModeOff);
+    loginCounter.lastSettingsTab = activeTab;
   }
 
   darkModeOn = () => {
@@ -64,10 +78,66 @@ export default class Settings extends Component<Props, State> {
     });
   };
 
-  setActiveTab = (activeTab: string) => {
+  setActiveTab = (newTab: string) => {
+    const { activeTab } = this.state;
     this.setState({
-      activeTab
+      previousTab: activeTab,
+      masterSwitch: true
     });
+    this.menuFocusStack.unshift(newTab);
+    if (this.menuFocusStack.length > 2) {
+      this.menuFocusStack.pop();
+    }
+    const [requestedPage, previousPage] = this.menuFocusStack;
+    if (
+      this.evaluatePosition(requestedPage) > this.evaluatePosition(previousPage)
+    ) {
+      this.setState({
+        inAnimation: 'slide-in-bottom',
+        outAnimation: 'slide-out-top'
+      });
+    } else if (
+      this.evaluatePosition(requestedPage) < this.evaluatePosition(previousPage)
+    ) {
+      this.setState({
+        inAnimation: 'slide-in-top',
+        outAnimation: 'slide-out-bottom'
+      });
+    } else {
+      this.setState({
+        inAnimation: '',
+        outAnimation: '',
+        masterSwitch: false
+      });
+    }
+    this.setState({
+      activeTab: newTab
+    });
+  };
+
+  evaluatePosition = (tabName: string) => {
+    let tabValue: number;
+    switch (tabName) {
+      case 'node':
+        tabValue = 0;
+        break;
+      case 'scan':
+        tabValue = 1;
+        break;
+      case 'display':
+        tabValue = 2;
+        break;
+      case 'security':
+        tabValue = 3;
+        break;
+      case 'platform':
+        tabValue = 4;
+        break;
+      default:
+        log.debug('Programmer error!');
+        break;
+    }
+    return tabValue;
   };
 
   handlePasswordChange = () => {
@@ -79,7 +149,14 @@ export default class Settings extends Component<Props, State> {
   };
 
   render() {
-    const { darkMode, activeTab } = this.state;
+    const {
+      darkMode,
+      activeTab,
+      inAnimation,
+      outAnimation,
+      previousTab,
+      masterSwitch
+    } = this.state;
     const {
       backgroundColor,
       textColor,
@@ -104,7 +181,7 @@ export default class Settings extends Component<Props, State> {
     }
 
     return (
-      <div>
+      <div className="hide-scrollbar">
         <Redirector />
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
@@ -203,58 +280,116 @@ export default class Settings extends Component<Props, State> {
                   </ul>
                 </aside>
               </div>
-              {activeTab === 'node' && (
-                <div className="column is-one-third">
-                  <NodeChanger darkMode={darkMode} />
-                </div>
-              )}
-              {activeTab === 'scan' && (
-                <div className="column is-one-third">
-                  <Rescanner darkMode={darkMode} />
-                  <br />
-                  <ScanCoinbaseToggle darkMode={darkMode} />
-                </div>
-              )}
-              {activeTab === 'display' && (
-                <div className="column is-one-third">
-                  <FiatSelector darkMode={darkMode} />
-                  <br />
-                  <DarkModeToggle darkMode={darkMode} />
-                </div>
-              )}
-              {activeTab === 'security' && (
-                <div className="column is-one-third">
-                  <TimeoutSelector darkMode={darkMode} />
-                  <br />
-                  <button
-                    className="button is-warning"
-                    onClick={this.handlePasswordChange}
-                  >
-                    <span className="icon is-small">
-                      <i className="fa fa-shield-alt" />
-                    </span>
-                    &nbsp;&nbsp; Change Wallet Password
-                  </button>
-                  <br />
-                  <br />
-                  <button
-                    className="button is-danger"
-                    onClick={this.handleBackup}
-                  >
-                    <span className="icon is-small">
-                      <i className="fas fa-key" />
-                    </span>
-                    &nbsp;&nbsp; Backup Wallet Keys/Seed
-                  </button>
-                </div>
-              )}
-              {activeTab === 'platform' && (
-                <div className="column is-one-third">
-                  <div className="button-settings-page">
-                    <CloseToTrayToggle darkMode={darkMode} />
+              <div className="column is-one-third">
+                {activeTab === 'node' && (
+                  <div className={inAnimation}>
+                    <NodeChanger darkMode={darkMode} />
                   </div>
+                )}
+                {activeTab === 'scan' && (
+                  <div className={inAnimation}>
+                    <Rescanner darkMode={darkMode} />
+                    <br />
+                    <ScanCoinbaseToggle darkMode={darkMode} />
+                  </div>
+                )}
+
+                {activeTab === 'display' && (
+                  <div className={inAnimation}>
+                    <FiatSelector darkMode={darkMode} />
+                    <br />
+                    <DarkModeToggle darkMode={darkMode} />
+                  </div>
+                )}
+
+                {activeTab === 'security' && (
+                  <div className={inAnimation}>
+                    <TimeoutSelector darkMode={darkMode} />
+                    <br />
+                    <button
+                      className="button is-warning"
+                      onClick={this.handlePasswordChange}
+                    >
+                      <span className="icon is-small">
+                        <i className="fa fa-shield-alt" />
+                      </span>
+                      &nbsp;&nbsp; Change Wallet Password
+                    </button>
+                    <br />
+                    <br />
+                    <button
+                      className="button is-danger"
+                      onClick={this.handleBackup}
+                    >
+                      <span className="icon is-small">
+                        <i className="fas fa-key" />
+                      </span>
+                      &nbsp;&nbsp; Backup Wallet Keys/Seed
+                    </button>
+                  </div>
+                )}
+                {activeTab === 'platform' && (
+                  <div className={inAnimation}>
+                    <div className="button-settings-page">
+                      <CloseToTrayToggle darkMode={darkMode} />
+                    </div>
+                  </div>
+                )}
+                <div className="settings-overlay">
+                  {previousTab === 'node' && masterSwitch && (
+                    <div className={outAnimation}>
+                      <NodeChanger darkMode={darkMode} />
+                    </div>
+                  )}
+                  {previousTab === 'scan' && masterSwitch && (
+                    <div className={outAnimation}>
+                      <Rescanner darkMode={darkMode} />
+                      <br />
+                      <ScanCoinbaseToggle darkMode={darkMode} />
+                    </div>
+                  )}
+                  {previousTab === 'display' && masterSwitch && (
+                    <div className={outAnimation}>
+                      <FiatSelector darkMode={darkMode} />
+                      <br />
+                      <DarkModeToggle darkMode={darkMode} />
+                    </div>
+                  )}
+                  {previousTab === 'security' && masterSwitch && (
+                    <div className={outAnimation}>
+                      <TimeoutSelector darkMode={darkMode} />
+                      <br />
+                      <button
+                        className="button is-warning"
+                        onClick={this.handlePasswordChange}
+                      >
+                        <span className="icon is-small">
+                          <i className="fa fa-shield-alt" />
+                        </span>
+                        &nbsp;&nbsp; Change Wallet Password
+                      </button>
+                      <br />
+                      <br />
+                      <button
+                        className="button is-danger"
+                        onClick={this.handleBackup}
+                      >
+                        <span className="icon is-small">
+                          <i className="fas fa-key" />
+                        </span>
+                        &nbsp;&nbsp; Backup Wallet Keys/Seed
+                      </button>
+                    </div>
+                  )}
+                  {previousTab === 'platform' && masterSwitch && (
+                    <div className={outAnimation}>
+                      <div className="button-settings-page">
+                        <CloseToTrayToggle darkMode={darkMode} />
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
