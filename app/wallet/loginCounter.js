@@ -52,10 +52,10 @@ export default class LoginCounter {
     }
 
     if (previousPageValue === -1 && currentPageValue !== -1) {
-      return 'slide-in-bottom';
+      return '';
     }
     if (previousPageValue !== -1 && currentPageValue === -1) {
-      return 'slide-in-top';
+      return '';
     }
     if (currentPageValue > previousPageValue) {
       return 'slide-in-right';
