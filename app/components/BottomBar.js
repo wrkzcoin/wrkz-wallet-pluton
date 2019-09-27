@@ -57,11 +57,11 @@ class BottomBar extends Component<Props, State> {
           // eslint-disable-next-line no-nested-ternary
           darkMode
             ? navBarCount > 0
-              ? 'footerbar has-background-black'
-              : 'footerbar-slideup has-background-black'
+              ? 'footerbar has-background-black noselect'
+              : 'footerbar-slideup has-background-black noselect'
             : navBarCount > 0
-            ? 'footerbar has-background-light'
-            : 'footerbar-slideup has-background-light'
+            ? 'footerbar has-background-light noselect'
+            : 'footerbar-slideup has-background-light noselect'
         }
       >
         <ReactTooltip
