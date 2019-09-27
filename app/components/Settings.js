@@ -194,7 +194,7 @@ export default class Settings extends Component<Props, State> {
     }
 
     return (
-      <div className="hide-scrollbar">
+      <div>
         <Redirector />
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
@@ -204,7 +204,7 @@ export default class Settings extends Component<Props, State> {
             place="top"
           />
           <NavBar darkMode={darkMode} />
-          <div className={`maincontent ${backgroundColor}`}>
+          <div className={`maincontent ${backgroundColor} hide-scrollbar`}>
             <div className="columns">
               <div className={`column is-one-fifth ${backgroundColor}`}>
                 <aside className="menu settings-menu">

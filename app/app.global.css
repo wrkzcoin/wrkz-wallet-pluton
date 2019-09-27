@@ -11,6 +11,10 @@
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma-extensions/dist/css/bulma-extensions.min.css';
 
+.hide-scrollbar {
+  overflow: hidden !important;
+}
+
 .settings-overlay {
   position: absolute;
 }
