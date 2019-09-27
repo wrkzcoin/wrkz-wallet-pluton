@@ -29,7 +29,8 @@ type State = {
   inAnimation: string,
   outAnimation: string,
   masterSwitch: boolean,
-  previousTab: string
+  previousTab: string,
+  pageAnimationIn: string
 };
 
 export default class Settings extends Component<Props, State> {
@@ -47,7 +48,8 @@ export default class Settings extends Component<Props, State> {
       previousTab: '',
       inAnimation: '',
       outAnimation: '',
-      masterSwitch: false
+      masterSwitch: false,
+      pageAnimationIn: loginCounter.getAnimation('/settings')
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
@@ -168,7 +170,8 @@ export default class Settings extends Component<Props, State> {
       inAnimation,
       outAnimation,
       previousTab,
-      masterSwitch
+      masterSwitch,
+      pageAnimationIn
     } = this.state;
     const {
       backgroundColor,
@@ -196,7 +199,7 @@ export default class Settings extends Component<Props, State> {
     return (
       <div>
         <Redirector />
-        <div className={`wholescreen ${backgroundColor}`}>
+        <div className={`wholescreen ${backgroundColor} hide-scrollbar`}>
           <ReactTooltip
             effect="solid"
             type={toolTipColor}
@@ -204,7 +207,9 @@ export default class Settings extends Component<Props, State> {
             place="top"
           />
           <NavBar darkMode={darkMode} />
-          <div className={`maincontent ${backgroundColor} hide-scrollbar`}>
+          <div
+            className={`maincontent ${backgroundColor} ${pageAnimationIn} hide-scrollbar`}
+          >
             <div className="columns">
               <div className={`column is-one-fifth ${backgroundColor}`}>
                 <aside className="menu settings-menu">

@@ -24,6 +24,10 @@ export default class LoginCounter {
 
   lastSettingsTab: string;
 
+  pageFocusStack: string[];
+
+  pageAnimationIn: string;
+
   constructor() {
     this.userLoginAttempted = false;
     this.isLoggedIn = false;
@@ -34,5 +38,56 @@ export default class LoginCounter {
     this.loopTest = false;
     this.looping = false;
     this.lastSettingsTab = 'node';
+    this.pageFocusStack = [];
+  }
+
+  getAnimation(currentPage: string) {
+    const currentPageValue: number = this.evaluatePageValue(currentPage);
+    const previousPageValue: number = this.evaluatePageValue(
+      this.pageFocusStack[0]
+    );
+
+    if (previousPageValue === -2) {
+      return 'fadein';
+    }
+
+    if (previousPageValue === -1 && currentPageValue !== -1) {
+      return 'slide-in-bottom';
+    }
+    if (previousPageValue !== -1 && currentPageValue === -1) {
+      return 'slide-in-top';
+    }
+    if (currentPageValue > previousPageValue) {
+      return 'slide-in-right';
+    }
+    if (currentPageValue < previousPageValue) {
+      return 'slide-in-left';
+    }
+    return '';
+  }
+
+  evaluatePageValue(location: string) {
+    let pageValue: number;
+    switch (location) {
+      case '/login':
+        pageValue = -2;
+        break;
+      case '/':
+        pageValue = 0;
+        break;
+      case '/send':
+        pageValue = 1;
+        break;
+      case '/receive':
+        pageValue = 2;
+        break;
+      case '/settings':
+        pageValue = 3;
+        break;
+      default:
+        pageValue = -1;
+        break;
+    }
+    return pageValue;
   }
 }

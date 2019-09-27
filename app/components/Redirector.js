@@ -92,6 +92,13 @@ class Redirector extends Component<Props, State> {
     eventEmitter.on('activityDetected', this.resetTimeout);
     eventEmitter.on('newLockInterval', this.resetTimeout);
     eventEmitter.on('setAutoLock', this.setAutoLock);
+
+    // prettier-ignore
+    const { location: { pathname } } = this.props;
+    loginCounter.pageFocusStack.unshift(pathname);
+    if (loginCounter.pageFocusStack.length > 1) {
+      loginCounter.pageFocusStack.pop();
+    }
   }
 
   componentWillUnmount() {

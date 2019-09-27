@@ -24,7 +24,8 @@ type State = {
   fiatPrice: number,
   fiatSymbol: string,
   symbolLocation: string,
-  fiatDecimals: number
+  fiatDecimals: number,
+  pageAnimationIn: string
 };
 
 export default class Home extends Component<Props, State> {
@@ -46,7 +47,8 @@ export default class Home extends Component<Props, State> {
       fiatPrice: session.fiatPrice,
       fiatSymbol: config.fiatSymbol,
       symbolLocation: config.symbolLocation,
-      fiatDecimals: config.fiatDecimals
+      fiatDecimals: config.fiatDecimals,
+      pageAnimationIn: loginCounter.getAnimation('/')
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
@@ -157,7 +159,8 @@ export default class Home extends Component<Props, State> {
       displayCurrency,
       fiatSymbol,
       symbolLocation,
-      fiatDecimals
+      fiatDecimals,
+      pageAnimationIn
     } = this.state;
     const { backgroundColor, textColor, tableMode, toolTipColor } = uiType(
       darkMode
@@ -175,11 +178,7 @@ export default class Home extends Component<Props, State> {
           />
           <NavBar darkMode={darkMode} />
           <div
-            className={
-              loginCounter.navBarCount > 0
-                ? `maincontent-homescreen ${backgroundColor}`
-                : `maincontent-homescreen-fadein ${backgroundColor}`
-            }
+            className={`maincontent-homescreen ${backgroundColor} ${pageAnimationIn}`}
           >
             <table
               className={`table is-striped is-hoverable is-fullwidth is-family-monospace ${tableMode}`}

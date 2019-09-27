@@ -31,7 +31,8 @@ type State = {
   symbolLocation: string,
   sendToAddress: string,
   loopTest: boolean,
-  looping: boolean
+  looping: boolean,
+  pageAnimationIn: string
 };
 
 export default class Send extends Component<Props, State> {
@@ -57,7 +58,8 @@ export default class Send extends Component<Props, State> {
       fiatSymbol: config.fiatSymbol,
       symbolLocation: config.symbolLocation,
       loopTest: loginCounter.loopTest,
-      looping: loginCounter.looping
+      looping: loginCounter.looping,
+      pageAnimationIn: loginCounter.getAnimation('/send')
     };
     this.transactionComplete = this.transactionComplete.bind(this);
     this.generatePaymentID = this.generatePaymentID.bind(this);
@@ -479,7 +481,8 @@ export default class Send extends Component<Props, State> {
       symbolLocation,
       sendToAddress,
       loopTest,
-      looping
+      looping,
+      pageAnimationIn
     } = this.state;
 
     const exampleAmount =
@@ -500,7 +503,7 @@ export default class Send extends Component<Props, State> {
     return (
       <div>
         <Redirector />
-        <div className={`wholescreen ${backgroundColor}`}>
+        <div className={`wholescreen ${backgroundColor}  hide-scrollbar`}>
           <ReactTooltip
             effect="solid"
             type={toolTipColor}
@@ -508,7 +511,7 @@ export default class Send extends Component<Props, State> {
             place="top"
           />
           <NavBar darkMode={darkMode} />
-          <div className={`maincontent ${backgroundColor}`}>
+          <div className={`maincontent ${backgroundColor} ${pageAnimationIn}`}>
             <form onSubmit={this.confirmTransaction}>
               <div className="field">
                 <label className={`label ${textColor}`} htmlFor="address">

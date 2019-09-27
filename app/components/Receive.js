@@ -11,7 +11,7 @@ import {
   createIntegratedAddress,
   validatePaymentID
 } from 'turtlecoin-wallet-backend';
-import { session, il8n } from '../index';
+import { session, il8n, loginCounter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -27,7 +27,8 @@ type State = {
   paymentID: string,
   usingIntegratedAddress: boolean,
   paymentIDHighlight: string,
-  masterSwitch: boolean
+  masterSwitch: boolean,
+  pageAnimationIn: string
 };
 
 export default class Receive extends Component<Props, State> {
@@ -45,7 +46,8 @@ export default class Receive extends Component<Props, State> {
       paymentID: '',
       usingIntegratedAddress: false,
       paymentIDHighlight: '',
-      masterSwitch: false
+      masterSwitch: false,
+      pageAnimationIn: loginCounter.getAnimation('/receive')
     };
     this.handleCopiedTip = this.handleCopiedTip.bind(this);
     this.generateIntegratedAddress = this.generateIntegratedAddress.bind(this);
@@ -122,7 +124,8 @@ export default class Receive extends Component<Props, State> {
       paymentID,
       usingIntegratedAddress,
       paymentIDHighlight,
-      masterSwitch
+      masterSwitch,
+      pageAnimationIn
     } = this.state;
     const {
       backgroundColor,
@@ -136,7 +139,7 @@ export default class Receive extends Component<Props, State> {
     return (
       <div>
         <Redirector />
-        <div className={`wholescreen ${backgroundColor}`}>
+        <div className={`wholescreen ${backgroundColor} hide-scrollbar`}>
           <ReactTooltip
             type={toolTipColor}
             multiline
@@ -144,7 +147,7 @@ export default class Receive extends Component<Props, State> {
             effect="solid"
           />
           <NavBar darkMode={darkMode} />
-          <div className={`maincontent ${backgroundColor}`}>
+          <div className={`maincontent ${backgroundColor} ${pageAnimationIn}`}>
             <div className="columns">
               <div className="column is-three-quarters">
                 <form>
@@ -225,7 +228,7 @@ export default class Receive extends Component<Props, State> {
                             <span className="icon is-small">
                               <i className="fa fa-flask" />
                             </span>
-                            &nbsp;&nbsp;Generate
+                            &nbsp;&nbsp;Change
                           </button>
                         </div>
                       </div>
