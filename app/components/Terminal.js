@@ -10,7 +10,6 @@ import { session, daemonLogger, eventEmitter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 type Props = {};
@@ -73,7 +72,6 @@ export default class Receive extends Component<Props, State> {
           multiline
           place="top"
         />
-        <Modal darkMode={darkMode} />
         <div className={`wholescreen ${backgroundColor}`}>
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${fillColor} ${textColor} terminal`}>

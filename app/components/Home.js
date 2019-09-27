@@ -10,7 +10,6 @@ import { session, eventEmitter, il8n, loginCounter, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 let displayedTransactionCount: number = 50;
@@ -167,7 +166,6 @@ export default class Home extends Component<Props, State> {
     return (
       <div>
         <Redirector />
-        <Modal darkMode={darkMode} />
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
             effect="solid"

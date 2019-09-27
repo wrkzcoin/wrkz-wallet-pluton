@@ -15,7 +15,6 @@ import { session, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -27,7 +26,8 @@ type State = {
   sessionAddress: string,
   paymentID: string,
   usingIntegratedAddress: boolean,
-  paymentIDHighlight: string
+  paymentIDHighlight: string,
+  masterSwitch: boolean
 };
 
 export default class Receive extends Component<Props, State> {
@@ -44,7 +44,8 @@ export default class Receive extends Component<Props, State> {
       sessionAddress: session.address,
       paymentID: '',
       usingIntegratedAddress: false,
-      paymentIDHighlight: ''
+      paymentIDHighlight: '',
+      masterSwitch: false
     };
     this.handleCopiedTip = this.handleCopiedTip.bind(this);
     this.generateIntegratedAddress = this.generateIntegratedAddress.bind(this);
@@ -71,6 +72,8 @@ export default class Receive extends Component<Props, State> {
       paymentID
     );
     this.setState({
+      masterSwitch: true,
+      paymentIDHighlight: 'is-success',
       usingIntegratedAddress: true,
       sessionAddress: integratedAddress,
       paymentID
@@ -86,6 +89,9 @@ export default class Receive extends Component<Props, State> {
   };
 
   handlePaymentIDChange = (event: any) => {
+    this.setState({
+      paymentIDHighlight: ''
+    });
     const enteredID = event.target.value;
     this.setState({
       paymentID: enteredID
@@ -115,7 +121,8 @@ export default class Receive extends Component<Props, State> {
       sessionAddress,
       paymentID,
       usingIntegratedAddress,
-      paymentIDHighlight
+      paymentIDHighlight,
+      masterSwitch
     } = this.state;
     const {
       backgroundColor,
@@ -129,7 +136,6 @@ export default class Receive extends Component<Props, State> {
     return (
       <div>
         <Redirector />
-        <Modal darkMode={darkMode} />
         <div className={`wholescreen ${backgroundColor}`}>
           <ReactTooltip
             type={toolTipColor}
@@ -201,28 +207,56 @@ export default class Receive extends Component<Props, State> {
                 </form>
                 <br />
                 {usingIntegratedAddress && (
-                  <form onSubmit={this.handleIDSubmit}>
-                    <p className={`help ${textColor}`}>
-                      Payment ID used for Generation:
-                    </p>
-                    <div className="field has-addons is-expanded">
-                      <div className="control is-expanded">
-                        <input
-                          className={`input ${paymentIDHighlight} is-family-monospace`}
-                          value={paymentID}
-                          onChange={this.handlePaymentIDChange}
-                        />
+                  <div className="slide-in-left">
+                    <form onSubmit={this.handleIDSubmit}>
+                      <p className={`help ${textColor}`}>
+                        Payment ID used for Generation:
+                      </p>
+                      <div className="field has-addons is-expanded">
+                        <div className="control is-expanded">
+                          <input
+                            className={`input ${paymentIDHighlight} is-family-monospace`}
+                            value={paymentID}
+                            onChange={this.handlePaymentIDChange}
+                          />
+                        </div>
+                        <div className="control">
+                          <button type="submit" className="button is-success">
+                            <span className="icon is-small">
+                              <i className="fa fa-flask" />
+                            </span>
+                            &nbsp;&nbsp;Generate
+                          </button>
+                        </div>
                       </div>
-                      <div className="control">
-                        <button type="submit" className="button is-success">
-                          <span className="icon is-small">
-                            <i className="fa fa-flask" />
-                          </span>
-                          &nbsp;&nbsp;Generate
-                        </button>
+                    </form>
+                  </div>
+                )}
+                {!usingIntegratedAddress && masterSwitch && (
+                  <div className="slide-out-left">
+                    <form onSubmit={this.handleIDSubmit}>
+                      <p className={`help ${textColor}`}>
+                        Payment ID used for Generation:
+                      </p>
+                      <div className="field has-addons is-expanded">
+                        <div classNa me="control is-expanded">
+                          <input
+                            className={`input ${paymentIDHighlight} is-family-monospace`}
+                            value={paymentID}
+                            onChange={this.handlePaymentIDChange}
+                          />
+                        </div>
+                        <div className="control">
+                          <button type="submit" className="button is-success">
+                            <span className="icon is-small">
+                              <i className="fa fa-flask" />
+                            </span>
+                            &nbsp;&nbsp;Generate
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
                 )}
               </div>
               <div className="column">

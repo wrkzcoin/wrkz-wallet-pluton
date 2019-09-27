@@ -8,7 +8,6 @@ import { config, session, eventEmitter, il8n } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import Modal from './Modal';
 import uiType from '../utils/uitype';
 
 type Props = {};
@@ -111,7 +110,6 @@ export default class ChangePassword extends Component<Props, State> {
     return (
       <div>
         <Redirector />
-        <Modal darkMode={darkMode} />
         <div className={`wholescreen ${fillColor}`}>
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>

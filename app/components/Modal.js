@@ -41,47 +41,11 @@ export default class Modal extends Component<Props, State> {
   }
 
   componentWillMount() {
-    eventEmitter.on(
-      'openModal',
-      (
-        message,
-        confirmLabel,
-        denyLabel,
-        confirmAction,
-        extraLabel,
-        extraAction
-      ) =>
-        this.openModal(
-          message,
-          confirmLabel,
-          denyLabel,
-          confirmAction,
-          extraLabel,
-          extraAction
-        )
-    );
+    eventEmitter.on('openModal', this.openModal);
   }
 
   componentWillUnmount() {
-    eventEmitter.off(
-      'openModal',
-      (
-        message,
-        confirmLabel,
-        denyLabel,
-        confirmAction,
-        extraLabel,
-        extraAction
-      ) =>
-        this.openModal(
-          message,
-          confirmLabel,
-          denyLabel,
-          confirmAction,
-          extraLabel,
-          extraAction
-        )
-    );
+    eventEmitter.off('openModal', this.openModal);
   }
 
   closeModal = () => {

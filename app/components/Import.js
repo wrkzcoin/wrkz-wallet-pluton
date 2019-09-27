@@ -10,7 +10,6 @@ import log from 'electron-log';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import Modal from './Modal';
 import uiType from '../utils/uitype';
 import {
   config,
@@ -138,7 +137,6 @@ export default class Send extends Component<Props, States> {
     return (
       <div>
         <Redirector />
-        <Modal darkMode={darkMode} />
         <div className={`wholescreen ${backgroundColor}`}>
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>

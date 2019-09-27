@@ -9,6 +9,7 @@ import { Link, withRouter } from 'react-router-dom';
 import routes from '../constants/routes';
 import { session, eventEmitter, il8n, loginCounter, config } from '../index';
 import uiType from '../utils/uitype';
+import Modal from './Modal';
 
 type Location = {
   hash: string,
@@ -63,6 +64,7 @@ class NavBar extends Component<Props, State> {
 
     return (
       <div>
+        <Modal darkMode={darkMode} />
         <div
           className={
             navBarCount > 0
