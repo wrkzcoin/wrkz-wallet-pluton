@@ -28,7 +28,8 @@ type State = {
   masterSwitch: boolean,
   inAnimation: string,
   outAnimation: string,
-  masterSwitch: boolean
+  masterSwitch: boolean,
+  previousTab: string
 };
 
 export default class Settings extends Component<Props, State> {
@@ -51,7 +52,10 @@ export default class Settings extends Component<Props, State> {
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
     this.setActiveTab = this.setActiveTab.bind(this);
-    this.menuFocusStack = ['node'];
+    this.flipMasterSwitch = this.flipMasterSwitch.bind(this);
+
+    const { activeTab, previousTab } = this.state;
+    this.menuFocusStack = [activeTab, previousTab];
   }
 
   componentDidMount() {
@@ -78,6 +82,12 @@ export default class Settings extends Component<Props, State> {
     });
   };
 
+  flipMasterSwitch = () => {
+    this.setState({
+      masterSwitch: false
+    });
+  };
+
   setActiveTab = (newTab: string) => {
     const { activeTab } = this.state;
     this.setState({
@@ -90,6 +100,7 @@ export default class Settings extends Component<Props, State> {
     }
     const [requestedPage, previousPage] = this.menuFocusStack;
     if (
+      // $FlowFixMe
       this.evaluatePosition(requestedPage) > this.evaluatePosition(previousPage)
     ) {
       this.setState({
@@ -97,6 +108,7 @@ export default class Settings extends Component<Props, State> {
         outAnimation: 'slide-out-top'
       });
     } else if (
+      // $FlowFixMe
       this.evaluatePosition(requestedPage) < this.evaluatePosition(previousPage)
     ) {
       this.setState({
@@ -113,6 +125,7 @@ export default class Settings extends Component<Props, State> {
     this.setState({
       activeTab: newTab
     });
+    setTimeout(this.flipMasterSwitch, 250);
   };
 
   evaluatePosition = (tabName: string) => {
