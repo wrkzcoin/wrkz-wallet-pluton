@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.0.0
+
+- There is user action required for this update. The wallet open dialog now **only looks for wallet files ending in the `.wallet` extension,** as well as uses this extension by default when saving. If your wallet file does not have this extension, you will not be able to see it in the open dialog. **You must manually rename your wallet file and give it the proper extension `.wallet`**.
+- Adds quite a few nifty animations.
+- Adds integrated address generation on the Receive screen.
+- Fixes a nasty memory leak that somehow I did not notice on the last version.
+- Fixes some UX bugs that were missed from transitioning to non-blocking modal components rather than native dialogs.
+- All dropdown menus are now fully searchable. (All one of them)
+
 ## v0.0.28
 
 - introduces a non-blocking in-window 'modal' component which replaces all native (thread blocking) dialogs
