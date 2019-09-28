@@ -561,7 +561,9 @@ export default class WalletSession {
   }
 
   formatLikeCurrency(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const parts = x.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
   }
 
   atomicToHuman(x: number, prettyPrint?: boolean) {
