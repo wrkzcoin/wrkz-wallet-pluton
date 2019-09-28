@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { remote } from 'electron';
 import ReactTooltip from 'react-tooltip';
-import { session, daemonLogger, eventEmitter } from '../index';
+import { session, daemonLogger, eventEmitter, loginCounter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -16,7 +16,8 @@ type Props = {};
 
 type State = {
   darkMode: boolean,
-  daemonLog: string[]
+  daemonLog: string[],
+  pageAnimationIn: string
 };
 
 export default class Receive extends Component<Props, State> {
@@ -33,7 +34,8 @@ export default class Receive extends Component<Props, State> {
 
     this.state = {
       darkMode,
-      daemonLog: this.daemonLog
+      daemonLog: this.daemonLog,
+      pageAnimationIn: loginCounter.getAnimation('/terminal')
     };
 
     this.refreshConsole = this.refreshConsole.bind(this);
@@ -57,7 +59,7 @@ export default class Receive extends Component<Props, State> {
   };
 
   render() {
-    const { darkMode, daemonLog } = this.state;
+    const { darkMode, daemonLog, pageAnimationIn } = this.state;
     const { backgroundColor, textColor, fillColor, toolTipColor } = uiType(
       darkMode
     );
@@ -72,9 +74,11 @@ export default class Receive extends Component<Props, State> {
           multiline
           place="top"
         />
-        <div className={`wholescreen ${backgroundColor}`}>
+        <div className={`wholescreen ${backgroundColor} hide-scrollbar`}>
           <NavBar darkMode={darkMode} />
-          <div className={`maincontent ${fillColor} ${textColor} terminal`}>
+          <div
+            className={`maincontent ${fillColor} ${textColor} terminal ${pageAnimationIn}`}
+          >
             {false && (
               <input
                 className="bash-prompt has-text-weight-bold has-icons-left has-text-success is-family-monospace"
@@ -138,7 +142,7 @@ export default class Receive extends Component<Props, State> {
               if (isLink) {
                 return (
                   <a
-                    key={consoleOut}
+                    key={new Date()}
                     className="has-text-link is-family-monospace"
                     onClick={() => remote.shell.openExternal(logText)}
                     onKeyPress={() => remote.shell.openExternal(logText)}
@@ -153,7 +157,7 @@ export default class Receive extends Component<Props, State> {
 
               if (isChatLink) {
                 return (
-                  <p key={consoleOut} className="is-family-monospace">
+                  <p key={new Date()} className="is-family-monospace">
                     {logText}{' '}
                     <a
                       className="has-text-link is-family-monospace"
@@ -172,7 +176,6 @@ export default class Receive extends Component<Props, State> {
                   </p>
                 );
               }
-
               return (
                 <p
                   key={consoleOut}

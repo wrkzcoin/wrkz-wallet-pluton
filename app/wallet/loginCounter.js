@@ -81,8 +81,11 @@ export default class LoginCounter {
       case '/receive':
         pageValue = 2;
         break;
-      case '/settings':
+      case '/terminal':
         pageValue = 3;
+        break;
+      case '/settings':
+        pageValue = 4;
         break;
       default:
         pageValue = -1;

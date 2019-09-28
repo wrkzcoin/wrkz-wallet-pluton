@@ -23,32 +23,36 @@
   position: absolute;
 }
 
+.fadein {
+  animation: fadein 0.7s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+
 .slide-in-left {
-  animation: slide-in-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-left 0.33s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .slide-out-left {
-  animation: slide-out-left 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+  animation: slide-out-left 0.33s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 }
 
 .slide-in-top {
-  animation: slide-in-top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-top 0.33s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .slide-in-bottom {
-  animation: slide-in-bottom 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-bottom 0.33s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .slide-out-top {
-  animation: slide-out-top 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+  animation: slide-out-top 0.33s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 }
 
 .slide-out-bottom {
-  animation: slide-out-bottom 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+  animation: slide-out-bottom 0.33s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 }
 
 .slide-in-right {
-  animation: slide-in-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-right 0.33s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 /* ----------------------------------------------
@@ -268,6 +272,27 @@
     opacity: 0;
   }
 }
+/**
+ * ----------------------------------------
+ * animation fade-in
+ * ----------------------------------------
+ */
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 
 .has-text-violet {
   color: hsl(271, 100%, 71%);
@@ -310,12 +335,8 @@
   right: 0;
 }
 
-.fadein {
-  animation: fadein 0.5s;
-}
-
 .modal {
-  animation: fadein 0.25s;
+  animation: fadein 0.33s;
 }
 
 .fullwindow {
@@ -383,15 +404,6 @@
   40%,
   60% {
     transform: translate3d(4px, 0, 0);
-  }
-}
-
-@keyframes fadein {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 
