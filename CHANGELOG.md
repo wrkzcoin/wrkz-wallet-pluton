@@ -7,6 +7,7 @@
 - Adds integrated address generation on the Receive screen.
 - Fixes a nasty memory leak that somehow I did not notice on the last version.
 - Fixes some UX bugs that were missed from transitioning to non-blocking modal components rather than native dialogs.
+- Increases the amount of sockets available to request to fix timeout bugs.
 - All dropdown menus are now fully searchable. (All one of them)
 
 ## v0.0.28

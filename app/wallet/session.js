@@ -60,7 +60,8 @@ export default class WalletSession {
     this.wbConfig = {
       scanCoinbaseTransactions: config.scanCoinbaseTransactions,
       customUserAgentString: `${name}-v${version}`,
-      requestTimeout: 20 * 1000
+      requestTimeout: 1000 * 30,
+      customRequestOptions: { pool: { maxSockets: 100 }, agent: false }
     };
 
     this.selectedFiat = config.selectedFiat;

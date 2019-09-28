@@ -279,11 +279,11 @@ export default class Send extends Component<Props, State> {
         <p className={`subtitle ${textColor}`}>
           <b>Amount (w/ fee):</b>
           <br />
-          {displayCurrency !== 'trtl' &&
+          {displayCurrency === 'fiat' &&
             symbolLocation === 'prefix' &&
             fiatSymbol}
           {totalAmount}
-          {displayCurrency !== 'trtl' &&
+          {displayCurrency === 'fiat' &&
             symbolLocation === 'suffix' &&
             fiatSymbol}
         </p>
@@ -366,6 +366,7 @@ export default class Send extends Component<Props, State> {
             'transactionCancel'
           );
         } else {
+          log.debug(err);
           const message = (
             <div>
               <center>
