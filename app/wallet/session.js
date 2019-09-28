@@ -226,8 +226,6 @@ export default class WalletSession {
 
   modifyConfig(propertyName: string, value: any) {
     const programDirectory = directories[0];
-    const modifiedConfig = config;
-    modifiedConfig[propertyName] = value;
     log.debug(`Config update: ${propertyName} set to ${value.toString()}`);
     config[propertyName] = value;
     fs.writeFileSync(

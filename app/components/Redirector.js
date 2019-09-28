@@ -40,6 +40,8 @@ class Redirector extends Component<Props, State> {
 
   activityTimer: TimeoutID;
 
+  refreshPrice: IntervalID;
+
   constructor(props?: Props) {
     super(props);
     this.state = {
@@ -72,6 +74,9 @@ class Redirector extends Component<Props, State> {
         () => this.logOut(),
         1000 * 60 * autoLockInterval
       );
+    }
+    if (config.displayCurrency === 'fiat') {
+      this.refreshPrice = setInterval(this.getPrice, 1000 * 30);
     }
   }
 
@@ -119,7 +124,12 @@ class Redirector extends Component<Props, State> {
     eventEmitter.off('newLockInterval', this.resetTimeout);
     eventEmitter.off('setAutoLock', this.setAutoLock);
     clearTimeout(this.activityTimer);
+    clearInterval(this.refreshPrice);
   }
+
+  getPrice = () => {
+    session.getFiatPrice(config.selectedFiat);
+  };
 
   setAutoLock = async (enable: boolean) => {
     if (enable) {
