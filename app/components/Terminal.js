@@ -142,7 +142,7 @@ export default class Receive extends Component<Props, State> {
               if (isLink) {
                 return (
                   <a
-                    key={new Date()}
+                    key={consoleOut}
                     className="has-text-link is-family-monospace"
                     onClick={() => remote.shell.openExternal(logText)}
                     onKeyPress={() => remote.shell.openExternal(logText)}
@@ -157,7 +157,7 @@ export default class Receive extends Component<Props, State> {
 
               if (isChatLink) {
                 return (
-                  <p key={new Date()} className="is-family-monospace">
+                  <p key={consoleOut} className="is-family-monospace">
                     {logText}{' '}
                     <a
                       className="has-text-link is-family-monospace"
