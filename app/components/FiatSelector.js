@@ -4,6 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import Select from 'react-select';
 import log from 'electron-log';
 import { config, session } from '../index';
 import currencies from '../constants/currencies.json';
@@ -14,8 +15,7 @@ type Props = {
 };
 
 type State = {
-  selectedFiat: string,
-  active: boolean
+  selectedFiat: any
 };
 
 export default class FiatSelector extends Component<Props, State> {
@@ -23,20 +23,30 @@ export default class FiatSelector extends Component<Props, State> {
 
   state: State;
 
+  options: any[];
+
   constructor(props?: Props) {
     super(props);
+    this.options = currencies.map(currency => {
+      return {
+        value: currency.ticker,
+        label: `${currency.symbol} ${currency.ticker.toUpperCase()}`
+      };
+    });
     this.state = {
-      selectedFiat: config.selectedFiat,
-      active: false
+      selectedFiat: this.search(config.selectedFiat, this.options, 'value')
     };
-
-    this.toggleMenu = this.toggleMenu.bind(this);
     this.changeCurrency = this.changeCurrency.bind(this);
+    this.handleFiatChange = this.handleFiatChange.bind(this);
   }
 
   componentDidMount() {}
 
   componentWillUnmount() {}
+
+  handleChange = (selectedFiat: any) => {
+    this.setState({ selectedFiat });
+  };
 
   changeCurrency = (
     selectedFiat: string,
@@ -53,22 +63,33 @@ export default class FiatSelector extends Component<Props, State> {
     session.modifyConfig('fiatDecimals', fiatDecimals);
     session.getFiatPrice(selectedFiat);
     this.setState({
-      selectedFiat,
-      active: false
+      selectedFiat: this.search(config.selectedFiat, this.options, 'value')
     });
   };
 
-  toggleMenu = () => {
-    const { active } = this.state;
-    this.setState({
-      active: !active
-    });
+  search(searchedValue: any, arrayToSearch: any[], objectPropertyName: string) {
+    for (let i = 0; i < arrayToSearch.length; i++) {
+      if (arrayToSearch[i][objectPropertyName] === searchedValue) {
+        return arrayToSearch[i];
+      }
+    }
+  }
+
+  handleFiatChange = (event: any) => {
+    const currency = this.search(event.value, currencies, 'ticker');
+    if (currency) {
+      this.changeCurrency(
+        currency.ticker,
+        currency.symbol,
+        currency.symbolLocation,
+        currency.decimals
+      );
+    }
   };
 
   render() {
     const { darkMode } = this.props;
-    const { selectedFiat, active } = this.state;
-    const isActive = active ? 'is-active' : '';
+    const { selectedFiat } = this.state;
     const { textColor } = uiType(darkMode);
 
     return (
@@ -76,63 +97,11 @@ export default class FiatSelector extends Component<Props, State> {
         <p className={`has-text-weight-bold ${textColor}`}>
           Alternate Display Currency:
         </p>
-        <div className={`dropdown ${isActive}`}>
-          <div
-            className="dropdown-trigger"
-            onClick={this.toggleMenu}
-            onKeyPress={this.toggleMenu}
-            role="button"
-            tabIndex={0}
-          >
-            <button
-              className="button"
-              aria-haspopup="true"
-              aria-controls="dropdown-menu3"
-            >
-              <span>{selectedFiat.toUpperCase()}</span>
-              <span className="icon is-small">
-                <i className="fas fa-angle-down" aria-hidden="true" />
-              </span>
-            </button>
-          </div>
-          <div className="dropdown-menu" id="dropdown-menu4" role="menu">
-            <div className="dropdown-content">
-              {currencies.map(currency => {
-                return (
-                  <div
-                    className="dropdown-item"
-                    onClick={() =>
-                      this.changeCurrency(
-                        currency.ticker,
-                        currency.symbol,
-                        currency.symbolLocation,
-                        currency.decimals
-                      )
-                    }
-                    onKeyPress={() =>
-                      this.changeCurrency(
-                        currency.ticker,
-                        currency.symbol,
-                        currency.symbolLocation,
-                        currency.decimals
-                      )
-                    }
-                    role="button"
-                    tabIndex={0}
-                    key={currency.ticker}
-                  >
-                    <div className="columns">
-                      <div className="column">
-                        {currency.ticker.toUpperCase()}
-                      </div>
-                      <div className="column">{currency.symbol}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        <Select
+          value={selectedFiat}
+          onChange={this.handleFiatChange}
+          options={this.options}
+        />
       </div>
     );
   }

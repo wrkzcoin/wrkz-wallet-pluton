@@ -207,7 +207,15 @@ export default class Send extends Component<Props, State> {
 
   confirmTransaction = (event: any) => {
     event.preventDefault();
-    const { sendToAddress, totalAmount, paymentID, darkMode } = this.state;
+    const {
+      sendToAddress,
+      totalAmount,
+      paymentID,
+      darkMode,
+      displayCurrency,
+      fiatSymbol,
+      symbolLocation
+    } = this.state;
     const { textColor } = uiType(darkMode);
     const sufficientFunds =
       (session.getUnlockedBalance() + session.getLockedBalance()) / 100 >=
@@ -271,7 +279,13 @@ export default class Send extends Component<Props, State> {
         <p className={`subtitle ${textColor}`}>
           <b>Amount (w/ fee):</b>
           <br />
+          {displayCurrency !== 'trtl' &&
+            symbolLocation === 'prefix' &&
+            fiatSymbol}
           {totalAmount}
+          {displayCurrency !== 'trtl' &&
+            symbolLocation === 'suffix' &&
+            fiatSymbol}
         </p>
         {paymentID !== '' && (
           <p className={`subtitle ${textColor}`}>
@@ -292,7 +306,7 @@ export default class Send extends Component<Props, State> {
   };
 
   sendTransaction = async () => {
-    const { loopTest } = this.state;
+    const { loopTest, displayCurrency, fiatPrice } = this.state;
 
     eventEmitter.emit('transactionInProgress');
 
@@ -302,7 +316,9 @@ export default class Send extends Component<Props, State> {
 
     const [hash, err] = await session.sendTransaction(
       sendToAddress,
-      Number(enteredAmount) * 100,
+      displayCurrency === 'TRTL'
+        ? Number(enteredAmount) * 100
+        : (Number(enteredAmount) * 100) / fiatPrice,
       paymentID
     );
     if (!loopTest) {

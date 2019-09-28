@@ -220,18 +220,26 @@ export default class Home extends Component<Props, State> {
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'prefix' &&
                               fiatPrice !== 0 &&
-                              `-${fiatSymbol}${(
-                                fiatPrice * session.atomicToHuman(tx[2], false)
-                              )
-                                .toFixed(fiatDecimals)
+                              `-${fiatSymbol}${session
+                                .formatLikeCurrency(
+                                  // $FlowFixMe
+                                  (
+                                    fiatPrice *
+                                    session.atomicToHuman(tx[2], false)
+                                  ).toFixed(fiatDecimals)
+                                )
                                 .substring(1)}`}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'suffix' &&
                               fiatPrice !== 0 &&
-                              `-${(
-                                fiatPrice * session.atomicToHuman(tx[2], false)
-                              )
-                                .toFixed(2)
+                              `-${session
+                                .formatLikeCurrency(
+                                  // $FlowFixMe
+                                  (
+                                    fiatPrice *
+                                    session.atomicToHuman(tx[2], false)
+                                  ).toFixed(2)
+                                )
                                 .substring(1)}${fiatSymbol}`}
                             {displayCurrency === 'fiat' &&
                               fiatPrice === 0 &&
@@ -246,14 +254,22 @@ export default class Home extends Component<Props, State> {
                               session.atomicToHuman(tx[2], true)}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'prefix' &&
-                              `${fiatSymbol}${(
-                                fiatPrice * session.atomicToHuman(tx[2], false)
-                              ).toFixed(fiatDecimals)}`}
+                              `${fiatSymbol}${session.formatLikeCurrency(
+                                // $FlowFixMe
+                                (
+                                  fiatPrice *
+                                  session.atomicToHuman(tx[2], false)
+                                ).toFixed(fiatDecimals)
+                              )}`}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'suffix' &&
-                              `${(
-                                fiatPrice * session.atomicToHuman(tx[2], false)
-                              ).toFixed(fiatDecimals)}${fiatSymbol}`}
+                              `${session.formatLikeCurrency(
+                                // $FlowFixMe
+                                (
+                                  fiatPrice *
+                                  session.atomicToHuman(tx[2], false)
+                                ).toFixed(fiatDecimals)
+                              )}${fiatSymbol}`}
                           </p>
                         </td>
                       )}
@@ -263,14 +279,20 @@ export default class Home extends Component<Props, State> {
                             session.atomicToHuman(tx[3], true)}
                           {displayCurrency === 'fiat' &&
                             symbolLocation === 'prefix' &&
-                            `${fiatSymbol}${(
-                              fiatPrice * session.atomicToHuman(tx[3], false)
-                            ).toFixed(fiatDecimals)}`}
+                            `${fiatSymbol}${session.formatLikeCurrency(
+                              // $FlowFixMe
+                              (
+                                fiatPrice * session.atomicToHuman(tx[3], false)
+                              ).toFixed(fiatDecimals)
+                            )}`}
                           {displayCurrency === 'fiat' &&
                             symbolLocation === 'suffix' &&
-                            `${(
-                              fiatPrice * session.atomicToHuman(tx[3], false)
-                            ).toFixed(fiatDecimals)}${fiatSymbol}`}
+                            `${session.formatLikeCurrency(
+                              // $FlowFixMe
+                              (
+                                fiatPrice * session.atomicToHuman(tx[3], false)
+                              ).toFixed(fiatDecimals)
+                            )}${fiatSymbol}`}
                         </p>
                       </td>
                     </tr>
