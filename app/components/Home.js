@@ -4,7 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import log from 'electron-log';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { session, eventEmitter, il8n, loginCounter, config } from '../index';
 import NavBar from './NavBar';
@@ -25,7 +25,8 @@ type State = {
   fiatSymbol: string,
   symbolLocation: string,
   fiatDecimals: number,
-  pageAnimationIn: string
+  pageAnimationIn: string,
+  expandedRows: string[]
 };
 
 export default class Home extends Component<Props, State> {
@@ -48,13 +49,15 @@ export default class Home extends Component<Props, State> {
       fiatSymbol: config.fiatSymbol,
       symbolLocation: config.symbolLocation,
       fiatDecimals: config.fiatDecimals,
-      pageAnimationIn: loginCounter.getAnimation('/')
+      pageAnimationIn: loginCounter.getAnimation('/'),
+      expandedRows: ['a']
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
     );
     this.openNewWallet = this.openNewWallet.bind(this);
     this.modifyCurrency = this.modifyCurrency.bind(this);
+    this.expandRow = this.expandRow.bind(this);
   }
 
   componentDidMount() {
@@ -150,6 +153,22 @@ export default class Home extends Component<Props, State> {
     });
   };
 
+  expandRow = (event: any) => {
+    log.debug(event.target.value);
+    const { expandedRows } = this.state;
+    if (!expandedRows.includes(event.target.value)) {
+      expandedRows.push(event.target.value);
+    } else {
+      const index = expandedRows.indexOf(event.target.value);
+      if (index > -1) {
+        expandedRows.splice(index);
+      }
+    }
+    this.setState({
+      expandedRows
+    });
+  };
+
   render() {
     const {
       darkMode,
@@ -160,12 +179,12 @@ export default class Home extends Component<Props, State> {
       fiatSymbol,
       symbolLocation,
       fiatDecimals,
-      pageAnimationIn
+      pageAnimationIn,
+      expandedRows
     } = this.state;
     const { backgroundColor, textColor, tableMode, toolTipColor } = uiType(
       darkMode
     );
-
     return (
       <div>
         <Redirector />
@@ -185,6 +204,7 @@ export default class Home extends Component<Props, State> {
             >
               <thead>
                 <tr>
+                  <th />
                   <th className={textColor}>{il8n.date}</th>
                   <th className={textColor}>{il8n.hash}</th>
                   <th className={`has-text-right ${textColor}`}>
@@ -197,68 +217,110 @@ export default class Home extends Component<Props, State> {
               </thead>
               <tbody>
                 {transactions.map(tx => {
+                  const rowIsExpanded = expandedRows.includes(tx[1]);
+                  const transactionHash = tx[1];
                   return (
-                    <tr key={tx[1]}>
-                      <td
-                        data-tip={
-                          tx[0] === 0
-                            ? il8n.unconfirmed_tx_30_sec_confirm
-                            : `${il8n.block} ${tx[4]}`
-                        }
-                      >
-                        {tx[0] === 0 && (
-                          <p className="has-text-danger">{il8n.unconfirmed}</p>
-                        )}
-                        {tx[0] > 0 && <p>{session.convertTimestamp(tx[0])}</p>}
-                      </td>
-                      <td>{tx[1]}</td>
-                      {tx[2] < 0 && (
+                    <Fragment key={transactionHash}>
+                      <tr>
                         <td>
-                          <p className="has-text-danger has-text-right">
-                            {displayCurrency === 'TRTL' &&
-                              session.atomicToHuman(tx[2], true)}
-                            {displayCurrency === 'fiat' &&
-                              symbolLocation === 'prefix' &&
-                              fiatPrice !== 0 &&
-                              `-${fiatSymbol}${session
-                                .formatLikeCurrency(
+                          <button
+                            value={transactionHash}
+                            onClick={this.expandRow}
+                            className={`transparent-button ${textColor}`}
+                            onMouseDown={event => event.preventDefault()}
+                          >
+                            +
+                          </button>
+                        </td>
+                        <td
+                          data-tip={
+                            tx[0] === 0
+                              ? il8n.unconfirmed_tx_30_sec_confirm
+                              : `${il8n.block} ${tx[4]}`
+                          }
+                        >
+                          {tx[0] === 0 && (
+                            <p className="has-text-danger">
+                              {il8n.unconfirmed}
+                            </p>
+                          )}
+                          {tx[0] > 0 && (
+                            <p>{session.convertTimestamp(tx[0])}</p>
+                          )}
+                        </td>
+                        <td>{tx[1]}</td>
+                        {tx[2] < 0 && (
+                          <td>
+                            <p className="has-text-danger has-text-right">
+                              {displayCurrency === 'TRTL' &&
+                                session.atomicToHuman(tx[2], true)}
+                              {displayCurrency === 'fiat' &&
+                                symbolLocation === 'prefix' &&
+                                fiatPrice !== 0 &&
+                                `-${fiatSymbol}${session
+                                  .formatLikeCurrency(
+                                    // $FlowFixMe
+                                    (
+                                      fiatPrice *
+                                      session.atomicToHuman(tx[2], false)
+                                    ).toFixed(fiatDecimals)
+                                  )
+                                  .substring(1)}`}
+                              {displayCurrency === 'fiat' &&
+                                symbolLocation === 'suffix' &&
+                                fiatPrice !== 0 &&
+                                `-${session
+                                  .formatLikeCurrency(
+                                    // $FlowFixMe
+                                    (
+                                      fiatPrice *
+                                      session.atomicToHuman(tx[2], false)
+                                    ).toFixed(2)
+                                  )
+                                  .substring(1)}${fiatSymbol}`}
+                              {displayCurrency === 'fiat' &&
+                                fiatPrice === 0 &&
+                                ''}
+                            </p>
+                          </td>
+                        )}
+                        {tx[2] > 0 && (
+                          <td>
+                            <p className="has-text-right">
+                              {displayCurrency === 'TRTL' &&
+                                session.atomicToHuman(tx[2], true)}
+                              {displayCurrency === 'fiat' &&
+                                symbolLocation === 'prefix' &&
+                                `${fiatSymbol}${session.formatLikeCurrency(
                                   // $FlowFixMe
                                   (
                                     fiatPrice *
                                     session.atomicToHuman(tx[2], false)
                                   ).toFixed(fiatDecimals)
-                                )
-                                .substring(1)}`}
-                            {displayCurrency === 'fiat' &&
-                              symbolLocation === 'suffix' &&
-                              fiatPrice !== 0 &&
-                              `-${session
-                                .formatLikeCurrency(
+                                )}`}
+                              {displayCurrency === 'fiat' &&
+                                symbolLocation === 'suffix' &&
+                                `${session.formatLikeCurrency(
                                   // $FlowFixMe
                                   (
                                     fiatPrice *
                                     session.atomicToHuman(tx[2], false)
-                                  ).toFixed(2)
-                                )
-                                .substring(1)}${fiatSymbol}`}
-                            {displayCurrency === 'fiat' &&
-                              fiatPrice === 0 &&
-                              ''}
-                          </p>
-                        </td>
-                      )}
-                      {tx[2] > 0 && (
+                                  ).toFixed(fiatDecimals)
+                                )}${fiatSymbol}`}
+                            </p>
+                          </td>
+                        )}
                         <td>
                           <p className="has-text-right">
                             {displayCurrency === 'TRTL' &&
-                              session.atomicToHuman(tx[2], true)}
+                              session.atomicToHuman(tx[3], true)}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'prefix' &&
                               `${fiatSymbol}${session.formatLikeCurrency(
                                 // $FlowFixMe
                                 (
                                   fiatPrice *
-                                  session.atomicToHuman(tx[2], false)
+                                  session.atomicToHuman(tx[3], false)
                                 ).toFixed(fiatDecimals)
                               )}`}
                             {displayCurrency === 'fiat' &&
@@ -267,35 +329,23 @@ export default class Home extends Component<Props, State> {
                                 // $FlowFixMe
                                 (
                                   fiatPrice *
-                                  session.atomicToHuman(tx[2], false)
+                                  session.atomicToHuman(tx[3], false)
                                 ).toFixed(fiatDecimals)
                               )}${fiatSymbol}`}
                           </p>
                         </td>
+                      </tr>
+                      {rowIsExpanded && (
+                        <tr>
+                          <td colSpan={5}>
+                            <div className="expanded-info">
+                              This is where the expanded data goes, turtlefren!{' '}
+                              {tx[1]}
+                            </div>
+                          </td>
+                        </tr>
                       )}
-                      <td>
-                        <p className="has-text-right">
-                          {displayCurrency === 'TRTL' &&
-                            session.atomicToHuman(tx[3], true)}
-                          {displayCurrency === 'fiat' &&
-                            symbolLocation === 'prefix' &&
-                            `${fiatSymbol}${session.formatLikeCurrency(
-                              // $FlowFixMe
-                              (
-                                fiatPrice * session.atomicToHuman(tx[3], false)
-                              ).toFixed(fiatDecimals)
-                            )}`}
-                          {displayCurrency === 'fiat' &&
-                            symbolLocation === 'suffix' &&
-                            `${session.formatLikeCurrency(
-                              // $FlowFixMe
-                              (
-                                fiatPrice * session.atomicToHuman(tx[3], false)
-                              ).toFixed(fiatDecimals)
-                            )}${fiatSymbol}`}
-                        </p>
-                      </td>
-                    </tr>
+                    </Fragment>
                   );
                 })}
               </tbody>

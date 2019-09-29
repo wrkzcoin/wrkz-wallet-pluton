@@ -11,8 +11,24 @@
 @import '~@fortawesome/fontawesome-free/css/all.css';
 @import '~bulma-extensions/dist/css/bulma-extensions.min.css';
 
+.transparent-button {
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+
 .hide-scrollbar {
   overflow: hidden !important;
+}
+
+.expand-button:hover {
+  color: #f5f5f5;
+}
+
+.expanded-info {
+  width: 100%;
 }
 
 .noselect {
@@ -272,6 +288,7 @@
     opacity: 0;
   }
 }
+
 /**
  * ----------------------------------------
  * animation fade-in
