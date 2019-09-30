@@ -354,7 +354,7 @@ export default class Home extends Component<Props, State> {
                         <tr>
                           <td />
                           <td colSpan={4}>
-                            <table>
+                            <table className="swing-in-top-fwd">
                               <tbody>
                                 <tr className="no-hover">
                                   <td>
