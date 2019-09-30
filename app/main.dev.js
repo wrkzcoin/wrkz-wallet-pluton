@@ -14,6 +14,9 @@ import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
 import iConfig from './constants/config';
 import TurtleCoind from './utils/TurtleCoind';
+import packageInfo from '../package.json';
+
+const { version } = packageInfo;
 
 let isQuitting;
 let tray = null;
@@ -171,6 +174,7 @@ app.on('ready', async () => {
   }
 
   mainWindow = new BrowserWindow({
+    title: `Proton v${version}`,
     useContentSize: true,
     show: false,
     width: 1250,

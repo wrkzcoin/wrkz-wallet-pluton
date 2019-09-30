@@ -392,7 +392,15 @@ export default class Home extends Component<Props, State> {
                                     <br />
                                     {session.atomicToHuman(tx[7], true)} TRTL
                                     <br />
-                                    {session.atomicToHuman(tx[2], true)} TRTL
+                                    <p
+                                      className={
+                                        tx[2] < 0
+                                          ? 'is-negative-transaction has-text-danger'
+                                          : ''
+                                      }
+                                    >
+                                      {session.atomicToHuman(tx[2], true)} TRTL
+                                    </p>
                                     <br />
                                     <br />
                                     <button
