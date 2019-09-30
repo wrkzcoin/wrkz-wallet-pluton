@@ -173,10 +173,10 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     useContentSize: true,
     show: false,
-    width: 1200,
-    height: 600,
-    minWidth: 1200,
-    minHeight: 600,
+    width: 1250,
+    height: 625,
+    minWidth: 1250,
+    minHeight: 625,
     backgroundColor: '#121212',
     icon: path.join(__dirname, 'images/icon.png'),
     webPreferences: {
