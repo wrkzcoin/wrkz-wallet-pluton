@@ -4,6 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import log from 'electron-log';
+import { remote } from 'electron';
 import React, { Component, Fragment } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { session, eventEmitter, il8n, loginCounter, config } from '../index';
@@ -58,6 +59,7 @@ export default class Home extends Component<Props, State> {
     this.openNewWallet = this.openNewWallet.bind(this);
     this.modifyCurrency = this.modifyCurrency.bind(this);
     this.expandRow = this.expandRow.bind(this);
+    this.openInExplorer = this.openInExplorer.bind(this);
   }
 
   componentDidMount() {
@@ -86,6 +88,16 @@ export default class Home extends Component<Props, State> {
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.off('modifyCurrency', this.modifyCurrency);
   }
+
+  openInExplorer = (event: any) => {
+    const hash = event.target.value;
+
+    log.debug(hash);
+
+    remote.shell.openExternal(
+      `https://explorer.turtlecoin.lol/?search=${encodeURIComponent(hash)}`
+    );
+  };
 
   modifyCurrency = (displayCurrency: string) => {
     this.setState({
@@ -182,9 +194,13 @@ export default class Home extends Component<Props, State> {
       pageAnimationIn,
       expandedRows
     } = this.state;
-    const { backgroundColor, textColor, tableMode, toolTipColor } = uiType(
-      darkMode
-    );
+    const {
+      backgroundColor,
+      textColor,
+      tableMode,
+      toolTipColor,
+      elementBaseColor
+    } = uiType(darkMode);
     return (
       <div>
         <Redirector />
@@ -380,6 +396,14 @@ export default class Home extends Component<Props, State> {
                                     <br />
                                     {session.atomicToHuman(tx[2], true)} TRTL
                                     <br />
+                                    <br />
+                                    <button
+                                      className={`button ${elementBaseColor}`}
+                                      value={transactionHash}
+                                      onClick={this.openInExplorer}
+                                    >
+                                      View on Block Explorer
+                                    </button>
                                   </td>
                                 </tr>
                               </tbody>
