@@ -405,7 +405,9 @@ export default class WalletSession {
         balance,
         tx.blockHeight,
         tx.paymentID,
-        index
+        index,
+        tx.fee,
+        tx.unlockTime
       ]);
       balance -= parseInt(tx.totalAmount(), 10);
     }

@@ -19,6 +19,10 @@
   overflow: hidden;
 }
 
+.no-hover:hover {
+  background-color: Transparent !important;
+}
+
 .hide-scrollbar {
   overflow: hidden !important;
 }
@@ -516,7 +520,7 @@
 }
 .table-darkmode.is-hoverable.is-striped
   tbody
-  tr:not(.is-selected):hover:nth-child(even) {
+  tr:not(.is-selected):not(.no-hover):hover:nth-child(even) {
   background-color: #353535;
 }
 

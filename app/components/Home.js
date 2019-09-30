@@ -154,12 +154,12 @@ export default class Home extends Component<Props, State> {
   };
 
   expandRow = (event: any) => {
-    log.debug(event.target.value);
+    const transactionHash = event.target.value;
     const { expandedRows } = this.state;
-    if (!expandedRows.includes(event.target.value)) {
-      expandedRows.push(event.target.value);
+    if (!expandedRows.includes(transactionHash)) {
+      expandedRows.push(transactionHash);
     } else {
-      const index = expandedRows.indexOf(event.target.value);
+      const index = expandedRows.indexOf(transactionHash);
       if (index > -1) {
         expandedRows.splice(index);
       }
@@ -219,6 +219,7 @@ export default class Home extends Component<Props, State> {
                 {transactions.map(tx => {
                   const rowIsExpanded = expandedRows.includes(tx[1]);
                   const transactionHash = tx[1];
+                  const toggleSymbol = rowIsExpanded ? '-' : '+';
                   return (
                     <Fragment key={transactionHash}>
                       <tr>
@@ -229,7 +230,7 @@ export default class Home extends Component<Props, State> {
                             className={`transparent-button ${textColor}`}
                             onMouseDown={event => event.preventDefault()}
                           >
-                            +
+                            {toggleSymbol}
                           </button>
                         </td>
                         <td
@@ -337,11 +338,52 @@ export default class Home extends Component<Props, State> {
                       </tr>
                       {rowIsExpanded && (
                         <tr>
-                          <td colSpan={5}>
-                            <div className="expanded-info">
-                              This is where the expanded data goes, turtlefren!{' '}
-                              {tx[1]}
-                            </div>
+                          <td />
+                          <td colSpan={4}>
+                            <table>
+                              <tbody>
+                                <tr className="no-hover">
+                                  <td>
+                                    <p>
+                                      <b>Date & Time</b>
+                                      <br />
+                                      <b>Confirmations</b>
+                                      <br />
+                                      <b>Block Height</b>
+                                      <br />
+                                      <b>Unlock Time</b>
+                                      <br />
+                                      <b>Payment ID</b>
+                                      <br />
+                                      <b>Fee</b>
+                                      <br />
+                                      <b>Amount</b>
+                                      <br />
+                                    </p>
+                                  </td>
+                                  <td>
+                                    {tx[0] === 0
+                                      ? 'Still In Memory Pool'
+                                      : session.convertTimestamp(tx[0])}
+                                    <br />
+                                    {session.daemon.getNetworkBlockCount() -
+                                      tx[4]}{' '}
+                                    <br />
+                                    {tx[0] === 0
+                                      ? 'Still In Memory Pool'
+                                      : session.formatLikeCurrency(tx[4])}
+                                    <br />
+                                    {tx[8]} <br />
+                                    {tx[5]}
+                                    <br />
+                                    {session.atomicToHuman(tx[7], true)} TRTL
+                                    <br />
+                                    {session.atomicToHuman(tx[2], true)} TRTL
+                                    <br />
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
                           </td>
                         </tr>
                       )}
