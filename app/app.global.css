@@ -48,31 +48,31 @@
 }
 
 .slide-in-left {
-  animation: slide-in-left 0.33s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-left 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .slide-out-left {
-  animation: slide-out-left 0.33s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+  animation: slide-out-left 0.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 }
 
 .slide-in-top {
-  animation: slide-in-top 0.33s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-top 0.16s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .slide-in-bottom {
-  animation: slide-in-bottom 0.33s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-bottom 0.16s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .slide-out-top {
-  animation: slide-out-top 0.33s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+  animation: slide-out-top 0.16s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 }
 
 .slide-out-bottom {
-  animation: slide-out-bottom 0.33s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+  animation: slide-out-bottom 0.16s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
 }
 
 .slide-in-right {
-  animation: slide-in-right 0.33s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-in-right 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .swing-in-top-fwd {
