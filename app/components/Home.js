@@ -51,7 +51,7 @@ export default class Home extends Component<Props, State> {
       symbolLocation: config.symbolLocation,
       fiatDecimals: config.fiatDecimals,
       pageAnimationIn: loginCounter.getAnimation('/'),
-      expandedRows: ['a']
+      expandedRows: []
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
@@ -168,10 +168,11 @@ export default class Home extends Component<Props, State> {
     const { expandedRows } = this.state;
     if (!expandedRows.includes(transactionHash)) {
       expandedRows.push(transactionHash);
+      log.debug(expandedRows);
     } else {
       const index = expandedRows.indexOf(transactionHash);
       if (index > -1) {
-        expandedRows.splice(index);
+        expandedRows.splice(index, 1);
       }
     }
     this.setState({
