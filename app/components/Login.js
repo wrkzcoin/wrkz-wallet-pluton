@@ -76,7 +76,7 @@ export default class Login extends Component<Props, State> {
       <div>
         <Redirector />
         <Modal darkMode={darkMode} />
-        <div className={`fullwindow outer-div ${backgroundColor}`}>
+        <div className={`fullwindow ${backgroundColor}`}>
           <div className="mid-div">
             <div
               className={

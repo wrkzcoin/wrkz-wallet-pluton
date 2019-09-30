@@ -100,6 +100,12 @@ const { textColor } = uiType(darkMode);
 
 export let session = new WalletSession();
 
+try {
+  session.getSyncStatus();
+} catch {
+  log.debug('no!');
+}
+
 if (!session.loginFailed && !session.firstStartup) {
   log.debug('Initialized wallet session ', session.address);
   startWallet();

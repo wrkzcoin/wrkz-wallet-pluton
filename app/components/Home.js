@@ -197,7 +197,8 @@ export default class Home extends Component<Props, State> {
       textColor,
       tableMode,
       toolTipColor,
-      elementBaseColor
+      elementBaseColor,
+      fillColor
     } = uiType(darkMode);
     return (
       <div>
@@ -416,6 +417,21 @@ export default class Home extends Component<Props, State> {
                 })}
               </tbody>
             </table>
+            {transactions.length === 0 && (
+              <div className="elem-to-center">
+                <div className={`box ${fillColor}`}>
+                  <p className={`${textColor} title has-text-centered`}>
+                    <i className="fas fa-robot" />
+                    &nbsp;&nbsp;Welcome to Proton!
+                  </p>
+                  <br />
+                  <p className={`${textColor} subtitle has-text-centered`}>
+                    You don&apos;t have any transactions yet. They will display
+                    here once you do.
+                  </p>
+                </div>
+              </div>
+            )}
             {totalTransactionCount > 50 && (
               <form>
                 <div className="field">

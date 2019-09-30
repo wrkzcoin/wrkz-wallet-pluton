@@ -441,6 +441,13 @@
   box-sizing: border-box;
 }
 
+.elem-to-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .loginspinner {
   position: relative;
   left: 40%;

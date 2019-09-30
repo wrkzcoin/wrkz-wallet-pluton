@@ -92,6 +92,9 @@ export default class WalletSession {
         this.walletPassword,
         this.wbConfig
       );
+      if (error) {
+        eventEmitter.emit('walletOpenFailed');
+      }
     }
 
     if (error) {
