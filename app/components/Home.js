@@ -247,13 +247,7 @@ export default class Home extends Component<Props, State> {
                             {toggleSymbol}
                           </button>
                         </td>
-                        <td
-                          data-tip={
-                            tx[0] === 0
-                              ? il8n.unconfirmed_tx_30_sec_confirm
-                              : `${il8n.block} ${tx[4]}`
-                          }
-                        >
+                        <td>
                           {tx[0] === 0 && (
                             <p className="has-text-danger">
                               {il8n.unconfirmed}
