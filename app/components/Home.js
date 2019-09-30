@@ -92,8 +92,6 @@ export default class Home extends Component<Props, State> {
   openInExplorer = (event: any) => {
     const hash = event.target.value;
 
-    log.debug(hash);
-
     remote.shell.openExternal(
       `https://explorer.turtlecoin.lol/?search=${encodeURIComponent(hash)}`
     );
