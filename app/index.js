@@ -11,6 +11,7 @@ import fs from 'fs';
 import path from 'path';
 import React, { Fragment } from 'react';
 import LocalizedStrings from 'react-localization';
+import ErrorBoundary from 'react-error-boundary';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { ipcRenderer, remote, clipboard } from 'electron';
@@ -97,6 +98,32 @@ const { darkMode, useLocalDaemon } = config;
 export const daemonLogger = useLocalDaemon ? new DaemonLogger() : null;
 
 const { textColor } = uiType(darkMode);
+
+try {
+  // eslint-disable-next-line no-unused-vars
+  let testSession = new WalletSession();
+  testSession = null;
+} catch (error) {
+  log.debug(error);
+  render(
+    <div className="wholescreen has-background-black">
+      <div className="elem-to-center box has-background-dark">
+        <h1 className="title has-text-white has-text-centered">
+          <i className="fas fa-skull" />
+          &nbsp;&nbsp;Uh oh, this isn&apos;t good.
+        </h1>
+        <p className="has-text-white">
+          Something bad happened and we couldn&apos;t open your wallet. Your
+          wallet file might be corrupted or have been moved.
+        </p>
+        <br />
+        <p className="has-text-white">{error.stack}</p>
+      </div>
+    </div>,
+    // $FlowFixMe
+    document.getElementById('root')
+  );
+}
 
 export let session = new WalletSession();
 
@@ -637,6 +664,28 @@ const store = configureStore();
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
+const uncaughtErrorHandler = (error: Error, componentStack: string) => {
+  log.debug(error);
+};
+
+const uncaughtErrorComponent = ({ componentStack, error }) => (
+  <div className="wholescreen has-background-black">
+    <div className="elem-to-center box has-background-dark">
+      <h1 className="title has-text-white has-text-centered">
+        <i className="fas fa-skull" />
+        &nbsp;&nbsp;Uh oh, this isn&apos;t good.
+      </h1>
+      <p className="has-text-white">
+        Something bad happened and we couldn&apos;t open your wallet. This is
+        probably a programmer error. Error details are below.
+      </p>
+      <br />
+      <p className="has-text-white">{error.toString()}</p>
+      <p className="has-text-white">{componentStack}</p>
+    </div>
+  </div>
+);
+
 async function startWallet() {
   if (session) {
     try {
@@ -656,14 +705,19 @@ function activityDetected() {
 
 render(
   <AppContainer>
-    <div
-      onClick={activityDetected}
-      onKeyPress={activityDetected}
-      role="button"
-      tabIndex={0}
+    <ErrorBoundary
+      onError={uncaughtErrorHandler}
+      FallbackComponent={uncaughtErrorComponent}
     >
-      <Root store={store} history={history} />
-    </div>
+      <div
+        onClick={activityDetected}
+        onKeyPress={activityDetected}
+        role="button"
+        tabIndex={0}
+      >
+        <Root store={store} history={history} />
+      </div>
+    </ErrorBoundary>
   </AppContainer>,
   // $FlowFixMe
   document.getElementById('root')

@@ -92,9 +92,6 @@ export default class WalletSession {
         this.walletPassword,
         this.wbConfig
       );
-      if (error) {
-        eventEmitter.emit('walletOpenFailed');
-      }
     }
 
     if (error) {
@@ -106,6 +103,8 @@ export default class WalletSession {
         if (loginCounter.loginsAttempted > 0) {
           loginCounter.lastLoginAttemptFailed = true;
         }
+      } else {
+        throw new Error(error);
       }
     }
     if (!this.loginFailed && !this.firstStartup) {
