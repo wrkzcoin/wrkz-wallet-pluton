@@ -362,6 +362,8 @@ export default class Home extends Component<Props, State> {
                                       <br />
                                       <b>Unlock Time</b>
                                       <br />
+                                      <b>Transaction Hash</b>
+                                      <br />
                                       <b>Payment ID</b>
                                       <br />
                                       <b>Fee</b>
@@ -376,13 +378,14 @@ export default class Home extends Component<Props, State> {
                                       : session.convertTimestamp(tx[0])}
                                     <br />
                                     {session.daemon.getNetworkBlockCount() -
-                                      tx[4]}{' '}
+                                      tx[4]}
                                     <br />
                                     {tx[0] === 0
                                       ? 'Still In Memory Pool'
                                       : session.formatLikeCurrency(tx[4])}
                                     <br />
                                     {tx[8]} <br />
+                                    {tx[1]} <br />
                                     {tx[5]}
                                     <br />
                                     {session.atomicToHuman(tx[7], true)} TRTL
