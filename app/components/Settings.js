@@ -406,6 +406,8 @@ export default class Settings extends Component<Props, State> {
                     <div className={outAnimation}>
                       <div className="button-settings-page">
                         <CloseToTrayToggle darkMode={darkMode} />
+                        <br />
+                        <NotificationsToggle darkMode={darkMode} />
                       </div>
                     </div>
                   )}
