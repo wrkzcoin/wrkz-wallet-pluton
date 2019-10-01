@@ -377,8 +377,13 @@ export default class Home extends Component<Props, State> {
                                       ? 'Still In Memory Pool'
                                       : session.convertTimestamp(tx[0])}
                                     <br />
-                                    {session.daemon.getNetworkBlockCount() -
-                                      tx[4]}
+                                    {tx[0] !== 0
+                                      ? Math.max(
+                                          session.daemon.getNetworkBlockCount() -
+                                            tx[4],
+                                          0
+                                        )
+                                      : 0}
                                     <br />
                                     {tx[0] === 0
                                       ? 'Still In Memory Pool'
@@ -386,7 +391,7 @@ export default class Home extends Component<Props, State> {
                                     <br />
                                     {tx[8]} <br />
                                     {tx[1]} <br />
-                                    {tx[5]}
+                                    {tx[5] !== '' ? tx[5] : 'none'}
                                     <br />
                                     {session.atomicToHuman(tx[7], true)} TRTL
                                     <br />
