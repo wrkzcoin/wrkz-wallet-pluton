@@ -246,7 +246,7 @@ export default class Settings extends Component<Props, State> {
                         onMouseDown={event => event.preventDefault()}
                         className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        <p className={textColor}>Scan</p>
+                        <p className={textColor}>Wallet</p>
                       </a>
                     </li>
                     <li
