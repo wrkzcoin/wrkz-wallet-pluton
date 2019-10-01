@@ -15,7 +15,7 @@ type Props = {
   darkMode: boolean
 };
 
-export default class Template extends Component<Props, State> {
+export default class ScanCoinbaseToggle extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {

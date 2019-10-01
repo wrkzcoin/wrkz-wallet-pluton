@@ -375,26 +375,16 @@ function handleOpen() {
   }
 }
 
-/*
-// This isn't very good for the UX as it freezes everything up.
-// Next release cycle I will be making my own in-window modal popup, so let's remove this for now.
-eventEmitter.on('deadNode', () => {
-  remote.dialog.showMessageBox(null, {
-    type: 'error',
-    buttons: [il8n.ok],
-    title: 'Dead Node',
-    message:
-      "The node you've connected to is most likely dead. Please try a different node."
-  });
-});
-*/
-
 eventEmitter.on('sendNotification', function sendNotification(amount) {
-  const notif = new window.Notification('Transaction Received!', {
-    body: `${il8n.just_received} ${amount} ${il8n.TRTL}`
-  });
-  if (notif) {
-    log.debug(`Sent notification: You've just received ${amount} TRTL.`);
+  const { notifications } = config;
+
+  if (notifications) {
+    const notif = new window.Notification('Transaction Received!', {
+      body: `${il8n.just_received} ${amount} ${il8n.TRTL}`
+    });
+    if (notif) {
+      log.debug(`Sent notification: You've just received ${amount} TRTL.`);
+    }
   }
 });
 

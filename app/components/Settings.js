@@ -19,6 +19,7 @@ import Rescanner from './Rescanner';
 import DarkModeToggle from './DarkModeToggle';
 import CloseToTrayToggle from './CloseToTrayToggle';
 import ScanCoinbaseToggle from './ScanCoinbaseToggle';
+import NotificationsToggle from './NotificationsToggle';
 
 type Props = {};
 
@@ -350,6 +351,8 @@ export default class Settings extends Component<Props, State> {
                   <div className={inAnimation}>
                     <div className="button-settings-page">
                       <CloseToTrayToggle darkMode={darkMode} />
+                      <br />
+                      <NotificationsToggle darkMode={darkMode} />
                     </div>
                   </div>
                 )}
