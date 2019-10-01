@@ -3,7 +3,7 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import log from 'electron-log';
 import os from 'os';
 import ReactTooltip from 'react-tooltip';
@@ -13,6 +13,7 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import FiatSelector from './FiatSelector';
 import TimeoutSelector from './TimeoutSelector';
+import LogLevelSelector from './LogLevelSelector';
 import NodeChanger from './NodeChanger';
 import uiType from '../utils/uitype';
 import Rescanner from './Rescanner';
@@ -310,6 +311,8 @@ export default class Settings extends Component<Props, State> {
                     <Rescanner darkMode={darkMode} />
                     <br />
                     <ScanCoinbaseToggle darkMode={darkMode} />
+                    <br />
+                    <LogLevelSelector darkMode={darkMode} />
                   </div>
                 )}
 
@@ -350,8 +353,12 @@ export default class Settings extends Component<Props, State> {
                 {activeTab === 'platform' && (
                   <div className={inAnimation}>
                     <div className="button-settings-page">
-                      <CloseToTrayToggle darkMode={darkMode} />
-                      <br />
+                      {os.platform() !== 'darwin' && (
+                        <Fragment>
+                          <CloseToTrayToggle darkMode={darkMode} />
+                          <br />
+                        </Fragment>
+                      )}
                       <NotificationsToggle darkMode={darkMode} />
                     </div>
                   </div>
@@ -405,7 +412,12 @@ export default class Settings extends Component<Props, State> {
                   {previousTab === 'platform' && masterSwitch && (
                     <div className={outAnimation}>
                       <div className="button-settings-page">
-                        <CloseToTrayToggle darkMode={darkMode} />
+                        {os.platform() !== 'darwin' && (
+                          <Fragment>
+                            <CloseToTrayToggle darkMode={darkMode} />
+                            <br />
+                          </Fragment>
+                        )}
                         <br />
                         <NotificationsToggle darkMode={darkMode} />
                       </div>

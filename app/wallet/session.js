@@ -115,28 +115,7 @@ export default class WalletSession {
       this.syncStatus = this.getSyncStatus();
       this.address = this.wallet.getPrimaryAddress();
 
-      let logLevel;
-
-      switch (config.logLevel) {
-        case 'DEBUG':
-          logLevel = LogLevel.DEBUG;
-          break;
-        case 'ERROR':
-          logLevel = LogLevel.ERROR;
-          break;
-        case 'INFO':
-          logLevel = LogLevel.INFO;
-          break;
-        case 'WARNING':
-          logLevel = LogLevel.WARNING;
-          break;
-        case 'TRACE':
-          logLevel = LogLevel.TRACE;
-          break;
-        default:
-          logLevel = LogLevel.DISABLED;
-          break;
-      }
+      const logLevel = this.evaluateLogLevel(config.logLevel);
 
       this.wallet.setLogLevel(logLevel);
 
@@ -189,6 +168,23 @@ export default class WalletSession {
 
   async startAutoSave() {
     await this.saveWallet(this.walletFile);
+  }
+
+  evaluateLogLevel(logLevel: string) {
+    switch (logLevel) {
+      case 'DEBUG':
+        return LogLevel.DEBUG;
+      case 'ERROR':
+        return LogLevel.ERROR;
+      case 'INFO':
+        return LogLevel.INFO;
+      case 'WARNING':
+        return LogLevel.WARNING;
+      case 'TRACE':
+        return LogLevel.TRACE;
+      default:
+        return LogLevel.DISABLED;
+    }
   }
 
   toggleDarkMode(status: boolean) {
