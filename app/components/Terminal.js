@@ -144,7 +144,7 @@ export default class Receive extends Component<Props, State> {
                   <aside className="menu log-menu swing-in-top-fwd">
                     <p className={`menu-label ${textColor}`}>Logs</p>
                     <ul className="menu-list">
-                      {session.backendLog.length > 0 && (
+                      {config.logLevel !== 'DISABLED' && (
                         <li>
                           <a
                             className={`menu-link-light ${textColor}`}
