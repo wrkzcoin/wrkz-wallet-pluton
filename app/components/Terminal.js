@@ -5,7 +5,6 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { remote } from 'electron';
-import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
 import {
   session,
@@ -59,7 +58,6 @@ export default class Receive extends Component<Props, State> {
   }
 
   componentDidMount() {
-    log.debug(loginCounter.daemonFailedInit);
     eventEmitter.on('refreshConsole', this.refreshConsole);
     eventEmitter.on('refreshBackendLog', this.refreshBackendLog);
     this.scrollToBottom();
@@ -146,18 +144,22 @@ export default class Receive extends Component<Props, State> {
                   <aside className="menu log-menu swing-in-top-fwd">
                     <p className={`menu-label ${textColor}`}>Logs</p>
                     <ul className="menu-list">
-                      <li>
-                        <a
-                          className={`menu-link-light ${textColor}`}
-                          onClick={() => this.setActiveLog('wallet-backend')}
-                          onKeyPress={() => this.setActiveLog('wallet-backend')}
-                          role="button"
-                          tabIndex={0}
-                          onMouseDown={event => event.preventDefault()}
-                        >
-                          WalletBackend
-                        </a>
-                      </li>
+                      {session.backendLog.length > 0 && (
+                        <li>
+                          <a
+                            className={`menu-link-light ${textColor}`}
+                            onClick={() => this.setActiveLog('wallet-backend')}
+                            onKeyPress={() =>
+                              this.setActiveLog('wallet-backend')
+                            }
+                            role="button"
+                            tabIndex={0}
+                            onMouseDown={event => event.preventDefault()}
+                          >
+                            WalletBackend
+                          </a>
+                        </li>
+                      )}
                       {showTerminal && (
                         <li>
                           <a
