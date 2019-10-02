@@ -2,7 +2,6 @@
 
 ![Download Count](https://img.shields.io/github/downloads/turtlecoin/turtle-wallet-proton/total.svg)
 ![Open Issue Count](https://img.shields.io/github/issues/turtlecoin/turtle-wallet-proton)
-![Commit Activity](https://img.shields.io/github/commit-activity/m/turtlecoin/turtle-wallet-proton)
 ![License](https://img.shields.io/github/license/turtlecoin/turtle-wallet-proton)
 ![Version](https://img.shields.io/github/v/release/turtlecoin/turtle-wallet-proton)
 
@@ -21,7 +20,7 @@
 </p>
 
 <p>
-  All of the code is released under the GPLv3 license. The icons in the ./resources folder, however, are not released under this MIT license, rather they are maintained to be intellectual property of ExtraHash, and may not be used to represent the brand or identity of any other piece of software or group. See the included license file in ./resources/LICENSE for more details.
+  All of the code is released under the GPLv3 license. The icons in the ./resources and ./app/images folders, however, are not released under this license, rather they are maintained to be intellectual property of ExtraHash, and may not be used to represent the brand or identity of any other piece of software or group. See the included license file in ./resources/LICENSE and ./app/images/LICENSE for more details.
 </p>
 
 ## Installing
