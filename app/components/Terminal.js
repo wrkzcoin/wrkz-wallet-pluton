@@ -25,7 +25,8 @@ type State = {
   daemonLog: string[],
   pageAnimationIn: string,
   backendLog: string[],
-  selectedLog: string
+  selectedLog: string,
+  hideMenu: boolean
 };
 
 export default class Receive extends Component<Props, State> {
@@ -47,17 +48,20 @@ export default class Receive extends Component<Props, State> {
       daemonLog: this.daemonLog,
       backendLog: session.backendLog,
       pageAnimationIn: loginCounter.getAnimation('/terminal'),
-      selectedLog: loginCounter.selectedLog
+      selectedLog: loginCounter.selectedLog,
+      hideMenu: true
     };
 
     this.refreshConsole = this.refreshConsole.bind(this);
     this.setActiveLog = this.setActiveLog.bind(this);
+    this.showMenu = this.showMenu.bind(this);
   }
 
   componentDidMount() {
     eventEmitter.on('refreshConsole', this.refreshConsole);
     eventEmitter.on('refreshBackendLog', this.refreshBackendLog);
     this.scrollToBottom();
+    setTimeout(this.showMenu, 200);
   }
 
   componentDidUpdate() {
@@ -71,6 +75,12 @@ export default class Receive extends Component<Props, State> {
     const { selectedLog } = this.state;
     loginCounter.selectedLog = selectedLog;
   }
+
+  showMenu = () => {
+    this.setState({
+      hideMenu: false
+    });
+  };
 
   scrollToBottom = () => {
     this.terminalEnd.scrollIntoView();
@@ -105,7 +115,8 @@ export default class Receive extends Component<Props, State> {
       daemonLog,
       backendLog,
       pageAnimationIn,
-      selectedLog
+      selectedLog,
+      hideMenu
     } = this.state;
     const { backgroundColor, textColor, fillColor, toolTipColor } = uiType(
       darkMode
@@ -128,38 +139,40 @@ export default class Receive extends Component<Props, State> {
           >
             <div className="columns">
               <div className="column is-one-fifth">
-                <aside className="menu log-menu">
-                  <ul className="menu-list">
-                    <li>
-                      <a
-                        className="menu-link-light"
-                        onClick={() => this.setActiveLog('wallet-backend')}
-                        onKeyPress={() => this.setActiveLog('wallet-backend')}
-                        role="button"
-                        tabIndex={0}
-                        onMouseDown={event => event.preventDefault()}
-                      >
-                        WalletBackend
-                      </a>
-                    </li>
-                    {config.useLocalDaemon && (
+                {!hideMenu && (
+                  <aside className="menu log-menu swing-in-top-fwd">
+                    <ul className="menu-list">
                       <li>
                         <a
                           className="menu-link-light"
-                          onClick={() => this.setActiveLog('daemon')}
-                          onKeyPress={() => this.setActiveLog('daemon')}
+                          onClick={() => this.setActiveLog('wallet-backend')}
+                          onKeyPress={() => this.setActiveLog('wallet-backend')}
                           role="button"
                           tabIndex={0}
                           onMouseDown={event => event.preventDefault()}
                         >
-                          TurtleCoind
+                          WalletBackend
                         </a>
                       </li>
-                    )}
-                  </ul>
-                </aside>
+                      {config.useLocalDaemon && (
+                        <li>
+                          <a
+                            className="menu-link-light"
+                            onClick={() => this.setActiveLog('daemon')}
+                            onKeyPress={() => this.setActiveLog('daemon')}
+                            role="button"
+                            tabIndex={0}
+                            onMouseDown={event => event.preventDefault()}
+                          >
+                            TurtleCoind
+                          </a>
+                        </li>
+                      )}
+                    </ul>
+                  </aside>
+                )}
               </div>
-              <div className="column terminal" id="terminal">
+              <div className="column terminal">
                 {false && (
                   <input
                     className="bash-prompt has-text-weight-bold has-icons-left has-text-success is-family-monospace"
