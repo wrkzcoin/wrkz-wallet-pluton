@@ -54,7 +54,14 @@ directories.forEach(dir => {
 });
 
 const daemonLogFile = path.resolve(directories[1], 'TurtleCoind.log');
+const backendLogFile = path.resolve(directories[1], 'wallet-backend.log');
 fs.closeSync(fs.openSync(daemonLogFile, 'w'));
+
+try {
+  fs.closeSync(fs.openSync(backendLogFile, 'wx'));
+} catch {
+  log.debug('Backend log file found.');
+}
 
 let useLocalDaemon;
 let localDaemon;
