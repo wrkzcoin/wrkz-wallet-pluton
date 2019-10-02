@@ -10,6 +10,7 @@
 - Increases the amount of sockets available to request to fix timeout bugs.
 - All dropdown menus are now fully searchable, keyboard navigable, and ARIA compliant.
 - WalletBackend logs are now viewable in the termimal tab, and there is a component under Wallet settings that allows you to set the log level.
+- Uncaught errors now display in an error component for the user instead of crashing the renderer process
 - You can now disable and enable notifications in OS Settings.
 
 Also, following this release, Proton wallet will be moving to a **monthly release cycle**. We will have a new version out W1 of each month for you to download, so no more of these incredibly frequent update notificatons (apologies if they've been bothersome).
