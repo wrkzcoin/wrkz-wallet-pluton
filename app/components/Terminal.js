@@ -140,7 +140,7 @@ export default class Receive extends Component<Props, State> {
             <div className="columns">
               <div className="column is-one-fifth">
                 {!hideMenu && (
-                  <aside className="menu log-menu fadein">
+                  <aside className="menu log-menu swing-in-top-fwd">
                     <ul className="menu-list">
                       <li>
                         <a
