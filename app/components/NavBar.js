@@ -38,7 +38,10 @@ class NavBar extends Component<Props, State> {
     super(props);
     this.state = {
       navBarCount: loginCounter.navBarCount,
-      terminalActive: config.useLocalDaemon || config.logLevel !== 'DISABLED'
+      terminalActive:
+        config.useLocalDaemon ||
+        config.logLevel !== 'DISABLED' ||
+        loginCounter.daemonFailedInit
     };
     this.logOut = this.logOut.bind(this);
     this.refreshTerminalStatus = this.refreshTerminalStatus.bind(this);
@@ -58,7 +61,10 @@ class NavBar extends Component<Props, State> {
 
   refreshTerminalStatus = () => {
     this.setState({
-      terminalActive: config.useLocalDaemon || config.logLevel !== 'DISABLED'
+      terminalActive:
+        config.useLocalDaemon ||
+        config.logLevel !== 'DISABLED' ||
+        loginCounter.daemonFailedInit
     });
   };
 

@@ -394,6 +394,7 @@ eventEmitter.on('handleOpen', handleOpen);
 ipcRenderer.on('failedDaemonInit', failedDaemonInit);
 
 function failedDaemonInit() {
+  loginCounter.daemonFailedInit = true;
   if (session) {
     session.modifyConfig('useLocalDaemon', false);
   }
@@ -405,8 +406,8 @@ function failedDaemonInit() {
       <br />
       <p className={`subtitle ${textColor}`}>
         Your daemon failed to initialize, and you have been placed back in
-        remote node mode automatically. Check your TurtleCoind path in settings
-        is accurate and that TurtleCoind has execute permissions, and try again.
+        remote node mode automatically. You can check the log output of
+        TurtleCoind in the Terminal tab.
       </p>
     </div>
   );
