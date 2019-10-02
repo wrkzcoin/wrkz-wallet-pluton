@@ -32,8 +32,7 @@ type State = {
   outAnimation: string,
   masterSwitch: boolean,
   previousTab: string,
-  pageAnimationIn: string,
-  hideMenu: boolean
+  pageAnimationIn: string
 };
 
 export default class Settings extends Component<Props, State> {
@@ -52,8 +51,7 @@ export default class Settings extends Component<Props, State> {
       inAnimation: '',
       outAnimation: '',
       masterSwitch: false,
-      pageAnimationIn: loginCounter.getAnimation('/settings'),
-      hideMenu: true
+      pageAnimationIn: loginCounter.getAnimation('/settings')
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
@@ -67,7 +65,6 @@ export default class Settings extends Component<Props, State> {
   componentDidMount() {
     eventEmitter.on('darkmodeon', this.darkModeOn);
     eventEmitter.on('darkmodeoff', this.darkModeOff);
-    setTimeout(this.showMenu, 200);
   }
 
   componentWillUnmount() {
@@ -76,12 +73,6 @@ export default class Settings extends Component<Props, State> {
     eventEmitter.off('darkmodeoff', this.darkModeOff);
     loginCounter.lastSettingsTab = activeTab;
   }
-
-  showMenu = () => {
-    this.setState({
-      hideMenu: false
-    });
-  };
 
   darkModeOn = () => {
     this.setState({
@@ -182,8 +173,7 @@ export default class Settings extends Component<Props, State> {
       outAnimation,
       previousTab,
       masterSwitch,
-      pageAnimationIn,
-      hideMenu
+      pageAnimationIn
     } = this.state;
     const {
       backgroundColor,
@@ -224,93 +214,91 @@ export default class Settings extends Component<Props, State> {
           >
             <div className="columns">
               <div className={`column is-one-fifth ${backgroundColor}`}>
-                {!hideMenu && (
-                  <aside className="menu swing-in-top-fwd">
-                    <p className={`menu-label ${textColor}`}>Settings</p>
-                    <ul className="menu-list settings-menu">
-                      <li
-                        className={
-                          activeTab === 'node' ? `${menuActiveColor}` : ''
-                        }
+                <aside className="menu">
+                  <p className={`menu-label ${textColor}`}>Settings</p>
+                  <ul className="menu-list settings-menu">
+                    <li
+                      className={
+                        activeTab === 'node' ? `${menuActiveColor}` : ''
+                      }
+                    >
+                      <a
+                        onClick={() => this.setActiveTab('node')}
+                        onKeyPress={() => this.setActiveTab('node')}
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        <a
-                          onClick={() => this.setActiveTab('node')}
-                          onKeyPress={() => this.setActiveTab('node')}
-                          role="button"
-                          tabIndex={0}
-                          onMouseDown={event => event.preventDefault()}
-                          className={darkMode ? 'menu-link-dark' : ''}
-                        >
-                          <p className={textColor}>Node</p>
-                        </a>
-                      </li>
-                      <li
-                        className={
-                          activeTab === 'scan' ? `${menuActiveColor}` : ''
-                        }
+                        <p className={textColor}>Node</p>
+                      </a>
+                    </li>
+                    <li
+                      className={
+                        activeTab === 'scan' ? `${menuActiveColor}` : ''
+                      }
+                    >
+                      <a
+                        onClick={() => this.setActiveTab('scan')}
+                        onKeyPress={() => this.setActiveTab('scan')}
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        <a
-                          onClick={() => this.setActiveTab('scan')}
-                          onKeyPress={() => this.setActiveTab('scan')}
-                          role="button"
-                          tabIndex={0}
-                          onMouseDown={event => event.preventDefault()}
-                          className={darkMode ? 'menu-link-dark' : ''}
-                        >
-                          <p className={textColor}>Wallet</p>
-                        </a>
-                      </li>
-                      <li
-                        className={
-                          activeTab === 'display' ? `${menuActiveColor}` : ''
-                        }
+                        <p className={textColor}>Wallet</p>
+                      </a>
+                    </li>
+                    <li
+                      className={
+                        activeTab === 'display' ? `${menuActiveColor}` : ''
+                      }
+                    >
+                      <a
+                        onClick={() => this.setActiveTab('display')}
+                        onKeyPress={() => this.setActiveTab('display')}
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        <a
-                          onClick={() => this.setActiveTab('display')}
-                          onKeyPress={() => this.setActiveTab('display')}
-                          role="button"
-                          tabIndex={0}
-                          onMouseDown={event => event.preventDefault()}
-                          className={darkMode ? 'menu-link-dark' : ''}
-                        >
-                          <p className={textColor}>Display</p>
-                        </a>
-                      </li>
-                      <li
-                        className={
-                          activeTab === 'security' ? `${menuActiveColor}` : ''
-                        }
+                        <p className={textColor}>Display</p>
+                      </a>
+                    </li>
+                    <li
+                      className={
+                        activeTab === 'security' ? `${menuActiveColor}` : ''
+                      }
+                    >
+                      <a
+                        onClick={() => this.setActiveTab('security')}
+                        onKeyPress={() => this.setActiveTab('security')}
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        <a
-                          onClick={() => this.setActiveTab('security')}
-                          onKeyPress={() => this.setActiveTab('security')}
-                          role="button"
-                          tabIndex={0}
-                          onMouseDown={event => event.preventDefault()}
-                          className={darkMode ? 'menu-link-dark' : ''}
-                        >
-                          <p className={textColor}>Security</p>
-                        </a>
-                      </li>
-                      <li
-                        className={
-                          activeTab === 'platform' ? `${menuActiveColor}` : ''
-                        }
+                        <p className={textColor}>Security</p>
+                      </a>
+                    </li>
+                    <li
+                      className={
+                        activeTab === 'platform' ? `${menuActiveColor}` : ''
+                      }
+                    >
+                      <a
+                        onClick={() => this.setActiveTab('platform')}
+                        onKeyPress={() => this.setActiveTab('platform')}
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={event => event.preventDefault()}
+                        className={darkMode ? 'menu-link-dark' : ''}
                       >
-                        <a
-                          onClick={() => this.setActiveTab('platform')}
-                          onKeyPress={() => this.setActiveTab('platform')}
-                          role="button"
-                          tabIndex={0}
-                          onMouseDown={event => event.preventDefault()}
-                          className={darkMode ? 'menu-link-dark' : ''}
-                        >
-                          <p className={textColor}>{platform} Settings</p>
-                        </a>
-                      </li>
-                    </ul>
-                  </aside>
-                )}
+                        <p className={textColor}>{platform} Settings</p>
+                      </a>
+                    </li>
+                  </ul>
+                </aside>
               </div>
               <div className="column is-one-third">
                 {activeTab === 'node' && (

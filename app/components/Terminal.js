@@ -140,11 +140,11 @@ export default class Receive extends Component<Props, State> {
             <div className="columns">
               <div className="column is-one-fifth">
                 {!hideMenu && (
-                  <aside className="menu log-menu swing-in-top-fwd">
+                  <aside className="menu log-menu fadein">
                     <ul className="menu-list">
                       <li>
                         <a
-                          className="menu-link-light"
+                          className={`menu-link-light ${textColor}`}
                           onClick={() => this.setActiveLog('wallet-backend')}
                           onKeyPress={() => this.setActiveLog('wallet-backend')}
                           role="button"
@@ -157,7 +157,7 @@ export default class Receive extends Component<Props, State> {
                       {config.useLocalDaemon && (
                         <li>
                           <a
-                            className="menu-link-light"
+                            className={`menu-link-light ${textColor}`}
                             onClick={() => this.setActiveLog('daemon')}
                             onKeyPress={() => this.setActiveLog('daemon')}
                             role="button"
