@@ -35,6 +35,9 @@ export default class DaemonLogger {
 
   pushToLog = (data: string) => {
     this.daemonLog.unshift(data);
+    if (this.daemonLog.length > 1000) {
+      this.daemonLog.pop();
+    }
     eventEmitter.emit('refreshConsole');
   };
 }

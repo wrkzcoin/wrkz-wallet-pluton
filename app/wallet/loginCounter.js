@@ -3,6 +3,8 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
+import { config } from '../index';
+
 export default class LoginCounter {
   userLoginAttempted: boolean;
 
@@ -28,6 +30,8 @@ export default class LoginCounter {
 
   pageAnimationIn: string;
 
+  selectedLog: string;
+
   constructor() {
     this.userLoginAttempted = false;
     this.isLoggedIn = false;
@@ -39,6 +43,7 @@ export default class LoginCounter {
     this.looping = false;
     this.lastSettingsTab = 'node';
     this.pageFocusStack = [];
+    this.selectedLog = config.useLocalDaemon ? 'daemon' : 'wallet-backend';
   }
 
   getAnimation(currentPage: string) {

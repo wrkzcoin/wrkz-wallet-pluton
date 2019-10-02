@@ -5,7 +5,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import Select from 'react-select';
-import { config, session } from '../index';
+import { config, session, eventEmitter } from '../index';
 import uiType from '../utils/uitype';
 
 const logLevels = [
@@ -82,6 +82,7 @@ export default class LogLevelSelector extends Component<Props, State> {
     });
     session.modifyConfig('logLevel', event.value);
     session.wallet.setLogLevel(session.evaluateLogLevel(event.value));
+    eventEmitter.emit('logLevelChanged');
   };
 
   render() {

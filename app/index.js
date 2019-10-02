@@ -654,10 +654,12 @@ const store = configureStore();
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
+// eslint-disable-next-line no-unused-vars
 const uncaughtErrorHandler = (error: Error, componentStack: string) => {
   log.debug(error);
 };
 
+// eslint-disable-next-line react/prop-types
 const uncaughtErrorComponent = ({ componentStack, error }) => (
   <div className="wholescreen has-background-black">
     <div className="elem-to-center box has-background-dark">

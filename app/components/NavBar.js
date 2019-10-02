@@ -23,7 +23,8 @@ type Props = {
 };
 
 type State = {
-  navBarCount: number
+  navBarCount: number,
+  terminalActive: boolean
 };
 
 class NavBar extends Component<Props, State> {
@@ -36,20 +37,30 @@ class NavBar extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      navBarCount: loginCounter.navBarCount
+      navBarCount: loginCounter.navBarCount,
+      terminalActive: config.useLocalDaemon || config.logLevel !== 'DISABLED'
     };
     this.logOut = this.logOut.bind(this);
+    this.refreshTerminalStatus = this.refreshTerminalStatus.bind(this);
   }
 
   componentDidMount() {
+    eventEmitter.on('logLevelChanged', this.refreshTerminalStatus);
     loginCounter.navBarCount++;
   }
 
   componentWillUnmount() {
+    eventEmitter.off('logLevelChanged', this.refreshTerminalStatus);
     if (session.walletPassword !== '') {
       clearInterval(this.activityTimer);
     }
   }
+
+  refreshTerminalStatus = () => {
+    this.setState({
+      terminalActive: config.useLocalDaemon || config.logLevel !== 'DISABLED'
+    });
+  };
 
   logOut = () => {
     eventEmitter.emit('logOut');
@@ -58,9 +69,8 @@ class NavBar extends Component<Props, State> {
   render() {
     // prettier-ignore
     const { location: { pathname }, darkMode } = this.props;
-    const { navBarCount } = this.state;
+    const { navBarCount, terminalActive } = this.state;
     const { fillColor, elementBaseColor, settingsCogColor } = uiType(darkMode);
-    const { useLocalDaemon } = config;
 
     return (
       <div>
@@ -115,7 +125,7 @@ class NavBar extends Component<Props, State> {
                       <p>&nbsp;&nbsp;{il8n.receive}</p>
                     )}
                   </Link>
-                  {useLocalDaemon && (
+                  {terminalActive && (
                     <Link className="navbar-item" to={routes.TERMINAL}>
                       <i className="fas fa-terminal" />
                       {pathname === '/terminal' && (

@@ -377,15 +377,27 @@
 }
 
 .terminal {
+  position: relative;
+  right: 5%;
+  overflow-x: hidden;
   padding-bottom: 10px;
   height: 100%;
   display: flex;
   flex-direction: column-reverse;
 }
 
+.log-menu {
+  position: sticky;
+  top: 0;
+}
+
 .settings-menu {
   position: relative;
   top: 4px;
+}
+
+.menu-link-light:hover {
+  background: Transparent !important;
 }
 
 .menu-link-dark:hover {

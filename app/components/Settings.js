@@ -214,9 +214,9 @@ export default class Settings extends Component<Props, State> {
           >
             <div className="columns">
               <div className={`column is-one-fifth ${backgroundColor}`}>
-                <aside className="menu settings-menu">
+                <aside className="menu">
                   <p className={`menu-label ${textColor}`}>Settings</p>
-                  <ul className="menu-list">
+                  <ul className="menu-list settings-menu">
                     <li
                       className={
                         activeTab === 'node' ? `${menuActiveColor}` : ''

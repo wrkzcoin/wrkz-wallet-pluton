@@ -47,6 +47,8 @@ export default class WalletSession {
 
   fiatPrice: number;
 
+  backendLog: string[];
+
   constructor(password?: string, daemonHost?: string, daemonPort?: string) {
     this.loginFailed = false;
     this.firstStartup = false;
@@ -115,10 +117,9 @@ export default class WalletSession {
       this.syncStatus = this.getSyncStatus();
       this.address = this.wallet.getPrimaryAddress();
 
+      this.backendLog = [];
       const logLevel = this.evaluateLogLevel(config.logLevel);
-
       this.wallet.setLogLevel(logLevel);
-
       this.wallet.setLoggerCallback(prettyMessage => {
         const logStream = fs.createWriteStream(
           `${directories[1]}/wallet-backend.log`,
@@ -127,6 +128,11 @@ export default class WalletSession {
           }
         );
         logStream.write(`${prettyMessage}\n`);
+        this.backendLog.unshift(prettyMessage);
+        if (this.backendLog.length > 1000) {
+          this.backendLog.pop();
+        }
+        eventEmitter.emit('refreshBackendLog');
       });
 
       setInterval(() => this.startAutoSave(), 1000 * 60 * 5);
