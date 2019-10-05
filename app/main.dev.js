@@ -6,7 +6,7 @@
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
-import { app, BrowserWindow, Tray, Menu, shell } from 'electron';
+import { app, BrowserWindow, Tray, Menu, shell, dialog } from 'electron';
 import isDev from 'electron-is-dev';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -256,6 +256,28 @@ app.on('ready', async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+
+  mainWindow.on('unresponsive', () => {
+    // catch the unresponsive event
+    const userSelection = dialog.showMessageBox(mainWindow, {
+      type: 'error',
+      buttons: ['Kill', `Don't Kill`],
+      title: 'Unresponse Application',
+      message: 'The application is unresponsive. Would you like to kill it?'
+    });
+    if (userSelection === 0) {
+      process.exit(1);
+    }
+  });
+
+  process.on('uncaughtException', () => {
+    // catch uncaught exceptions in the main process
+    dialog.showErrorBox(
+      'Uncaught Error',
+      'An unexpected error has occurred. Please report this error, and what you were doing to cause it.'
+    );
+    process.exit(1);
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
