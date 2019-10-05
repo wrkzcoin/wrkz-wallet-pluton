@@ -17,6 +17,7 @@ import LoginPage from './containers/LoginPage';
 import ChangePasswordPage from './containers/ChangePasswordPage';
 import FirstStartupPage from './containers/FirstStartupPage';
 import TerminalPage from './containers/TerminalPage';
+import AddressBookPage from './containers/AddressBookPage';
 
 export default () => (
   <App>
@@ -30,6 +31,7 @@ export default () => (
       <Route exact path={routes.LOGIN} component={LoginPage} />
       <Route exact path={routes.FIRSTSTARTUP} component={FirstStartupPage} />
       <Route exact path={routes.TERMINAL} component={TerminalPage} />
+      <Route exact path={routes.ADDRESSBOOK} component={AddressBookPage} />
       <Route
         exact
         path={routes.CHANGEPASSWORD}

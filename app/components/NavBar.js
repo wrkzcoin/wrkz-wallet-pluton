@@ -131,6 +131,17 @@ class NavBar extends Component<Props, State> {
                       <p>&nbsp;&nbsp;{il8n.receive}</p>
                     )}
                   </Link>
+
+                  <Link className="navbar-item" to={routes.ADDRESSBOOK}>
+                    <i className="fas fa-address-book" />
+                    {pathname === '/addressbook' && (
+                      <strong>&nbsp;&nbsp;Address Book</strong>
+                    )}
+                    {pathname !== '/addressbook' && (
+                      <p>&nbsp;&nbsp;Address Book</p>
+                    )}
+                  </Link>
+
                   {terminalActive && (
                     <Link className="navbar-item" to={routes.TERMINAL}>
                       <i className="fas fa-terminal" />
