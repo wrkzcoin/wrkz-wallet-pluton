@@ -186,16 +186,48 @@ export default class Receive extends Component<Props, State> {
                     type="text"
                   />
                 )}
-                {selectedLog === 'wallet-backend' &&
+                {backendLog &&
+                  selectedLog === 'wallet-backend' &&
                   backendLog.map((backendOut, index) => {
+                    const isInfo = backendOut.toUpperCase().includes('[INFO]');
+                    const isTransactions = backendOut
+                      .toUpperCase()
+                      .includes('TRANSACTION');
+                    const isWarning = backendOut
+                      .toUpperCase()
+                      .includes('WARNING');
+                    const isError = backendOut.toUpperCase().includes('ERROR');
+
+                    let logColor: string = '';
+
+                    if (isInfo) {
+                      logColor = 'has-text-info has-text-weight-bold';
+                    }
+
+                    if (isTransactions) {
+                      logColor = 'has-text-success has-text-weight-bold';
+                    }
+
+                    if (isWarning) {
+                      logColor = 'has-text-warning has-text-weight-bold';
+                    }
+
+                    if (isError) {
+                      logColor = 'has-text-danger has-text-weight-bold';
+                    }
+
                     return (
-                      // eslint-disable-next-line react/no-array-index-key
-                      <p key={index} className="is-family-monospace">
+                      <p
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={index}
+                        className={`is-family-monospace ${logColor}`}
+                      >
                         {backendOut}
                       </p>
                     );
                   })}
-                {selectedLog === 'daemon' &&
+                {daemonLog &&
+                  selectedLog === 'daemon' &&
                   daemonLog.map(consoleOut => {
                     if (consoleOut.trim() === '') {
                       return null;
