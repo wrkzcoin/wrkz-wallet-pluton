@@ -19,6 +19,15 @@
   overflow: hidden;
 }
 
+.no-resize {
+  resize: none;
+}
+
+.transparent-textarea {
+  background-color: Transparent;
+  border: none;
+}
+
 .no-hover:hover {
   background-color: Transparent !important;
 }

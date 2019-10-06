@@ -158,7 +158,7 @@ export default class Receive extends Component<Props, State> {
                     >
                       {il8n.receiving_address}
                       <textarea
-                        className="textarea is-family-monospace is-large"
+                        className="textarea is-family-monospace is-large no-resize"
                         rows="6"
                         value={sessionAddress}
                         readOnly
