@@ -34,7 +34,11 @@ const addressBook = [
 ];
 
 type State = {
-  darkMode: boolean
+  darkMode: boolean,
+  showNewContactForm: boolean,
+  newName: string,
+  newAddress: string,
+  newPaymentID: string
 };
 
 type Props = {};
@@ -48,23 +52,60 @@ export default class AddressBook extends Component<Props, State> {
     super(props);
     this.state = {
       darkMode: session.darkMode,
-      showNewContactForm: false
+      showNewContactForm: false,
+      newName: '',
+      newAddress: '',
+      newPaymentID: ''
     };
     this.showAddContactForm = this.showAddContactForm.bind(this);
+    this.handleNewAddressChange = this.handleNewAddressChange.bind(this);
+    this.handleNewNameChange = this.handleNewNameChange.bind(this);
+    this.handleNewPaymentIDChange = this.handleNewPaymentIDChange.bind(this);
   }
 
   componentWillMount() {}
 
   componentWillUnmount() {}
 
-  showAddContactForm() {
+  showAddContactForm = () => {
     this.setState({
       showNewContactForm: true
     });
-  }
+  };
+
+  handleNewNameChange = (event: any) => {
+    const newName = event.target.value;
+    this.setState({
+      newName
+    });
+  };
+
+  handleNewAddressChange = (event: any) => {
+    const newAddress = event.target.value;
+    const regex = /^[a-z0-9]*$/i;
+    if (!regex.test(newAddress)) {
+      return;
+    }
+    this.setState({
+      newAddress
+    });
+  };
+
+  handleNewPaymentIDChange = (event: any) => {
+    const newPaymentID = event.target.value;
+    this.setState({
+      newPaymentID
+    });
+  };
 
   render() {
-    const { darkMode, showNewContactForm } = this.state;
+    const {
+      darkMode,
+      showNewContactForm,
+      newName,
+      newAddress,
+      newPaymentID
+    } = this.state;
     const { backgroundColor, tableMode, textColor } = uiType(darkMode);
     return (
       <div>
@@ -82,7 +123,14 @@ export default class AddressBook extends Component<Props, State> {
                   <th className={textColor}>Address</th>
                   <th className={textColor}>Payment ID</th>
                   <th className="has-text-centered">
-                    <a className={textColor} onClick={this.showAddContactForm}>
+                    <a
+                      className={textColor}
+                      onClick={this.showAddContactForm}
+                      onKeyPress={this.showAddContactForm}
+                      role="button"
+                      tabIndex={0}
+                      onMouseDown={event => event.preventDefault()}
+                    >
                       <i className="fas fa-user-plus" />
                     </a>
                   </th>
@@ -91,15 +139,34 @@ export default class AddressBook extends Component<Props, State> {
               <tbody>
                 {showNewContactForm && (
                   <tr>
-                    <td />
                     <td>
-                      <input className="input no-resize" />
+                      <span
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{
+                          __html: jdenticon.toSvg(newAddress, 114)
+                        }}
+                      />
                     </td>
                     <td>
-                      <input className="input no-resize" />
+                      <input
+                        className="input no-resize"
+                        value={newName}
+                        onChange={this.handleNewNameChange}
+                      />
                     </td>
                     <td>
-                      <input className="input no-resize" />
+                      <input
+                        className="input no-resize"
+                        value={newAddress}
+                        onChange={this.handleNewAddressChange}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        className="input no-resize"
+                        value={newPaymentID}
+                        onChange={this.handleNewPaymentIDChange}
+                      />
                     </td>
                     <td>
                       <i
@@ -115,6 +182,7 @@ export default class AddressBook extends Component<Props, State> {
                     <tr>
                       <td>
                         <span
+                          // eslint-disable-next-line react/no-danger
                           dangerouslySetInnerHTML={{
                             __html: jdenticon.toSvg(address, 114)
                           }}
