@@ -24,7 +24,7 @@ export default () => (
     <Switch>
       <Route exact path={routes.RECEIVE} component={ReceivePage} />
       <Route exact path={routes.HOME} component={HomePage} />
-      <Route exact path={routes.SEND} component={SendPage} />
+      <Route path="/send/:address?/:paymentid?" component={SendPage} />
       <Route exact path={routes.IMPORT} component={ImportPage} />
       <Route exact path={routes.IMPORTKEY} component={ImportKeyPage} />
       <Route exact path={routes.SETTINGS} component={SettingsPage} />

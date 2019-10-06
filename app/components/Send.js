@@ -15,7 +15,10 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 
-type Props = {};
+type Props = {
+  uriAddress?: string,
+  uriPaymentID?: string
+};
 
 type State = {
   unlockedBalance: number,
@@ -48,8 +51,8 @@ export default class Send extends Component<Props, State> {
       unlockedBalance: session.getUnlockedBalance(),
       enteredAmount: '',
       totalAmount: '',
-      sendToAddress: '',
-      paymentID: '',
+      sendToAddress: props.uriAddress,
+      paymentID: props.uriPaymentID,
       darkMode: session.darkMode,
       transactionInProgress: false,
       transactionComplete: false,
@@ -61,6 +64,7 @@ export default class Send extends Component<Props, State> {
       looping: loginCounter.looping,
       pageAnimationIn: loginCounter.getAnimation('/send')
     };
+
     this.transactionComplete = this.transactionComplete.bind(this);
     this.generatePaymentID = this.generatePaymentID.bind(this);
     this.resetPaymentID = this.resetPaymentID.bind(this);
@@ -724,3 +728,8 @@ export default class Send extends Component<Props, State> {
     );
   }
 }
+
+Send.defaultProps = {
+  uriAddress: '',
+  uriPaymentID: ''
+};

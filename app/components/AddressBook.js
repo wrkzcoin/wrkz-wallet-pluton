@@ -5,13 +5,18 @@
 // Please see the included LICENSE file for more information.
 import fs from 'fs';
 import React, { Component } from 'react';
-import log from 'electron-log';
+import { Link, withRouter } from 'react-router-dom';
 import jdenticon from 'jdenticon';
+import {
+  validateAddress,
+  validatePaymentID
+} from 'turtlecoin-wallet-backend/dist/lib/ValidateParameters';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 import { session, addressList, directories } from '../index';
+import routes from '../constants/routes';
 
 type State = {
   darkMode: boolean,
@@ -19,12 +24,15 @@ type State = {
   newName: string,
   newAddress: string,
   newPaymentID: string,
-  addressBook: any[]
+  addressBook: any[],
+  deletionRequests: number[],
+  badAddress: boolean,
+  badPaymentID: boolean
 };
 
 type Props = {};
 
-export default class AddressBook extends Component<Props, State> {
+class AddressBook extends Component<Props, State> {
   props: Props;
 
   state: State;
@@ -37,13 +45,18 @@ export default class AddressBook extends Component<Props, State> {
       newName: '',
       newAddress: '',
       newPaymentID: '',
-      addressBook: addressList
+      addressBook: addressList,
+      deletionRequests: [],
+      badAddress: false,
+      badPaymentID: false
     };
     this.showAddContactForm = this.showAddContactForm.bind(this);
     this.handleNewAddressChange = this.handleNewAddressChange.bind(this);
     this.handleNewNameChange = this.handleNewNameChange.bind(this);
     this.handleNewPaymentIDChange = this.handleNewPaymentIDChange.bind(this);
     this.addNewContact = this.addNewContact.bind(this);
+    this.deleteContact = this.deleteContact.bind(this);
+    this.cancelAddContact = this.cancelAddContact.bind(this);
   }
 
   componentWillMount() {}
@@ -81,6 +94,39 @@ export default class AddressBook extends Component<Props, State> {
     });
   };
 
+  deleteContact = (index: number) => {
+    let { deletionRequests } = this.state;
+    const { addressBook } = this.state;
+    const [programDirectory] = directories;
+
+    if (deletionRequests.includes(index)) {
+      addressBook.splice(index, 1);
+      deletionRequests = [];
+      fs.writeFileSync(
+        `${programDirectory}/addressBook.json`,
+        JSON.stringify(addressBook, null, 4)
+      );
+    } else {
+      deletionRequests.push(index);
+    }
+
+    this.setState({
+      addressBook,
+      deletionRequests
+    });
+  };
+
+  cancelAddContact = () => {
+    this.setState({
+      showNewContactForm: false,
+      newAddress: '',
+      newPaymentID: '',
+      newName: '',
+      badAddress: false,
+      badPaymentID: false
+    });
+  };
+
   addNewContact = () => {
     const { newName, newAddress, newPaymentID, addressBook } = this.state;
     const [programDirectory] = directories;
@@ -90,9 +136,37 @@ export default class AddressBook extends Component<Props, State> {
       paymentID: newPaymentID
     };
 
+    let badAddress = false;
+    let badPaymentID = false;
+
+    if (!validateAddress(newAddress, true)) {
+      badAddress = true;
+    } else {
+      badAddress = false;
+    }
+
+    const { errorCode } = validatePaymentID(newPaymentID);
+
+    if (errorCode === 23) {
+      badPaymentID = true;
+    } else if (errorCode === 0) {
+      badPaymentID = false;
+    }
+
+    this.setState({
+      badAddress,
+      badPaymentID
+    });
+
+    if (badAddress || badPaymentID) {
+      return;
+    }
+
     addressBook.push(newContact);
 
-    addressBook.sort((a, b) => (a.name > b.name ? 1 : -1));
+    addressBook.sort((a, b) =>
+      a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1
+    );
 
     fs.writeFileSync(
       `${programDirectory}/addressBook.json`,
@@ -106,9 +180,6 @@ export default class AddressBook extends Component<Props, State> {
       newName: '',
       showNewContactForm: false
     });
-
-    // adding a new contact
-    log.debug('added!');
   };
 
   render() {
@@ -118,7 +189,10 @@ export default class AddressBook extends Component<Props, State> {
       newName,
       newAddress,
       newPaymentID,
-      addressBook
+      addressBook,
+      deletionRequests,
+      badPaymentID,
+      badAddress
     } = this.state;
     const { backgroundColor, tableMode, textColor } = uiType(darkMode);
     return (
@@ -170,14 +244,18 @@ export default class AddressBook extends Component<Props, State> {
                     </td>
                     <td>
                       <input
-                        className="input is-large"
+                        className={`input is-large ${
+                          badAddress ? 'is-danger' : ''
+                        }`}
                         value={newAddress}
                         onChange={this.handleNewAddressChange}
                       />
                     </td>
                     <td>
                       <input
-                        className="input is-large"
+                        className={`input is-large ${
+                          badPaymentID ? 'is-danger' : ''
+                        }`}
                         value={newPaymentID}
                         onChange={this.handleNewPaymentIDChange}
                       />
@@ -196,13 +274,27 @@ export default class AddressBook extends Component<Props, State> {
                           aria-hidden="true"
                         />
                       </a>
+                      <a
+                        className={textColor}
+                        onClick={this.cancelAddContact}
+                        onKeyPress={this.cancelAddContact}
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={event => event.preventDefault()}
+                      >
+                        &nbsp;&nbsp;
+                        <i
+                          className="fas fa-times is-size-2 has-text-centered"
+                          aria-hidden="true"
+                        />
+                      </a>
                     </td>
                   </tr>
                 )}
-                {addressBook.map(contact => {
+                {addressBook.map((contact, index) => {
                   const { name, address, paymentID } = contact;
                   return (
-                    <tr>
+                    <tr key={address}>
                       <td>
                         <span
                           // eslint-disable-next-line react/no-danger
@@ -212,30 +304,48 @@ export default class AddressBook extends Component<Props, State> {
                         />
                       </td>
                       <td>
+                        <br />
                         <p className={`subtitle ${textColor}`}>{name}</p>
                       </td>
                       <td>
                         <textarea
                           className={`textarea transparent-textarea ${textColor} no-resize is-family-monospace`}
+                          defaultValue={address}
                           readOnly
-                        >
-                          {address}
-                        </textarea>
+                        />
                       </td>
                       <td>
                         <textarea
                           className={`textarea transparent-textarea ${textColor} no-resize is-family-monospace`}
+                          defaultValue={paymentID}
                           readOnly
-                        >
-                          {paymentID}
-                        </textarea>
+                        />
                       </td>
                       <td>
                         <br />
-                        <i
-                          className="fa fa-paper-plane is-size-2 has-text-centered"
-                          aria-hidden="true"
-                        />
+                        <Link
+                          className={textColor}
+                          to={`${routes.SEND}/${address}/${paymentID}`}
+                        >
+                          <i
+                            className="fa fa-paper-plane is-size-3 has-text-centered"
+                            aria-hidden="true"
+                          />
+                        </Link>
+                        &nbsp;&nbsp;
+                        <a
+                          className={
+                            deletionRequests.includes(index)
+                              ? 'has-text-danger'
+                              : textColor
+                          }
+                        >
+                          <i
+                            className="fa fa-trash is-size-3 has-text-centered"
+                            aria-hidden="true"
+                            onClick={() => this.deleteContact(index)}
+                          />
+                        </a>
                       </td>
                     </tr>
                   );
@@ -249,3 +359,5 @@ export default class AddressBook extends Component<Props, State> {
     );
   }
 }
+
+export default withRouter(AddressBook);
