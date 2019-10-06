@@ -4,6 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import log from 'electron-log';
 import jdenticon from 'jdenticon';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
@@ -11,7 +12,7 @@ import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 import { session } from '../index';
 
-const addressBook = [
+const addressList = [
   {
     name: 'ExtraHash',
     address:
@@ -38,7 +39,8 @@ type State = {
   showNewContactForm: boolean,
   newName: string,
   newAddress: string,
-  newPaymentID: string
+  newPaymentID: string,
+  addressBook: any[]
 };
 
 type Props = {};
@@ -55,12 +57,14 @@ export default class AddressBook extends Component<Props, State> {
       showNewContactForm: false,
       newName: '',
       newAddress: '',
-      newPaymentID: ''
+      newPaymentID: '',
+      addressBook: addressList
     };
     this.showAddContactForm = this.showAddContactForm.bind(this);
     this.handleNewAddressChange = this.handleNewAddressChange.bind(this);
     this.handleNewNameChange = this.handleNewNameChange.bind(this);
     this.handleNewPaymentIDChange = this.handleNewPaymentIDChange.bind(this);
+    this.addNewContact = this.addNewContact.bind(this);
   }
 
   componentWillMount() {}
@@ -98,13 +102,36 @@ export default class AddressBook extends Component<Props, State> {
     });
   };
 
+  addNewContact = () => {
+    const { newName, newAddress, newPaymentID, addressBook } = this.state;
+    const newContact = {
+      name: newName,
+      address: newAddress,
+      paymentID: newPaymentID
+    };
+
+    addressBook.push(newContact);
+
+    this.setState({
+      addressBook,
+      newAddress: '',
+      newPaymentID: '',
+      newName: '',
+      showNewContactForm: false
+    });
+
+    // adding a new contact
+    log.debug('added!');
+  };
+
   render() {
     const {
       darkMode,
       showNewContactForm,
       newName,
       newAddress,
-      newPaymentID
+      newPaymentID,
+      addressBook
     } = this.state;
     const { backgroundColor, tableMode, textColor } = uiType(darkMode);
     return (
@@ -169,10 +196,19 @@ export default class AddressBook extends Component<Props, State> {
                       />
                     </td>
                     <td>
-                      <i
-                        className="fas fa-save is-size-2 has-text-centered"
-                        aria-hidden="true"
-                      />
+                      <a
+                        className={textColor}
+                        onClick={this.addNewContact}
+                        onKeyPress={this.addNewContact}
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={event => event.preventDefault()}
+                      >
+                        <i
+                          className="fas fa-save is-size-2 has-text-centered"
+                          aria-hidden="true"
+                        />
+                      </a>
                     </td>
                   </tr>
                 )}
