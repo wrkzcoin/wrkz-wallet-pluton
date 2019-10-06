@@ -89,11 +89,14 @@ export default class LoginCounter {
       case '/receive':
         pageValue = 2;
         break;
-      case '/terminal':
+      case '/addressbook':
         pageValue = 3;
         break;
-      case '/settings':
+      case '/terminal':
         pageValue = 4;
+        break;
+      case '/settings':
+        pageValue = 5;
         break;
       default:
         pageValue = -1;

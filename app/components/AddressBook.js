@@ -15,7 +15,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
-import { session, addressList, directories } from '../index';
+import { session, addressList, directories, loginCounter } from '../index';
 import routes from '../constants/routes';
 
 type State = {
@@ -27,7 +27,8 @@ type State = {
   addressBook: any[],
   deletionRequests: number[],
   badAddress: boolean,
-  badPaymentID: boolean
+  badPaymentID: boolean,
+  pageAnimationIn: string
 };
 
 type Props = {};
@@ -48,7 +49,8 @@ class AddressBook extends Component<Props, State> {
       addressBook: addressList,
       deletionRequests: [],
       badAddress: false,
-      badPaymentID: false
+      badPaymentID: false,
+      pageAnimationIn: loginCounter.getAnimation('/addressbook')
     };
     this.showAddContactForm = this.showAddContactForm.bind(this);
     this.handleNewAddressChange = this.handleNewAddressChange.bind(this);
@@ -206,15 +208,18 @@ class AddressBook extends Component<Props, State> {
       addressBook,
       deletionRequests,
       badPaymentID,
-      badAddress
+      badAddress,
+      pageAnimationIn
     } = this.state;
     const { backgroundColor, tableMode, textColor } = uiType(darkMode);
     return (
       <div>
         <Redirector />
-        <div className={`wholescreen ${backgroundColor}`}>
+        <div className={`wholescreen ${backgroundColor} hide-scrollbar`}>
           <NavBar darkMode={darkMode} />
-          <div className={`maincontent-homescreen ${backgroundColor}`}>
+          <div
+            className={`maincontent-homescreen ${backgroundColor} ${pageAnimationIn}`}
+          >
             <table
               className={`table is-striped is-hoverable is-fullwidth is-family-monospace ${tableMode}`}
             >
