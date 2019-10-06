@@ -3,6 +3,7 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
+import fs from 'fs';
 import React, { Component } from 'react';
 import log from 'electron-log';
 import jdenticon from 'jdenticon';
@@ -10,29 +11,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
-import { session } from '../index';
-
-const addressList = [
-  {
-    name: 'ExtraHash',
-    address:
-      'TRTLv1ExtraTJ2oebAvuQB4TzF2uJEFpnbJCkQ4xr71vcqoS96fHX3kTKfHQwkK2Ee3TUD1NCsprfiZHnDL5mqrGiEJHgNz33Xf',
-    paymentID:
-      '3ebf0be306a997b50f17d3bfbfd85d4bd5cb6bc38da1eef6d0646a148ff42c8a'
-  },
-  {
-    name: 'Xaz-kun',
-    address:
-      'TRTLv2cJg6ECNdvqomtzWFB79S5hR5xFc8F3friQZscocBTuPqhCzKyDZPt61JG5eVGJKrHsXJHSUHDmAhZ134q8QRN2kHnyyHz',
-    paymentID: ''
-  },
-  {
-    name: 'zpalmtree',
-    address:
-      'TRTLv2Fyavy8CXG8BPEbNeCHFZ1fuDCYCZ3vW5H5LXN4K2M2MHUpTENip9bbavpHvvPwb4NDkBWrNgURAd5DB38FHXWZyoBh4wW',
-    paymentID: ''
-  }
-];
+import { session, addressList, directories } from '../index';
 
 type State = {
   darkMode: boolean,
@@ -104,6 +83,7 @@ export default class AddressBook extends Component<Props, State> {
 
   addNewContact = () => {
     const { newName, newAddress, newPaymentID, addressBook } = this.state;
+    const [programDirectory] = directories;
     const newContact = {
       name: newName,
       address: newAddress,
@@ -111,6 +91,13 @@ export default class AddressBook extends Component<Props, State> {
     };
 
     addressBook.push(newContact);
+
+    addressBook.sort((a, b) => (a.name > b.name ? 1 : -1));
+
+    fs.writeFileSync(
+      `${programDirectory}/addressBook.json`,
+      JSON.stringify(addressBook, null, 4)
+    );
 
     this.setState({
       addressBook,
@@ -176,21 +163,21 @@ export default class AddressBook extends Component<Props, State> {
                     </td>
                     <td>
                       <input
-                        className="input no-resize"
+                        className="input is-large"
                         value={newName}
                         onChange={this.handleNewNameChange}
                       />
                     </td>
                     <td>
                       <input
-                        className="input no-resize"
+                        className="input is-large"
                         value={newAddress}
                         onChange={this.handleNewAddressChange}
                       />
                     </td>
                     <td>
                       <input
-                        className="input no-resize"
+                        className="input is-large"
                         value={newPaymentID}
                         onChange={this.handleNewPaymentIDChange}
                       />

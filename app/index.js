@@ -27,6 +27,13 @@ import LoginCounter from './wallet/loginCounter';
 import uiType from './utils/uitype';
 import DaemonLogger from './wallet/DaemonLogger';
 
+const homedir = os.homedir();
+
+export const directories = [
+  `${homedir}/.protonwallet`,
+  `${homedir}/.protonwallet/logs`
+];
+
 export const il8n = new LocalizedStrings({
   // eslint-disable-next-line global-require
   en: require('./il8n/en.json'),
@@ -50,13 +57,6 @@ export let config = iConfig;
 
 export const eventEmitter = new EventEmitter();
 eventEmitter.setMaxListeners(6);
-
-const homedir = os.homedir();
-
-export const directories = [
-  `${homedir}/.protonwallet`,
-  `${homedir}/.protonwallet/logs`
-];
 
 export const updater = new AutoUpdater();
 updater.getLatestVersion();
@@ -84,6 +84,10 @@ if (!fs.existsSync(`${programDirectory}/config.json`)) {
     log.debug('User config is not valid JSON!');
   }
 }
+
+export const addressList = JSON.parse(
+  fs.readFileSync(`${programDirectory}/addressBook.json`).toString()
+);
 
 fs.writeFile(
   `${programDirectory}/config.json`,

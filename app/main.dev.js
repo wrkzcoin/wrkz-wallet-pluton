@@ -31,6 +31,14 @@ const directories = [
 
 const [programDirectory] = directories;
 
+log.debug('Checking if program directories are present...');
+directories.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+    log.debug(`${dir} directories not detected, creating...`);
+  }
+});
+
 if (fs.existsSync(`${programDirectory}/config.json`)) {
   const rawUserConfig = fs
     .readFileSync(`${programDirectory}/config.json`)
@@ -45,13 +53,25 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
   }
 }
 
-log.debug('Checking if program directories are present...');
-directories.forEach(dir => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-    log.debug(`${dir} directories not detected, creating...`);
+if (fs.existsSync(`${programDirectory}/addressBook.json`)) {
+  const rawAddressBook = fs
+    .readFileSync(`${programDirectory}/addressBook.json`)
+    .toString();
+
+  // check if the user addressBook is valid JSON before parsing it
+  try {
+    config = JSON.parse(rawAddressBook);
+  } catch {
+    // if it isn't, backup the invalid JSON and overwrite it with an empty addressBook
+    fs.copyFileSync(
+      `${programDirectory}/addressBook.json`,
+      `${programDirectory}/addressBook.notvalid.json`
+    );
+    fs.writeFileSync(`${programDirectory}/addressBook.json`, '[]');
   }
-});
+} else {
+  fs.writeFileSync(`${programDirectory}/addressBook.json`, '[]');
+}
 
 const daemonLogFile = path.resolve(directories[1], 'TurtleCoind.log');
 const backendLogFile = path.resolve(directories[1], 'wallet-backend.log');
