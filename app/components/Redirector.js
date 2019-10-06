@@ -105,8 +105,6 @@ class Redirector extends Component<Props, State> {
 
     log.debug(cleanPath);
 
-    log.info(`Router: GET ${pathname}`);
-
     loginCounter.pageFocusStack.unshift(cleanPath);
     if (loginCounter.pageFocusStack.length > 1) {
       loginCounter.pageFocusStack.pop();
