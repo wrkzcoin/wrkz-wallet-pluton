@@ -211,7 +211,13 @@ class AddressBook extends Component<Props, State> {
       badAddress,
       pageAnimationIn
     } = this.state;
-    const { backgroundColor, tableMode, textColor } = uiType(darkMode);
+
+    const { backgroundColor, tableMode, textColor, fillColor } = uiType(
+      darkMode
+    );
+    const displayWelcomeMessage =
+      addressBook.length === 0 && !showNewContactForm;
+
     return (
       <div>
         <Redirector />
@@ -371,6 +377,21 @@ class AddressBook extends Component<Props, State> {
                 })}
               </tbody>
             </table>
+            {displayWelcomeMessage && (
+              <div className="elem-to-center">
+                <div className={`box ${fillColor}`}>
+                  <p className={`${textColor} title has-text-centered`}>
+                    <i className="fas fa-robot" />
+                    &nbsp;&nbsp;Welcome to your Address Book!
+                  </p>
+                  <br />
+                  <p className={`${textColor} subtitle has-text-centered`}>
+                    You don&apos;t have any contacts saved yet. They will
+                    display here once you do.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
           <BottomBar darkMode={darkMode} />
         </div>

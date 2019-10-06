@@ -60,7 +60,7 @@ if (fs.existsSync(`${programDirectory}/addressBook.json`)) {
 
   // check if the user addressBook is valid JSON before parsing it
   try {
-    config = JSON.parse(rawAddressBook);
+    JSON.parse(rawAddressBook);
   } catch {
     // if it isn't, backup the invalid JSON and overwrite it with an empty addressBook
     fs.copyFileSync(
@@ -94,6 +94,8 @@ if (config) {
   // eslint-disable-next-line prefer-destructuring
   turtleCoindPath = config.turtleCoindPath;
 }
+
+log.debug(useLocalDaemon, turtleCoindPath);
 
 if (useLocalDaemon && turtleCoindPath) {
   localDaemon = new TurtleCoind(turtleCoindPath);
