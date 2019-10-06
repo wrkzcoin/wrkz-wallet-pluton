@@ -29,7 +29,7 @@ type State = {
   hideMenu: boolean
 };
 
-export default class Receive extends Component<Props, State> {
+export default class Terminal extends Component<Props, State> {
   props: Props;
 
   state: State;

@@ -116,6 +116,14 @@ class AddressBook extends Component<Props, State> {
     });
   };
 
+  search(searchedValue: any, arrayToSearch: any[], objectPropertyName: string) {
+    for (let i = 0; i < arrayToSearch.length; i++) {
+      if (arrayToSearch[i][objectPropertyName] === searchedValue) {
+        return arrayToSearch[i];
+      }
+    }
+  }
+
   cancelAddContact = () => {
     this.setState({
       showNewContactForm: false,
@@ -153,12 +161,18 @@ class AddressBook extends Component<Props, State> {
       badPaymentID = false;
     }
 
+    const duplicate = this.search(newAddress, addressBook, 'address');
+
+    if (duplicate) {
+      badAddress = true;
+    }
+
     this.setState({
       badAddress,
       badPaymentID
     });
 
-    if (badAddress || badPaymentID) {
+    if (badAddress || badPaymentID || duplicate) {
       return;
     }
 

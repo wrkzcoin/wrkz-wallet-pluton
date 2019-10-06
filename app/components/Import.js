@@ -27,7 +27,7 @@ type States = {
   darkMode: boolean
 };
 
-export default class Send extends Component<Props, States> {
+export default class Import extends Component<Props, States> {
   props: Props;
 
   states: States;
