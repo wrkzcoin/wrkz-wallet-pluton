@@ -100,7 +100,14 @@ class Redirector extends Component<Props, State> {
 
     // prettier-ignore
     const { location: { pathname } } = this.props;
-    loginCounter.pageFocusStack.unshift(pathname);
+    const splitPath = pathname.split('/');
+    const cleanPath = `/${splitPath[1]}`;
+
+    log.debug(cleanPath);
+
+    log.info(`Router: GET ${pathname}`);
+
+    loginCounter.pageFocusStack.unshift(cleanPath);
     if (loginCounter.pageFocusStack.length > 1) {
       loginCounter.pageFocusStack.pop();
     }
