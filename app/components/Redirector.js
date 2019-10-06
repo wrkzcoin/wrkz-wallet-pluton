@@ -103,8 +103,6 @@ class Redirector extends Component<Props, State> {
     const splitPath = pathname.split('/');
     const cleanPath = `/${splitPath[1]}`;
 
-    log.debug(cleanPath);
-
     loginCounter.pageFocusStack.unshift(cleanPath);
     if (loginCounter.pageFocusStack.length > 1) {
       loginCounter.pageFocusStack.pop();
