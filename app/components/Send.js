@@ -7,9 +7,16 @@ import crypto from 'crypto';
 import isDev from 'electron-is-dev';
 import log from 'electron-log';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import Creatable from 'react-select/creatable';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter, il8n, config, loginCounter } from '../index';
+import {
+  session,
+  eventEmitter,
+  il8n,
+  config,
+  loginCounter,
+  addressList
+} from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -27,7 +34,6 @@ type State = {
   paymentID: string,
   darkMode: boolean,
   transactionInProgress: boolean,
-  transactionComplete: boolean,
   displayCurrency: string,
   fiatPrice: number,
   fiatSymbol: string,
@@ -35,7 +41,31 @@ type State = {
   sendToAddress: string,
   loopTest: boolean,
   looping: boolean,
-  pageAnimationIn: string
+  pageAnimationIn: string,
+  selectedContact: any
+};
+
+const customStyles = {
+  control: base => ({
+    ...base,
+    height: 54,
+    minHeight: 54,
+    fontSize: '1.5rem'
+  }),
+  placeholder: base => ({
+    ...base,
+    color: 'hsl(0, 0%, 71%)',
+    'font-weight': 'normal'
+  }),
+  menuList: base => ({
+    ...base,
+    color: 'hsl(0, 0%, 21%)',
+    'font-weight': 'normal'
+  }),
+  singleValue: base => ({
+    ...base,
+    'font-weight': 'normal'
+  })
 };
 
 export default class Send extends Component<Props, State> {
@@ -45,27 +75,30 @@ export default class Send extends Component<Props, State> {
 
   loopInterval: IntervalID | null;
 
+  autoCompleteContacts: any[];
+
+  static defaultProps: any;
+
   constructor(props?: Props) {
     super(props);
     this.state = {
       unlockedBalance: session.getUnlockedBalance(),
       enteredAmount: '',
       totalAmount: '',
-      sendToAddress: props.uriAddress,
-      paymentID: props.uriPaymentID,
+      sendToAddress: props.uriAddress || '',
+      paymentID: props.uriPaymentID || '',
       darkMode: session.darkMode,
       transactionInProgress: false,
-      transactionComplete: false,
       displayCurrency: config.displayCurrency,
       fiatPrice: session.fiatPrice,
       fiatSymbol: config.fiatSymbol,
       symbolLocation: config.symbolLocation,
       loopTest: loginCounter.loopTest,
       looping: loginCounter.looping,
-      pageAnimationIn: loginCounter.getAnimation('/send')
+      pageAnimationIn: loginCounter.getAnimation('/send'),
+      selectedContact: null
     };
 
-    this.transactionComplete = this.transactionComplete.bind(this);
     this.generatePaymentID = this.generatePaymentID.bind(this);
     this.resetPaymentID = this.resetPaymentID.bind(this);
     this.handleTransactionInProgress = this.handleTransactionInProgress.bind(
@@ -81,10 +114,12 @@ export default class Send extends Component<Props, State> {
     this.confirmTransaction = this.confirmTransaction.bind(this);
     this.toggleLoopTest = this.toggleLoopTest.bind(this);
     this.loopInterval = null;
+    this.autoCompleteContacts = addressList.map(contact => {
+      return { label: contact.name, value: contact.address };
+    });
   }
 
   componentDidMount() {
-    eventEmitter.on('transactionComplete', this.transactionComplete);
     eventEmitter.on('transactionInProgress', this.handleTransactionInProgress);
     eventEmitter.on('transactionCancel', this.handleTransactionCancel);
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
@@ -94,7 +129,6 @@ export default class Send extends Component<Props, State> {
 
   componentWillUnmount() {
     const { looping } = this.state;
-    eventEmitter.off('transactionComplete', this.transactionComplete);
     eventEmitter.off('transactionInProgress', this.handleTransactionInProgress);
     eventEmitter.off('transactionCancel', this.handleTransactionCancel);
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
@@ -127,13 +161,6 @@ export default class Send extends Component<Props, State> {
 
   handleTransactionCancel = () => {
     this.setState({
-      transactionInProgress: false
-    });
-  };
-
-  transactionComplete = () => {
-    this.setState({
-      transactionComplete: true,
       transactionInProgress: false
     });
   };
@@ -485,13 +512,34 @@ export default class Send extends Component<Props, State> {
     });
   };
 
+  search(searchedValue: any, arrayToSearch: any[], objectPropertyName: string) {
+    for (let i = 0; i < arrayToSearch.length; i++) {
+      if (arrayToSearch[i][objectPropertyName] === searchedValue) {
+        return arrayToSearch[i];
+      }
+    }
+  }
+
+  handleAddressChange = (event: any) => {
+    if (event) {
+      this.setState({
+        selectedContact: event,
+        sendToAddress: event.value
+      });
+      log.debug(event);
+    } else {
+      this.setState({
+        selectedContact: null
+      });
+    }
+  };
+
   roundDown(x: number) {
     return Math.floor(x * 100) / 100;
   }
 
   render() {
     const {
-      transactionComplete,
       darkMode,
       enteredAmount,
       totalAmount,
@@ -503,7 +551,8 @@ export default class Send extends Component<Props, State> {
       sendToAddress,
       loopTest,
       looping,
-      pageAnimationIn
+      pageAnimationIn,
+      selectedContact
     } = this.state;
 
     const exampleAmount =
@@ -516,10 +565,6 @@ export default class Send extends Component<Props, State> {
       linkColor,
       toolTipColor
     } = uiType(darkMode);
-
-    if (transactionComplete === true) {
-      return <Redirect to="/" />;
-    }
 
     return (
       <div>
@@ -535,6 +580,27 @@ export default class Send extends Component<Props, State> {
           <div className={`maincontent ${backgroundColor} ${pageAnimationIn}`}>
             <form onSubmit={this.confirmTransaction}>
               <div className="field">
+                <div className="control">
+                  <label className={`label ${textColor}`} htmlFor="address">
+                    Send to
+                    <Creatable
+                      options={this.autoCompleteContacts}
+                      placeholder="Enter a TurtleCoin address or a contact name to send funds to"
+                      // eslint-disable-next-line no-unused-vars
+                      noOptionsMessage={inputValue => null}
+                      styles={customStyles}
+                      isClearable
+                      formatCreateLabel={value => {
+                        return `Send to ${value}`;
+                      }}
+                      value={selectedContact}
+                      onChange={this.handleAddressChange}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="field" hidden>
                 <label className={`label ${textColor}`} htmlFor="address">
                   {il8n.send_to_address}
                   <div className="control">
