@@ -155,6 +155,18 @@ class NavBar extends Component<Props, State> {
                   )}
                 </div>
                 <div className="navbar-end">
+                  <div className="navbar-item">
+                    <div className="control has-icons-left searchbar">
+                      <input
+                        className="input is-medium"
+                        type="text"
+                        placeholder="Search for anything..."
+                      />
+                      <span className="icon is-large is-left">
+                        <i className="fas fa-search" />
+                      </span>
+                    </div>
+                  </div>
                   {session.walletPassword !== '' && (
                     <div className="navbar-item">
                       <Link className="buttons" to={routes.LOGIN}>
