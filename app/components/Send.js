@@ -125,6 +125,20 @@ export default class Send extends Component<Props, State> {
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.on('modifyCurrency', this.modifyCurrency);
     eventEmitter.on('confirmTransaction', this.sendTransaction);
+    // eslint-disable-next-line react/destructuring-assignment
+    if (this.props && this.props.uriAddress) {
+      const { uriAddress } = this.props;
+
+      const selectedContact = this.search(
+        uriAddress,
+        this.autoCompleteContacts,
+        'value'
+      );
+
+      this.setState({
+        selectedContact
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -409,7 +423,6 @@ export default class Send extends Component<Props, State> {
               </p>
               <p className={`subtitle ${textColor}`}>{err.toString()}</p>
             </div>
-            // eslint-disable-next-line prettier/prettier
           );
           eventEmitter.emit(
             'openModal',
@@ -466,7 +479,8 @@ export default class Send extends Component<Props, State> {
       paymentID: '',
       enteredAmount: '',
       totalAmount: '',
-      sendToAddress: ''
+      sendToAddress: '',
+      selectedContact: null
     });
   };
 
@@ -522,11 +536,12 @@ export default class Send extends Component<Props, State> {
 
   handleAddressChange = (event: any) => {
     if (event) {
+      const { paymentid } = this.search(event.value, addressList, 'address');
       this.setState({
         selectedContact: event,
-        sendToAddress: event.value
+        sendToAddress: event.value,
+        paymentID: paymentid
       });
-      log.debug(event);
     } else {
       this.setState({
         selectedContact: null
@@ -581,7 +596,10 @@ export default class Send extends Component<Props, State> {
             <form onSubmit={this.confirmTransaction}>
               <div className="field">
                 <div className="control">
-                  <label className={`label ${textColor}`} htmlFor="address">
+                  <label
+                    className={`label ${textColor}`}
+                    htmlFor="autoCompleteAddress"
+                  >
                     Send to
                     <Creatable
                       options={this.autoCompleteContacts}
@@ -595,6 +613,7 @@ export default class Send extends Component<Props, State> {
                       }}
                       value={selectedContact}
                       onChange={this.handleAddressChange}
+                      id="autoCompleteAddress"
                     />
                   </label>
                 </div>
@@ -610,6 +629,7 @@ export default class Send extends Component<Props, State> {
                       placeholder={il8n.send_to_address_input_placeholder}
                       value={sendToAddress}
                       onChange={this.handleSendToAddressChange}
+                      id="address"
                     />
                   </div>
                 </label>
@@ -630,6 +650,7 @@ export default class Send extends Component<Props, State> {
                           })`}
                           value={enteredAmount}
                           onChange={this.handleAmountChange}
+                          id="amount"
                         />
                         <a
                           onClick={this.sendAll}
@@ -655,6 +676,7 @@ export default class Send extends Component<Props, State> {
                           placeholder={il8n.total_with_fees_input_placeholder}
                           value={totalAmount}
                           onChange={this.handleTotalAmountChange}
+                          id="totalamount"
                         />
                       </label>
                     </div>
@@ -671,6 +693,7 @@ export default class Send extends Component<Props, State> {
                       placeholder={il8n.payment_id_input_placeholder}
                       value={paymentID}
                       onChange={this.handlePaymentIDChange}
+                      id="paymentid"
                     />
                     <a
                       onClick={this.generatePaymentID}

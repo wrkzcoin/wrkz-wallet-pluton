@@ -116,10 +116,12 @@ class NavBar extends Component<Props, State> {
 
                   <Link className="navbar-item" to={routes.SEND}>
                     <i className="fa fa-paper-plane" />
-                    {pathname === '/send' && (
+                    {pathname.includes('/send') && (
                       <strong>&nbsp;&nbsp;{il8n.send}</strong>
                     )}
-                    {pathname !== '/send' && <p>&nbsp;&nbsp;{il8n.send}</p>}
+                    {!pathname.includes('/send') && (
+                      <p>&nbsp;&nbsp;{il8n.send}</p>
+                    )}
                   </Link>
 
                   <Link className="navbar-item" to={routes.RECEIVE}>
