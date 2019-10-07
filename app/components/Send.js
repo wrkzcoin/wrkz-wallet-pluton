@@ -3,6 +3,7 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import crypto from 'crypto';
 import isDev from 'electron-is-dev';
 import log from 'electron-log';
@@ -55,16 +56,16 @@ const customStyles = {
   placeholder: base => ({
     ...base,
     color: 'hsl(0, 0%, 71%)',
-    'font-weight': 'normal'
+    fontWeight: 'normal'
   }),
   menuList: base => ({
     ...base,
     color: 'hsl(0, 0%, 21%)',
-    'font-weight': 'normal'
+    fontWeight: 'normal'
   }),
   singleValue: base => ({
     ...base,
-    'font-weight': 'normal'
+    fontWeight: 'normal'
   })
 };
 
@@ -446,6 +447,7 @@ export default class Send extends Component<Props, State> {
     const paymentID = this.generatePaymentID();
 
     await this.setState({
+      selectedContact: { label: sendToAddress, value: sendToAddress },
       enteredAmount: String(amount / 100),
       totalAmount: String((amount + 10) / 100),
       sendToAddress,
@@ -536,11 +538,24 @@ export default class Send extends Component<Props, State> {
 
   handleAddressChange = (event: any) => {
     if (event) {
-      const { paymentid } = this.search(event.value, addressList, 'address');
+      log.debug(event);
+
+      // eslint-disable-next-line no-underscore-dangle
+      if (event.__isNew__) {
+        this.setState({
+          selectedContact: { label: event.value, value: event.value },
+          sendToAddress: event.value
+        });
+        return;
+      }
+
+      const { paymentID } = this.search(event.value, addressList, 'address');
+      log.debug('test');
+
       this.setState({
         selectedContact: event,
         sendToAddress: event.value,
-        paymentID: paymentid
+        paymentID: paymentID || ''
       });
     } else {
       this.setState({

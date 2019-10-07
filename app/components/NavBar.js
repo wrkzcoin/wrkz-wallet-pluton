@@ -20,7 +20,8 @@ type Location = {
 
 type Props = {
   location: Location,
-  darkMode: boolean
+  darkMode: boolean,
+  query?: string
 };
 
 type State = {
@@ -37,6 +38,8 @@ class NavBar extends Component<Props, State> {
 
   activityTimer: IntervalID;
 
+  static defaultProps: any;
+
   constructor(props?: Props) {
     super(props);
     this.state = {
@@ -45,7 +48,7 @@ class NavBar extends Component<Props, State> {
         config.useLocalDaemon ||
         config.logLevel !== 'DISABLED' ||
         loginCounter.daemonFailedInit,
-      query: '',
+      query: props.query || '',
       submitSearch: false
     };
     this.logOut = this.logOut.bind(this);
@@ -105,9 +108,6 @@ class NavBar extends Component<Props, State> {
 
     if (submitSearch && pathname !== `/search/${query}`) {
       const userSearchTerm = query;
-      this.setState({
-        query: ''
-      });
       return <Redirect to={`/search/${userSearchTerm}`} />;
     }
 
@@ -195,7 +195,7 @@ class NavBar extends Component<Props, State> {
                           <input
                             className="input is-medium"
                             type="text"
-                            placeholder="Search for (almost) anything..."
+                            placeholder="Search for anything..."
                             value={query}
                             onChange={this.handleQueryChange}
                           />
@@ -262,6 +262,10 @@ class NavBar extends Component<Props, State> {
     );
   }
 }
+
+NavBar.defaultProps = {
+  query: ''
+};
 
 // $FlowFixMe
 export default withRouter(NavBar);
