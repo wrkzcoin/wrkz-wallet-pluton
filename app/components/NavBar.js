@@ -5,7 +5,8 @@
 // Please see the included LICENSE file for more information.
 
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import log from 'electron-log';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import routes from '../constants/routes';
 import { session, eventEmitter, il8n, loginCounter, config } from '../index';
 import uiType from '../utils/uitype';
@@ -24,7 +25,9 @@ type Props = {
 
 type State = {
   navBarCount: number,
-  terminalActive: boolean
+  terminalActive: boolean,
+  query: string,
+  submitSearch: boolean
 };
 
 class NavBar extends Component<Props, State> {
@@ -41,10 +44,14 @@ class NavBar extends Component<Props, State> {
       terminalActive:
         config.useLocalDaemon ||
         config.logLevel !== 'DISABLED' ||
-        loginCounter.daemonFailedInit
+        loginCounter.daemonFailedInit,
+      query: '',
+      submitSearch: false
     };
     this.logOut = this.logOut.bind(this);
     this.refreshTerminalStatus = this.refreshTerminalStatus.bind(this);
+    this.handleQueryChange = this.handleQueryChange.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
   }
 
   componentDidMount() {
@@ -72,11 +79,37 @@ class NavBar extends Component<Props, State> {
     eventEmitter.emit('logOut');
   };
 
+  handleQueryChange = (event: any) => {
+    this.setState({
+      query: event.target.value,
+      submitSearch: false
+    });
+  };
+
+  handleSearch = (event: any) => {
+    event.preventDefault();
+    const { query } = this.state;
+
+    log.debug(`User searched for ${query}`);
+
+    this.setState({
+      submitSearch: true
+    });
+  };
+
   render() {
     // prettier-ignore
     const { location: { pathname }, darkMode } = this.props;
-    const { navBarCount, terminalActive } = this.state;
+    const { navBarCount, terminalActive, query, submitSearch } = this.state;
     const { fillColor, elementBaseColor, settingsCogColor } = uiType(darkMode);
+
+    if (submitSearch && pathname !== `/search/${query}`) {
+      const userSearchTerm = query;
+      this.setState({
+        query: ''
+      });
+      return <Redirect to={`/search/${userSearchTerm}`} />;
+    }
 
     return (
       <div>
@@ -156,16 +189,25 @@ class NavBar extends Component<Props, State> {
                 </div>
                 <div className="navbar-end">
                   <div className="navbar-item">
-                    <div className="control has-icons-left searchbar">
-                      <input
-                        className="input is-medium"
-                        type="text"
-                        placeholder="Search for anything..."
-                      />
-                      <span className="icon is-large is-left">
-                        <i className="fas fa-search" />
-                      </span>
-                    </div>
+                    <form onSubmit={this.handleSearch}>
+                      <div className="field has-addons">
+                        <div className="control is-expanded">
+                          <input
+                            className="input is-medium"
+                            type="text"
+                            placeholder="Search for (almost) anything..."
+                            value={query}
+                            onChange={this.handleQueryChange}
+                          />
+                        </div>
+                        <div className="control">
+                          <span className="button is-dark is-medium">
+                            {' '}
+                            <i className="fas fa-search" />
+                          </span>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                   {session.walletPassword !== '' && (
                     <div className="navbar-item">
