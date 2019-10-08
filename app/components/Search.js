@@ -44,6 +44,17 @@ export default class Search extends Component<Props, States> {
   componentDidMount() {
     const { query } = this.props;
     this.getContactResults(query);
+    this.setState({
+      query
+    });
+  }
+
+  componentWillReceiveProps(newProps) {
+    const { query } = newProps;
+    this.getContactResults(query);
+    this.setState({
+      query
+    });
   }
 
   componentWillUnmount() {}
@@ -53,7 +64,11 @@ export default class Search extends Component<Props, States> {
     let contactResults = possibleContactValues.map(value => {
       return this.search(query, addressList, value);
     });
-    contactResults = this.filterNullValues(contactResults);
+
+    /* We don't want duplicates, so we're going to
+       pass the array to a new Set to remove them */
+    contactResults = [...new Set(this.filterNullValues(contactResults))];
+
     this.setState({
       contactResults
     });
