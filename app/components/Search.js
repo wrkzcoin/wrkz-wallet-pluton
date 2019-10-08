@@ -4,12 +4,14 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import log from 'electron-log';
+import { Link } from 'react-router-dom';
+import jdenticon from 'jdenticon';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 import { session, addressList } from '../index';
+import routes from '../constants/routes';
 
 type Props = {
   query: string
@@ -88,8 +90,8 @@ export default class Search extends Component<Props, States> {
 
   getTransactionResults = (query: string) => {
     const transactions = session.wallet.getTransactions();
-    log.debug(query);
-    log.debug(transactions);
+    // log.debug(query);
+    // log.debug(transactions);
   };
 
   filterNullValues(arr: any[]) {
@@ -115,7 +117,7 @@ export default class Search extends Component<Props, States> {
   render() {
     const { darkMode, contactResults } = this.state;
     const { query } = this.props;
-    const { backgroundColor, textColor } = uiType(darkMode);
+    const { backgroundColor, textColor, tableMode } = uiType(darkMode);
 
     return (
       <div>
@@ -123,12 +125,87 @@ export default class Search extends Component<Props, States> {
         <div className={`wholescreen ${backgroundColor}`}>
           <NavBar darkMode={darkMode} query={query} />
           <div className={`maincontent ${backgroundColor}`}>
-            <p className={`${textColor} subtitle`}>
-              Search results for <b>{query}:</b>
-              <br />
-              <br />
-              {JSON.stringify(contactResults)}
-            </p>
+            {contactResults.length > 0 && (
+              <div>
+                <p className={`subtitle ${textColor}`}>
+                  <b>Contacts:</b>
+                </p>
+              </div>
+            )}
+
+            {contactResults.length > 0 && (
+              <table
+                className={`table is-striped is-hoverable is-fullwidth is-family-monospace ${tableMode}`}
+              >
+                <thead>
+                  <tr>
+                    <th className={textColor}>Icon</th>
+                    <th className={textColor}>Name</th>
+                    <th className={textColor}>Address</th>
+                    <th className={textColor}>Payment ID</th>
+                    <th className="has-text-centered">
+                      <a
+                        className={textColor}
+                        onClick={this.showAddContactForm}
+                        onKeyPress={this.showAddContactForm}
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={event => event.preventDefault()}
+                      >
+                        <i className="fas fa-user-plus" />
+                      </a>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {contactResults.map(contact => {
+                    const { name, address, paymentID } = contact;
+                    return (
+                      <tr key={address}>
+                        <td>
+                          <span
+                            // eslint-disable-next-line react/no-danger
+                            dangerouslySetInnerHTML={{
+                              __html: jdenticon.toSvg(address, 114)
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <br />
+                          <p className={`subtitle ${textColor}`}>{name}</p>
+                        </td>
+                        <td>
+                          <textarea
+                            className={`textarea transparent-textarea ${textColor} no-resize is-family-monospace`}
+                            defaultValue={address}
+                            readOnly
+                          />
+                        </td>
+                        <td>
+                          <textarea
+                            className={`textarea transparent-textarea ${textColor} no-resize is-family-monospace`}
+                            defaultValue={paymentID}
+                            readOnly
+                          />
+                        </td>
+                        <td>
+                          <br />
+                          <Link
+                            className={textColor}
+                            to={`${routes.SEND}/${address}/${paymentID}`}
+                          >
+                            <i
+                              className="fa fa-paper-plane is-size-3 has-text-centered"
+                              aria-hidden="true"
+                            />
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
             <br />
           </div>
           <BottomBar darkMode={darkMode} />
