@@ -4,6 +4,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import log from 'electron-log';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -39,11 +40,13 @@ export default class Search extends Component<Props, States> {
     this.addressList = addressList;
     this.transactions = session.wallet.getTransactions();
     this.getContactResults = this.getContactResults.bind(this);
+    this.getTransactionResults = this.getTransactionResults.bind(this);
   }
 
   componentDidMount() {
     const { query } = this.props;
     this.getContactResults(query);
+    this.getTransactionResults(query);
     this.setState({
       query
     });
@@ -61,17 +64,32 @@ export default class Search extends Component<Props, States> {
 
   getContactResults = (query: string) => {
     const possibleContactValues = ['name', 'address', 'paymentID'];
-    let contactResults = possibleContactValues.map(value => {
+
+    const contactResults = possibleContactValues.map(value => {
       return this.search(query, addressList, value);
     });
 
+    let sanitizedResults = [];
+
+    /* the search function returns a separate array of results for each
+       value searched, we need to concat them together with spread */
+    for (let i = 0; i < contactResults.length; i++) {
+      sanitizedResults = [...contactResults[i], ...sanitizedResults];
+    }
+
     /* We don't want duplicates, so we're going to
        pass the array to a new Set to remove them */
-    contactResults = [...new Set(this.filterNullValues(contactResults))];
+    sanitizedResults = [...new Set(this.filterNullValues(sanitizedResults))];
 
     this.setState({
-      contactResults
+      contactResults: sanitizedResults
     });
+  };
+
+  getTransactionResults = (query: string) => {
+    const transactions = session.wallet.getTransactions();
+    log.debug(query);
+    log.debug(transactions);
   };
 
   filterNullValues(arr: any[]) {
@@ -79,6 +97,7 @@ export default class Search extends Component<Props, States> {
   }
 
   search(searchedValue: any, arrayToSearch: any[], objectPropertyName: string) {
+    const resultsToReturn = [];
     for (let i = 0; i < arrayToSearch.length; i++) {
       // will resolve to true if the selected value contains the substring, case insensitive
       if (
@@ -86,9 +105,11 @@ export default class Search extends Component<Props, States> {
           .toUpperCase()
           .includes(searchedValue.toUpperCase())
       ) {
-        return arrayToSearch[i];
+        // return
+        resultsToReturn.push(arrayToSearch[i]);
       }
     }
+    return resultsToReturn;
   }
 
   render() {
