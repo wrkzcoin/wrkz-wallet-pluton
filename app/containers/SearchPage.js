@@ -14,7 +14,7 @@ type Props = {
   }
 };
 
-export default class SendPage extends Component<Props> {
+export default class SearchPage extends Component<Props> {
   props: Props;
 
   render() {

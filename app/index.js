@@ -319,6 +319,7 @@ function handleOpen() {
     ]
   };
   const getPaths = remote.dialog.showOpenDialog(null, options);
+  log.debug(getPaths);
   if (getPaths === undefined) {
     return;
   }

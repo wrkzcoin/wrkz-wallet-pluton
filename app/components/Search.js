@@ -4,7 +4,6 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import log from 'electron-log';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -16,7 +15,9 @@ type Props = {
 };
 
 type States = {
-  darkMode: boolean
+  darkMode: boolean,
+  contactResults: string[],
+  transactionResults: any[]
 };
 
 export default class Search extends Component<Props, States> {
@@ -37,42 +38,28 @@ export default class Search extends Component<Props, States> {
     };
     this.addressList = addressList;
     this.transactions = session.wallet.getTransactions();
-    this.searchHistory = [];
+    this.getContactResults = this.getContactResults.bind(this);
   }
 
   componentDidMount() {
     const { query } = this.props;
-    this.getSearchResults(query);
-  }
-
-  componentDidUpdate() {
-    const { query } = this.props;
-
-    this.getSearchResults(query);
+    this.getContactResults(query);
   }
 
   componentWillUnmount() {}
 
-  async getSearchResults(query: string) {
-    const contactMatches = await this.getContactResults(query);
-    const transactionMatches = await this.getTransactionResults(query);
-  }
-
-  async getContactResults(query: string) {
+  getContactResults = (query: string) => {
     const possibleContactValues = ['name', 'address', 'paymentID'];
-    let contactResults = await possibleContactValues.map(value => {
+    let contactResults = possibleContactValues.map(value => {
       return this.search(query, addressList, value);
     });
     contactResults = this.filterNullValues(contactResults);
-    log.debug(contactResults);
-    return contactResults;
-  }
+    this.setState({
+      contactResults
+    });
+  };
 
-  async getTransactionResults(query: string) {
-    log.debug(query);
-  }
-
-  filterNullValues(arr) {
+  filterNullValues(arr: any[]) {
     return arr.filter(Boolean);
   }
 
@@ -90,7 +77,7 @@ export default class Search extends Component<Props, States> {
   }
 
   render() {
-    const { darkMode, contactResults, transactionResults } = this.state;
+    const { darkMode, contactResults } = this.state;
     const { query } = this.props;
     const { backgroundColor, textColor } = uiType(darkMode);
 
@@ -102,24 +89,11 @@ export default class Search extends Component<Props, States> {
           <div className={`maincontent ${backgroundColor}`}>
             <p className={`${textColor} subtitle`}>
               Search results for <b>{query}:</b>
+              <br />
+              <br />
+              {JSON.stringify(contactResults)}
             </p>
-            {contactResults.length > 0 && (
-              <div>
-                <p className={textColor}>
-                  Contacts:
-                  <br />
-                  {JSON.stringify(this.contactResults)}
-                </p>
-              </div>
-            )}
             <br />
-            <div>
-              <p className={textColor}>
-                Transactions:
-                <br />
-                {JSON.stringify(this.transactions)}
-              </p>
-            </div>
           </div>
           <BottomBar darkMode={darkMode} />
         </div>
