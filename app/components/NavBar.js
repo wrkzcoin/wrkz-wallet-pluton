@@ -201,10 +201,12 @@ class NavBar extends Component<Props, State> {
                           />
                         </div>
                         <div className="control">
-                          <span className="button is-dark is-medium">
-                            {' '}
+                          <button
+                            className="button is-dark is-medium"
+                            type="submit"
+                          >
                             <i className="fas fa-search" />
-                          </span>
+                          </button>
                         </div>
                       </div>
                     </form>

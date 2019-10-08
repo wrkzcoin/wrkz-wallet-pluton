@@ -550,7 +550,6 @@ export default class Send extends Component<Props, State> {
       }
 
       const { paymentID } = this.search(event.value, addressList, 'address');
-      log.debug('test');
 
       this.setState({
         selectedContact: event,
@@ -629,6 +628,7 @@ export default class Send extends Component<Props, State> {
                       value={selectedContact}
                       onChange={this.handleAddressChange}
                       id="autoCompleteAddress"
+                      multi
                     />
                   </label>
                 </div>
