@@ -93,6 +93,10 @@ class NavBar extends Component<Props, State> {
     event.preventDefault();
     const { query } = this.state;
 
+    if (query === '') {
+      return;
+    }
+
     log.debug(`User searched for ${query}`);
 
     this.setState({
@@ -202,7 +206,7 @@ class NavBar extends Component<Props, State> {
                         </div>
                         <div className="control">
                           <button
-                            className="button is-dark is-medium"
+                            className={`button ${settingsCogColor} is-medium`}
                             type="submit"
                           >
                             <i className="fas fa-search" />
