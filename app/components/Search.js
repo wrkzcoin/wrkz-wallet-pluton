@@ -5,7 +5,6 @@
 // Please see the included LICENSE file for more information.
 import React, { Component, Fragment } from 'react';
 import { remote } from 'electron';
-import log from 'electron-log';
 import { Link } from 'react-router-dom';
 import jdenticon from 'jdenticon';
 import NavBar from './NavBar';
@@ -317,9 +316,6 @@ export default class Search extends Component<Props, States> {
                     <th className={`has-text-right ${textColor}`}>
                       {il8n.amount}
                     </th>
-                    <th className={`has-text-right ${textColor}`}>
-                      {il8n.balance}
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -333,14 +329,8 @@ export default class Search extends Component<Props, States> {
                       blockHeight
                     } = tx;
                     const amount = tx.totalAmount();
-                    const balance = 0;
-
                     const rowIsExpanded = expandedRows.includes(hash);
                     const toggleSymbol = rowIsExpanded ? '-' : '+';
-
-                    log.debug(tx);
-
-                    log.debug(hash);
                     return (
                       <Fragment key={`${hash}-fragment`}>
                         <tr>
@@ -426,30 +416,13 @@ export default class Search extends Component<Props, States> {
                               </p>
                             </td>
                           )}
-                          <td>
-                            <p className="has-text-right">
-                              {displayCurrency === 'TRTL' &&
-                                session.atomicToHuman(balance, true)}
-                              {displayCurrency === 'fiat' &&
-                                symbolLocation === 'prefix' &&
-                                `${fiatSymbol}${session.formatLikeCurrency(
-                                  // $FlowFixMe
-                                  (
-                                    fiatPrice *
-                                    session.atomicToHuman(balance, false)
-                                  ).toFixed(fiatDecimals)
-                                )}`}
-                              {displayCurrency === 'fiat' &&
-                                symbolLocation === 'suffix' &&
-                                `${session.formatLikeCurrency(
-                                  // $FlowFixMe
-                                  (
-                                    fiatPrice *
-                                    session.atomicToHuman(balance, false)
-                                  ).toFixed(fiatDecimals)
-                                )}${fiatSymbol}`}
-                            </p>
-                          </td>
+                          {amount === 0 && (
+                            <td>
+                              <p className="has-text-right has-text-warning">
+                                Fusion
+                              </p>
+                            </td>
+                          )}
                         </tr>
                         {rowIsExpanded && (
                           <tr>

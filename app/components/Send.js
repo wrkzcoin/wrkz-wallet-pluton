@@ -735,7 +735,7 @@ export default class Send extends Component<Props, State> {
                 {transactionInProgress && (
                   <button
                     type="submit"
-                    className="button is-success is-large is-loading"
+                    className="button is-success is-large is-loading is-disabled"
                     disabled
                   >
                     <span className="icon is-small">
