@@ -352,7 +352,16 @@ export default class Send extends Component<Props, State> {
   };
 
   sendTransaction = async () => {
-    const { loopTest, displayCurrency, fiatPrice } = this.state;
+    const {
+      loopTest,
+      displayCurrency,
+      fiatPrice,
+      transactionInProgress
+    } = this.state;
+
+    if (transactionInProgress) {
+      return;
+    }
 
     eventEmitter.emit('transactionInProgress');
 
