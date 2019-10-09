@@ -20,7 +20,8 @@ type State = {
   isLoggedIn: boolean,
   freshRestore: boolean,
   autoLockInterval: number,
-  autoLockEnabled: boolean
+  autoLockEnabled: boolean,
+  settings: boolean
 };
 
 type Location = {
@@ -55,12 +56,14 @@ class Redirector extends Component<Props, State> {
       isLoggedIn: loginCounter.isLoggedIn,
       freshRestore: loginCounter.freshRestore,
       autoLockInterval: config.autoLockInterval,
-      autoLockEnabled: config.autoLockEnabled
+      autoLockEnabled: config.autoLockEnabled,
+      settings: false
     };
     const { autoLockInterval, autoLockEnabled } = this.state;
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
     this.goToImportFromKey = this.goToImportFromKey.bind(this);
     this.goToPasswordChange = this.goToPasswordChange.bind(this);
+    this.goToSettings = this.goToSettings.bind(this);
     this.goToHome = this.goToHome.bind(this);
     this.goToLogin = this.goToLogin.bind(this);
     this.logOut = this.logOut.bind(this);
@@ -97,6 +100,7 @@ class Redirector extends Component<Props, State> {
     eventEmitter.on('activityDetected', this.resetTimeout);
     eventEmitter.on('newLockInterval', this.resetTimeout);
     eventEmitter.on('setAutoLock', this.setAutoLock);
+    eventEmitter.on('goToSettings', this.goToSettings);
 
     // prettier-ignore
     const { location: { pathname } } = this.props;
@@ -126,6 +130,7 @@ class Redirector extends Component<Props, State> {
     eventEmitter.off('activityDetected', this.resetTimeout);
     eventEmitter.off('newLockInterval', this.resetTimeout);
     eventEmitter.off('setAutoLock', this.setAutoLock);
+    eventEmitter.off('goToSettings', this.goToSettings);
     clearTimeout(this.activityTimer);
     clearInterval(this.refreshPrice);
   }
@@ -177,6 +182,12 @@ class Redirector extends Component<Props, State> {
     }
   };
 
+  goToSettings = () => {
+    this.setState({
+      settings: true
+    });
+  };
+
   goToLogin = () => {
     this.setState({
       login: true
@@ -225,7 +236,8 @@ class Redirector extends Component<Props, State> {
       home,
       login,
       isLoggedIn,
-      freshRestore
+      freshRestore,
+      settings
     } = this.state;
     if (freshRestore === true && pathname !== '/changepassword') {
       loginCounter.freshRestore = false;
@@ -236,6 +248,10 @@ class Redirector extends Component<Props, State> {
     }
     if (changePassword === true && pathname !== '/changepassword') {
       return <Redirect to="/changepassword" />;
+    }
+
+    if (settings === true && pathname !== '/settings') {
+      return <Redirect to="/settings" />;
     }
 
     if (importKey === true && pathname !== '/importkey') {

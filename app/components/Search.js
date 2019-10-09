@@ -5,14 +5,22 @@
 // Please see the included LICENSE file for more information.
 import React, { Component, Fragment } from 'react';
 import { remote } from 'electron';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import jdenticon from 'jdenticon';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
-import { session, addressList, il8n, config, eventEmitter } from '../index';
+import {
+  session,
+  addressList,
+  il8n,
+  config,
+  eventEmitter,
+  loginCounter
+} from '../index';
 import routes from '../constants/routes';
+import settings from '../constants/settings';
 
 type Props = {
   query: string
@@ -26,7 +34,10 @@ type States = {
   displayCurrency: string,
   fiatSymbol: string,
   symbolLocation: string,
-  fiatPrice: number
+  fiatPrice: number,
+  query: string,
+  redirect: boolean,
+  redirectTo: string
 };
 
 export default class Search extends Component<Props, States> {
@@ -49,18 +60,24 @@ export default class Search extends Component<Props, States> {
       fiatPrice: session.fiatPrice,
       fiatSymbol: config.fiatSymbol,
       symbolLocation: config.symbolLocation,
-      fiatDecimals: config.fiatDecimals
+      fiatDecimals: config.fiatDecimals,
+      query: props.query,
+      settingsResults: [],
+      redirectTo: '',
+      redirect: false
     };
     this.addressList = addressList;
     this.transactions = session.wallet.getTransactions();
     this.getContactResults = this.getContactResults.bind(this);
     this.getTransactionResults = this.getTransactionResults.bind(this);
+    this.getSettingsResults = this.getSettingsResults.bind(this);
   }
 
   componentDidMount() {
     const { query } = this.props;
     this.getContactResults(query);
     this.getTransactionResults(query);
+    this.getSettingsResults(query);
     this.setState({
       query
     });
@@ -69,9 +86,10 @@ export default class Search extends Component<Props, States> {
     eventEmitter.on('modifyCurrency', this.modifyCurrency);
   }
 
-  componentWillReceiveProps(newProps) {
+  componentWillReceiveProps(newProps: any) {
     const { query } = newProps;
     this.getContactResults(query);
+    this.getSettingsResults(query);
     this.getTransactionResults(query);
     this.setState({
       query
@@ -151,6 +169,26 @@ export default class Search extends Component<Props, States> {
     });
   };
 
+  getSettingsResults = (query: string) => {
+    const possibleSettingsValues = ['description', 'settingName', 'keywords'];
+
+    const settingsResults = possibleSettingsValues.map(value => {
+      return this.search(query, settings, value);
+    });
+
+    let sanitizedResults = [];
+
+    for (let i = 0; i < settingsResults.length; i++) {
+      sanitizedResults = [...settingsResults[i], ...sanitizedResults];
+    }
+
+    sanitizedResults = [...new Set(this.filterNullValues(sanitizedResults))];
+
+    this.setState({
+      settingsResults: sanitizedResults
+    });
+  };
+
   getTransactionResults = (query: string) => {
     if (query.length < 4) {
       return;
@@ -175,6 +213,29 @@ export default class Search extends Component<Props, States> {
       transactionResults: sanitizedResults
     });
   };
+
+  goToSetting(location: string) {
+    let redirectTo: string = '';
+    let redirect: boolean = false;
+
+    if (location[0] === '/') {
+      redirect = true;
+      redirectTo = location;
+    } else if (location[0] === '.') {
+      const eventName = location.substr(1);
+      eventEmitter.emit(eventName);
+      redirect = false;
+    } else {
+      redirect = true;
+      loginCounter.lastSettingsTab = location;
+      redirectTo = '/settings';
+    }
+
+    this.setState({
+      redirect,
+      redirectTo
+    });
+  }
 
   filterNullValues(arr: any[]) {
     return arr.filter(Boolean);
@@ -206,8 +267,15 @@ export default class Search extends Component<Props, States> {
       symbolLocation,
       fiatPrice,
       fiatSymbol,
-      fiatDecimals
+      fiatDecimals,
+      settingsResults,
+      redirectTo,
+      redirect
     } = this.state;
+
+    if (redirect) {
+      return <Redirect to={redirectTo} />;
+    }
     const { query } = this.props;
     const {
       backgroundColor,
@@ -218,7 +286,10 @@ export default class Search extends Component<Props, States> {
       settingsCogColor
     } = uiType(darkMode);
 
-    const resultsFound = contactResults.length + transactionResults.length;
+    const resultsFound =
+      contactResults.length +
+      transactionResults.length +
+      settingsResults.length;
 
     return (
       <div>
@@ -516,6 +587,45 @@ export default class Search extends Component<Props, States> {
                   })}
                 </tbody>
               </table>
+            )}
+            {settingsResults.length > 0 && (
+              <Fragment>
+                <table
+                  className={`table is-striped is-hoverable is-fullwidth ${tableMode}`}
+                >
+                  <thead>
+                    <tr>
+                      <th>
+                        <p className={`${textColor} subtitle`}>
+                          Settings Results:
+                        </p>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {settingsResults.map(setting => {
+                      const { location, settingName, description } = setting;
+                      return (
+                        <tr onClick={() => this.goToSetting(location)}>
+                          <td>
+                            <div className="columns">
+                              <div className="column">
+                                <p className={`${textColor} subtitle`}>
+                                  {settingName}
+                                </p>
+                                <p className={textColor}>{description}</p>
+                              </div>
+                              <div className="column has-text-right">
+                                <i className="fas fa-angle-right is-size-1" />
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </Fragment>
             )}
             {resultsFound === 0 && (
               <div className={`box elem-to-center ${fillColor}`}>
