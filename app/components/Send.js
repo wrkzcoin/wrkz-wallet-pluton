@@ -538,8 +538,6 @@ export default class Send extends Component<Props, State> {
 
   handleAddressChange = (event: any) => {
     if (event) {
-      log.debug(event);
-
       // eslint-disable-next-line no-underscore-dangle
       if (event.__isNew__) {
         this.setState({

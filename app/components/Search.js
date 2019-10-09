@@ -111,6 +111,14 @@ export default class Search extends Component<Props, States> {
     });
   };
 
+  openSearchInExplorer = () => {
+    const { query } = this.state;
+
+    remote.shell.openExternal(
+      `https://explorer.turtlecoin.lol/?search=${encodeURIComponent(query)}`
+    );
+  };
+
   openInExplorer = (event: any) => {
     const hash = event.target.value;
 
@@ -206,7 +214,8 @@ export default class Search extends Component<Props, States> {
       textColor,
       tableMode,
       fillColor,
-      elementBaseColor
+      elementBaseColor,
+      settingsCogColor
     } = uiType(darkMode);
 
     const resultsFound = contactResults.length + transactionResults.length;
@@ -510,7 +519,26 @@ export default class Search extends Component<Props, States> {
             )}
             {resultsFound === 0 && (
               <div className={`box elem-to-center ${fillColor}`}>
-                <p className="title has-text-danger">No results found!</p>{' '}
+                <p className="title has-text-danger has-text-centered">
+                  No results found!
+                </p>{' '}
+                {query.length === 64 && (
+                  <Fragment>
+                    <center>
+                      <br />
+                      <span
+                        className={`button ${settingsCogColor}`}
+                        onClick={this.openSearchInExplorer}
+                        onKeyPress={this.openSearchInExplorer}
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={event => event.preventDefault()}
+                      >
+                        Seach on Block Explorer
+                      </span>
+                    </center>
+                  </Fragment>
+                )}
               </div>
             )}
             <br />
