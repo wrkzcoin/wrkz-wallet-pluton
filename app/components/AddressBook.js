@@ -226,31 +226,18 @@ class AddressBook extends Component<Props, State> {
           <div
             className={`maincontent-homescreen ${backgroundColor} ${pageAnimationIn}`}
           >
-            <table
-              className={`table is-striped is-hoverable is-fullwidth is-family-monospace ${tableMode}`}
-            >
-              <thead>
-                <tr>
-                  <th className={textColor}>Icon</th>
-                  <th className={textColor}>Name</th>
-                  <th className={textColor}>Address</th>
-                  <th className={textColor}>Payment ID</th>
-                  <th className="has-text-centered">
-                    <a
-                      className={textColor}
-                      onClick={this.showAddContactForm}
-                      onKeyPress={this.showAddContactForm}
-                      role="button"
-                      tabIndex={0}
-                      onMouseDown={event => event.preventDefault()}
-                    >
-                      <i className="fas fa-user-plus" />
-                    </a>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {showNewContactForm && (
+            {showNewContactForm && (
+              <table
+                className={`table is-striped is-hoverable is-fullwidth is-family-monospace ${tableMode}`}
+              >
+                <thead>
+                  <th className={textColor} />
+                  <th className={textColor}>Enter Name:</th>
+                  <th className={textColor}>Enter Address:</th>
+                  <th className={textColor}>Enter Payment ID (optional):</th>
+                  <th />
+                </thead>
+                <tbody>
                   <tr>
                     <td>
                       <span
@@ -309,13 +296,39 @@ class AddressBook extends Component<Props, State> {
                       >
                         &nbsp;&nbsp;
                         <i
-                          className="fas fa-times is-size-2 has-text-centered"
+                          className="fas fa-times is-size-2 has-text-centered has-text-danger"
                           aria-hidden="true"
                         />
                       </a>
                     </td>
                   </tr>
-                )}
+                </tbody>
+              </table>
+            )}
+            <table
+              className={`table is-striped is-hoverable is-fullwidth is-family-monospace ${tableMode}`}
+            >
+              <thead>
+                <tr>
+                  <th className={textColor}>Icon</th>
+                  <th className={textColor}>Name</th>
+                  <th className={textColor}>Address</th>
+                  <th className={textColor}>Payment ID</th>
+                  <th className="has-text-centered">
+                    <a
+                      className={textColor}
+                      onClick={this.showAddContactForm}
+                      onKeyPress={this.showAddContactForm}
+                      role="button"
+                      tabIndex={0}
+                      onMouseDown={event => event.preventDefault()}
+                    >
+                      <i className="fas fa-user-plus" />
+                    </a>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
                 {addressBook.map((contact, index) => {
                   const { name, address, paymentID } = contact;
                   return (
@@ -329,8 +342,11 @@ class AddressBook extends Component<Props, State> {
                         />
                       </td>
                       <td>
-                        <br />
-                        <p className={`subtitle ${textColor}`}>{name}</p>
+                        <textarea
+                          className={`textarea transparent-textarea ${textColor} no-resize is-family-monospace`}
+                          defaultValue={name}
+                          readOnly
+                        />
                       </td>
                       <td>
                         <textarea
@@ -347,30 +363,31 @@ class AddressBook extends Component<Props, State> {
                         />
                       </td>
                       <td>
-                        <br />
-                        <Link
-                          className={textColor}
-                          to={`${routes.SEND}/${address}/${paymentID}`}
-                        >
-                          <i
-                            className="fa fa-paper-plane is-size-3 has-text-centered"
-                            aria-hidden="true"
-                          />
-                        </Link>
-                        &nbsp;&nbsp;
-                        <a
-                          className={
-                            deletionRequests.includes(index)
-                              ? 'has-text-danger'
-                              : textColor
-                          }
-                        >
-                          <i
-                            className="fa fa-trash is-size-3 has-text-centered"
-                            aria-hidden="true"
-                            onClick={() => this.deleteContact(index)}
-                          />
-                        </a>
+                        <div className="contactButtons">
+                          <Link
+                            className={textColor}
+                            to={`${routes.SEND}/${address}/${paymentID}`}
+                          >
+                            <i
+                              className="fa fa-paper-plane is-size-3 has-text-centered"
+                              aria-hidden="true"
+                            />
+                          </Link>
+                          &nbsp;&nbsp;
+                          <a
+                            className={
+                              deletionRequests.includes(index)
+                                ? 'has-text-danger'
+                                : textColor
+                            }
+                          >
+                            <i
+                              className="fa fa-trash is-size-3 has-text-centered"
+                              aria-hidden="true"
+                              onClick={() => this.deleteContact(index)}
+                            />
+                          </a>
+                        </div>
                       </td>
                     </tr>
                   );

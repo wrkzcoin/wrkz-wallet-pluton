@@ -342,8 +342,11 @@ export default class Search extends Component<Props, States> {
                           />
                         </td>
                         <td>
-                          <br />
-                          <p className={`subtitle ${textColor}`}>{name}</p>
+                          <textarea
+                            className={`textarea transparent-textarea ${textColor} no-resize is-family-monospace`}
+                            defaultValue={name}
+                            readOnly
+                          />
                         </td>
                         <td>
                           <textarea
@@ -360,16 +363,17 @@ export default class Search extends Component<Props, States> {
                           />
                         </td>
                         <td>
-                          <br />
-                          <Link
-                            className={textColor}
-                            to={`${routes.SEND}/${address}/${paymentID}`}
-                          >
-                            <i
-                              className="fa fa-paper-plane is-size-3 has-text-centered"
-                              aria-hidden="true"
-                            />
-                          </Link>
+                          <div className="contactButtons">
+                            <Link
+                              className={textColor}
+                              to={`${routes.SEND}/${address}/${paymentID}`}
+                            >
+                              <i
+                                className="fa fa-paper-plane is-size-3 has-text-centered"
+                                aria-hidden="true"
+                              />
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -616,7 +620,7 @@ export default class Search extends Component<Props, States> {
                                 <p className={textColor}>{description}</p>
                               </div>
                               <div className="column has-text-right">
-                                <i className="fas fa-angle-right is-size-1" />
+                                <i className="fas fa-angle-right is-size-1 settingsCarot" />
                               </div>
                             </div>
                           </td>

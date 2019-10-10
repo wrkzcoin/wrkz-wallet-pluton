@@ -56,6 +56,16 @@
   animation: fadein 0.7s cubic-bezier(0.39, 0.575, 0.565, 1) both;
 }
 
+.contactButtons {
+  position: relative;
+  top: 16px;
+}
+
+.settingsCarot {
+  position: relative;
+  top: 12px;
+}
+
 .slide-in-left {
   animation: slide-in-left 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
@@ -639,9 +649,6 @@
   position: relative;
   left: -9px;
   width: calc(100% + 9px);
-}
-
-.searchbar {
 }
 
 .darklink {

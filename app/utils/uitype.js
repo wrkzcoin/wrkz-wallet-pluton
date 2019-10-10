@@ -10,7 +10,7 @@ export default function uiType(darkMode: boolean) {
 
   const fillColor = darkMode ? 'has-background-black' : 'has-background-light';
 
-  const textColor = darkMode ? 'has-text-white' : '';
+  const textColor = darkMode ? 'has-text-white' : 'has-text-dark';
 
   const redTitleColor = darkMode ? 'has-text-danger' : '';
 
