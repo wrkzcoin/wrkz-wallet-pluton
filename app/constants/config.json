@@ -7,7 +7,7 @@
   "logLevel": "DISABLED",
   "daemonHost": "blockapi.turtlepay.io",
   "daemonPort": 443,
-  "darkMode": false,
+  "darkMode": true,
   "displayCurrency": "TRTL",
   "selectedFiat": "usd",
   "fiatSymbol": "$",

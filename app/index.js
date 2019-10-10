@@ -398,6 +398,26 @@ eventEmitter.on('handleOpen', handleOpen);
 
 ipcRenderer.on('failedDaemonInit', failedDaemonInit);
 
+function handleAbout() {
+  remote.shell.openExternal(
+    'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+  );
+}
+
+function handleHelp() {
+  remote.shell.openExternal('https://discord.gg/P7urHQs');
+}
+
+function handleIssues() {
+  remote.shell.openExternal(
+    'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+  );
+}
+
+eventEmitter.on('handleHelp', handleHelp);
+eventEmitter.on('handleAbout', handleAbout);
+eventEmitter.on('handleIssues', handleIssues);
+
 function failedDaemonInit() {
   loginCounter.daemonFailedInit = true;
   if (session) {

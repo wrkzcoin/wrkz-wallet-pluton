@@ -63,7 +63,7 @@
     "settingName": "Dark Mode",
     "location": "display",
     "description": "Turn on or off dark mode",
-    "keywords": ""
+    "keywords": "theme"
   },
   {
     "settingName": "Security Settings",
@@ -93,7 +93,7 @@
     "settingName": "Backup",
     "location": ".handleBackup",
     "description": "Back up your private keys or mnemonic seed",
-    "keywords": ""
+    "keywords": "key seed back up paper wallet"
   },
   {
     "settingName": "OS Settings",
@@ -124,5 +124,29 @@
     "location": "/import",
     "description": "Import a wallet from a mnenomic seed",
     "keywords": "restore key seed"
+  },
+  {
+    "settingName": "Support",
+    "location": ".handleHelp",
+    "description": "Need help? Join our Discord for support",
+    "keywords": "help"
+  },
+  {
+    "settingName": "About",
+    "location": ".handleAbout",
+    "description": "View the readme for Proton Wallet",
+    "keywords": ""
+  },
+  {
+    "settingName": "Report Bug",
+    "location": ".handleIssues",
+    "description": "Report a bug to us on GitHub",
+    "keywords": "error"
+  },
+  {
+    "settingName": "Request Feature",
+    "location": ".handleIssues",
+    "description": "Make a feature request for Proton Wallet",
+    "keywords": ""
   }
 ]
