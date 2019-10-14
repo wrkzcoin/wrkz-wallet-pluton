@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -573,7 +571,6 @@ export default class WalletSession {
 
   atomicToHuman(x: number, prettyPrint?: boolean) {
     if (prettyPrint || false) {
-      // $FlowFixMe
       return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
     }
     return x / 100;

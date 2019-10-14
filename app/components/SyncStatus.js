@@ -1,12 +1,10 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import ReactTooltip from 'react-tooltip';
-import { session, config } from '../index';
+import { session } from '../index';
 
 type Props = {
   size: string,
@@ -49,7 +47,6 @@ export default class SyncStatus extends Component<Props, State> {
     const { syncStatus } = this.state;
     const { darkMode, size } = this.props;
     const color = darkMode ? 'is-dark' : 'is-white';
-    const { useLocalDaemon } = config;
 
     let syncTooltip;
 
@@ -71,7 +68,7 @@ export default class SyncStatus extends Component<Props, State> {
               darkMode ? `tag ${color} ${size}` : `tag ${color} ${size}`
             }
           >
-            {useLocalDaemon && 'Wallet'} Sync:
+            Sync:
           </span>
           {syncStatus < 100 && session.daemon.networkBlockCount !== 0 && (
             <span

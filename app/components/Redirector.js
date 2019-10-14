@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -299,5 +297,4 @@ class Redirector extends Component<Props, State> {
   }
 }
 
-// $FlowFixMe
 export default withRouter(Redirector);

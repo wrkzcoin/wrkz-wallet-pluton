@@ -1,8 +1,7 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
+
 /* eslint-disable global-require */
 
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -16,7 +15,6 @@ import type { counterStateType } from '../reducers/types';
 
 const history = createHashHistory();
 
-// $FlowFixMe
 const rootReducer = createRootReducer(history);
 
 const configureStore = (initialState?: counterStateType) => {
@@ -62,15 +60,11 @@ const configureStore = (initialState?: counterStateType) => {
   const enhancer = composeEnhancers(...enhancers);
 
   // Create Store
-  // $FlowFixMe
   const store = createStore(rootReducer, initialState, enhancer);
 
-  // $FlowFixMe
   if (module.hot) {
-    module.hot.accept(
-      '../reducers',
-      // $FlowFixMe
-      () => store.replaceReducer(require('../reducers').default)
+    module.hot.accept('../reducers', () =>
+      store.replaceReducer(require('../reducers').default)
     );
   }
 

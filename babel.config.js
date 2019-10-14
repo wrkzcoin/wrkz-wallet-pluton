@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -19,7 +17,6 @@ const productionPlugins = [
   require('babel-plugin-transform-react-remove-prop-types')
 ];
 
-// $FlowFixMe
 module.exports = api => {
   // see docs about api at https://babeljs.io/docs/en/config-files#apicache
 

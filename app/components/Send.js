@@ -1,9 +1,9 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
+
 /* eslint-disable jsx-a11y/label-has-associated-control */
+
 import crypto from 'crypto';
 import isDev from 'electron-is-dev';
 import log from 'electron-log';

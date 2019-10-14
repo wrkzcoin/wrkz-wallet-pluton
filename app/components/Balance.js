@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -129,14 +127,12 @@ export default class Balance extends Component<Props, State> {
     ) {
       balanceTooltip =
         `Unlocked: ${fiatSymbol}${session.formatLikeCurrency(
-          // $FlowFixMe
           Number(
             fiatPrice * session.atomicToHuman(unlockedBalance, false)
           ).toFixed(fiatDecimals)
         )}
         <br>` +
         `Locked: ${fiatSymbol}${session.formatLikeCurrency(
-          // $FlowFixMe
           Number(
             fiatPrice * session.atomicToHuman(lockedBalance, false)
           ).toFixed(fiatDecimals)

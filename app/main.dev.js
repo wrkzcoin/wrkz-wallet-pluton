@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -13,7 +11,6 @@ import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
 import iConfig from './constants/config';
-import TurtleCoind from './utils/TurtleCoind';
 import packageInfo from '../package.json';
 
 const { version } = packageInfo;
@@ -83,22 +80,8 @@ try {
   log.debug('Backend log file found.');
 }
 
-let useLocalDaemon;
-let localDaemon;
-let turtleCoindPath;
-
 if (config) {
   isQuitting = !config.closeToTray;
-  // eslint-disable-next-line prefer-destructuring
-  useLocalDaemon = config.useLocalDaemon;
-  // eslint-disable-next-line prefer-destructuring
-  turtleCoindPath = config.turtleCoindPath;
-}
-
-log.debug(useLocalDaemon, turtleCoindPath);
-
-if (useLocalDaemon && turtleCoindPath) {
-  localDaemon = new TurtleCoind(turtleCoindPath);
 }
 
 if (os.platform() !== 'win32') {
@@ -165,9 +148,6 @@ if (!isSingleInstance) {
 }
 
 app.on('before-quit', () => {
-  if (useLocalDaemon) {
-    localDaemon.quit();
-  }
   log.debug('Exiting application.');
   isQuitting = true;
 });
@@ -252,11 +232,6 @@ app.on('ready', async () => {
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
-    }
-    if (localDaemon) {
-      if (localDaemon.child.exitCode) {
-        mainWindow.webContents.send('failedDaemonInit');
-      }
     }
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();

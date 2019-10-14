@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -18,7 +16,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(ReceiveActions, dispatch);
 }
 
-// $FlowFixMe
 export default connect(
   mapStateToProps,
   mapDispatchToProps

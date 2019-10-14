@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -97,9 +95,29 @@ fs.writeFile(
   }
 );
 
-const { darkMode, useLocalDaemon } = config;
+const { darkMode, daemonLogPath, useLocalDaemon } = config;
 
-export const daemonLogger = useLocalDaemon ? new DaemonLogger() : null;
+export let daemonLogger = null;
+
+if (useLocalDaemon && daemonLogPath) {
+  try {
+    daemonLogger = new DaemonLogger(daemonLogPath);
+  } catch {
+    log.error('Tail initialization failed.');
+  }
+}
+
+export function stopTail() {
+  daemonLogger = null;
+}
+
+export function startTail() {
+  try {
+    daemonLogger = new DaemonLogger(daemonLogPath);
+  } catch {
+    log.error('Tail initialization failed.');
+  }
+}
 
 const { textColor } = uiType(darkMode);
 
@@ -124,7 +142,6 @@ try {
         <p className="has-text-white">{error.stack}</p>
       </div>
     </div>,
-    // $FlowFixMe
     document.getElementById('root')
   );
 }
@@ -737,11 +754,9 @@ render(
       </div>
     </ErrorBoundary>
   </AppContainer>,
-  // $FlowFixMe
   document.getElementById('root')
 );
 
-// $FlowFixMe
 if (module.hot) {
   module.hot.accept('./containers/Root', () => {
     // eslint-disable-next-line global-require
@@ -757,7 +772,6 @@ if (module.hot) {
           <NextRoot store={store} history={history} />{' '}
         </div>
       </AppContainer>,
-      // $FlowFixMe
       document.getElementById('root')
     );
   });

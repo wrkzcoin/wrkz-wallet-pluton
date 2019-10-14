@@ -1,11 +1,16 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { remote } from 'electron';
-import { il8n, session, eventEmitter, config } from '../index';
+import {
+  il8n,
+  session,
+  eventEmitter,
+  config,
+  stopTail,
+  startTail
+} from '../index';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -17,7 +22,7 @@ type State = {
   nodeChangeInProgress: boolean,
   ssl: boolean,
   useLocalDaemon: boolean,
-  turtleCoindPath: string
+  daemonLogPath: string
 };
 
 export default class NodeChanger extends Component<Props, State> {
@@ -32,7 +37,7 @@ export default class NodeChanger extends Component<Props, State> {
       nodeChangeInProgress: false,
       ssl: session.daemon.ssl,
       useLocalDaemon: config.useLocalDaemon,
-      turtleCoindPath: config.turtleCoindPath
+      daemonLogPath: config.daemonLogPath
     };
     this.changeNode = this.changeNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
@@ -49,14 +54,12 @@ export default class NodeChanger extends Component<Props, State> {
     eventEmitter.on('newNodeConnected', this.handleNewNode);
     eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.on('nodeChangeComplete', this.handleNodeChangeComplete);
-    eventEmitter.on('toggleLocalDaemon', this.toggleLocalDaemon2);
   }
 
   componentWillUnmount() {
     eventEmitter.off('newNodeConnected', this.handleNewNode);
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.off('nodeChangeComplete', this.handleNodeChangeComplete);
-    eventEmitter.off('toggleLocalDaemon', this.toggleLocalDaemon2);
   }
 
   browseForTurtleCoind = () => {
@@ -68,10 +71,10 @@ export default class NodeChanger extends Component<Props, State> {
       return;
     }
     this.setState({
-      turtleCoindPath: getPaths[0]
+      daemonLogPath: getPaths[0]
     });
 
-    session.modifyConfig('turtleCoindPath', getPaths[0]);
+    session.modifyConfig('daemonLogPath', getPaths[0]);
   };
 
   changeNode = async (event: any) => {
@@ -128,45 +131,21 @@ export default class NodeChanger extends Component<Props, State> {
     });
   };
 
-  toggleLocalDaemon2 = () => {
-    const { useLocalDaemon } = this.state;
-    session.modifyConfig('useLocalDaemon', !useLocalDaemon);
-    this.setState({
-      useLocalDaemon: !useLocalDaemon
-    });
-  };
-
   toggleLocalDaemon = () => {
-    const { darkMode } = this.props;
     const { useLocalDaemon } = this.state;
-    const { textColor } = uiType(darkMode);
+
+    if (!useLocalDaemon) {
+      startTail();
+    } else {
+      stopTail();
+    }
 
     session.modifyConfig('useLocalDaemon', !useLocalDaemon);
     this.setState({
       useLocalDaemon: !useLocalDaemon
     });
 
-    const message = (
-      <div>
-        <center>
-          <p className={`subtitle ${textColor}`}>Restart Required!</p>
-        </center>
-        <br />
-        <p className={`subtitle ${textColor}`}>
-          In order to change this setting, an application restart is required.
-          Would you like to restart now?
-        </p>
-      </div>
-    );
-    eventEmitter.emit(
-      'openModal',
-      message,
-      'Restart',
-      null,
-      'restartApplication',
-      'Not Right Now',
-      'toggleLocalDaemon'
-    );
+    eventEmitter.emit('logLevelChanged');
   };
 
   render() {
@@ -177,7 +156,7 @@ export default class NodeChanger extends Component<Props, State> {
       connectednode,
       ssl,
       useLocalDaemon,
-      turtleCoindPath
+      daemonLogPath
     } = this.state;
     return (
       <form onSubmit={this.changeNode}>
@@ -190,7 +169,6 @@ export default class NodeChanger extends Component<Props, State> {
               <input
                 className="input has-icons-left"
                 type="text"
-                disabled={useLocalDaemon}
                 value={connectednode}
                 onChange={this.handleNodeInputChange}
               />
@@ -209,7 +187,6 @@ export default class NodeChanger extends Component<Props, State> {
               <input
                 className="input"
                 type="text"
-                disabled={useLocalDaemon}
                 placeholder="connecting..."
                 onChange={this.handleNodeInputChange}
               />
@@ -224,7 +201,6 @@ export default class NodeChanger extends Component<Props, State> {
                 onClick={this.findNode}
                 onKeyPress={this.findNode}
                 role="button"
-                disabled={useLocalDaemon}
                 tabIndex={0}
                 className={linkColor}
                 onMouseDown={event => event.preventDefault()}
@@ -235,10 +211,7 @@ export default class NodeChanger extends Component<Props, State> {
           </div>
           {nodeChangeInProgress === true && (
             <div className="control">
-              <button
-                className="button is-success is-loading"
-                disabled={useLocalDaemon}
-              >
+              <button className="button is-success is-loading">
                 <span className="icon is-small">
                   <i className="fa fa-network-wired" />
                 </span>
@@ -248,7 +221,7 @@ export default class NodeChanger extends Component<Props, State> {
           )}
           {nodeChangeInProgress === false && (
             <div className="control">
-              <button className="button is-success" disabled={useLocalDaemon}>
+              <button className="button is-success">
                 <span className="icon is-small">
                   <i className="fa fa-network-wired" />
                 </span>
@@ -265,12 +238,13 @@ export default class NodeChanger extends Component<Props, State> {
               onKeyPress={this.toggleLocalDaemon}
               role="button"
               tabIndex={0}
+              disabled={!daemonLogPath}
             >
               <span className="icon is-large">
                 <i className="fas fa-times" />
               </span>
             </a>
-            &nbsp;&nbsp; Use Local Daemon: <b>Off</b>
+            &nbsp;&nbsp; Tail Local Daemon Log File: <b>Off</b>
           </span>
         )}
         {useLocalDaemon === true && (
@@ -281,25 +255,26 @@ export default class NodeChanger extends Component<Props, State> {
               onKeyPress={this.toggleLocalDaemon}
               role="button"
               tabIndex={0}
+              disabled={!daemonLogPath}
             >
               <span className="icon is-large">
                 <i className="fa fa-check" />
               </span>
             </a>
-            &nbsp;&nbsp; Use Local Daemon: <b>On</b> &nbsp;&nbsp;
+            &nbsp;&nbsp; Tail Local Daemon Log File: <b>On</b> &nbsp;&nbsp;
           </span>
         )}
         <br />
         <br />
         <p className={`has-text-weight-bold ${textColor}`}>
-          TurtleCoind location:
+          TurtleCoind.log file location:
         </p>
         <div className="field has-addons">
           <div className="control is-expanded">
             <input
               className="input"
               type="text"
-              value={turtleCoindPath}
+              value={daemonLogPath}
               readOnly
             />
           </div>

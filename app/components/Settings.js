@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -104,7 +102,6 @@ export default class Settings extends Component<Props, State> {
     }
     const [requestedPage, previousPage] = this.menuFocusStack;
     if (
-      // $FlowFixMe
       this.evaluatePosition(requestedPage) > this.evaluatePosition(previousPage)
     ) {
       this.setState({
@@ -112,7 +109,6 @@ export default class Settings extends Component<Props, State> {
         outAnimation: 'slide-out-top'
       });
     } else if (
-      // $FlowFixMe
       this.evaluatePosition(requestedPage) < this.evaluatePosition(previousPage)
     ) {
       this.setState({

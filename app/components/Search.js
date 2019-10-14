@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -37,7 +35,9 @@ type States = {
   fiatPrice: number,
   query: string,
   redirect: boolean,
-  redirectTo: string
+  redirectTo: string,
+  settingsResults: any[],
+  fiatDecimals: number
 };
 
 export default class Search extends Component<Props, States> {
@@ -314,22 +314,11 @@ export default class Search extends Component<Props, States> {
                     <th className={textColor}>Name</th>
                     <th className={textColor}>Address</th>
                     <th className={textColor}>Payment ID</th>
-                    <th className="has-text-centered">
-                      <a
-                        className={textColor}
-                        onClick={this.showAddContactForm}
-                        onKeyPress={this.showAddContactForm}
-                        role="button"
-                        tabIndex={0}
-                        onMouseDown={event => event.preventDefault()}
-                      >
-                        <i className="fas fa-user-plus" />
-                      </a>
-                    </th>
+                    <th />
                   </tr>
                 </thead>
                 <tbody>
-                  {contactResults.map(contact => {
+                  {contactResults.map((contact: any) => {
                     const { name, address, paymentID } = contact;
                     return (
                       <tr key={address}>
@@ -403,7 +392,7 @@ export default class Search extends Component<Props, States> {
                   </tr>
                 </thead>
                 <tbody>
-                  {transactionResults.map(tx => {
+                  {transactionResults.map((tx, index) => {
                     const {
                       timestamp,
                       hash,
@@ -412,11 +401,12 @@ export default class Search extends Component<Props, States> {
                       unlockTime,
                       blockHeight
                     } = tx;
+
                     const amount = tx.totalAmount();
                     const rowIsExpanded = expandedRows.includes(hash);
                     const toggleSymbol = rowIsExpanded ? '-' : '+';
                     return (
-                      <Fragment key={`${hash}-fragment`}>
+                      <Fragment key={index}>
                         <tr>
                           <td>
                             <button
@@ -449,7 +439,6 @@ export default class Search extends Component<Props, States> {
                                   fiatPrice !== 0 &&
                                   `-${fiatSymbol}${session
                                     .formatLikeCurrency(
-                                      // $FlowFixMe
                                       (
                                         fiatPrice *
                                         session.atomicToHuman(amount, false)
@@ -461,7 +450,6 @@ export default class Search extends Component<Props, States> {
                                   fiatPrice !== 0 &&
                                   `-${session
                                     .formatLikeCurrency(
-                                      // $FlowFixMe
                                       (
                                         fiatPrice *
                                         session.atomicToHuman(amount, false)
@@ -482,7 +470,6 @@ export default class Search extends Component<Props, States> {
                                 {displayCurrency === 'fiat' &&
                                   symbolLocation === 'prefix' &&
                                   `${fiatSymbol}${session.formatLikeCurrency(
-                                    // $FlowFixMe
                                     (
                                       fiatPrice *
                                       session.atomicToHuman(amount, false)
@@ -491,7 +478,6 @@ export default class Search extends Component<Props, States> {
                                 {displayCurrency === 'fiat' &&
                                   symbolLocation === 'suffix' &&
                                   `${session.formatLikeCurrency(
-                                    // $FlowFixMe
                                     (
                                       fiatPrice *
                                       session.atomicToHuman(amount, false)

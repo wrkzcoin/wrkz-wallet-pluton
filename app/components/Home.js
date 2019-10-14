@@ -1,5 +1,3 @@
-// @flow
-//
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
@@ -269,7 +267,6 @@ export default class Home extends Component<Props, State> {
                                 fiatPrice !== 0 &&
                                 `-${fiatSymbol}${session
                                   .formatLikeCurrency(
-                                    // $FlowFixMe
                                     (
                                       fiatPrice *
                                       session.atomicToHuman(tx[2], false)
@@ -281,7 +278,6 @@ export default class Home extends Component<Props, State> {
                                 fiatPrice !== 0 &&
                                 `-${session
                                   .formatLikeCurrency(
-                                    // $FlowFixMe
                                     (
                                       fiatPrice *
                                       session.atomicToHuman(tx[2], false)
@@ -302,7 +298,6 @@ export default class Home extends Component<Props, State> {
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'prefix' &&
                                 `${fiatSymbol}${session.formatLikeCurrency(
-                                  // $FlowFixMe
                                   (
                                     fiatPrice *
                                     session.atomicToHuman(tx[2], false)
@@ -311,7 +306,6 @@ export default class Home extends Component<Props, State> {
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'suffix' &&
                                 `${session.formatLikeCurrency(
-                                  // $FlowFixMe
                                   (
                                     fiatPrice *
                                     session.atomicToHuman(tx[2], false)
@@ -327,7 +321,6 @@ export default class Home extends Component<Props, State> {
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'prefix' &&
                               `${fiatSymbol}${session.formatLikeCurrency(
-                                // $FlowFixMe
                                 (
                                   fiatPrice *
                                   session.atomicToHuman(tx[3], false)
@@ -336,7 +329,6 @@ export default class Home extends Component<Props, State> {
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'suffix' &&
                               `${session.formatLikeCurrency(
-                                // $FlowFixMe
                                 (
                                   fiatPrice *
                                   session.atomicToHuman(tx[3], false)
