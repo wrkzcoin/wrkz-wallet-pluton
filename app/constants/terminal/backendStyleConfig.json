@@ -1,0 +1,14 @@
+{
+  "success": {
+    "strings": ["Transactions"],
+    "class": "has-text-success has-text-weight-bold"
+  },
+  "danger": {
+    "strings": ["Error"],
+    "class": "has-text-danger has-text-weight-bold"
+  },
+  "primary": {
+    "strings": ["Warning"],
+    "class": "has-text-primary has-text-weight-bold"
+  }
+}

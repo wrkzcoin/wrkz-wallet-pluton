@@ -4,7 +4,6 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { remote } from 'electron';
 import ReactTooltip from 'react-tooltip';
 import {
   session,
@@ -17,6 +16,15 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
+import substringsToRemove from '../constants/terminal/substringsToRemove.json';
+import terminalStyleConfig from '../constants/terminal/styleConfig.json';
+import walletBackendStyleConfig from '../constants/terminal/backendStyleConfig.json';
+import linesToIgnore from '../constants/terminal/linesToIgnore.json';
+
+const styleConfig: { [key: string]: any } = terminalStyleConfig;
+const backendStyleConfig: { [key: string]: any } = walletBackendStyleConfig;
+const styleValues = Object.keys(styleConfig);
+const backendStyleValues = Object.keys(backendStyleConfig);
 
 type Props = {};
 
@@ -188,149 +196,79 @@ export default class Terminal extends Component<Props, State> {
                 )}
                 {backendLog &&
                   selectedLog === 'wallet-backend' &&
-                  backendLog.map((backendOut, index) => {
-                    const isInfo = backendOut.toUpperCase().includes('[INFO]');
-                    const isTransactions = backendOut
-                      .toUpperCase()
-                      .includes('TRANSACTION');
-                    const isWarning = backendOut
-                      .toUpperCase()
-                      .includes('WARNING');
-                    const isError = backendOut.toUpperCase().includes('ERROR');
-
-                    let logColor: string = '';
-
-                    if (isInfo) {
-                      logColor = 'has-text-info has-text-weight-bold';
+                  backendLog.map((line, index) => {
+                    // don't print empty messages
+                    if (line.trim() === '') {
+                      return null;
                     }
 
-                    if (isTransactions) {
-                      logColor = 'has-text-success has-text-weight-bold';
-                    }
+                    // let's determine the log styles based on styleConfig.json
+                    let logStyles: string = '';
+                    backendStyleValues.forEach((color: string) => {
+                      const { strings } = backendStyleConfig[color];
+                      strings.forEach((string: string) => {
+                        if (line.includes(string)) {
+                          logStyles = backendStyleConfig[color].class;
+                        }
+                      });
+                    });
 
-                    if (isWarning) {
-                      logColor = 'has-text-warning has-text-weight-bold';
-                    }
-
-                    if (isError) {
-                      logColor = 'has-text-danger has-text-weight-bold';
-                    }
-
+                    // finally print the log message
                     return (
-                      <p
+                      <span
+                        className={`is-family-monospace ${logStyles}`}
                         // eslint-disable-next-line react/no-array-index-key
                         key={index}
-                        className={`is-family-monospace ${logColor}`}
                       >
-                        {backendOut}
-                      </p>
+                        {line}
+                      </span>
                     );
                   })}
                 {daemonLog &&
                   selectedLog === 'daemon' &&
-                  daemonLog.map(consoleOut => {
-                    if (consoleOut.trim() === '') {
-                      return null;
-                    }
-                    let logColor = textColor;
-                    const isProtocol = consoleOut.includes('TurtleCoin');
-                    const isCheckpoints = consoleOut.includes('[checkpoints]');
-                    const addedToMainChain = consoleOut.includes(
-                      'added to main chain'
-                    );
-                    const stopSignalSent = consoleOut.includes(
-                      'Stop signal sent'
-                    );
-                    const isError = consoleOut.includes('ERROR');
-                    const isViolet = consoleOut.includes('===');
-                    const isAscii =
-                      consoleOut.includes('█') ||
-                      consoleOut.includes('═') ||
-                      consoleOut.includes('_') ||
-                      consoleOut.includes('|');
-
-                    const isLink = consoleOut.includes(
-                      'https://github.com/turtlecoin/turtlecoin/blob/master/LICENSE'
-                    );
-                    const isChatLink = consoleOut.includes(
-                      'http://chat.turtlecoin.lol'
-                    );
-
-                    let logText = consoleOut.replace('[protocol]', '');
-                    logText = logText.replace('[Core]', '');
-                    logText = logText.replace('[daemon]', '');
-                    logText = logText.replace('[node_server]', '');
-                    logText = logText.replace('[RocksDBWrapper]', '');
-                    logText = logText.replace('http://chat.turtlecoin.lol', '');
-
-                    if (isProtocol || isCheckpoints || addedToMainChain) {
-                      logColor = 'has-text-success has-text-weight-bold';
-                    }
-
-                    if (stopSignalSent) {
-                      logColor = 'has-text-primary has-text-weight-bold';
-                    }
-
-                    if (isError) {
-                      logColor = 'has-text-danger has-text-weight-bold';
-                    }
-
-                    if (isViolet) {
-                      logColor = 'has-text-violet has-text-weight-bold';
-                    }
-
-                    if (isAscii) {
+                  daemonLog.map((line, index) => {
+                    // don't print empty messages
+                    if (line.trim() === '') {
                       return null;
                     }
 
-                    if (isLink) {
-                      return (
-                        <a
-                          key={consoleOut}
-                          className="has-text-link is-family-monospace"
-                          onClick={() => remote.shell.openExternal(logText)}
-                          onKeyPress={() => remote.shell.openExternal(logText)}
-                          role="button"
-                          tabIndex={0}
-                          onMouseDown={event => event.preventDefault()}
-                        >
-                          {logText}
-                        </a>
-                      );
+                    // ignore the line if it is in linesToIgnore.json
+                    let showLine: boolean = true;
+                    linesToIgnore.forEach((string: string) => {
+                      if (line.includes(string)) {
+                        showLine = false;
+                      }
+                    });
+                    if (!showLine) {
+                      return null;
                     }
 
-                    if (isChatLink) {
-                      return (
-                        <p key={consoleOut} className="is-family-monospace">
-                          {logText}{' '}
-                          <a
-                            className="has-text-link is-family-monospace"
-                            onClick={() =>
-                              remote.shell.openExternal(
-                                'http://chat.turtlecoin.lol'
-                              )
-                            }
-                            onKeyPress={() =>
-                              remote.shell.openExternal(
-                                'http://chat.turtlecoin.lol'
-                              )
-                            }
-                            role="button"
-                            tabIndex={0}
-                            onMouseDown={event => event.preventDefault()}
-                          >
-                            http://chat.turtlecoin.lol
-                          </a>
-                        </p>
-                      );
-                    }
+                    // let's determine the log styles based on styleConfig.json
+                    let logStyles: string = '';
+                    styleValues.forEach((color: string) => {
+                      const { strings } = styleConfig[color];
+                      strings.forEach((string: string) => {
+                        if (line.includes(string)) {
+                          logStyles = styleConfig[color].class;
+                        }
+                      });
+                    });
+
+                    // Trim substrings that are in the substringsToRemove.json file
+                    let logText: string = line;
+                    substringsToRemove.forEach(string => {
+                      logText = logText.replace(string, '');
+                    });
+
+                    // finally print the log message
                     return (
-                      <p
-                        key={consoleOut}
-                        className={`is-family-monospace ${logColor}`}
+                      <span
+                        className={`is-family-monospace ${logStyles}`}
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={index}
                       >
                         {logText}
-                      </p>
+                      </span>
                     );
                   })}
               </div>
