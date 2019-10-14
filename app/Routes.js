@@ -17,6 +17,7 @@ import FirstStartupPage from './containers/FirstStartupPage';
 import TerminalPage from './containers/TerminalPage';
 import AddressBookPage from './containers/AddressBookPage';
 import SearchPage from './containers/SearchPage';
+import NewWalletPage from './containers/NewWalletPage';
 
 export default () => (
   <App>
@@ -32,6 +33,7 @@ export default () => (
       <Route exact path={routes.FIRSTSTARTUP} component={FirstStartupPage} />
       <Route exact path={routes.TERMINAL} component={TerminalPage} />
       <Route exact path={routes.ADDRESSBOOK} component={AddressBookPage} />
+      <Route exact path={routes.NEWWALLET} component={NewWalletPage} />
       <Route
         exact
         path={routes.CHANGEPASSWORD}

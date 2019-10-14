@@ -19,7 +19,8 @@ type State = {
   freshRestore: boolean,
   autoLockInterval: number,
   autoLockEnabled: boolean,
-  settings: boolean
+  settings: boolean,
+  newWallet: boolean
 };
 
 type Location = {
@@ -55,7 +56,8 @@ class Redirector extends Component<Props, State> {
       freshRestore: loginCounter.freshRestore,
       autoLockInterval: config.autoLockInterval,
       autoLockEnabled: config.autoLockEnabled,
-      settings: false
+      settings: false,
+      newWallet: false
     };
     const { autoLockInterval, autoLockEnabled } = this.state;
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
@@ -66,6 +68,7 @@ class Redirector extends Component<Props, State> {
     this.goToLogin = this.goToLogin.bind(this);
     this.logOut = this.logOut.bind(this);
     this.setAutoLock = this.setAutoLock.bind(this);
+    this.goToNewWallet = this.goToNewWallet.bind(this);
     if (
       session.walletPassword !== '' &&
       loginCounter.isLoggedIn &&
@@ -99,6 +102,7 @@ class Redirector extends Component<Props, State> {
     eventEmitter.on('newLockInterval', this.resetTimeout);
     eventEmitter.on('setAutoLock', this.setAutoLock);
     eventEmitter.on('goToSettings', this.goToSettings);
+    eventEmitter.on('goToNewWallet', this.goToNewWallet);
 
     // prettier-ignore
     const { location: { pathname } } = this.props;
@@ -129,9 +133,16 @@ class Redirector extends Component<Props, State> {
     eventEmitter.off('newLockInterval', this.resetTimeout);
     eventEmitter.off('setAutoLock', this.setAutoLock);
     eventEmitter.off('goToSettings', this.goToSettings);
+    eventEmitter.off('goToNewWallet', this.goToNewWallet);
     clearTimeout(this.activityTimer);
     clearInterval(this.refreshPrice);
   }
+
+  goToNewWallet = () => {
+    this.setState({
+      newWallet: true
+    });
+  };
 
   getPrice = () => {
     session.getFiatPrice(config.selectedFiat);
@@ -235,7 +246,8 @@ class Redirector extends Component<Props, State> {
       login,
       isLoggedIn,
       freshRestore,
-      settings
+      settings,
+      newWallet
     } = this.state;
     if (freshRestore === true && pathname !== '/changepassword') {
       loginCounter.freshRestore = false;
@@ -258,6 +270,10 @@ class Redirector extends Component<Props, State> {
 
     if (importSeed === true && pathname !== '/import') {
       return <Redirect to="/import" />;
+    }
+
+    if (newWallet === true && pathname !== '/newwallet') {
+      return <Redirect to="/newwallet" />;
     }
 
     if (

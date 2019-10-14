@@ -472,6 +472,9 @@ eventEmitter.on('initializeNewSession', password => {
 });
 
 function handleNew() {
+  eventEmitter.emit('goToNewWallet');
+
+  /*
   const options = {
     defaultPath: remote.app.getPath('documents'),
     filters: [
@@ -543,6 +546,7 @@ function handleNew() {
       }
     }
   }
+  */
 }
 
 ipcRenderer.on('handleNew', handleNew);

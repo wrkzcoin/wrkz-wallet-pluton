@@ -9,5 +9,6 @@
   "CHANGEPASSWORD": "/changepassword",
   "FIRSTSTARTUP": "/firststartup",
   "TERMINAL": "/terminal",
-  "ADDRESSBOOK": "/addressbook"
+  "ADDRESSBOOK": "/addressbook",
+  "NEWWALLET": "/newwallet"
 }
