@@ -148,12 +148,6 @@ try {
 
 export let session = new WalletSession();
 
-try {
-  session.getSyncStatus();
-} catch {
-  log.debug('no!');
-}
-
 if (!session.loginFailed && !session.firstStartup) {
   log.debug('Initialized wallet session ', session.address);
   startWallet();
@@ -471,6 +465,78 @@ eventEmitter.on('initializeNewSession', password => {
   eventEmitter.emit('openNewWallet');
 });
 
+export function saveNew(wallet: any) {
+  const options = {
+    defaultPath: remote.app.getPath('documents'),
+    filters: [
+      {
+        name: 'TurtleCoin Wallet File (v0)',
+        extensions: ['wallet']
+      }
+    ]
+  };
+  const savePath = remote.dialog.showSaveDialog(null, options);
+  if (savePath === undefined) {
+    return;
+  }
+  if (session) {
+    session.saveWallet(session.walletFile);
+  }
+  if (savedInInstallDir(savePath)) {
+    const message = (
+      <div>
+        <center>
+          <p className="subtitle has-text-danger">Wallet Save Error!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          You can not save the wallet in the installation directory. The windows
+          installer will delete all files in the directory upon upgrading the
+          application, so it is not allowed. Please save the wallet somewhere
+          else.
+        </p>
+      </div>
+    );
+    eventEmitter.emit('openModal', message, 'OK', null, null);
+    return;
+  }
+  const createdSuccessfuly = session.handleNewWallet(wallet, savePath);
+  if (createdSuccessfuly === false) {
+    const message = (
+      <div>
+        <center>
+          <p className="subtitle has-text-danger">Wallet Creation Error!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          The wallet was not created successfully. Check your directory
+          permissions and try again.
+        </p>
+      </div>
+    );
+    eventEmitter.emit('openModal', message, 'OK', null, null);
+  } else {
+    const savedSuccessfully = session.handleWalletOpen(savePath);
+    if (savedSuccessfully === true) {
+      session = null;
+      session = new WalletSession();
+      startWallet();
+      const message = (
+        <div>
+          <center>
+            <p className={`subtitle ${textColor}`}>Success!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            Your new wallet was created successfully.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, 'goHome');
+    }
+  }
+}
+
 function handleNew() {
   eventEmitter.emit('goToNewWallet');
 
@@ -677,8 +743,6 @@ function handleImport() {
       </center>
       <br />
       <p className={`subtitle ${textColor}`}>
-        <b>Send to:</b>
-        <br />
         Would you like to import from seed or keys?
       </p>
     </div>

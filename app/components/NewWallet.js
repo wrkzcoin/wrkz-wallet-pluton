@@ -9,11 +9,15 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
-import { session } from '../index';
+import { session, saveNew } from '../index';
 
 type State = {
   darkMode: boolean,
-  newWallet: any
+  newWallet: any,
+  password: string,
+  confirmPassword: string,
+  confirmSeed: string,
+  activePage: string
 };
 
 type Props = {};
@@ -24,11 +28,19 @@ export default class NewWallet extends Component<Props, State> {
     this.state = {
       darkMode: session.darkMode,
       newWallet: WalletBackend.createWallet(session.daemon),
-      activePage: 'generate'
+      activePage: 'generate',
+      password: '',
+      confirmPassword: '',
+      confirmSeed: ''
     };
 
     this.nextPage = this.nextPage.bind(this);
     this.prevPage = this.prevPage.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(
+      this
+    );
+    this.handleConfirmSeedChange = this.handleConfirmSeedChange.bind(this);
   }
 
   componentWillMount() {}
@@ -84,10 +96,42 @@ export default class NewWallet extends Component<Props, State> {
   };
 
   nextPage = () => {
-    const { activePage } = this.state;
+    const {
+      activePage,
+      password,
+      confirmPassword,
+      confirmSeed,
+      newWallet
+    } = this.state;
     let currentPageNumber: number = this.evaluatePageNumber(activePage);
 
     if (currentPageNumber === 4) {
+      log.info(confirmSeed);
+      const [wallet, err] = WalletBackend.importWalletFromSeed(
+        session.daemon,
+        100000,
+        confirmSeed
+      );
+
+      if (err) {
+        log.error(err);
+      }
+
+      if (wallet) {
+        log.debug(wallet.getPrimaryAddress());
+        log.debug(newWallet.getPrimaryAddress());
+
+        if (wallet.getPrimaryAddress() === newWallet.getPrimaryAddress()) {
+          saveNew(wallet);
+        } else {
+          log.error('Wallet creation error.');
+        }
+      }
+
+      return;
+    }
+
+    if (currentPageNumber === 2 && password !== confirmPassword) {
       return;
     }
 
@@ -99,8 +143,39 @@ export default class NewWallet extends Component<Props, State> {
     });
   };
 
+  handlePasswordChange(event: any) {
+    const password = event.target.value;
+
+    this.setState({
+      password
+    });
+  }
+
+  handleConfirmSeedChange(event: any) {
+    const confirmSeed = event.target.value;
+
+    this.setState({
+      confirmSeed
+    });
+  }
+
+  handleConfirmPasswordChange(event: any) {
+    const confirmPassword = event.target.value;
+
+    this.setState({
+      confirmPassword
+    });
+  }
+
   render() {
-    const { darkMode, newWallet, activePage } = this.state;
+    const {
+      darkMode,
+      newWallet,
+      activePage,
+      password,
+      confirmPassword,
+      confirmSeed
+    } = this.state;
     const { backgroundColor, fillColor, textColor } = uiType(darkMode);
 
     return (
@@ -154,39 +229,122 @@ export default class NewWallet extends Component<Props, State> {
 
             {activePage === 'generate' && (
               <div>
-                <center>
-                  <p className={`${textColor}`}>
-                    Each address is randomly generated.
-                  </p>
-                  <span
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{
-                      __html: jdenticon.toSvg(
-                        newWallet.getPrimaryAddress(),
-                        150
-                      )
-                    }}
-                  />
-                </center>
-                <p className={`${textColor} label`}>Your New Address:</p>
-                <input
-                  className="input"
-                  readOnly
-                  value={newWallet.getPrimaryAddress()}
-                />
+                <p className={`subtitle ${textColor}`}>
+                  Welcome to the wallet creation wizard. Each address is
+                  randomly generated.
+                </p>
+                <div className="columns">
+                  <div className="column">
+                    <p className={`${textColor} label`}>
+                      Your New Address:
+                      <textarea
+                        className="textarea is-large no-resize is-family-monospace"
+                        rows="4"
+                        readOnly
+                        value={newWallet.getPrimaryAddress()}
+                      />
+                    </p>
+                  </div>
+                  <div className="column is-one-fifth">
+                    <p className={`label ${textColor}`}>
+                      Identicon:
+                      <div className="box">
+                        <center>
+                          <span
+                            // eslint-disable-next-line react/no-danger
+                            dangerouslySetInnerHTML={{
+                              __html: jdenticon.toSvg(
+                                newWallet.getPrimaryAddress(),
+                                130
+                              )
+                            }}
+                          />
+                        </center>
+                      </div>
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
             {activePage === 'secure' && (
-              <p className="has-text-centered title">Secure</p>
+              <div>
+                <p className={`subtitle ${textColor}`}>
+                  Set a password for your wallet. Take care not to forget it.
+                </p>
+                <div className="field">
+                  <label className={`label ${textColor}`} htmlFor="scanheight">
+                    Enter a Password:
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type="password"
+                        placeholder="Enter a password"
+                        value={password}
+                        onChange={this.handlePasswordChange}
+                      />
+                    </div>
+                  </label>
+                </div>
+                <div className="field">
+                  <label className={`label ${textColor}`} htmlFor="scanheight">
+                    Confirm Password:{' '}
+                    {password !== confirmPassword ? (
+                      <span className="has-text-danger">
+                        &nbsp;&nbsp;Passwords do not match!
+                      </span>
+                    ) : (
+                      ''
+                    )}
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type="password"
+                        placeholder="Confirm password"
+                        value={confirmPassword}
+                        onChange={this.handleConfirmPasswordChange}
+                      />
+                    </div>
+                  </label>
+                </div>
+              </div>
             )}
 
             {activePage === 'backup' && (
-              <p className="has-text-centered title">Backup</p>
+              <div>
+                <p className={`subtitle ${textColor}`}>
+                  Please back up the following mnemonic seed safely.{' '}
+                  <span className="has-text-danger has-text-weight-bold ">
+                    If you lose it your funds will be lost forever.
+                  </span>
+                </p>
+                <p className={`label ${textColor}`}>
+                  Mnemonic Seed:
+                  <textarea
+                    className="textarea no-resize is-large"
+                    value={newWallet.getMnemonicSeed()[0]}
+                    rows="4"
+                    readOnly
+                  />
+                </p>
+              </div>
             )}
 
             {activePage === 'verify' && (
-              <p className="has-text-centered title">Verify</p>
+              <div>
+                <p className={`subtitle ${textColor}`}>
+                  Enter your seed to confirm you&apos;ve backed it up.
+                </p>
+                <p className={`label ${textColor}`}>
+                  Confirm Seed:
+                  <textarea
+                    className="textarea no-resize is-large"
+                    value={confirmSeed}
+                    onChange={this.handleConfirmSeedChange}
+                    rows="4"
+                  />
+                </p>
+              </div>
             )}
 
             <br />
@@ -210,7 +368,7 @@ export default class NewWallet extends Component<Props, State> {
                 tabIndex={0}
                 onMouseDown={event => event.preventDefault()}
               >
-                Next
+                {activePage === 'verify' ? 'Save Wallet As' : 'Next'}
               </span>
             </center>
           </div>

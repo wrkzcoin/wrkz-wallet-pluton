@@ -281,7 +281,8 @@ class Redirector extends Component<Props, State> {
       pathname !== '/login' &&
       pathname !== '/import' &&
       pathname !== '/importkey' &&
-      pathname !== '/firststartup'
+      pathname !== '/firststartup' &&
+      pathname !== '/newwallet'
     ) {
       return <Redirect to="/login" />;
     }
@@ -295,7 +296,8 @@ class Redirector extends Component<Props, State> {
       pathname !== '/login' &&
       pathname !== '/import' &&
       pathname !== '/importkey' &&
-      pathname !== '/firststartup'
+      pathname !== '/firststartup' &&
+      pathname !== '/newwallet'
     ) {
       return <Redirect to="/login" />;
     }

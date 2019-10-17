@@ -70,12 +70,7 @@ export default class WalletSession {
 
     this.getFiatPrice(this.selectedFiat);
 
-    const { useLocalDaemon } = config;
-
-    this.daemon = new Daemon(
-      useLocalDaemon ? '127.0.0.1' : this.daemonHost,
-      useLocalDaemon ? 11898 : this.daemonPort
-    );
+    this.daemon = new Daemon(this.daemonHost, this.daemonPort);
 
     if (this.walletFile === '') {
       this.firstStartup = true;
@@ -306,9 +301,8 @@ export default class WalletSession {
     return true;
   }
 
-  handleNewWallet(filename: string) {
-    const newWallet = WalletBackend.createWallet(this.daemon, this.wbConfig);
-    const saved = newWallet.saveWalletToFile(filename, '');
+  handleNewWallet(wallet: any, filename) {
+    const saved = wallet.saveWalletToFile(filename, '');
     if (!saved) {
       log.debug('Failed to save wallet!');
       return false;
