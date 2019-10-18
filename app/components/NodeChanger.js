@@ -3,6 +3,8 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { remote } from 'electron';
+import log from 'electron-log';
+import { Daemon } from 'turtlecoin-wallet-backend';
 import {
   il8n,
   session,
@@ -32,10 +34,12 @@ export default class NodeChanger extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+    this.daemonInfo = session.wallet.getDaemonConnectionInfo();
+
     this.state = {
-      connectednode: `${session.daemonHost}:${session.daemonPort}`,
+      connectednode: `${this.daemonInfo.host}:${this.daemonInfo.port}`,
       nodeChangeInProgress: false,
-      ssl: session.daemon.ssl,
+      ssl: this.daemonInfo.ssl,
       useLocalDaemon: config.useLocalDaemon,
       daemonLogPath: config.daemonLogPath
     };
@@ -83,9 +87,8 @@ export default class NodeChanger extends Component<Props, State> {
       connectednode: event.target[0].value
     });
     const connectionString = event.target[0].value;
-    const splitConnectionString = connectionString.split(':', 2);
-    const host = splitConnectionString[0];
-    let port = splitConnectionString[1];
+    // eslint-disable-next-line prefer-const
+    let [host, port] = connectionString.split(':', 2);
     if (port === undefined) {
       port = '11898';
     }
@@ -98,8 +101,14 @@ export default class NodeChanger extends Component<Props, State> {
       return;
     }
     eventEmitter.emit('nodeChangeInProgress');
-    session.swapNode(host, port);
-    eventEmitter.emit('initializeNewNode', session.walletPassword, host, port);
+    const daemon = new Daemon(host, Number(port));
+    await session.wallet.swapNode(daemon);
+    session.daemon = daemon;
+    eventEmitter.emit('newNodeConnected');
+    const daemonInfo = session.wallet.getDaemonConnectionInfo();
+    log.info(`Connected to ${daemonInfo.host}:${daemonInfo.port}`);
+    session.modifyConfig('daemonHost', daemonInfo.host);
+    session.modifyConfig('daemonPort', daemonInfo.port);
   };
 
   findNode = () => {
@@ -111,8 +120,12 @@ export default class NodeChanger extends Component<Props, State> {
   };
 
   handleNewNode = () => {
+    const daemonInfo = session.wallet.getDaemonConnectionInfo();
+
     this.setState({
-      connectednode: `${session.daemon.daemonHost}:${session.daemon.daemonPort}`
+      nodeChangeInProgress: false,
+      connectednode: `${daemonInfo.host}:${daemonInfo.port}`,
+      ssl: daemonInfo.ssl
     });
   };
 
