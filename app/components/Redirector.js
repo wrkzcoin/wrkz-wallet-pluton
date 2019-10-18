@@ -306,7 +306,8 @@ class Redirector extends Component<Props, State> {
       firstStartup === true &&
       pathname !== '/firststartup' &&
       pathname !== '/import' &&
-      pathname !== '/importkey'
+      pathname !== '/importkey' &&
+      pathname !== '/newwallet'
     ) {
       return <Redirect to="/firststartup" />;
     }

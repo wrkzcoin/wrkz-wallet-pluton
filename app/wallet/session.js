@@ -301,8 +301,8 @@ export default class WalletSession {
     return true;
   }
 
-  handleNewWallet(wallet: any, filename) {
-    const saved = wallet.saveWalletToFile(filename, '');
+  handleNewWallet(wallet: any, filename: string, password: string) {
+    const saved = wallet.saveWalletToFile(filename, password);
     if (!saved) {
       log.debug('Failed to save wallet!');
       return false;

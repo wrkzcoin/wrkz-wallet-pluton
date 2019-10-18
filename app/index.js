@@ -465,7 +465,7 @@ eventEmitter.on('initializeNewSession', password => {
   eventEmitter.emit('openNewWallet');
 });
 
-export function saveNew(wallet: any) {
+export function saveNew(wallet: any, password: string) {
   const options = {
     defaultPath: remote.app.getPath('documents'),
     filters: [
@@ -500,7 +500,11 @@ export function saveNew(wallet: any) {
     eventEmitter.emit('openModal', message, 'OK', null, null);
     return;
   }
-  const createdSuccessfuly = session.handleNewWallet(wallet, savePath);
+  const createdSuccessfuly = session.handleNewWallet(
+    wallet,
+    savePath,
+    password
+  );
   if (createdSuccessfuly === false) {
     const message = (
       <div>
@@ -519,7 +523,7 @@ export function saveNew(wallet: any) {
     const savedSuccessfully = session.handleWalletOpen(savePath);
     if (savedSuccessfully === true) {
       session = null;
-      session = new WalletSession();
+      session = new WalletSession(password);
       startWallet();
       const message = (
         <div>
@@ -539,80 +543,6 @@ export function saveNew(wallet: any) {
 
 function handleNew() {
   eventEmitter.emit('goToNewWallet');
-
-  /*
-  const options = {
-    defaultPath: remote.app.getPath('documents'),
-    filters: [
-      {
-        name: 'TurtleCoin Wallet File (v0)',
-        extensions: ['wallet']
-      }
-    ]
-  };
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
-    return;
-  }
-  if (session) {
-    session.saveWallet(session.walletFile);
-    if (savedInInstallDir(savePath)) {
-      const message = (
-        <div>
-          <center>
-            <p className="subtitle has-text-danger">Wallet Save Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            You can not save the wallet in the installation directory. The
-            windows installer will delete all files in the directory upon
-            upgrading the application, so it is not allowed. Please save the
-            wallet somewhere else.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-      return;
-    }
-    const createdSuccessfuly = session.handleNewWallet(savePath);
-    if (createdSuccessfuly === false) {
-      const message = (
-        <div>
-          <center>
-            <p className="subtitle has-text-danger">Wallet Creation Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            The wallet was not created successfully. Check your directory
-            permissions and try again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-    } else {
-      const savedSuccessfully = session.handleWalletOpen(savePath);
-      if (savedSuccessfully === true) {
-        session = null;
-        session = new WalletSession();
-        startWallet();
-        eventEmitter.emit('handlePasswordChange');
-        const message = (
-          <div>
-            <center>
-              <p className={`subtitle ${textColor}`}>Success!</p>
-            </center>
-            <br />
-            <p className={`subtitle ${textColor}`}>
-              Your new wallet was created successfully. Please set your
-              password.
-            </p>
-          </div>
-        );
-        eventEmitter.emit('openModal', message, 'OK', null, null);
-      }
-    }
-  }
-  */
 }
 
 ipcRenderer.on('handleNew', handleNew);

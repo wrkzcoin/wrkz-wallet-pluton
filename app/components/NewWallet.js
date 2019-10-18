@@ -2,6 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import { clipboard } from 'electron';
 import log from 'electron-log';
 import jdenticon from 'jdenticon';
 import { WalletBackend } from 'turtlecoin-wallet-backend';
@@ -9,7 +10,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
-import { session, saveNew } from '../index';
+import { session, saveNew, eventEmitter } from '../index';
 
 type State = {
   darkMode: boolean,
@@ -17,7 +18,8 @@ type State = {
   password: string,
   confirmPassword: string,
   confirmSeed: string,
-  activePage: string
+  activePage: string,
+  showPassword: boolean
 };
 
 type Props = {};
@@ -31,7 +33,8 @@ export default class NewWallet extends Component<Props, State> {
       activePage: 'generate',
       password: '',
       confirmPassword: '',
-      confirmSeed: ''
+      confirmSeed: '',
+      showPassword: false
     };
 
     this.nextPage = this.nextPage.bind(this);
@@ -41,11 +44,20 @@ export default class NewWallet extends Component<Props, State> {
       this
     );
     this.handleConfirmSeedChange = this.handleConfirmSeedChange.bind(this);
+    this.toggleShowPassword = this.toggleShowPassword.bind(this);
   }
 
   componentWillMount() {}
 
   componentWillUnmount() {}
+
+  toggleShowPassword() {
+    const { showPassword } = this.state;
+
+    this.setState({
+      showPassword: !showPassword
+    });
+  }
 
   evaluatePageNumber = (pageName: string) => {
     switch (pageName) {
@@ -122,7 +134,7 @@ export default class NewWallet extends Component<Props, State> {
         log.debug(newWallet.getPrimaryAddress());
 
         if (wallet.getPrimaryAddress() === newWallet.getPrimaryAddress()) {
-          saveNew(wallet);
+          saveNew(newWallet, password);
         } else {
           log.error('Wallet creation error.');
         }
@@ -174,9 +186,12 @@ export default class NewWallet extends Component<Props, State> {
       activePage,
       password,
       confirmPassword,
-      confirmSeed
+      confirmSeed,
+      showPassword
     } = this.state;
-    const { backgroundColor, fillColor, textColor } = uiType(darkMode);
+    const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
+      darkMode
+    );
 
     return (
       <div>
@@ -188,9 +203,17 @@ export default class NewWallet extends Component<Props, State> {
               <div
                 className={`step-item ${
                   activePage === 'generate' ? 'is-active' : ''
+                } ${
+                  this.evaluatePageNumber(activePage) > 1 ? 'is-completed' : ''
                 } is-success`}
               >
-                <div className="step-marker">1</div>
+                <div className="step-marker">
+                  {this.evaluatePageNumber(activePage) > 1 ? (
+                    <i className="fas fa-check" />
+                  ) : (
+                    '1'
+                  )}
+                </div>
                 <div className="step-details">
                   <p className="step-title">Generate</p>
                 </div>
@@ -198,9 +221,18 @@ export default class NewWallet extends Component<Props, State> {
               <div
                 className={`step-item ${
                   activePage === 'secure' ? 'is-active' : ''
+                } ${
+                  this.evaluatePageNumber(activePage) > 2 ? 'is-completed' : ''
                 } is-success`}
               >
-                <div className="step-marker">2</div>
+                <div className="step-marker">
+                  {' '}
+                  {this.evaluatePageNumber(activePage) > 2 ? (
+                    <i className="fas fa-check" />
+                  ) : (
+                    '2'
+                  )}
+                </div>
                 <div className="step-details">
                   <p className="step-title">Secure</p>
                 </div>
@@ -208,9 +240,18 @@ export default class NewWallet extends Component<Props, State> {
               <div
                 className={`step-item ${
                   activePage === 'backup' ? 'is-active' : ''
+                } ${
+                  this.evaluatePageNumber(activePage) > 3 ? 'is-completed' : ''
                 } is-success`}
               >
-                <div className="step-marker">3</div>
+                <div className="step-marker">
+                  {' '}
+                  {this.evaluatePageNumber(activePage) > 3 ? (
+                    <i className="fas fa-check" />
+                  ) : (
+                    '3'
+                  )}
+                </div>
                 <div className="step-details">
                   <p className="step-title">Backup</p>
                 </div>
@@ -246,10 +287,10 @@ export default class NewWallet extends Component<Props, State> {
                     </p>
                   </div>
                   <div className="column is-one-fifth">
-                    <p className={`label ${textColor}`}>
+                    <span className={`label ${textColor}`}>
                       Identicon:
-                      <div className="box">
-                        <center>
+                      <center>
+                        <div className="box">
                           <span
                             // eslint-disable-next-line react/no-danger
                             dangerouslySetInnerHTML={{
@@ -259,9 +300,9 @@ export default class NewWallet extends Component<Props, State> {
                               )
                             }}
                           />
-                        </center>
-                      </div>
-                    </p>
+                        </div>
+                      </center>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -278,7 +319,7 @@ export default class NewWallet extends Component<Props, State> {
                     <div className="control">
                       <input
                         className="input is-large"
-                        type="password"
+                        type={showPassword ? 'input' : 'password'}
                         placeholder="Enter a password"
                         value={password}
                         onChange={this.handlePasswordChange}
@@ -299,7 +340,7 @@ export default class NewWallet extends Component<Props, State> {
                     <div className="control">
                       <input
                         className="input is-large"
-                        type="password"
+                        type={showPassword ? 'input' : 'password'}
                         placeholder="Confirm password"
                         value={confirmPassword}
                         onChange={this.handleConfirmPasswordChange}
@@ -307,6 +348,38 @@ export default class NewWallet extends Component<Props, State> {
                     </div>
                   </label>
                 </div>
+                {showPassword === false && (
+                  <span className={textColor}>
+                    <a
+                      className="button is-danger"
+                      onClick={this.toggleShowPassword}
+                      onKeyPress={this.toggleShowPassword}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <span className="icon is-large">
+                        <i className="fas fa-times" />
+                      </span>
+                    </a>
+                    &nbsp;&nbsp; Show Password: <b>Off</b>
+                  </span>
+                )}
+                {showPassword === true && (
+                  <span className={textColor}>
+                    <a
+                      className="button is-success"
+                      onClick={this.toggleShowPassword}
+                      onKeyPress={this.toggleShowPassword}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <span className="icon is-large">
+                        <i className="fa fa-check" />
+                      </span>
+                    </a>
+                    &nbsp;&nbsp; Show Password: <b>On</b> &nbsp;&nbsp;
+                  </span>
+                )}
               </div>
             )}
 
@@ -327,6 +400,35 @@ export default class NewWallet extends Component<Props, State> {
                     readOnly
                   />
                 </p>
+                <button
+                  // eslint-disable-next-line no-return-assign
+                  ref={ref => (this.ref = ref)}
+                  type="button"
+                  className={`button ${elementBaseColor}`}
+                  onClick={() => {
+                    clipboard.writeText(newWallet.getMnemonicSeed()[0]);
+                  }}
+                  data-event="none"
+                  data-effect="float"
+                >
+                  <span className="icon">
+                    <i className="fa fa-clipboard" />
+                  </span>
+                  &nbsp;&nbsp;Copy to Clipboard
+                </button>
+                &nbsp;&nbsp;
+                <button
+                  type="button"
+                  className={`button ${elementBaseColor}`}
+                  onClick={() => {
+                    eventEmitter.emit('backupToFile');
+                  }}
+                >
+                  <span className="icon">
+                    <i className="fas fa-save" />
+                  </span>
+                  &nbsp;&nbsp;Save To File
+                </button>
               </div>
             )}
 
@@ -349,27 +451,29 @@ export default class NewWallet extends Component<Props, State> {
 
             <br />
             <center>
-              <span
-                className="button is-warning"
-                onClick={this.prevPage}
-                onKeyPress={this.prevPage}
-                role="button"
-                tabIndex={0}
-                onMouseDown={event => event.preventDefault()}
-              >
-                Back
-              </span>
-              &nbsp;&nbsp;
-              <span
-                className="button is-success"
-                onClick={this.nextPage}
-                onKeyPress={this.nextPage}
-                role="button"
-                tabIndex={0}
-                onMouseDown={event => event.preventDefault()}
-              >
-                {activePage === 'verify' ? 'Save Wallet As' : 'Next'}
-              </span>
+              <div className="buttons bottombuttons">
+                <span
+                  className="button is-warning is-large"
+                  onClick={this.prevPage}
+                  onKeyPress={this.prevPage}
+                  role="button"
+                  tabIndex={0}
+                  onMouseDown={event => event.preventDefault()}
+                >
+                  Back
+                </span>
+                &nbsp;&nbsp;
+                <span
+                  className="button is-success is-large"
+                  onClick={this.nextPage}
+                  onKeyPress={this.nextPage}
+                  role="button"
+                  tabIndex={0}
+                  onMouseDown={event => event.preventDefault()}
+                >
+                  {activePage === 'verify' ? 'Save Wallet As' : 'Next'}
+                </span>
+              </div>
             </center>
           </div>
           <BottomBar darkMode={darkMode} />

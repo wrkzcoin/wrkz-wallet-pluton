@@ -734,7 +734,8 @@
 
 .bottombuttons {
   position: absolute;
-  bottom: 0;
+  bottom: 25px;
+  left: calc(50% - 97px);
 }
 
 .settingscog {
