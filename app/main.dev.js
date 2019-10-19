@@ -4,7 +4,15 @@
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
-import { app, BrowserWindow, Tray, Menu, shell, dialog } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  Tray,
+  Menu,
+  shell,
+  dialog,
+  ipcMain
+} from 'electron';
 import isDev from 'electron-is-dev';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -285,4 +293,12 @@ function showMainWindow() {
   if (mainWindow) {
     mainWindow.show();
   }
+}
+
+ipcMain.on('closeToTrayToggle', (event: any, state: boolean) => {
+  toggleCloseToTray(state);
+});
+
+function toggleCloseToTray(state: boolean) {
+  isQuitting = !state;
 }

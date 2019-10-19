@@ -229,7 +229,7 @@ ipcRenderer.on('handleSave', () => {
       const message = (
         <div>
           <center>
-            <p className="subtitle has-texct-danger">Save Error!</p>
+            <p className="subtitle has-text-danger">Save Error!</p>
           </center>
           <br />
           <p className={`subtitle ${textColor}`}>

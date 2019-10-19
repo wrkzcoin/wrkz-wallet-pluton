@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.1.0
+
+- Adds a new method of making new wallets, which is much more interactive, and ensures the user backs up their seed before they use their wallet.
+- Adds an addressbook.
+- Makes several updates to the send form to integrate with the new address book. You can now enter a contact name or turtlecoin address in the send field, and it will autosuggest matching contacts as you type.
+- Adds a search feature. Currently you can search contacts (name or address), transactions (hash, block height, or payment ID), and settings (name, description, or keywords).
+- Switches the node changer to use the built in swapNode() method.
+- Removes the ability to actually launch the TurtleCoind process, but still allows tailing a log file: I found that actually having Proton launch the child process itself was not the functionality I was really looking for, I was just looking to be able to view my terminal output in Proton for both the daemon and the backend. So, I removed the launching of the process, but it still allows you to set a log file location and view the tail of the text file in the Terminal tab.
+
 ## v1.0.0
 
 - There is user action required for this update. The wallet open dialog now **only looks for wallet files ending in the `.wallet` extension,** as well as uses this extension by default when saving. If your wallet file does not have this extension, you will not be able to see it in the open dialog. **You must manually rename your wallet file and give it the proper extension `.wallet`**.

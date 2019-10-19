@@ -2,8 +2,9 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import { ipcRenderer } from 'electron';
 import uiType from '../utils/uitype';
-import { session, config, eventEmitter } from '../index';
+import { session, config } from '../index';
 
 type State = {
   closeToTray: boolean
@@ -28,59 +29,19 @@ export default class CloseToTrayToggle extends Component<Props, State> {
   componentWillUnmount() {}
 
   closeToTrayOn = () => {
-    const { darkMode } = this.props;
-    const { textColor } = uiType(darkMode);
     this.setState({
       closeToTray: true
     });
     session.toggleCloseToTray(true);
-    const message = (
-      <div>
-        <center>
-          <p className={`title ${textColor}`}>Warning!</p>
-        </center>
-        <br />
-        <p className={`subtitle ${textColor}`}>
-          Changing this setting requires an application restart. Would you like
-          to restart now?
-        </p>
-      </div>
-    );
-    eventEmitter.emit(
-      'openModal',
-      message,
-      'Restart',
-      'Not Now',
-      'restartApplication'
-    );
+    ipcRenderer.send('closeToTrayToggle', true);
   };
 
   closeToTrayOff = () => {
-    const { darkMode } = this.props;
-    const { textColor } = uiType(darkMode);
     this.setState({
       closeToTray: false
     });
     session.toggleCloseToTray(false);
-    const message = (
-      <div>
-        <center>
-          <p className={`title ${textColor}`}>Warning!</p>
-        </center>
-        <br />
-        <p className={`subtitle ${textColor}`}>
-          Changing this setting requires an application restart. Would you like
-          to restart now?
-        </p>
-      </div>
-    );
-    eventEmitter.emit(
-      'openModal',
-      message,
-      'Restart',
-      'Not Now',
-      'restartApplication'
-    );
+    ipcRenderer.send('closeToTrayToggle', false);
   };
 
   render() {

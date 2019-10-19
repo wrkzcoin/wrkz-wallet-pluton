@@ -2,6 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import ReactTooltip from 'react-tooltip';
 import { clipboard } from 'electron';
 import log from 'electron-log';
 import jdenticon from 'jdenticon';
@@ -19,7 +20,8 @@ type State = {
   confirmPassword: string,
   confirmSeed: string,
   activePage: string,
-  showPassword: boolean
+  showPassword: boolean,
+  darkMode: boolean
 };
 
 type Props = {};
@@ -45,6 +47,8 @@ export default class NewWallet extends Component<Props, State> {
     );
     this.handleConfirmSeedChange = this.handleConfirmSeedChange.bind(this);
     this.toggleShowPassword = this.toggleShowPassword.bind(this);
+    this.ref = null;
+    this.handleCopiedTip = this.handleCopiedTip.bind(this);
   }
 
   componentWillMount() {}
@@ -91,6 +95,13 @@ export default class NewWallet extends Component<Props, State> {
     }
   };
 
+  handleCopiedTip = () => {
+    ReactTooltip.show(this.ref);
+    setTimeout(() => {
+      ReactTooltip.hide(this.ref);
+    }, 500);
+  };
+
   prevPage = () => {
     const { activePage } = this.state;
     let currentPageNumber: number = this.evaluatePageNumber(activePage);
@@ -113,12 +124,13 @@ export default class NewWallet extends Component<Props, State> {
       password,
       confirmPassword,
       confirmSeed,
-      newWallet
+      newWallet,
+      darkMode
     } = this.state;
+    const { textColor } = uiType(darkMode);
     let currentPageNumber: number = this.evaluatePageNumber(activePage);
 
     if (currentPageNumber === 4) {
-      log.info(confirmSeed);
       const [wallet, err] = WalletBackend.importWalletFromSeed(
         session.daemon,
         100000,
@@ -127,16 +139,36 @@ export default class NewWallet extends Component<Props, State> {
 
       if (err) {
         log.error(err);
+        const message = (
+          <div>
+            <center>
+              <p className="title has-text-danger">Seed Verification Error!</p>
+            </center>
+            <br />
+            <p className={`subtitle ${textColor}`}>{err.customMessage}</p>
+          </div>
+        );
+        eventEmitter.emit('openModal', message, 'OK', null, null);
       }
 
       if (wallet) {
-        log.debug(wallet.getPrimaryAddress());
-        log.debug(newWallet.getPrimaryAddress());
-
         if (wallet.getPrimaryAddress() === newWallet.getPrimaryAddress()) {
           saveNew(newWallet, password);
         } else {
           log.error('Wallet creation error.');
+          const message = (
+            <div>
+              <center>
+                <p className="title has-text-danger">Wallet Save Error!</p>
+              </center>
+              <br />
+              <p className={`subtitle ${textColor}`}>
+                The wallet failed to save to disk. Check your directory
+                permissions and try again.
+              </p>
+            </div>
+          );
+          eventEmitter.emit('openModal', message, 'OK', null, null);
         }
       }
 
@@ -192,6 +224,7 @@ export default class NewWallet extends Component<Props, State> {
     const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
       darkMode
     );
+    const copiedTip = 'Copied!';
 
     return (
       <div>
@@ -407,7 +440,9 @@ export default class NewWallet extends Component<Props, State> {
                   className={`button ${elementBaseColor}`}
                   onClick={() => {
                     clipboard.writeText(newWallet.getMnemonicSeed()[0]);
+                    this.handleCopiedTip();
                   }}
+                  data-tip={copiedTip}
                   data-event="none"
                   data-effect="float"
                 >
