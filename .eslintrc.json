@@ -25,6 +25,7 @@
     ],
     "header/header": [2, "app/constants/header.js"],
     "react/no-array-index-key": false,
-    "global-require": 0
+    "global-require": 0,
+    "flowtype/no-weak-types": "off"
   }
 }

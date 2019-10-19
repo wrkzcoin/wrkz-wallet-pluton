@@ -19,6 +19,12 @@
   overflow: hidden;
 }
 
+.address-input-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
 .no-resize {
   resize: none;
 }
@@ -26,6 +32,12 @@
 .transparent-textarea {
   background-color: Transparent;
   border: none;
+}
+
+.address-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .no-hover:hover {

@@ -43,7 +43,8 @@ type State = {
   loopTest: boolean,
   looping: boolean,
   pageAnimationIn: string,
-  selectedContact: any
+  selectedContact: any,
+  menuIsOpen: boolean
 };
 
 const customStyles = {
@@ -97,7 +98,8 @@ export default class Send extends Component<Props, State> {
       loopTest: loginCounter.loopTest,
       looping: loginCounter.looping,
       pageAnimationIn: loginCounter.getAnimation('/send'),
-      selectedContact: null
+      selectedContact: null,
+      menuIsOpen: false
     };
 
     this.generatePaymentID = this.generatePaymentID.bind(this);
@@ -115,6 +117,7 @@ export default class Send extends Component<Props, State> {
     this.confirmTransaction = this.confirmTransaction.bind(this);
     this.toggleLoopTest = this.toggleLoopTest.bind(this);
     this.loopInterval = null;
+    this.checkInputLength = this.checkInputLength.bind(this);
     this.autoCompleteContacts = addressList.map(contact => {
       return { label: contact.name, value: contact.address };
     });
@@ -545,6 +548,18 @@ export default class Send extends Component<Props, State> {
     }
   }
 
+  checkInputLength = (input: string) => {
+    if (input.length > 1) {
+      this.setState({
+        menuIsOpen: true
+      });
+    } else {
+      this.setState({
+        menuIsOpen: false
+      });
+    }
+  };
+
   handleAddressChange = (event: any) => {
     if (event) {
       // eslint-disable-next-line no-underscore-dangle
@@ -588,7 +603,8 @@ export default class Send extends Component<Props, State> {
       loopTest,
       looping,
       pageAnimationIn,
-      selectedContact
+      selectedContact,
+      menuIsOpen
     } = this.state;
 
     const exampleAmount =
@@ -623,6 +639,7 @@ export default class Send extends Component<Props, State> {
                   >
                     Send to
                     <Creatable
+                      multi
                       options={this.autoCompleteContacts}
                       placeholder="Enter a TurtleCoin address or a contact name to send funds to"
                       // eslint-disable-next-line no-unused-vars
@@ -635,7 +652,8 @@ export default class Send extends Component<Props, State> {
                       value={selectedContact}
                       onChange={this.handleAddressChange}
                       id="autoCompleteAddress"
-                      multi
+                      menuIsOpen={menuIsOpen}
+                      onInputChange={this.checkInputLength}
                     />
                   </label>
                 </div>
