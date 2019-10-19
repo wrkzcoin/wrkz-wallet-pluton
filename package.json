@@ -17,7 +17,7 @@
     "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
     "package-linux": "yarn build && electron-builder build --linux",
     "package-win": "yarn build && electron-builder build --win --x64",
-    "postinstall": "electron-builder install-app-deps package.json && yarn build-dll && opencollective-postinstall",
+    "postinstall": "electron-builder install-app-deps package.json && yarn build-dll",
     "preinstall": "node ./internals/scripts/CheckYarn.js",
     "prestart": "yarn build",
     "prettier": "prettier '**/*.{js,jsx,ts,tsx,json,css,scss,md}' --ignore-path .gitignore --single-quote --write",
@@ -196,7 +196,7 @@
     "eslint-formatter-pretty": "^2.1.1",
     "eslint-import-resolver-webpack": "^0.11.0",
     "eslint-plugin-compat": "^3.1.0",
-    "eslint-plugin-flowtype": "^3.4.2",
+    "eslint-plugin-flowtype": "^4.3.0",
     "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jest": "^22.4.1",
@@ -212,7 +212,6 @@
     "lint-staged": "^8.1.5",
     "mini-css-extract-plugin": "^0.5.0",
     "node-sass": "^4.11.0",
-    "opencollective-postinstall": "^2.0.2",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "prettier": "^1.16.4",
     "react-test-renderer": "^16.8.6",
@@ -251,7 +250,6 @@
     "electron-debug": "^2.1.0",
     "electron-is-dev": "^1.1.0",
     "electron-log": "^3.0.4",
-    "electron-updater": "^4.0.6",
     "file-loader": "^4.2.0",
     "history": "^4.9.0",
     "jdenticon": "^2.2.0",
@@ -281,9 +279,6 @@
     "node": ">=10.x",
     "npm": ">=4.x",
     "yarn": ">=0.21.3"
-  },
-  "collective": {
-    "url": "TRTLv1ExtraTJ2oebAvuQB4TzF2uJEFpnbJCkQ4xr71vcqoS96fHX3kTKfHQwkK2Ee3TUD1NCsprfiZHnDL5mqrGiEJHgNz33Xf\npls sirs"
   },
   "browserslist": "electron 1.6",
   "husky": {

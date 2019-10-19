@@ -14,7 +14,6 @@ import {
   ipcMain
 } from 'electron';
 import isDev from 'electron-is-dev';
-import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
@@ -100,14 +99,6 @@ if (os.platform() !== 'win32') {
 
 if (os.platform() === 'darwin') {
   isQuitting = true;
-}
-
-export default class AppUpdater {
-  constructor() {
-    log.transports.file.level = 'info';
-    autoUpdater.logger = log;
-    autoUpdater.checkForUpdatesAndNotify();
-  }
 }
 
 let mainWindow = null;
