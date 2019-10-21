@@ -8,6 +8,7 @@
 - Adds a search feature. Currently you can search contacts (name or address), transactions (hash, block height, or payment ID), and settings (name, description, or keywords).
 - Switches the node changer to use the built in swapNode() method.
 - Removes the ability to actually launch the TurtleCoind process, but still allows tailing a log file: I found that actually having Proton launch the child process itself was not the functionality I was really looking for, I was just looking to be able to view my terminal output in Proton for both the daemon and the backend. So, I removed the launching of the process, but it still allows you to set a log file location and view the tail of the text file in the Terminal tab.
+- Switches to GitHub actions for pushes and PR's rather than using travis
 
 ## v1.0.0
 
