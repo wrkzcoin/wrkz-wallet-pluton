@@ -16,7 +16,16 @@ jobs:
           node-version: '10.x'
 
       - name: Dependencies
+        if: matrix.os != 'windows-2019'
         run: yarn
+      
+      - name: Dependencies (Windows)
+        if: matrix.os == 'windows-2019'
+        env:
+          MSBUILD_PATH: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin"
+        run: |
+          set PATH=%MSBUILD_PATH%;%PATH%
+          yarn
 
       - name: Build
         run: yarn package
