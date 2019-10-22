@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-2019, macOS-10.14]
+        os: [ubuntu-18.04, windows-2016, macOS-10.14]
     steps:
       - uses: actions/checkout@v1
 
@@ -16,13 +16,13 @@ jobs:
           node-version: '10.x'
 
       - name: Dependencies
-        if: matrix.os != 'windows-2019'
+        if: matrix.os != 'windows-2016'
         run: yarn
       
       - name: Dependencies (Windows)
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-2016'
         env:
-          MSBUILD_PATH: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/MSBuild/Current/Bin"
+          MSBUILD_PATH: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/MSBuild/Current/Bin"
         run: |
           set PATH=%MSBUILD_PATH%;%PATH%
           yarn
