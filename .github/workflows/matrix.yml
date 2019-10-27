@@ -19,17 +19,12 @@ jobs:
         with:
           node-version: '10.x'
 
-      - name: Dependencies
-        if: matrix.os != 'windows-2016'
-        run: yarn
-
-      - name: Dependencies (Windows)
+      - name: Setup MSBuild.exe
         if: matrix.os == 'windows-2016'
-        env:
-          MSBUILD_PATH: 'C:/Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/MSBuild/Current/Bin'
-        run: |
-          set PATH=%MSBUILD_PATH%;%path%
-          yarn
+        uses: warrenbuckley/Setup-MSBuild@v1
+
+      - name: Dependencies
+        run: yarn
 
       - name: Build
         run: yarn package
