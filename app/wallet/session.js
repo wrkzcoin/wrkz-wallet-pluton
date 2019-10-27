@@ -9,7 +9,7 @@ import {
   Config
 } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
-import fs from 'fs';
+import fs, { WriteStream } from 'fs';
 import { createObjectCsvWriter } from 'csv-writer';
 import { config, directories, eventEmitter, loginCounter } from '../index';
 import { name, version } from '../../package.json';
@@ -46,6 +46,13 @@ export default class WalletSession {
   fiatPrice: number;
 
   backendLog: string[];
+
+  logStream: WriteStream = fs.createWriteStream(
+    `${directories[1]}/wallet-backend.log`,
+    {
+      flags: 'a'
+    }
+  );
 
   constructor(password?: string, daemonHost?: string, daemonPort?: string) {
     this.loginFailed = false;
@@ -114,13 +121,7 @@ export default class WalletSession {
       const logLevel = this.evaluateLogLevel(config.logLevel);
       this.wallet.setLogLevel(logLevel);
       this.wallet.setLoggerCallback(prettyMessage => {
-        const logStream = fs.createWriteStream(
-          `${directories[1]}/wallet-backend.log`,
-          {
-            flags: 'a'
-          }
-        );
-        logStream.write(`${prettyMessage}\n`);
+        this.logStream.write(`${prettyMessage}\n`);
         this.backendLog.unshift(prettyMessage);
         if (this.backendLog.length > 1000) {
           this.backendLog.pop();
