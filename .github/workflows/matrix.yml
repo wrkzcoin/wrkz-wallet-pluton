@@ -28,7 +28,7 @@ jobs:
         env:
           MSBUILD_PATH: 'C:/Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/MSBuild/Current/Bin'
         run: |
-          set PATH=%MSBUILD_PATH%;%PATH%
+          set PATH=%MSBUILD_PATH%;%path%
           yarn
 
       - name: Build
