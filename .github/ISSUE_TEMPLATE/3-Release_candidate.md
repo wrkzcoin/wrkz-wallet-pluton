@@ -6,6 +6,10 @@ labels: 'release candidate'
 
 # Release Candidate
 
+## System Info:
+
+<b>OS Used for Tests:</b> <!-- Enter your OS e.g. Gentoo Linux -->
+
 ## Creation
 
 - [ ] Loads the internal config when local config not present
