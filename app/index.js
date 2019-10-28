@@ -295,7 +295,7 @@ ipcRenderer.on('handleSaveAs', () => {
 });
 
 ipcRenderer.on('exportToCSV', () => {
-  if (session && !session.wallet) {
+  if ((session && !session.wallet) || !loginCounter.isLoggedIn) {
     eventEmitter.emit('refreshLogin');
     return;
   }
