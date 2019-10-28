@@ -103,3 +103,6 @@
 - [ ] Reset from scan height of zero works
 
 - [ ] Changing password works
+
+Template (C) zpalmtree 2019-2019, (C) ExtraHash 2019-2019
+original found here: https://github.com/turtlecoin/turtlecoin-mobile-wallet/blob/master/.github/ISSUE_TEMPLATE/release-testing.md
