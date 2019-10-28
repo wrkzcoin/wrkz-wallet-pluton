@@ -11,7 +11,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
-import { session, saveNew, eventEmitter } from '../index';
+import { session, saveNew, eventEmitter, backupToFile } from '../index';
 
 type State = {
   darkMode: boolean,
@@ -456,7 +456,7 @@ export default class NewWallet extends Component<Props, State> {
                   type="button"
                   className={`button ${elementBaseColor}`}
                   onClick={() => {
-                    eventEmitter.emit('backupToFile');
+                    backupToFile(newWallet);
                   }}
                 >
                   <span className="icon">

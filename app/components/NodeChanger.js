@@ -34,7 +34,8 @@ export default class NodeChanger extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.daemonInfo = session.wallet.getDaemonConnectionInfo();
+    this.daemonInfo =
+      session && session.wallet ? session.wallet.getDaemonConnectionInfo() : '';
 
     this.state = {
       connectednode: `${this.daemonInfo.host}:${this.daemonInfo.port}`,

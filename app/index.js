@@ -119,7 +119,14 @@ export function startTail() {
   }
 }
 
-const { textColor } = uiType(darkMode);
+let { textColor } = uiType(darkMode);
+
+eventEmitter.on('darkmodeon', () => {
+  textColor = 'has-text-white';
+});
+eventEmitter.on('darkmodeoff', () => {
+  textColor = 'has-text-dark';
+});
 
 try {
   // eslint-disable-next-line no-unused-vars
@@ -593,19 +600,23 @@ function restartApplication() {
 eventEmitter.on('restartApplication', restartApplication);
 
 eventEmitter.on('backupToFile', backupToFile);
-function backupToFile() {
-  if (!session) {
-    return;
-  }
-  const publicAddress = session.wallet.getPrimaryAddress();
+
+function getWalletSecret(wallet?: any) {
+  const walletToBackup = wallet || session.wallet;
+
+  const publicAddress = walletToBackup.getPrimaryAddress();
   const [
     privateSpendKey,
     privateViewKey
-  ] = session.wallet.getPrimaryAddressPrivateKeys();
-  const [mnemonicSeed, err] = session.wallet.getMnemonicSeed();
+  ] = walletToBackup.getPrimaryAddressPrivateKeys();
+  // eslint-disable-next-line prefer-const
+  let [mnemonicSeed, err] = walletToBackup.getMnemonicSeed();
   if (err) {
-    log.debug(err);
-    return;
+    if (err.errorCode === 41) {
+      mnemonicSeed = '';
+    } else {
+      throw err;
+    }
   }
 
   const secret =
@@ -615,9 +626,19 @@ function backupToFile() {
     privateSpendKey +
     `\n\n${il8n.private_view_key_colon}\n\n` +
     privateViewKey +
-    `\n\n${il8n.mnemonic_seed_colon}\n\n` +
+    (mnemonicSeed !== '' ? `\n\n${il8n.mnemonic_seed_colon}\n\n` : '') +
     mnemonicSeed +
     `\n\n${il8n.please_save_your_keys}`;
+
+  return secret;
+}
+
+export function backupToFile(wallet?: any) {
+  if (!session && !wallet) {
+    return;
+  }
+
+  const secret = getWalletSecret(wallet || undefined);
 
   const options = {
     defaultPath: remote.app.getPath('documents'),
@@ -634,36 +655,20 @@ function backupToFile() {
   }
 
   fs.writeFile(savePath, secret, error => {
-    throw error;
+    if (error) {
+      throw error;
+    }
   });
 }
 
 eventEmitter.on('backupToClipboard', backupToClipboard);
+
 function backupToClipboard() {
   if (!session) {
     return;
   }
-  const publicAddress = session.wallet.getPrimaryAddress();
-  const [
-    privateSpendKey,
-    privateViewKey
-  ] = session.wallet.getPrimaryAddressPrivateKeys();
-  const [mnemonicSeed, err] = session.wallet.getMnemonicSeed();
-  if (err) {
-    log.debug(err);
-    return;
-  }
 
-  const secret =
-    // eslint-disable-next-line prefer-template
-    publicAddress +
-    `\n\n${il8n.private_spend_key_colon}\n\n` +
-    privateSpendKey +
-    `\n\n${il8n.private_view_key_colon}\n\n` +
-    privateViewKey +
-    `\n\n${il8n.mnemonic_seed_colon}\n\n` +
-    mnemonicSeed +
-    `\n\n${il8n.please_save_your_keys}`;
+  const secret = getWalletSecret();
 
   clipboard.writeText(secret);
 }
