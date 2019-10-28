@@ -618,6 +618,34 @@ export default class Send extends Component<Props, State> {
       toolTipColor
     } = uiType(darkMode);
 
+    const addressInput = (
+      <a
+        href="#addressinput"
+        onClick={event => event.preventDefault()}
+        onKeyPress={event => event.preventDefault()}
+        onMouseDown={event => event.preventDefault()}
+        id="#addressinput"
+      >
+        <Creatable
+          multi
+          options={this.autoCompleteContacts}
+          placeholder="Enter a TurtleCoin address or a contact name to send funds to"
+          // eslint-disable-next-line no-unused-vars
+          noOptionsMessage={inputValue => null}
+          styles={customStyles}
+          isClearable
+          formatCreateLabel={value => {
+            return `Send to ${value}`;
+          }}
+          value={selectedContact}
+          onChange={this.handleAddressChange}
+          id="autoCompleteAddress"
+          menuIsOpen={menuIsOpen}
+          onInputChange={this.checkInputLength}
+        />
+      </a>
+    );
+
     return (
       <div>
         <Redirector />
@@ -638,23 +666,7 @@ export default class Send extends Component<Props, State> {
                     htmlFor="autoCompleteAddress"
                   >
                     Send to
-                    <Creatable
-                      multi
-                      options={this.autoCompleteContacts}
-                      placeholder="Enter a TurtleCoin address or a contact name to send funds to"
-                      // eslint-disable-next-line no-unused-vars
-                      noOptionsMessage={inputValue => null}
-                      styles={customStyles}
-                      isClearable
-                      formatCreateLabel={value => {
-                        return `Send to ${value}`;
-                      }}
-                      value={selectedContact}
-                      onChange={this.handleAddressChange}
-                      id="autoCompleteAddress"
-                      menuIsOpen={menuIsOpen}
-                      onInputChange={this.checkInputLength}
-                    />
+                    {addressInput}
                   </label>
                 </div>
               </div>

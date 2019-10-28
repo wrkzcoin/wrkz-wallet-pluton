@@ -162,10 +162,13 @@ app.on('window-all-closed', () => {
 
 contextMenu({
   showInspectElement: isDev,
+  showSaveImage: false,
+  showCopyImage: false,
+  showCopyLink: false,
   prepend: (defaultActions, params) => [
     {
       label: 'Search block explorer for this hash',
-      // Only show it when right-clicking text
+      // Only show it when right-clicking a hash
       visible: params.selectionText.trim().length === 64,
       click: () => {
         shell.openExternal(
@@ -174,6 +177,29 @@ contextMenu({
           )}`
         );
       }
+    },
+    {
+      label: 'Cut',
+      role: 'cut',
+      enabled: false,
+      visible:
+        params.linkURL.includes('#addressinput') &&
+        params.inputFieldType !== 'plainText'
+    },
+    {
+      label: 'Copy',
+      role: 'copy',
+      enabled: false,
+      visible:
+        params.linkURL.includes('#addressinput') &&
+        params.inputFieldType !== 'plainText'
+    },
+    {
+      label: 'Paste',
+      role: 'paste',
+      visible:
+        params.linkURL.includes('#addressinput') &&
+        params.inputFieldType !== 'plainText'
     }
   ]
 });
@@ -231,8 +257,6 @@ app.on('ready', async () => {
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
