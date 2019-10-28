@@ -155,6 +155,13 @@ if (!session.loginFailed && !session.firstStartup) {
   log.debug('Login failed, redirecting to login...');
 }
 
+function handleDonate() {
+  eventEmitter.emit('goToDonate');
+}
+
+ipcRenderer.on('handleDonate', handleDonate);
+eventEmitter.on('handleDonate', handleDonate);
+
 ipcRenderer.on('handleClose', () => {
   if (session && !session.loginFailed && !session.firstStartup) {
     const saved = session.saveWallet(session.walletFile);

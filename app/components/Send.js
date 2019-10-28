@@ -5,6 +5,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
 import crypto from 'crypto';
+import { ipcRenderer } from 'electron';
 import isDev from 'electron-is-dev';
 import log from 'electron-log';
 import React, { Component } from 'react';
@@ -22,6 +23,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
+import donateInfo from '../constants/donateInfo.json';
 
 type Props = {
   uriAddress?: string,
@@ -118,9 +120,16 @@ export default class Send extends Component<Props, State> {
     this.toggleLoopTest = this.toggleLoopTest.bind(this);
     this.loopInterval = null;
     this.checkInputLength = this.checkInputLength.bind(this);
-    this.autoCompleteContacts = addressList.map(contact => {
-      return { label: contact.name, value: contact.address };
-    });
+    this.handleDonate = this.handleDonate.bind(this);
+    this.autoCompleteContacts = [
+      ...addressList.map(contact => {
+        return { label: contact.name, value: contact.address };
+      })
+    ];
+    this.devContact = {
+      label: donateInfo.name,
+      value: donateInfo.address
+    };
   }
 
   componentDidMount() {
@@ -129,13 +138,14 @@ export default class Send extends Component<Props, State> {
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.on('modifyCurrency', this.modifyCurrency);
     eventEmitter.on('confirmTransaction', this.sendTransaction);
+    ipcRenderer.on('handleDonate', this.handleDonate);
     // eslint-disable-next-line react/destructuring-assignment
     if (this.props && this.props.uriAddress) {
       const { uriAddress } = this.props;
 
       const selectedContact = this.search(
         uriAddress,
-        this.autoCompleteContacts,
+        [this.devContact, ...this.autoCompleteContacts],
         'value'
       );
 
@@ -152,6 +162,8 @@ export default class Send extends Component<Props, State> {
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.off('modifyCurrency', this.modifyCurrency);
     eventEmitter.off('confirmTransaction', this.sendTransaction);
+    ipcRenderer.off('handleDonate', this.handleDonate);
+
     if (looping) {
       clearInterval(this.loopInterval);
       loginCounter.looping = false;
@@ -181,6 +193,10 @@ export default class Send extends Component<Props, State> {
     this.setState({
       transactionInProgress: false
     });
+  };
+
+  handleDonate = () => {
+    this.handleAddressChange(this.devContact);
   };
 
   handleAmountChange = (event: any) => {
@@ -563,7 +579,7 @@ export default class Send extends Component<Props, State> {
   handleAddressChange = (event: any) => {
     if (event) {
       // eslint-disable-next-line no-underscore-dangle
-      if (event.__isNew__) {
+      if (event.__isNew__ || event.__isDonate__) {
         this.setState({
           selectedContact: { label: event.value, value: event.value },
           sendToAddress: event.value
@@ -571,7 +587,11 @@ export default class Send extends Component<Props, State> {
         return;
       }
 
-      const { paymentID } = this.search(event.value, addressList, 'address');
+      const { paymentID } = this.search(
+        event.value,
+        [donateInfo, ...addressList],
+        'address'
+      );
 
       this.setState({
         selectedContact: event,
@@ -622,8 +642,6 @@ export default class Send extends Component<Props, State> {
       <a
         href="#addressinput"
         onClick={event => event.preventDefault()}
-        onKeyPress={event => event.preventDefault()}
-        onMouseDown={event => event.preventDefault()}
         id="#addressinput"
       >
         <Creatable

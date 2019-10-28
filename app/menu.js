@@ -259,6 +259,14 @@ export default class MenuBuilder {
         }
       ]
     };
+    const subMenuDonate = {
+      label: 'Donate',
+      submenu: [
+        {
+          label: `Donate to the Developers`
+        }
+      ]
+    };
 
     const subMenuView =
       process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
@@ -271,7 +279,8 @@ export default class MenuBuilder {
       subMenuView,
       subMenuWindow,
       subMenuTools,
-      subMenuHelp
+      subMenuHelp,
+      subMenuDonate
     ];
   }
 
@@ -311,6 +320,10 @@ export default class MenuBuilder {
     this.mainWindow.webContents.send('handleSaveSilent');
     log.debug('Import menu selected.');
     this.mainWindow.webContents.send('handleImport');
+  }
+
+  handleDonate() {
+    this.mainWindow.webContents.send('handleDonate');
   }
 
   buildDefaultTemplate() {
@@ -444,13 +457,13 @@ export default class MenuBuilder {
           },
           {
             label: il8n.support,
-            click() {
+            click: () => {
               shell.openExternal('https://discord.gg/P7urHQs');
             }
           },
           {
             label: il8n.about,
-            click() {
+            click: () => {
               shell.openExternal(
                 'http://github.com/turtlecoin/turtle-wallet-proton#readme'
               );
@@ -458,7 +471,7 @@ export default class MenuBuilder {
           },
           {
             label: il8n.report_bug,
-            click() {
+            click: () => {
               shell.openExternal(
                 'https://github.com/turtlecoin/turtle-wallet-proton/issues'
               );
@@ -466,10 +479,25 @@ export default class MenuBuilder {
           },
           {
             label: il8n.feature_request,
-            click() {
+            click: () => {
               shell.openExternal(
                 'https://github.com/turtlecoin/turtle-wallet-proton/issues'
               );
+            }
+          }
+        ]
+      },
+      {
+        label: 'Donate',
+        submenu: [
+          {
+            label: 'Donate to the Developers',
+            click: () => {
+              try {
+                this.handleDonate();
+              } catch (err) {
+                log.error(err);
+              }
             }
           }
         ]

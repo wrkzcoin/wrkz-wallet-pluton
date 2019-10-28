@@ -148,5 +148,11 @@
     "location": ".handleIssues",
     "description": "Make a feature request for Proton Wallet",
     "keywords": ""
+  },
+  {
+    "settingName": "Donate",
+    "location": ".goToDonate",
+    "description": "Like Proton Wallet? Consider donating to support its development",
+    "keywords": "donate developer"
   }
 ]

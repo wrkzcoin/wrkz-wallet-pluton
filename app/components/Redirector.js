@@ -6,6 +6,7 @@ import log from 'electron-log';
 import { ipcRenderer } from 'electron';
 import { Redirect, withRouter } from 'react-router-dom';
 import { session, eventEmitter, loginCounter, config } from '../index';
+import donateInfo from '../constants/donateInfo.json';
 
 type State = {
   home: boolean,
@@ -20,7 +21,8 @@ type State = {
   autoLockInterval: number,
   autoLockEnabled: boolean,
   settings: boolean,
-  newWallet: boolean
+  newWallet: boolean,
+  donate: boolean
 };
 
 type Location = {
@@ -57,7 +59,8 @@ class Redirector extends Component<Props, State> {
       autoLockInterval: config.autoLockInterval,
       autoLockEnabled: config.autoLockEnabled,
       settings: false,
-      newWallet: false
+      newWallet: false,
+      donate: false
     };
     const { autoLockInterval, autoLockEnabled } = this.state;
     this.goToImportFromSeed = this.goToImportFromSeed.bind(this);
@@ -69,6 +72,8 @@ class Redirector extends Component<Props, State> {
     this.logOut = this.logOut.bind(this);
     this.setAutoLock = this.setAutoLock.bind(this);
     this.goToNewWallet = this.goToNewWallet.bind(this);
+    this.goToDonate = this.goToDonate.bind(this);
+
     if (
       session.walletPassword !== '' &&
       loginCounter.isLoggedIn &&
@@ -103,6 +108,7 @@ class Redirector extends Component<Props, State> {
     eventEmitter.on('setAutoLock', this.setAutoLock);
     eventEmitter.on('goToSettings', this.goToSettings);
     eventEmitter.on('goToNewWallet', this.goToNewWallet);
+    eventEmitter.on('goToDonate', this.goToDonate);
 
     // prettier-ignore
     const { location: { pathname } } = this.props;
@@ -134,9 +140,16 @@ class Redirector extends Component<Props, State> {
     eventEmitter.off('setAutoLock', this.setAutoLock);
     eventEmitter.off('goToSettings', this.goToSettings);
     eventEmitter.off('goToNewWallet', this.goToNewWallet);
+    eventEmitter.off('goToDonate', this.goToDonate);
     clearTimeout(this.activityTimer);
     clearInterval(this.refreshPrice);
   }
+
+  goToDonate = () => {
+    this.setState({
+      donate: true
+    });
+  };
 
   goToNewWallet = () => {
     this.setState({
@@ -247,7 +260,8 @@ class Redirector extends Component<Props, State> {
       isLoggedIn,
       freshRestore,
       settings,
-      newWallet
+      newWallet,
+      donate
     } = this.state;
     if (freshRestore === true && pathname !== '/changepassword') {
       loginCounter.freshRestore = false;
@@ -274,6 +288,12 @@ class Redirector extends Component<Props, State> {
 
     if (newWallet === true && pathname !== '/newwallet') {
       return <Redirect to="/newwallet" />;
+    }
+
+    if (donate === true && !pathname.includes('/send')) {
+      return (
+        <Redirect to={`/send/${donateInfo.address}/${donateInfo.paymentID}`} />
+      );
     }
 
     if (
