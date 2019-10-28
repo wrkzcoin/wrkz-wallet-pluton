@@ -20,6 +20,11 @@ import MenuBuilder from './menu';
 import iConfig from './constants/config';
 import packageInfo from '../package.json';
 
+/** disable background throttling so our sync
+ *   speed doesn't crap out when minimized
+ */
+app.commandLine.appendSwitch('disable-background-timer-throttling');
+
 const { version } = packageInfo;
 
 let isQuitting;
