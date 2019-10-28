@@ -146,10 +146,14 @@ export default class NodeChanger extends Component<Props, State> {
   };
 
   toggleLocalDaemon = () => {
-    const { useLocalDaemon } = this.state;
+    const { useLocalDaemon, daemonLogPath } = this.state;
+
+    if (!daemonLogPath) {
+      return;
+    }
 
     if (!useLocalDaemon) {
-      startTail();
+      startTail(daemonLogPath);
     } else {
       stopTail();
     }

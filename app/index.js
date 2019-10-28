@@ -102,8 +102,9 @@ export let daemonLogger = null;
 if (useLocalDaemon && daemonLogPath) {
   try {
     daemonLogger = new DaemonLogger(daemonLogPath);
-  } catch {
+  } catch (error) {
     log.error('Tail initialization failed.');
+    log.error(error);
   }
 }
 
@@ -111,11 +112,12 @@ export function stopTail() {
   daemonLogger = null;
 }
 
-export function startTail() {
+export function startTail(filePath?: PathLike) {
   try {
-    daemonLogger = new DaemonLogger(daemonLogPath);
-  } catch {
+    daemonLogger = new DaemonLogger(filePath || daemonLogPath);
+  } catch (error) {
     log.error('Tail initialization failed.');
+    log.error(error);
   }
 }
 
