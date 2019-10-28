@@ -104,5 +104,7 @@
 
 - [ ] Changing password works
 
+```
 Template (c) zpalmtree 2019-2019, (c) ExtraHash 2019-2019
 original found here: https://github.com/turtlecoin/turtlecoin-mobile-wallet/blob/master/.github/ISSUE_TEMPLATE/release-testing.md
+```
