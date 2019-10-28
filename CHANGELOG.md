@@ -6,9 +6,10 @@
 - Adds an addressbook.
 - Makes several updates to the send form to integrate with the new address book. You can now enter a contact name or turtlecoin address in the send field, and it will autosuggest matching contacts as you type.
 - Adds a search feature. Currently you can search contacts (name or address), transactions (hash, block height, or payment ID), and settings (name, description, or keywords).
+- Fixes a bug that would cause the wallet syncing to slow drastically when window was hidden or minimized.
 - Switches the node changer to use the built in swapNode() method.
 - Removes the ability to actually launch the TurtleCoind process, but still allows tailing a log file: I found that actually having Proton launch the child process itself was not the functionality I was really looking for, I was just looking to be able to view my terminal output in Proton for both the daemon and the backend. So, I removed the launching of the process, but it still allows you to set a log file location and view the tail of the text file in the Terminal tab.
-- Switches to GitHub actions for pushes and PR's rather than using travis
+- Switches to GitHub actions for push and PR building / release deployment rather than using travis (much faster, windows build is ~6 min compared to almost 30)
 
 ## v1.0.0
 
