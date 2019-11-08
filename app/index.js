@@ -40,15 +40,16 @@ export const il8n = new LocalizedStrings({
 });
 
 export function savedInInstallDir(savePath: string) {
-  const installationDirectory = path.resolve(remote.app.getAppPath(), '../../');
-  const saveAttemptDirectory = path.resolve(savePath, '../');
-  if (
-    saveAttemptDirectory === installationDirectory &&
-    os.platform() === 'win32'
-  ) {
-    return true;
-  }
-  return false;
+  const programDirectory = path.resolve(remote.app.getAppPath(), '../../');
+  const saveDirectory = path.resolve(savePath, '../');
+
+  log.info(programDirectory, saveDirectory);
+
+  const relative = path.relative(programDirectory, saveDirectory);
+  return (
+    (relative && !relative.startsWith('..') && !path.isAbsolute(relative)) ||
+    programDirectory === saveDirectory
+  );
 }
 
 export let config = iConfig;
