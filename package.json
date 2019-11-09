@@ -20,8 +20,7 @@
     "postinstall": "electron-builder install-app-deps package.json && yarn build-dll",
     "preinstall": "node ./internals/scripts/CheckYarn.js",
     "prestart": "yarn build",
-    "prettier": "prettier '**/*.{js,jsx,ts,tsx,json,css,scss,md}' --ignore-path .gitignore --single-quote --write",
-    "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
+    "prettier": "node ./node_modules/prettier/bin-prettier.js '**/*.{ts,tsx,json,md}' --ignore-path .gitignore --single-quote --write",    "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r @babel/register ./app/main.dev.js",
     "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js"
   },
