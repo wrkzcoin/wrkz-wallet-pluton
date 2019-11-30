@@ -3245,7 +3245,7 @@ buffer@^5.1.0:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
 
-buffer@^5.4.0:
+buffer@^5.4.3:
   version "5.4.3"
   resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.4.3.tgz#3fbc9c69eb713d323e3fc1a895eee0710c072115"
   integrity sha512-zvj65TkFeIt3i6aj5bIvJDzjjQQGs4o/sNoezg1F1kYap9Nu2jcUdpwzRSJTHMMzG0H7bZkn4rNQpImhuxWX2A==
@@ -9525,12 +9525,12 @@ object-keys@~0.4.0:
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-0.4.0.tgz#28a6aae7428dd2c3a92f3d95f21335dd204e0336"
   integrity sha1-KKaq50KN0sOpLz2V8hM13SBOAzY=
 
-object-sizeof@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/object-sizeof/-/object-sizeof-1.5.1.tgz#da2ed6ce9c7c0b0f7cf42e8b370f493ec41e0936"
-  integrity sha512-htKkjOdWqxZQg5V6/M0tA/yLiYaRize4MzAyzibuR9Q0Jy/WYFRmTH4FYiGTdTXi2hbzxzdnaLv4K8N4VX7YTQ==
+object-sizeof@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/object-sizeof/-/object-sizeof-1.5.2.tgz#d2db77107779e4c522a390fbf5e715d848395dc1"
+  integrity sha512-5M9MYfLX3GsUv8YVSxypUkjQvpj5p3lX5gSaZCcV5973EqcQYp576vNU/620C1V6UaCdxeYGk3/QzEWz7uLvUQ==
   dependencies:
-    buffer "^5.4.0"
+    buffer "^5.4.3"
 
 object-visit@^1.0.0:
   version "1.0.1"
@@ -11392,12 +11392,28 @@ request-promise-core@1.1.2:
   dependencies:
     lodash "^4.17.11"
 
-request-promise-native@^1.0.5, request-promise-native@^1.0.7:
+request-promise-core@1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/request-promise-core/-/request-promise-core-1.1.3.tgz#e9a3c081b51380dfea677336061fea879a829ee9"
+  integrity sha512-QIs2+ArIGQVp5ZYbWD5ZLCY29D5CfWizP8eWnm8FoGD1TX61veauETVQbrV60662V0oFBkrDOuaBI8XgtuyYAQ==
+  dependencies:
+    lodash "^4.17.15"
+
+request-promise-native@^1.0.5:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/request-promise-native/-/request-promise-native-1.0.7.tgz#a49868a624bdea5069f1251d0a836e0d89aa2c59"
   integrity sha512-rIMnbBdgNViL37nZ1b3L/VfPOpSi0TqVDQPAvO6U14lMzOLrt5nilxCQqtDKhZeDiW0/hkCXGoQjhgJd/tCh6w==
   dependencies:
     request-promise-core "1.1.2"
+    stealthy-require "^1.1.1"
+    tough-cookie "^2.3.3"
+
+request-promise-native@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/request-promise-native/-/request-promise-native-1.0.8.tgz#a455b960b826e44e2bf8999af64dff2bfe58cb36"
+  integrity sha512-dapwLGqkHtwL5AEbfenuzjTYg35Jd6KPytsC2/TLkVMz8rm+tNt72MGUWT1RP/aYawMpN6HqbNGBQaRcBtjQMQ==
+  dependencies:
+    request-promise-core "1.1.3"
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
@@ -13238,26 +13254,18 @@ tunnel-agent@0.6.0, tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-turtlecoin-crypto@^3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/turtlecoin-crypto/-/turtlecoin-crypto-3.0.5.tgz#a6a4ebd2775eb26d18eb4e4bd83b00ec7be66796"
-  integrity sha512-X8t75lVQHMmFOOSqxz+FdYbkZDtjzwHvFdxVC9aE7AEuhMQjWkjDyV0frwRlKcBeReJG0kmKaqOKVLpPAcVyOg==
+turtlecoin-crypto@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/turtlecoin-crypto/-/turtlecoin-crypto-3.1.0.tgz#e524dfb5ff2be519095b5300c50e739bcf60474c"
+  integrity sha512-eaO+jxOmitYWTxl/QGR6aYdJZjOiV6T5tGgIEJjiMHwwse9487vTA5/x0iMtubfIrjK0J1jqiK9gmKbbh1yA5A==
   dependencies:
     bindings "^1.5.0"
     nan "^2.14.0"
 
-turtlecoin-rpc@^1.0.2:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/turtlecoin-rpc/-/turtlecoin-rpc-1.0.3.tgz#51a43f06680b4924682a8c5ab40427299c44d50f"
-  integrity sha512-cBrL4I8l8mvw8okQiw1xiH8YsbG4F2aucrPvOyQJupQxxokc1rTtgDUSMI6YNTjqt4qBPQUnPq5oKVGPsHy+dg==
-  dependencies:
-    request "^2.88.0"
-    request-promise-native "^1.0.7"
-
-turtlecoin-utils@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/turtlecoin-utils/-/turtlecoin-utils-1.0.6.tgz#0b33e945c8c05334391fcdb7dbdb65d059dd8e83"
-  integrity sha512-ldMF38Z+Nxti/Ol/pVKnsccFEUBbRE14ZknwZqoSCfmVl+pBwHSgC5Xr5oogUyUM0x0djCB+Nsv/yYlSNgAHgA==
+turtlecoin-utils@^1.0.14:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/turtlecoin-utils/-/turtlecoin-utils-1.0.15.tgz#3eddded6feca14580b846aafa370ef6604ecd6cf"
+  integrity sha512-nVMst3fZNmDG97kPyk5I+f05CD4+0o0F0m2J21IVddd/i2Fw/Id/brnemuMlgi1llAq1zhQYP1AVkjra1RPI4w==
   dependencies:
     crc "^3.8.0"
     get-random-values "^1.2.0"
@@ -13265,19 +13273,20 @@ turtlecoin-utils@^1.0.6:
     secure-random-string "^1.1.0"
     varint "^5.0.0"
   optionalDependencies:
-    turtlecoin-crypto "^3.0.5"
+    turtlecoin-crypto "^3.1.0"
 
-turtlecoin-wallet-backend@^4.0.4:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-4.0.4.tgz#b6c69c07292c8b6c49cece28c753658280f8419b"
-  integrity sha512-Dzu1pK0Ec4EjVTaW7g1IcEzV5stMKy3nmjR4hTXeHJr2TVNTNdlvwiqte/83iz7gN+LC94BlBrhzUjwNgd45Og==
+turtlecoin-wallet-backend@^4.0.8:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/turtlecoin-wallet-backend/-/turtlecoin-wallet-backend-4.0.8.tgz#24a95ea0e6ba62490044a72bbed4cc7481294729"
+  integrity sha512-dI4t/Xfesr4T0tWCpM8q2aN9qaqAUHAGWPipwcIghIaty0NhbJ452scAr7EMNeKL99VjC40KWSYNjS/xgJ+VLw==
   dependencies:
     lodash "^4.17.15"
-    object-sizeof "^1.5.1"
+    object-sizeof "^1.5.2"
     pbkdf2 "^3.0.17"
-    turtlecoin-rpc "^1.0.2"
-    turtlecoin-utils "^1.0.6"
-    typescript "^3.6.2"
+    request "^2.88.0"
+    request-promise-native "^1.0.8"
+    turtlecoin-utils "^1.0.14"
+    typescript "^3.7.2"
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
@@ -13319,10 +13328,10 @@ typescript@^3.3.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.1.tgz#b6691be11a881ffa9a05765a205cb7383f3b63c6"
   integrity sha512-3NSMb2VzDQm8oBTLH6Nj55VVtUEpe/rgkIzMir0qVoLyjDZlnMBva0U6vDiV3IH+sl/Yu6oP5QwsAQtHPmDd2Q==
 
-typescript@^3.6.2:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.3.tgz#fea942fabb20f7e1ca7164ff626f1a9f3f70b4da"
-  integrity sha512-N7bceJL1CtRQ2RiG0AQME13ksR7DiuQh/QehubYcghzv20tnh+MQnQIuJddTmsbqYj+dztchykemz0zFzlvdQw==
+typescript@^3.7.2:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.2.tgz#27e489b95fa5909445e9fef5ee48d81697ad18fb"
+  integrity sha512-ml7V7JfiN2Xwvcer+XAf2csGO1bPBdRbFCkYBczNZggrBZ9c7G3riSUeJmqEU5uOtXNPMhE3n+R4FA/3YOAWOQ==
 
 ua-parser-js@^0.7.18:
   version "0.7.19"

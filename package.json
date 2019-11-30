@@ -273,7 +273,7 @@
     "semver": "^6.2.0",
     "source-code-pro": "^2.30.2",
     "tail": "^2.0.3",
-    "turtlecoin-wallet-backend": "^4.0.4"
+    "turtlecoin-wallet-backend": "^4.0.8"
   },
   "devEngines": {
     "node": ">=10.x",
