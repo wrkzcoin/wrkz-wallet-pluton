@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1
+- upgrades the wallet backend to alleviate a bug that was (possibly) effecting sending transactions
+- Slight configuration change in an attempt to make the sync process not effect the GUI responsiveness so much
+
 ## v1.1.0
 
 - Adds a new method of making new wallets, which is much more interactive, and ensures the user backs up their seed before they use their wallet.
