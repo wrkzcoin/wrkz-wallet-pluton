@@ -34,8 +34,8 @@ let config = null;
 const homedir = os.homedir();
 
 const directories = [
-  `${homedir}/.protonwallet`,
-  `${homedir}/.protonwallet/logs`
+  `${homedir}/.plutonwallet`,
+  `${homedir}/.plutonwallet/logs`
 ];
 
 const [programDirectory] = directories;
@@ -213,7 +213,7 @@ app.on('ready', async () => {
   }
 
   mainWindow = new BrowserWindow({
-    title: `Proton v${version}`,
+    title: `Pluton v${version}`,
     useContentSize: true,
     show: false,
     width: 1250,

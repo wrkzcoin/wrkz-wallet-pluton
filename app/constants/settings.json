@@ -134,7 +134,7 @@
   {
     "settingName": "About",
     "location": ".handleAbout",
-    "description": "View the readme for Proton Wallet",
+    "description": "View the readme for Pluton Wallet",
     "keywords": ""
   },
   {
@@ -146,13 +146,13 @@
   {
     "settingName": "Request Feature",
     "location": ".handleIssues",
-    "description": "Make a feature request for Proton Wallet",
+    "description": "Make a feature request for Pluton Wallet",
     "keywords": ""
   },
   {
     "settingName": "Donate",
     "location": ".goToDonate",
-    "description": "Like Proton Wallet? Consider donating to support its development",
+    "description": "Like Pluton Wallet? Consider donating to support its development",
     "keywords": "donate developer"
   }
 ]

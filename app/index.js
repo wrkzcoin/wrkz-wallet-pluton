@@ -29,8 +29,8 @@ import Configure from './Configure';
 const homedir = os.homedir();
 
 export const directories = [
-  `${homedir}/.protonwallet`,
-  `${homedir}/.protonwallet/logs`
+  `${homedir}/.plutonwallet`,
+  `${homedir}/.plutonwallet/logs`
 ];
 
 export const il8n = new LocalizedStrings({
@@ -63,9 +63,9 @@ updater.getLatestVersion();
 
 export const loginCounter = new LoginCounter();
 
-remote.app.setAppUserModelId('wallet.proton.extra');
+remote.app.setAppUserModelId('work.wrkz.pluton');
 
-log.debug(`Proton wallet started...`);
+log.debug(`Pluton wallet started...`);
 
 const [programDirectory] = directories;
 
@@ -195,7 +195,7 @@ eventEmitter.on('updateRequired', updateFile => {
       </center>
       <br />
       <p className={`subtitle ${textColor}`}>
-        There&apos;s a new version of Proton Wallet available. Would you like to
+        There&apos;s a new version of Pluton Wallet available. Would you like to
         download it?
       </p>
     </div>
@@ -435,7 +435,7 @@ ipcRenderer.on('failedDaemonInit', failedDaemonInit);
 
 function handleAbout() {
   remote.shell.openExternal(
-    'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+    'https://github.com/wrkzdev/wrkz-wallet-pluton#readme'
   );
 }
 
@@ -445,7 +445,7 @@ function handleHelp() {
 
 function handleIssues() {
   remote.shell.openExternal(
-    'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+    'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
   );
 }
 

@@ -386,7 +386,7 @@ export default class Home extends Component<Props, State> {
                                     {tx[1]} <br />
                                     {tx[5] !== '' ? tx[5] : 'none'}
                                     <br />
-                                    {session.atomicToHuman(tx[7], true)} Configure.ticker
+                                    {session.atomicToHuman(tx[7], true)} {Configure.ticker}
                                     <br />
                                     <p
                                       className={
@@ -395,7 +395,7 @@ export default class Home extends Component<Props, State> {
                                           : ''
                                       }
                                     >
-                                      {session.atomicToHuman(tx[2], true)} Configure.ticker
+                                      {session.atomicToHuman(tx[2], true)} {Configure.ticker}
                                     </p>
                                     <br />
                                     <br />
@@ -423,7 +423,7 @@ export default class Home extends Component<Props, State> {
                 <div className={`box ${fillColor}`}>
                   <p className={`${textColor} title has-text-centered`}>
                     <i className="fas fa-robot" />
-                    &nbsp;&nbsp;Welcome to Proton!
+                    &nbsp;&nbsp;Welcome to Pluton!
                   </p>
                   <br />
                   <p className={`${textColor} subtitle has-text-centered`}>

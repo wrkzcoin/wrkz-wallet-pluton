@@ -92,21 +92,26 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "ExtraHash",
-      "repo": "proton",
+      "owner": "Wrkz",
+      "repo": "pluton",
       "private": false
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/turtlecoin/turtle-wallet-proton.git"
+    "url": "git+https://github.com/wrkzdev/wrkz-wallet-pluton.git"
   },
   "author": {
-    "name": "ExtraHash",
-    "email": "extrahash@protonmail.com",
-    "url": "http://getproton.org"
+    "name": "Wrkz",
+    "email": "team@wrkz.work",
+    "url": "https://github.com/wrkzdev/wrkz-wallet-pluton"
   },
   "contributors": [
+    {
+      "name": "ExtraHash",
+      "email": "extrahash@protonmail.com",
+      "url": "http://getproton.org"
+    },
     {
       "name": "Vikram Rangaraj",
       "email": "vikr01@icloud.com",
@@ -120,13 +125,15 @@
   ],
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/turtlecoin/turtle-wallet-proton/issues"
+    "url": "https://github.com/wrkzdev/wrkz-wallet-pluton/issues"
   },
   "keywords": [
     "turtlecoin",
     "gui wallet",
     "electron",
-    "proton"
+    "proton",
+    "wrkzcoin",
+    "pluton"
   ],
   "homepage": "https://github.com/turtlecoin/turtle-wallet-proton#readme",
   "jest": {

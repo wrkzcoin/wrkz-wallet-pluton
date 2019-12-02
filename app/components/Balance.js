@@ -118,9 +118,9 @@ export default class Balance extends Component<Props, State> {
     if (session.wallet && displayCurrency === Configure.ticker) {
       balanceTooltip =
         `Unlocked: ${session.atomicToHuman(unlockedBalance, true)} ${
-          il8n.WRKZ
+          Configure.ticker
         }<br>` +
-        `Locked: ${session.atomicToHuman(lockedBalance, true)} ${il8n.WRKZ}`;
+        `Locked: ${session.atomicToHuman(lockedBalance, true)} ${Configure.ticker}`;
     } else if (
       session.wallet &&
       symbolLocation === 'prefix' &&
@@ -183,7 +183,7 @@ export default class Balance extends Component<Props, State> {
               )}
               &nbsp;
               {session.atomicToHuman(unlockedBalance + lockedBalance, true)}
-              &nbsp;{il8n.WRKZ}
+              &nbsp;{Configure.ticker}
             </span>
           )}
           {displayCurrency === 'fiat' && symbolLocation === 'prefix' && (
