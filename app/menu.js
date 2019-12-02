@@ -55,7 +55,7 @@ export default class MenuBuilder {
           label: `${il8n.about} ${productName}`,
           click: () => {
             shell.openExternal(
-              'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+              'https://github.com/wrkzdev/wrkz-wallet-pluton#readme'
             );
           }
         },
@@ -248,7 +248,7 @@ export default class MenuBuilder {
           label: il8n.report_bug,
           click() {
             shell.openExternal(
-              'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+              'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
             );
           }
         },
@@ -256,7 +256,7 @@ export default class MenuBuilder {
           label: il8n.feature_request,
           click() {
             shell.openExternal(
-              'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+              'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
             );
           }
         }
@@ -468,7 +468,7 @@ export default class MenuBuilder {
             label: il8n.about,
             click: () => {
               shell.openExternal(
-                'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+                'https://github.com/wrkzdev/wrkz-wallet-pluton#readme'
               );
             }
           },
@@ -476,7 +476,7 @@ export default class MenuBuilder {
             label: il8n.report_bug,
             click: () => {
               shell.openExternal(
-                'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+                'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
               );
             }
           },
@@ -484,7 +484,7 @@ export default class MenuBuilder {
             label: il8n.feature_request,
             click: () => {
               shell.openExternal(
-                'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+                'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
               );
             }
           }

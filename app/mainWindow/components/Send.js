@@ -24,6 +24,7 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import { uiType, atomicToHuman, search } from '../utils/utils';
 import donateInfo from '../constants/donateInfo.json';
+import Configure from '../Configure';
 
 type Props = {
   uriAddress?: string,
@@ -378,7 +379,7 @@ export default class Send extends Component<Props, State> {
 
     await this.setState({
       selectedContact: { label: sendToAddress, value: sendToAddress },
-      enteredAmount: String(amount / 100),
+      enteredAmount: String((amount + Configure.minimumFee) / 100),
       sendToAddress,
       paymentID,
       sendAll: false
@@ -414,14 +415,14 @@ export default class Send extends Component<Props, State> {
     const { unlockedBalance, fiatPrice, displayCurrency, nodeFee } = this.state;
 
     const totalAmount =
-      unlockedBalance - 10 - parseInt(nodeFee, 10) <= 0 ? 0 : unlockedBalance;
+      unlockedBalance - Configure.minimumFee - parseInt(nodeFee, 10) <= 0 ? 0 : unlockedBalance;
     const enteredAmount =
-      unlockedBalance - 10 - parseInt(nodeFee, 10) <= 0
+      unlockedBalance - Configure.minimumFee - parseInt(nodeFee, 10) <= 0
         ? 0
-        : totalAmount - 10 - parseInt(nodeFee, 10);
+        : totalAmount - Configure.minimumFee - parseInt(nodeFee, 10);
     this.setState({
       enteredAmount:
-        displayCurrency === 'TRTL'
+        displayCurrency === Configure.ticker
           ? atomicToHuman(enteredAmount, false).toString()
           : atomicToHuman(enteredAmount * fiatPrice, false).toString()
     });
@@ -508,7 +509,7 @@ export default class Send extends Component<Props, State> {
         <Creatable
           multi
           options={this.autoCompleteContacts}
-          placeholder="Enter a TurtleCoin address or a contact name to send funds to"
+          placeholder="Enter a WrkzCoin address or a contact name to send funds to"
           // eslint-disable-next-line no-unused-vars
           noOptionsMessage={inputValue => null}
           styles={customStyles}
@@ -578,7 +579,7 @@ export default class Send extends Component<Props, State> {
                           : `How much to send (eg. ${
                               displayCurrency === 'fiat'
                                 ? exampleAmount
-                                : '100 TRTL'
+                                : '1000 WRKZ'
                             })`
                       }
                       value={enteredAmount}

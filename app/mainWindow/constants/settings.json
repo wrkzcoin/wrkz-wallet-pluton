@@ -12,6 +12,12 @@
     "keywords": ""
   },
   {
+    "settingName": "Wrkzd Log File Location",
+    "location": "node",
+    "description": "Set the path to the Wrkzd log",
+    "keywords": ""
+  },
+  {
     "settingName": "Wallet Settings",
     "location": "scan",
     "description": "All settings related to the wallet itself",
@@ -122,7 +128,7 @@
   {
     "settingName": "About",
     "location": ".handleAbout",
-    "description": "View the readme for Proton Wallet",
+    "description": "View the readme for Pluton Wallet",
     "keywords": ""
   },
   {
@@ -134,13 +140,13 @@
   {
     "settingName": "Request Feature",
     "location": ".handleIssues",
-    "description": "Make a feature request for Proton Wallet",
+    "description": "Make a feature request for Pluton Wallet",
     "keywords": ""
   },
   {
     "settingName": "Donate",
     "location": ".goToDonate",
-    "description": "Like Proton Wallet? Consider donating to support its development",
+    "description": "Like Pluton Wallet? Consider donating to support its development",
     "keywords": "donate developer"
   }
 ]

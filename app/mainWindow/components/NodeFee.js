@@ -52,7 +52,7 @@ export default class NodeFee extends Component<Props, State> {
           <div className="tags has-addons">
             <span className={`tag ${color} ${size}`}>{il8n.node_fee}</span>
             <span className={`tag is-danger ${size}`}>
-              {atomicToHuman(nodeFee, true)} {il8n.TRTL}
+              {atomicToHuman(nodeFee, true)} {Configure.ticker}
             </span>
           </div>
         </div>

@@ -15,6 +15,7 @@ import {
   atomicToHuman,
   convertTimestamp
 } from '../utils/utils';
+import Configure from '../Configure';
 
 let displayedTransactionCount: number = 50;
 
@@ -266,7 +267,7 @@ export default class Home extends Component<Props, State> {
                         {tx[2] < 0 && (
                           <td>
                             <p className="has-text-danger has-text-right">
-                              {displayCurrency === 'TRTL' &&
+                              {displayCurrency === Configure.ticker &&
                                 atomicToHuman(tx[2], true)}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'prefix' &&
@@ -293,7 +294,7 @@ export default class Home extends Component<Props, State> {
                         {tx[2] > 0 && (
                           <td>
                             <p className="has-text-right">
-                              {displayCurrency === 'TRTL' &&
+                              {displayCurrency === Configure.ticker &&
                                 atomicToHuman(tx[2], true)}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'prefix' &&
@@ -314,7 +315,7 @@ export default class Home extends Component<Props, State> {
                         )}
                         <td>
                           <p className="has-text-right">
-                            {displayCurrency === 'TRTL' &&
+                            {displayCurrency === Configure.ticker &&
                               atomicToHuman(tx[3], true)}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'prefix' &&
@@ -377,7 +378,7 @@ export default class Home extends Component<Props, State> {
                                     {tx[1]} <br />
                                     {tx[5] !== '' ? tx[5] : 'none'}
                                     <br />
-                                    {atomicToHuman(tx[7], true)} TRTL
+                                    {atomicToHuman(tx[7], true)} {Configure.ticker}
                                     <br />
                                     <p
                                       className={
@@ -386,7 +387,7 @@ export default class Home extends Component<Props, State> {
                                           : ''
                                       }
                                     >
-                                      {atomicToHuman(tx[2], true)} TRTL
+                                      {atomicToHuman(tx[2], true)} {Configure.ticker}
                                     </p>
                                     <br />
                                     <br />
@@ -414,7 +415,7 @@ export default class Home extends Component<Props, State> {
                 <div className={`box ${fillColor}`}>
                   <p className={`${textColor} title has-text-centered`}>
                     <i className="fas fa-robot" />
-                    &nbsp;&nbsp;Welcome to Proton!
+                    &nbsp;&nbsp;Welcome to Pluton!
                   </p>
                   <br />
                   <p className={`${textColor} subtitle has-text-centered`}>
