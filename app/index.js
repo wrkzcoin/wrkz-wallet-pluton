@@ -275,7 +275,7 @@ ipcRenderer.on('handleSaveAs', () => {
     defaultPath: remote.app.getPath('documents'),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
+        name: 'WrkzCoin Wallet File (v0)',
         extensions: ['wallet']
       }
     ]
@@ -347,7 +347,7 @@ function handleOpen() {
     defaultPath: remote.app.getPath('documents'),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
+        name: 'WrkzCoin Wallet File (v0)',
         extensions: ['wallet']
       }
     ]
@@ -419,10 +419,10 @@ eventEmitter.on('sendNotification', function sendNotification(amount) {
 
   if (notifications) {
     const notif = new window.Notification('Transaction Received!', {
-      body: `${il8n.just_received} ${amount} ${il8n.TRTL}`
+      body: `${il8n.just_received} ${amount} ${il8n.WRKZ}`
     });
     if (notif) {
-      log.debug(`Sent notification: You've just received ${amount} TRTL.`);
+      log.debug(`Sent notification: You've just received ${amount} WRKZ.`);
     }
   }
 });
@@ -466,7 +466,7 @@ function failedDaemonInit() {
       <p className={`subtitle ${textColor}`}>
         Your daemon failed to initialize, and you have been placed back in
         remote node mode automatically. You can check the log output of
-        TurtleCoind in the Terminal tab.
+        Wrzkd in the Terminal tab.
       </p>
     </div>
   );
@@ -493,7 +493,7 @@ export function saveNew(wallet: any, password: string) {
     defaultPath: remote.app.getPath('documents'),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
+        name: 'WrzkCoin Wallet File (v0)',
         extensions: ['wallet']
       }
     ]

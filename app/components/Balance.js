@@ -82,7 +82,7 @@ export default class Balance extends Component<Props, State> {
 
   switchCurrency = () => {
     const { displayCurrency } = this.state;
-    if (displayCurrency === 'TRTL') {
+    if (displayCurrency === 'WRKZ') {
       this.setState({
         displayCurrency: 'fiat'
       });
@@ -91,10 +91,10 @@ export default class Balance extends Component<Props, State> {
     }
     if (displayCurrency === 'fiat') {
       this.setState({
-        displayCurrency: 'TRTL'
+        displayCurrency: 'WRKZ'
       });
-      session.modifyConfig('displayCurrency', 'TRTL');
-      eventEmitter.emit('modifyCurrency', 'TRTL');
+      session.modifyConfig('displayCurrency', 'WRKZ');
+      eventEmitter.emit('modifyCurrency', 'WRKZ');
     }
     ReactTooltip.rebuild();
   };
@@ -114,12 +114,12 @@ export default class Balance extends Component<Props, State> {
 
     let balanceTooltip;
 
-    if (session.wallet && displayCurrency === 'TRTL') {
+    if (session.wallet && displayCurrency === 'WRKZ') {
       balanceTooltip =
         `Unlocked: ${session.atomicToHuman(unlockedBalance, true)} ${
-          il8n.TRTL
+          il8n.WRKZ
         }<br>` +
-        `Locked: ${session.atomicToHuman(lockedBalance, true)} ${il8n.TRTL}`;
+        `Locked: ${session.atomicToHuman(lockedBalance, true)} ${il8n.WRKZ}`;
     } else if (
       session.wallet &&
       symbolLocation === 'prefix' &&
@@ -166,7 +166,7 @@ export default class Balance extends Component<Props, State> {
       >
         <div className="tags has-addons">
           <span className={`tag ${color} ${size}`}>{il8n.balance_colon}</span>
-          {displayCurrency === 'TRTL' && (
+          {displayCurrency === 'WRKZ' && (
             <span
               className={
                 lockedBalance > 0
@@ -182,7 +182,7 @@ export default class Balance extends Component<Props, State> {
               )}
               &nbsp;
               {session.atomicToHuman(unlockedBalance + lockedBalance, true)}
-              &nbsp;{il8n.TRTL}
+              &nbsp;{il8n.WRKZ}
             </span>
           )}
           {displayCurrency === 'fiat' && symbolLocation === 'prefix' && (

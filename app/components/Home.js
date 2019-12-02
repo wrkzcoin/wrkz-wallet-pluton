@@ -260,7 +260,7 @@ export default class Home extends Component<Props, State> {
                         {tx[2] < 0 && (
                           <td>
                             <p className="has-text-danger has-text-right">
-                              {displayCurrency === 'TRTL' &&
+                              {displayCurrency === 'WRKZ' &&
                                 session.atomicToHuman(tx[2], true)}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'prefix' &&
@@ -293,7 +293,7 @@ export default class Home extends Component<Props, State> {
                         {tx[2] > 0 && (
                           <td>
                             <p className="has-text-right">
-                              {displayCurrency === 'TRTL' &&
+                              {displayCurrency === 'WRKZ' &&
                                 session.atomicToHuman(tx[2], true)}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'prefix' &&
@@ -316,7 +316,7 @@ export default class Home extends Component<Props, State> {
                         )}
                         <td>
                           <p className="has-text-right">
-                            {displayCurrency === 'TRTL' &&
+                            {displayCurrency === 'WRKZ' &&
                               session.atomicToHuman(tx[3], true)}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'prefix' &&
@@ -385,7 +385,7 @@ export default class Home extends Component<Props, State> {
                                     {tx[1]} <br />
                                     {tx[5] !== '' ? tx[5] : 'none'}
                                     <br />
-                                    {session.atomicToHuman(tx[7], true)} TRTL
+                                    {session.atomicToHuman(tx[7], true)} WRKZ
                                     <br />
                                     <p
                                       className={
@@ -394,7 +394,7 @@ export default class Home extends Component<Props, State> {
                                           : ''
                                       }
                                     >
-                                      {session.atomicToHuman(tx[2], true)} TRTL
+                                      {session.atomicToHuman(tx[2], true)} WRKZ
                                     </p>
                                     <br />
                                     <br />

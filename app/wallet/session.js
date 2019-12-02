@@ -2,6 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import request from 'request-promise';
+import Configure from '../Configure';
 import {
   WalletBackend,
   Daemon,
@@ -546,10 +547,14 @@ export default class WalletSession {
     log.debug(
       `Sending transaction: Amount: ${amount} Address ${sendToAddress} PID: ${paymentID}`
     );
-    const [hash, err] = await this.wallet.sendTransactionBasic(
-      sendToAddress,
-      parseInt(amount, 10),
-      paymentID
+    const payments = [];
+    /* User payment */
+    payments.push([sendToAddress, parseInt(amount, 10)]);
+
+    const [hash, err] = await this.wallet.sendTransactionAdvanced(
+      payments, undefined, undefined, 
+      paymentID, undefined,
+      undefined,
     );
     if (err) {
       log.debug(`Failed to send transaction: ${err.toString()}`);

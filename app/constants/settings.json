@@ -14,13 +14,13 @@
   {
     "settingName": "Tail Local Daemon Log File",
     "location": "node",
-    "description": "Show the log output of your local TurtleCoind in the Terminal tab",
+    "description": "Show the log output of your local Wrkzd in the Terminal tab",
     "keywords": ""
   },
   {
-    "settingName": "TurtleCoind Log File Location",
+    "settingName": "Wrkzd Log File Location",
     "location": "node",
-    "description": "Set the path to the TurtleCoind log",
+    "description": "Set the path to the Wrkzd log",
     "keywords": ""
   },
   {

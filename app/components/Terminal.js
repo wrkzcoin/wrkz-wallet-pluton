@@ -176,7 +176,7 @@ export default class Terminal extends Component<Props, State> {
                             tabIndex={0}
                             onMouseDown={event => event.preventDefault()}
                           >
-                            TurtleCoind
+                            Wrkzd
                           </a>
                         </li>
                       )}

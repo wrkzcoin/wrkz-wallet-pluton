@@ -432,7 +432,7 @@ export default class Search extends Component<Props, States> {
                           {amount < 0 && (
                             <td>
                               <p className="has-text-danger has-text-right">
-                                {displayCurrency === 'TRTL' &&
+                                {displayCurrency === 'WRKZ' &&
                                   session.atomicToHuman(amount, true)}
                                 {displayCurrency === 'fiat' &&
                                   symbolLocation === 'prefix' &&
@@ -465,7 +465,7 @@ export default class Search extends Component<Props, States> {
                           {amount > 0 && (
                             <td>
                               <p className="has-text-right">
-                                {displayCurrency === 'TRTL' &&
+                                {displayCurrency === 'WRKZ' &&
                                   session.atomicToHuman(amount, true)}
                                 {displayCurrency === 'fiat' &&
                                   symbolLocation === 'prefix' &&
@@ -544,7 +544,7 @@ export default class Search extends Component<Props, States> {
                                       {hash} <br />
                                       {paymentID !== '' ? paymentID : 'none'}
                                       <br />
-                                      {session.atomicToHuman(fee, true)} TRTL
+                                      {session.atomicToHuman(fee, true)} WRKZ
                                       <br />
                                       <p
                                         className={
@@ -554,7 +554,7 @@ export default class Search extends Component<Props, States> {
                                         }
                                       >
                                         {session.atomicToHuman(amount, true)}{' '}
-                                        TRTL
+                                        WRKZ
                                       </p>
                                       <br />
                                       <br />
