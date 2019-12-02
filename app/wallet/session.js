@@ -2,7 +2,6 @@
 //
 // Please see the included LICENSE file for more information.
 import request from 'request-promise';
-import Configure from '../Configure';
 import {
   WalletBackend,
   Daemon,
@@ -14,6 +13,7 @@ import fs, { WriteStream } from 'fs';
 import { createObjectCsvWriter } from 'csv-writer';
 import { config, directories, eventEmitter, loginCounter } from '../index';
 import { name, version } from '../../package.json';
+import Configure from '../Configure';
 
 export default class WalletSession {
   loginFailed: boolean;
@@ -94,7 +94,7 @@ export default class WalletSession {
         this.daemon,
         this.walletFile,
         this.walletPassword,
-        this.wbConfig
+        Configure
       );
     }
 
