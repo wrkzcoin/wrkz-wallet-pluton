@@ -3,6 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { session, eventEmitter, il8n } from '../index';
+import Configure from '../Configure';
 
 type Props = {
   size: string,
