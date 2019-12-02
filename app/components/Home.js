@@ -92,7 +92,7 @@ export default class Home extends Component<Props, State> {
     const hash = event.target.value;
 
     remote.shell.openExternal(
-      `https://explorer.turtlecoin.lol/?search=${encodeURIComponent(hash)}`
+      `${Configure.ExplorerURL}/?hash=${encodeURIComponent(hash)}#blockchain_transaction`
     );
   };
 

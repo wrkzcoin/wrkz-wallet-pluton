@@ -162,6 +162,12 @@ const Configure = new function() {
      * detailed here: https://docs.turtlepay.io/blockapi/
      */
     this.nodeListURL = 'https://node.wrkz.work/list';
+
+    this.ExplorerURL = 'https://myexplorer.wrkz.work';
+
+    this.GitHubRepo = 'https://github.com/wrkzcoin/wrkz-wallet-pluton';
+
+    this.DiscordURL = 'https://chat.wrkz.work';
 };
 
 export default Configure;
