@@ -24,6 +24,7 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 import donateInfo from '../constants/donateInfo.json';
+import Configure from '../Configure';
 
 type Props = {
   uriAddress?: string,
@@ -218,7 +219,7 @@ export default class Send extends Component<Props, State> {
       return;
     }
 
-    const fee = displayCurrency === 'WRKZ' ? 500.0 : 500.0 * fiatPrice;
+    const fee = displayCurrency === Configure.ticker ? 500.0 : 500.0 * fiatPrice;
 
     const totalAmount = (
       parseFloat(enteredAmount) +
@@ -257,7 +258,7 @@ export default class Send extends Component<Props, State> {
     }
 
     const subtractFee =
-      Number(totalAmount) * 100 - 50000 - parseInt(session.daemon.feeAmount, 10);
+      Number(totalAmount) * 100 - Configure.minimumFee - parseInt(session.daemon.feeAmount, 10);
 
     const enteredAmount =
       subtractFee < 0
@@ -390,7 +391,7 @@ export default class Send extends Component<Props, State> {
 
     const [hash, err] = await session.sendTransaction(
       sendToAddress,
-      displayCurrency === 'WRKZ'
+      displayCurrency === Configure.ticker
         ? Number(enteredAmount) * 100
         : (Number(enteredAmount) * 100) / fiatPrice,
       paymentID
@@ -477,7 +478,7 @@ export default class Send extends Component<Props, State> {
     await this.setState({
       selectedContact: { label: sendToAddress, value: sendToAddress },
       enteredAmount: String(amount / 100),
-      totalAmount: String((amount + 50000) / 100),
+      totalAmount: String((amount + Configure.minimumFee) / 100),
       sendToAddress,
       paymentID
     });
@@ -522,20 +523,20 @@ export default class Send extends Component<Props, State> {
     const { unlockedBalance, fiatPrice, displayCurrency } = this.state;
 
     const totalAmount =
-      unlockedBalance - 50000 - parseInt(session.daemon.feeAmount, 10) <= 0
+      unlockedBalance - Configure.minimumFee - parseInt(session.daemon.feeAmount, 10) <= 0
         ? 0
         : unlockedBalance;
     const enteredAmount =
-      unlockedBalance - 50000 - parseInt(session.daemon.feeAmount, 10) <= 0
+      unlockedBalance - Configure.minimumFee - parseInt(session.daemon.feeAmount, 10) <= 0
         ? 0
-        : totalAmount - 50000 - parseInt(session.daemon.feeAmount, 10);
+        : totalAmount - Configure.minimumFee - parseInt(session.daemon.feeAmount, 10);
     this.setState({
       totalAmount:
-        displayCurrency === 'WRKZ'
+        displayCurrency === Configure.ticker
           ? session.atomicToHuman(totalAmount, false).toString()
           : session.atomicToHuman(totalAmount * fiatPrice, false).toString(),
       enteredAmount:
-        displayCurrency === 'WRKZ'
+        displayCurrency === Configure.ticker
           ? session.atomicToHuman(enteredAmount, false).toString()
           : session.atomicToHuman(enteredAmount * fiatPrice, false).toString()
     });

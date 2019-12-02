@@ -24,6 +24,7 @@ import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 import uiType from './utils/uitype';
 import DaemonLogger from './wallet/DaemonLogger';
+import Configure from './Configure';
 
 const homedir = os.homedir();
 
@@ -422,7 +423,7 @@ eventEmitter.on('sendNotification', function sendNotification(amount) {
       body: `${il8n.just_received} ${amount} ${il8n.WRKZ}`
     });
     if (notif) {
-      log.debug(`Sent notification: You've just received ${amount} WRKZ.`);
+      log.debug(`Sent notification: You've just received ${amount} {Configure.ticker}.`);
     }
   }
 });

@@ -6,6 +6,7 @@ import ReactLoading from 'react-loading';
 import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
 import { session, il8n, eventEmitter, config } from '../index';
+import Configure from '../Configure';
 
 type Props = {
   size: string,
@@ -82,7 +83,7 @@ export default class Balance extends Component<Props, State> {
 
   switchCurrency = () => {
     const { displayCurrency } = this.state;
-    if (displayCurrency === 'WRKZ') {
+    if (displayCurrency === Configure.ticker) {
       this.setState({
         displayCurrency: 'fiat'
       });
@@ -91,10 +92,10 @@ export default class Balance extends Component<Props, State> {
     }
     if (displayCurrency === 'fiat') {
       this.setState({
-        displayCurrency: 'WRKZ'
+        displayCurrency: Configure.ticker
       });
-      session.modifyConfig('displayCurrency', 'WRKZ');
-      eventEmitter.emit('modifyCurrency', 'WRKZ');
+      session.modifyConfig('displayCurrency', Configure.ticker);
+      eventEmitter.emit('modifyCurrency', Configure.ticker);
     }
     ReactTooltip.rebuild();
   };
@@ -114,7 +115,7 @@ export default class Balance extends Component<Props, State> {
 
     let balanceTooltip;
 
-    if (session.wallet && displayCurrency === 'WRKZ') {
+    if (session.wallet && displayCurrency === Configure.ticker) {
       balanceTooltip =
         `Unlocked: ${session.atomicToHuman(unlockedBalance, true)} ${
           il8n.WRKZ
@@ -166,7 +167,7 @@ export default class Balance extends Component<Props, State> {
       >
         <div className="tags has-addons">
           <span className={`tag ${color} ${size}`}>{il8n.balance_colon}</span>
-          {displayCurrency === 'WRKZ' && (
+          {displayCurrency === Configure.ticker && (
             <span
               className={
                 lockedBalance > 0
