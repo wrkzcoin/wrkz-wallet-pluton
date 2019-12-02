@@ -1,6 +1,6 @@
 {
   "success": {
-    "strings": ["TurtleCoin", "[checkpoints]", "added to main chain"],
+    "strings": ["WrkzCoin", "[checkpoints]", "added to main chain"],
     "class": "has-text-success has-text-weight-bold"
   },
   "danger": {

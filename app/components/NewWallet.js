@@ -3,6 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
+import Configure from '../Configure';
 import { clipboard } from 'electron';
 import log from 'electron-log';
 import jdenticon from 'jdenticon';
@@ -31,7 +32,7 @@ export default class NewWallet extends Component<Props, State> {
     super(props);
     this.state = {
       darkMode: session.darkMode,
-      newWallet: WalletBackend.createWallet(session.daemon),
+      newWallet: WalletBackend.createWallet(session.daemon, Configure),
       activePage: 'generate',
       password: '',
       confirmPassword: '',
@@ -134,7 +135,8 @@ export default class NewWallet extends Component<Props, State> {
       const [wallet, err] = WalletBackend.importWalletFromSeed(
         session.daemon,
         100000,
-        confirmSeed
+        confirmSeed,
+        Configure
       );
 
       if (err) {

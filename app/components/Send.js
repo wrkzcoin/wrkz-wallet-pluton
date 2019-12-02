@@ -24,6 +24,7 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 import donateInfo from '../constants/donateInfo.json';
+import Configure from '../Configure';
 
 type Props = {
   uriAddress?: string,
@@ -218,7 +219,7 @@ export default class Send extends Component<Props, State> {
       return;
     }
 
-    const fee = displayCurrency === 'TRTL' ? 0.1 : 0.1 * fiatPrice;
+    const fee = displayCurrency === Configure.ticker ? 500.0 : 500.0 * fiatPrice;
 
     const totalAmount = (
       parseFloat(enteredAmount) +
@@ -257,7 +258,7 @@ export default class Send extends Component<Props, State> {
     }
 
     const subtractFee =
-      Number(totalAmount) * 100 - 10 - parseInt(session.daemon.feeAmount, 10);
+      Number(totalAmount) * 100 - Configure.minimumFee - parseInt(session.daemon.feeAmount, 10);
 
     const enteredAmount =
       subtractFee < 0
@@ -390,7 +391,7 @@ export default class Send extends Component<Props, State> {
 
     const [hash, err] = await session.sendTransaction(
       sendToAddress,
-      displayCurrency === 'TRTL'
+      displayCurrency === Configure.ticker
         ? Number(enteredAmount) * 100
         : (Number(enteredAmount) * 100) / fiatPrice,
       paymentID
@@ -477,7 +478,7 @@ export default class Send extends Component<Props, State> {
     await this.setState({
       selectedContact: { label: sendToAddress, value: sendToAddress },
       enteredAmount: String(amount / 100),
-      totalAmount: String((amount + 10) / 100),
+      totalAmount: String((amount + Configure.minimumFee) / 100),
       sendToAddress,
       paymentID
     });
@@ -522,20 +523,20 @@ export default class Send extends Component<Props, State> {
     const { unlockedBalance, fiatPrice, displayCurrency } = this.state;
 
     const totalAmount =
-      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
+      unlockedBalance - Configure.minimumFee - parseInt(session.daemon.feeAmount, 10) <= 0
         ? 0
         : unlockedBalance;
     const enteredAmount =
-      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
+      unlockedBalance - Configure.minimumFee - parseInt(session.daemon.feeAmount, 10) <= 0
         ? 0
-        : totalAmount - 10 - parseInt(session.daemon.feeAmount, 10);
+        : totalAmount - Configure.minimumFee - parseInt(session.daemon.feeAmount, 10);
     this.setState({
       totalAmount:
-        displayCurrency === 'TRTL'
+        displayCurrency === Configure.ticker
           ? session.atomicToHuman(totalAmount, false).toString()
           : session.atomicToHuman(totalAmount * fiatPrice, false).toString(),
       enteredAmount:
-        displayCurrency === 'TRTL'
+        displayCurrency === Configure.ticker
           ? session.atomicToHuman(enteredAmount, false).toString()
           : session.atomicToHuman(enteredAmount * fiatPrice, false).toString()
     });
@@ -647,7 +648,7 @@ export default class Send extends Component<Props, State> {
         <Creatable
           multi
           options={this.autoCompleteContacts}
-          placeholder="Enter a TurtleCoin address or a contact name to send funds to"
+          placeholder="Enter a WrkzCoin address or a contact name to send funds to"
           // eslint-disable-next-line no-unused-vars
           noOptionsMessage={inputValue => null}
           styles={customStyles}
@@ -716,7 +717,7 @@ export default class Send extends Component<Props, State> {
                           placeholder={`How much to send (eg. ${
                             displayCurrency === 'fiat'
                               ? exampleAmount
-                              : '100 TRTL'
+                              : '100 WRKZ'
                           })`}
                           value={enteredAmount}
                           onChange={this.handleAmountChange}

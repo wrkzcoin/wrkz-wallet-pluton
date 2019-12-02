@@ -13,6 +13,7 @@ import fs, { WriteStream } from 'fs';
 import { createObjectCsvWriter } from 'csv-writer';
 import { config, directories, eventEmitter, loginCounter } from '../index';
 import { name, version } from '../../package.json';
+import Configure from '../Configure';
 
 export default class WalletSession {
   loginFailed: boolean;
@@ -93,7 +94,7 @@ export default class WalletSession {
         this.daemon,
         this.walletFile,
         this.walletPassword,
-        this.wbConfig
+        Configure
       );
     }
 
@@ -546,10 +547,14 @@ export default class WalletSession {
     log.debug(
       `Sending transaction: Amount: ${amount} Address ${sendToAddress} PID: ${paymentID}`
     );
-    const [hash, err] = await this.wallet.sendTransactionBasic(
-      sendToAddress,
-      parseInt(amount, 10),
-      paymentID
+    const payments = [];
+    /* User payment */
+    payments.push([sendToAddress, parseInt(amount, 10)]);
+
+    const [hash, err] = await this.wallet.sendTransactionAdvanced(
+      payments, undefined, undefined, 
+      paymentID, undefined,
+      undefined,
     );
     if (err) {
       log.debug(`Failed to send transaction: ${err.toString()}`);

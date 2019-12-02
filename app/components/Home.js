@@ -10,6 +10,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
+import Configure from '../Configure';
 
 let displayedTransactionCount: number = 50;
 
@@ -260,7 +261,7 @@ export default class Home extends Component<Props, State> {
                         {tx[2] < 0 && (
                           <td>
                             <p className="has-text-danger has-text-right">
-                              {displayCurrency === 'TRTL' &&
+                              {displayCurrency === Configure.ticker &&
                                 session.atomicToHuman(tx[2], true)}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'prefix' &&
@@ -293,7 +294,7 @@ export default class Home extends Component<Props, State> {
                         {tx[2] > 0 && (
                           <td>
                             <p className="has-text-right">
-                              {displayCurrency === 'TRTL' &&
+                              {displayCurrency === Configure.ticker &&
                                 session.atomicToHuman(tx[2], true)}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'prefix' &&
@@ -316,7 +317,7 @@ export default class Home extends Component<Props, State> {
                         )}
                         <td>
                           <p className="has-text-right">
-                            {displayCurrency === 'TRTL' &&
+                            {displayCurrency === Configure.ticker &&
                               session.atomicToHuman(tx[3], true)}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'prefix' &&
@@ -385,7 +386,7 @@ export default class Home extends Component<Props, State> {
                                     {tx[1]} <br />
                                     {tx[5] !== '' ? tx[5] : 'none'}
                                     <br />
-                                    {session.atomicToHuman(tx[7], true)} TRTL
+                                    {session.atomicToHuman(tx[7], true)} {Configure.ticker}
                                     <br />
                                     <p
                                       className={
@@ -394,7 +395,7 @@ export default class Home extends Component<Props, State> {
                                           : ''
                                       }
                                     >
-                                      {session.atomicToHuman(tx[2], true)} TRTL
+                                      {session.atomicToHuman(tx[2], true)} {Configure.ticker}
                                     </p>
                                     <br />
                                     <br />
@@ -422,7 +423,7 @@ export default class Home extends Component<Props, State> {
                 <div className={`box ${fillColor}`}>
                   <p className={`${textColor} title has-text-centered`}>
                     <i className="fas fa-robot" />
-                    &nbsp;&nbsp;Welcome to Proton!
+                    &nbsp;&nbsp;Welcome to Pluton!
                   </p>
                   <br />
                   <p className={`${textColor} subtitle has-text-centered`}>

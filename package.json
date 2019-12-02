@@ -1,8 +1,8 @@
 {
-  "name": "proton-wallet",
-  "productName": "Proton",
+  "name": "pluton-wallet",
+  "productName": "Pluton",
   "version": "1.1.1",
-  "description": "TurtleCoin wallet based on React, React Router, Webpack, and React Hot Loader",
+  "description": "WrkzCoin wallet based on React, React Router, Webpack, and React Hot Loader",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -46,8 +46,8 @@
   },
   "main": "./app/main.prod.js",
   "build": {
-    "productName": "proton-wallet",
-    "appId": "wallet.proton.extra",
+    "productName": "pluton-wallet",
+    "appId": "work.wrkz.pluton",
     "files": [
       "app/dist/",
       "app/app.html",
@@ -92,21 +92,26 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "ExtraHash",
-      "repo": "proton",
+      "owner": "Wrkz",
+      "repo": "pluton",
       "private": false
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/turtlecoin/turtle-wallet-proton.git"
+    "url": "git+https://github.com/wrkzdev/wrkz-wallet-pluton.git"
   },
   "author": {
-    "name": "ExtraHash",
-    "email": "extrahash@protonmail.com",
-    "url": "http://getproton.org"
+    "name": "Wrkz",
+    "email": "team@wrkz.work",
+    "url": "https://github.com/wrkzdev/wrkz-wallet-pluton"
   },
   "contributors": [
+    {
+      "name": "ExtraHash",
+      "email": "extrahash@protonmail.com",
+      "url": "http://getproton.org"
+    },
     {
       "name": "Vikram Rangaraj",
       "email": "vikr01@icloud.com",
@@ -120,13 +125,15 @@
   ],
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/turtlecoin/turtle-wallet-proton/issues"
+    "url": "https://github.com/wrkzdev/wrkz-wallet-pluton/issues"
   },
   "keywords": [
     "turtlecoin",
     "gui wallet",
     "electron",
-    "proton"
+    "proton",
+    "wrkzcoin",
+    "pluton"
   ],
   "homepage": "https://github.com/turtlecoin/turtle-wallet-proton#readme",
   "jest": {

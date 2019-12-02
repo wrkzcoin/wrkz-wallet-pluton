@@ -24,12 +24,13 @@ import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 import uiType from './utils/uitype';
 import DaemonLogger from './wallet/DaemonLogger';
+import Configure from './Configure';
 
 const homedir = os.homedir();
 
 export const directories = [
-  `${homedir}/.protonwallet`,
-  `${homedir}/.protonwallet/logs`
+  `${homedir}/.plutonwallet`,
+  `${homedir}/.plutonwallet/logs`
 ];
 
 export const il8n = new LocalizedStrings({
@@ -62,9 +63,9 @@ updater.getLatestVersion();
 
 export const loginCounter = new LoginCounter();
 
-remote.app.setAppUserModelId('wallet.proton.extra');
+remote.app.setAppUserModelId('work.wrkz.pluton');
 
-log.debug(`Proton wallet started...`);
+log.debug(`Pluton wallet started...`);
 
 const [programDirectory] = directories;
 
@@ -194,7 +195,7 @@ eventEmitter.on('updateRequired', updateFile => {
       </center>
       <br />
       <p className={`subtitle ${textColor}`}>
-        There&apos;s a new version of Proton Wallet available. Would you like to
+        There&apos;s a new version of Pluton Wallet available. Would you like to
         download it?
       </p>
     </div>
@@ -275,7 +276,7 @@ ipcRenderer.on('handleSaveAs', () => {
     defaultPath: remote.app.getPath('documents'),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
+        name: 'WrkzCoin Wallet File (v0)',
         extensions: ['wallet']
       }
     ]
@@ -347,7 +348,7 @@ function handleOpen() {
     defaultPath: remote.app.getPath('documents'),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
+        name: 'WrkzCoin Wallet File (v0)',
         extensions: ['wallet']
       }
     ]
@@ -419,10 +420,10 @@ eventEmitter.on('sendNotification', function sendNotification(amount) {
 
   if (notifications) {
     const notif = new window.Notification('Transaction Received!', {
-      body: `${il8n.just_received} ${amount} ${il8n.TRTL}`
+      body: `${il8n.just_received} ${amount} ${il8n.WRKZ}`
     });
     if (notif) {
-      log.debug(`Sent notification: You've just received ${amount} TRTL.`);
+      log.debug(`Sent notification: You've just received ${amount} {Configure.ticker}.`);
     }
   }
 });
@@ -434,7 +435,7 @@ ipcRenderer.on('failedDaemonInit', failedDaemonInit);
 
 function handleAbout() {
   remote.shell.openExternal(
-    'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+    'https://github.com/wrkzdev/wrkz-wallet-pluton#readme'
   );
 }
 
@@ -444,7 +445,7 @@ function handleHelp() {
 
 function handleIssues() {
   remote.shell.openExternal(
-    'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+    'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
   );
 }
 
@@ -466,7 +467,7 @@ function failedDaemonInit() {
       <p className={`subtitle ${textColor}`}>
         Your daemon failed to initialize, and you have been placed back in
         remote node mode automatically. You can check the log output of
-        TurtleCoind in the Terminal tab.
+        Wrzkd in the Terminal tab.
       </p>
     </div>
   );
@@ -493,7 +494,7 @@ export function saveNew(wallet: any, password: string) {
     defaultPath: remote.app.getPath('documents'),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
+        name: 'WrzkCoin Wallet File (v0)',
         extensions: ['wallet']
       }
     ]

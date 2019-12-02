@@ -52,7 +52,7 @@ export default class NodeChanger extends Component<Props, State> {
     );
     this.handleNodeChangeComplete = this.handleNodeChangeComplete.bind(this);
     this.toggleLocalDaemon = this.toggleLocalDaemon.bind(this);
-    this.browseForTurtleCoind = this.browseForTurtleCoind.bind(this);
+    this.browseForWrkzd = this.browseForWrkzd.bind(this);
   }
 
   componentWillMount() {
@@ -67,7 +67,7 @@ export default class NodeChanger extends Component<Props, State> {
     eventEmitter.off('nodeChangeComplete', this.handleNodeChangeComplete);
   }
 
-  browseForTurtleCoind = () => {
+  browseForWrkzd = () => {
     const options = {
       defaultPath: remote.app.getPath('documents')
     };
@@ -285,7 +285,7 @@ export default class NodeChanger extends Component<Props, State> {
         <br />
         <br />
         <p className={`has-text-weight-bold ${textColor}`}>
-          TurtleCoind.log file location:
+          Wrkzd.log file location:
         </p>
         <div className="field has-addons">
           <div className="control is-expanded">
@@ -299,7 +299,7 @@ export default class NodeChanger extends Component<Props, State> {
           <div className="control">
             <button
               className="button is-warning"
-              onClick={this.browseForTurtleCoind}
+              onClick={this.browseForWrkzd}
             >
               <span className="icon is-small">
                 <i className="fas fa-folder-open" />
