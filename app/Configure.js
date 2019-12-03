@@ -1,5 +1,6 @@
 // Copyright (C) 2018, Zpalmtree
-//
+// Copyright (C) 2019, WrkzCoin
+// 
 // Please see the included LICENSE file for more information.
 
 import { MixinLimit, MixinLimits, Daemon } from 'turtlecoin-wallet-backend';
