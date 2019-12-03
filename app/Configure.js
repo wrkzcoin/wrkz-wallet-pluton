@@ -161,6 +161,9 @@ const Configure = new function() {
      * A url to fetch node info from. Should follow the turtlepay format 
      * detailed here: https://docs.turtlepay.io/blockapi/
      */
+
+    this.DefaultDaemonRPCPort = '17856';
+
     this.nodeListURL = 'https://node.wrkz.work/list';
 
     this.ExplorerURL = 'https://myexplorer.wrkz.work';
