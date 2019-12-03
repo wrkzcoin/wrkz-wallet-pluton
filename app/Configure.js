@@ -1,5 +1,6 @@
 // Copyright (C) 2018, Zpalmtree
-//
+// Copyright (C) 2019, WrkzCoin
+// 
 // Please see the included LICENSE file for more information.
 
 import { MixinLimit, MixinLimits, Daemon } from 'turtlecoin-wallet-backend';
@@ -161,6 +162,17 @@ const Configure = new function() {
      * A url to fetch node info from. Should follow the turtlepay format 
      * detailed here: https://docs.turtlepay.io/blockapi/
      */
+
+    this.DefaultDaemonRPCPort = '17856';
+
+    this.nodeListURL = 'https://node.wrkz.work/list';
+
+    this.ExplorerURL = 'https://myexplorer.wrkz.work';
+
+    this.GitHubRepo = 'https://github.com/wrkzcoin/wrkz-wallet-pluton';
+
+    this.DiscordURL = 'https://chat.wrkz.work';
+
     this.nodeListURL = 'https://node.wrkz.work/list';
 };
 

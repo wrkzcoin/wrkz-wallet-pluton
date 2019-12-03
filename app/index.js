@@ -1,4 +1,5 @@
 // Copyright (C) 2019 ExtraHash
+// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 
@@ -435,17 +436,17 @@ ipcRenderer.on('failedDaemonInit', failedDaemonInit);
 
 function handleAbout() {
   remote.shell.openExternal(
-    'https://github.com/wrkzdev/wrkz-wallet-pluton#readme'
+    `${Configure.GitHubRepo}/issues#readme`
   );
 }
 
 function handleHelp() {
-  remote.shell.openExternal('https://discord.gg/P7urHQs');
+  remote.shell.openExternal(`${Configure.DiscordURL}`);
 }
 
 function handleIssues() {
   remote.shell.openExternal(
-    'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
+    `${Configure.GitHubRepo}/issues`
   );
 }
 
