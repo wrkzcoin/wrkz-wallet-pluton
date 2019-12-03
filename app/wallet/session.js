@@ -272,7 +272,7 @@ export default class WalletSession {
       this.daemon,
       height,
       seed,
-      this.wbConfig
+      Configure
     );
     if (err) {
       log.debug(`Failed to load wallet: ${err.toString()}`);
@@ -294,7 +294,7 @@ export default class WalletSession {
       height,
       viewKey,
       spendKey,
-      this.wbConfig
+      Configure
     );
     if (err) {
       log.debug(`Failed to load wallet: ${err.toString()}`);
