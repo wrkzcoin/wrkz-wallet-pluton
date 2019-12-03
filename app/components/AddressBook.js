@@ -15,6 +15,7 @@ import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 import { session, addressList, directories, loginCounter } from '../index';
 import routes from '../constants/routes';
+import Configure from '../Configure';
 
 type State = {
   darkMode: boolean,
@@ -147,7 +148,7 @@ class AddressBook extends Component<Props, State> {
     let badAddress = false;
     let badPaymentID = false;
 
-    if (!validateAddress(newAddress, true)) {
+    if (!validateAddress(newAddress, true, Configure)) {
       badAddress = true;
     } else {
       badAddress = false;
