@@ -172,6 +172,8 @@ const Configure = new function() {
     this.GitHubRepo = 'https://github.com/wrkzcoin/wrkz-wallet-pluton';
 
     this.DiscordURL = 'https://chat.wrkz.work';
+
+    this.nodeListURL = 'https://node.wrkz.work/list';
 };
 
 export default Configure;
