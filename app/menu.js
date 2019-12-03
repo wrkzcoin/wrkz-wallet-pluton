@@ -1,4 +1,5 @@
 // Copyright (C) 2019 ExtraHash
+// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 import { app, Menu, shell, BrowserWindow } from 'electron';
@@ -6,6 +7,7 @@ import log from 'electron-log';
 import LocalizedStrings from 'react-localization';
 import npmPackage from '../package.json';
 import { messageRelayer } from './main.dev';
+import Configure from './Configure';
 
 export const il8n = new LocalizedStrings({
   // eslint-disable-next-line global-require
@@ -55,7 +57,7 @@ export default class MenuBuilder {
           label: `${il8n.about} ${productName}`,
           click: () => {
             shell.openExternal(
-              'https://github.com/wrkzdev/wrkz-wallet-pluton#readme'
+              `${Configure.GitHubRepo}/issues#readme`
             );
           }
         },
@@ -241,14 +243,14 @@ export default class MenuBuilder {
         {
           label: il8n.support,
           click() {
-            shell.openExternal('https://discord.gg/P7urHQs');
+            shell.openExternal(`${Configure.DiscordURL}`);
           }
         },
         {
           label: il8n.report_bug,
           click() {
             shell.openExternal(
-              'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
+              `${Configure.GitHubRepo}/issues`
             );
           }
         },
@@ -256,7 +258,7 @@ export default class MenuBuilder {
           label: il8n.feature_request,
           click() {
             shell.openExternal(
-              'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
+              `${Configure.GitHubRepo}/issues`
             );
           }
         }
@@ -461,14 +463,14 @@ export default class MenuBuilder {
           {
             label: il8n.support,
             click: () => {
-              shell.openExternal('https://discord.gg/P7urHQs');
+              shell.openExternal(`${Configure.DiscordURL}`);
             }
           },
           {
             label: il8n.about,
             click: () => {
               shell.openExternal(
-                'https://github.com/wrkzdev/wrkz-wallet-pluton#readme'
+                `${Configure.GitHubRepo}/issues#readme`
               );
             }
           },
@@ -476,7 +478,7 @@ export default class MenuBuilder {
             label: il8n.report_bug,
             click: () => {
               shell.openExternal(
-                'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
+                `${Configure.GitHubRepo}/issues`
               );
             }
           },
@@ -484,7 +486,7 @@ export default class MenuBuilder {
             label: il8n.feature_request,
             click: () => {
               shell.openExternal(
-                'https://github.com/wrkzdev/wrkz-wallet-pluton/issues'
+                `${Configure.GitHubRepo}/issues`
               );
             }
           }

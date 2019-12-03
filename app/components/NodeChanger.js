@@ -1,4 +1,5 @@
 // Copyright (C) 2019 ExtraHash
+// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
@@ -14,6 +15,7 @@ import {
   startTail
 } from '../index';
 import uiType from '../utils/uitype';
+import Configure from '../Configure';
 
 type Props = {
   darkMode: boolean
@@ -91,7 +93,7 @@ export default class NodeChanger extends Component<Props, State> {
     // eslint-disable-next-line prefer-const
     let [host, port] = connectionString.split(':', 2);
     if (port === undefined) {
-      port = '11898';
+      port = Configure.DefaultDaemonRPCPort;
     }
     if (
       // eslint-disable-next-line eqeqeq

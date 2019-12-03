@@ -1,4 +1,5 @@
 // Copyright (C) 2019 ExtraHash
+// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 import log from 'electron-log';
@@ -112,7 +113,7 @@ export default class Home extends Component<Props, State> {
     const hash = event.target.value;
 
     remote.shell.openExternal(
-      `https://explorer.turtlecoin.lol/?search=${encodeURIComponent(hash)}`
+      `${Configure.ExplorerURL}/?hash=${encodeURIComponent(hash)}#blockchain_transaction`
     );
   };
 

@@ -1,9 +1,11 @@
 // Copyright (C) 2019 ExtraHash
+// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { session, eventEmitter, il8n } from '../index';
 import { atomicToHuman } from '../utils/utils';
+import Configure from '../Configure';
 
 type Props = {
   size: string,

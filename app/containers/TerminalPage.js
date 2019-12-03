@@ -3,14 +3,14 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import ImportKey from '../components/ImportKey';
+import Terminal from '../components/Terminal';
 
 type Props = {};
 
-export default class ImportKeyPage extends Component<Props> {
+export default class TerminalPage extends Component<Props> {
   props: Props;
 
   render() {
-    return <ImportKey />;
+    return <Terminal />;
   }
 }
