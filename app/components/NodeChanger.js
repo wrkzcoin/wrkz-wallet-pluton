@@ -16,6 +16,8 @@ import {
   startTail
 } from '../index';
 import uiType from '../utils/uitype';
+
+import NodeFee from './NodeFee';
 import Configure from '../Configure';
 
 type Props = {
@@ -28,7 +30,8 @@ type State = {
   ssl: boolean,
   useLocalDaemon: boolean,
   daemonLogPath: string,
-  Selected_Node: string
+  Selected_Node: string,
+  node_NewFee: number
 };
 
 export default class NodeChanger extends Component<Props, State> {
@@ -64,13 +67,19 @@ export default class NodeChanger extends Component<Props, State> {
     eventEmitter.on('newNodeConnected', this.handleNewNode);
     eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.on('nodeChangeComplete', this.handleNodeChangeComplete);
+    eventEmitter.on('gotNodeFee', this.refreshNodeFee);
   }
 
   componentWillUnmount() {
     eventEmitter.off('newNodeConnected', this.handleNewNode);
     eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
     eventEmitter.off('nodeChangeComplete', this.handleNodeChangeComplete);
+    eventEmitter.off('gotNodeFee', this.refreshNodeFee);
   }
+
+  refreshNodeFee = () => {
+    NodeFee.nodeFee = session.daemon.feeAmount
+  };
 
   browseForWrkzd = () => {
     const options = {
@@ -128,18 +137,22 @@ export default class NodeChanger extends Component<Props, State> {
 
   handleNewNode = () => {
     const daemonInfo = session.wallet.getDaemonConnectionInfo();
-
+    log.debug(daemonInfo)
+    const [nodeFeeAddress, nodeFeeAmount] = session.wallet.getNodeFee();
+    log.info(`New fee: ${nodeFeeAmount}`)
     this.setState({
       nodeChangeInProgress: false,
       connectednode: `${daemonInfo.host}:${daemonInfo.port}`,
-      ssl: daemonInfo.ssl
+      ssl: daemonInfo.ssl,
+      node_NewFee: nodeFeeAmount || 0
     });
   };
 
   handleNodeChangeInProgress = () => {
     this.setState({
       nodeChangeInProgress: true,
-      ssl: undefined
+      ssl: undefined,
+      node_NewFee: undefined
     });
   };
 
@@ -147,8 +160,10 @@ export default class NodeChanger extends Component<Props, State> {
     this.setState({
       nodeChangeInProgress: false,
       connectednode: `${session.daemonHost}:${session.daemonPort}`,
-      ssl: session.daemon.ssl
+      ssl: session.daemon.ssl,
+      node_NewFee: session.daemon.feeAmount || 0
     });
+    log.info(`Network Fee ${node_NewFee  || 0}`);
   };
 
   toggleLocalDaemon = () => {
@@ -181,7 +196,8 @@ export default class NodeChanger extends Component<Props, State> {
       ssl,
       useLocalDaemon,
       daemonLogPath,
-	  Selected_Node
+	  Selected_Node,
+	  node_NewFee
     } = this.state;
     return (
       <form onSubmit={this.changeNode}>
