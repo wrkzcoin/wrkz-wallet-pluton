@@ -3,6 +3,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import Select from 'react-select';
 import { remote } from 'electron';
 import log from 'electron-log';
 import { Daemon } from 'turtlecoin-wallet-backend';
@@ -26,7 +27,8 @@ type State = {
   nodeChangeInProgress: boolean,
   ssl: boolean,
   useLocalDaemon: boolean,
-  daemonLogPath: string
+  daemonLogPath: string,
+  Selected_Node: string
 };
 
 export default class NodeChanger extends Component<Props, State> {
@@ -44,7 +46,8 @@ export default class NodeChanger extends Component<Props, State> {
       nodeChangeInProgress: false,
       ssl: this.daemonInfo.ssl,
       useLocalDaemon: config.useLocalDaemon,
-      daemonLogPath: config.daemonLogPath
+      daemonLogPath: config.daemonLogPath,
+      Selected_Node: Configure.defaultDaemon
     };
     this.changeNode = this.changeNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
@@ -114,13 +117,14 @@ export default class NodeChanger extends Component<Props, State> {
     session.modifyConfig('daemonPort', daemonInfo.port);
   };
 
-  findNode = () => {
-    remote.shell.openExternal('https://explorer.turtlecoin.lol/nodes.html');
-  };
-
   handleNodeInputChange = (event: any) => {
     this.setState({ connectednode: event.target.value.trim() });
   };
+
+  handleNodeListChange = (selectedOptions, data) => {
+    this.setState({ selectedOptions });
+    this.setState({ connectednode: selectedOptions.label });
+  }
 
   handleNewNode = () => {
     const daemonInfo = session.wallet.getDaemonConnectionInfo();
@@ -176,7 +180,8 @@ export default class NodeChanger extends Component<Props, State> {
       connectednode,
       ssl,
       useLocalDaemon,
-      daemonLogPath
+      daemonLogPath,
+	  Selected_Node
     } = this.state;
     return (
       <form onSubmit={this.changeNode}>
@@ -216,18 +221,18 @@ export default class NodeChanger extends Component<Props, State> {
                 <i className="fas fa-sync fa-spin" />
               </span>
             )}
-            <p className="help">
-              <a
-                onClick={this.findNode}
-                onKeyPress={this.findNode}
-                role="button"
-                tabIndex={0}
-                className={linkColor}
-                onMouseDown={event => event.preventDefault()}
-              >
-                {il8n.find_node}
-              </a>
-            </p>
+			<br />
+			<br />
+			<p className={`has-text-weight-bold ${textColor}`}>
+			  Select a node:
+			</p>
+			<div style={{width: '350px'}}>
+			<Select
+			  value={this.state.selectedOptions}
+			  onChange={this.handleNodeListChange}
+			  options={session.daemons}
+			/>
+			</div>
           </div>
           {nodeChangeInProgress === true && (
             <div className="control">
