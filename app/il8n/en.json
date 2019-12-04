@@ -46,7 +46,6 @@
   "enable_close_to_tray": "Enable close to tray",
   "error_opening_wallet": "Your wallet did not open successfully. Try again.",
   "exported_csv": "Your transactions were successfully exported to",
-  "find_node": "Find node...",
   "generate_payment_id": "Generate Random Payment ID",
   "has_been_rewound_beginning": "Your wallet has been rewound to block",
   "has_been_rewound_end": ", and will sync again from there.",
