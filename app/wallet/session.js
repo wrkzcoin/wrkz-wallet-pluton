@@ -468,7 +468,6 @@ export default class WalletSession {
                      value: result.nodes[i].url + ':' + result.nodes[i].port.toString(),
                      label: result.nodes[i].url + ':' + result.nodes[i].port.toString()
                   });
-               log.debug(`Add ${result.nodes[i].url + ':' + result.nodes[i].port.toString()} to online node list.`)
             }
          }
          log.debug(

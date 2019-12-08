@@ -368,7 +368,8 @@ function handleOpen() {
     const [, error] = WalletBackend.openWalletFromFile(
       session.daemon,
       getPaths[0],
-      ''
+      '',
+      Configure
     );
     if (error && error.errorCode !== 5) {
       log.debug(`Failed to open wallet: ${error.toString()}`);
