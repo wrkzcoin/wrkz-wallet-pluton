@@ -7,7 +7,7 @@
 
 ### Master Build Status
 
-[TODO]
+![Master Build Status](https://github.com/wrkzcoin/wrkz-wallet-pluton/workflows/Build%20Pluton/badge.svg?branch=master)
 
 ### Development Build Status
 
@@ -86,5 +86,6 @@ $ yarn package
 
 ## License
 
-© [ExtraHash](https://github.com/ExtraHash)
+© 2019, [ExtraHash](https://github.com/ExtraHash)
+© 2019, [WrkzCoin](https://github.com/wrkzcoin/wrkz-wallet-pluton)
 See included License file for more details.
