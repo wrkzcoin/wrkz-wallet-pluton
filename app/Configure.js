@@ -47,7 +47,7 @@ const Configure = new function() {
     /**
      * How often to process blocks, in millseconds
      */
-    this.syncThreadInterval = 4;
+    this.syncThreadInterval = 10;
 
     /**
      * How often to update the daemon info, in milliseconds
@@ -57,7 +57,7 @@ const Configure = new function() {
     /**
      * How often to check on locked transactions
      */
-    this.lockedTransactionsCheckInterval = 10 * 3000;
+    this.lockedTransactionsCheckInterval = 30 * 1000;
 
     /**
      * The amount of blocks to process per 'tick' of the mainloop. Note: too
@@ -96,7 +96,7 @@ const Configure = new function() {
         new MixinLimit(430000, 0, 7, 3),
 
         /* At height of 658,500 */
-        new MixinLimit(658500, 1, 3, 3),
+        new MixinLimit(658500, 1, 3, 1),
 
     ], 3 /* Default mixin of 3 before block 440,000 */);
 
@@ -115,14 +115,14 @@ const Configure = new function() {
     this.integratedAddressLength = 98 + ((64 * 11) / 8);
 
     /**
-     * Memory to use for storing downloaded blocks - 3MB
+     * Memory to use for storing downloaded blocks - 32MB
      */
-    this.blockStoreMemoryLimit = 1024 * 1024 * 3;
+    this.blockStoreMemoryLimit = 1024 * 1024 * 32;
 
     /**
      * Amount of blocks to request from the daemon at once
      */
-    this.blocksPerDaemonRequest = 25;
+    this.blocksPerDaemonRequest = 50;
 
     /**
      * User agent string
