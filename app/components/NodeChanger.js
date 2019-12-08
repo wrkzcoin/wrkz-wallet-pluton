@@ -43,18 +43,21 @@ export default class NodeChanger extends Component<Props, State> {
     super(props);
     this.daemonInfo =
       session && session.wallet ? session.wallet.getDaemonConnectionInfo() : '';
-
+    this.daemonFee =
+      session && session.wallet ? session.wallet.getNodeFee() : '';
     this.state = {
       connectednode: `${this.daemonInfo.host}:${this.daemonInfo.port}`,
       nodeChangeInProgress: false,
       ssl: this.daemonInfo.ssl,
       useLocalDaemon: config.useLocalDaemon,
       daemonLogPath: config.daemonLogPath,
-      Selected_Node: Configure.defaultDaemon
+      Selected_Node: Configure.defaultDaemon,
+      Fee: this.daemonFee.nodeFeeAmount
     };
     this.changeNode = this.changeNode.bind(this);
     this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);
+    this.handleNodeListChange = this.handleNodeListChange.bind(this);
     this.handleNodeChangeInProgress = this.handleNodeChangeInProgress.bind(
       this
     );
@@ -124,6 +127,9 @@ export default class NodeChanger extends Component<Props, State> {
     log.info(`Connected to ${daemonInfo.host}:${daemonInfo.port}`);
     session.modifyConfig('daemonHost', daemonInfo.host);
     session.modifyConfig('daemonPort', daemonInfo.port);
+    //eventEmitter.emit('gotNodeFee');
+    //const daemonFee = session.wallet.getNodeFee();
+    //log.info(`Got node fee ${daemonFee.nodeFeeAddress}:${daemonFee.nodeFeeAmount}`);
   };
 
   handleNodeInputChange = (event: any) => {
@@ -135,16 +141,16 @@ export default class NodeChanger extends Component<Props, State> {
     this.setState({ connectednode: selectedOptions.label });
   }
 
-  handleNewNode = () => {
+  handleNewNode = async () => {
     const daemonInfo = session.wallet.getDaemonConnectionInfo();
-    log.debug(daemonInfo)
-    const [nodeFeeAddress, nodeFeeAmount] = session.wallet.getNodeFee();
-    log.info(`New fee: ${nodeFeeAmount}`)
+    const daemonFee = await session.wallet.getNodeFee();
+    log.info(daemonInfo)
+    log.info(daemonFee)
     this.setState({
       nodeChangeInProgress: false,
       connectednode: `${daemonInfo.host}:${daemonInfo.port}`,
       ssl: daemonInfo.ssl,
-      node_NewFee: nodeFeeAmount || 0
+      Fee: daemonFee.nodeFeeAmount
     });
   };
 
@@ -161,9 +167,9 @@ export default class NodeChanger extends Component<Props, State> {
       nodeChangeInProgress: false,
       connectednode: `${session.daemonHost}:${session.daemonPort}`,
       ssl: session.daemon.ssl,
-      node_NewFee: session.daemon.feeAmount || 0
+      node_NewFee: daemonFee.nodeFeeAmount || 0
     });
-    log.info(`Network Fee ${node_NewFee  || 0}`);
+    log.info(`Network Fee ${daemonFee.nodeFeeAmount  || 0}`);
   };
 
   toggleLocalDaemon = () => {
