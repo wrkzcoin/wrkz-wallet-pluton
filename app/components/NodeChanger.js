@@ -120,16 +120,15 @@ export default class NodeChanger extends Component<Props, State> {
     }
     eventEmitter.emit('nodeChangeInProgress');
     const daemon = new Daemon(host, Number(port));
+    daemon.config = Configure;
     await session.wallet.swapNode(daemon);
     session.daemon = daemon;
     eventEmitter.emit('newNodeConnected');
     const daemonInfo = session.wallet.getDaemonConnectionInfo();
-    log.info(`Connected to ${daemonInfo.host}:${daemonInfo.port}`);
+    log.debug(`Connected to ${daemonInfo.host}:${daemonInfo.port}`);
     session.modifyConfig('daemonHost', daemonInfo.host);
     session.modifyConfig('daemonPort', daemonInfo.port);
-    //eventEmitter.emit('gotNodeFee');
-    //const daemonFee = session.wallet.getNodeFee();
-    //log.info(`Got node fee ${daemonFee.nodeFeeAddress}:${daemonFee.nodeFeeAmount}`);
+    eventEmitter.emit('gotNodeFee');
   };
 
   handleNodeInputChange = (event: any) => {
@@ -143,14 +142,10 @@ export default class NodeChanger extends Component<Props, State> {
 
   handleNewNode = async () => {
     const daemonInfo = session.wallet.getDaemonConnectionInfo();
-    const daemonFee = await session.wallet.getNodeFee();
-    log.info(daemonInfo)
-    log.info(daemonFee)
     this.setState({
       nodeChangeInProgress: false,
       connectednode: `${daemonInfo.host}:${daemonInfo.port}`,
-      ssl: daemonInfo.ssl,
-      Fee: daemonFee.nodeFeeAmount
+      ssl: daemonInfo.ssl
     });
   };
 
@@ -169,7 +164,7 @@ export default class NodeChanger extends Component<Props, State> {
       ssl: session.daemon.ssl,
       node_NewFee: daemonFee.nodeFeeAmount || 0
     });
-    log.info(`Network Fee ${daemonFee.nodeFeeAmount  || 0}`);
+    log.debug(`Network Fee ${daemonFee.nodeFeeAmount  || 0}`);
   };
 
   toggleLocalDaemon = () => {
