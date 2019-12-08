@@ -4,6 +4,7 @@
 // Please see the included LICENSE file for more information.
 
 import { MixinLimit, MixinLimits, Daemon } from 'turtlecoin-wallet-backend';
+import { name, version } from '../package.json';
 
 const Configure = new function() {
     /**
@@ -36,7 +37,7 @@ const Configure = new function() {
     /**
      * Request timeout for daemon operations in milliseconds
      */
-    this.requestTimeout = 10 * 1000;
+    this.requestTimeout = 30 * 1000;
 
     /**
      * The block time of your coin, in seconds
@@ -51,7 +52,7 @@ const Configure = new function() {
     /**
      * How often to update the daemon info, in milliseconds
      */
-    this.daemonUpdateInterval = 10 * 1000;
+    this.daemonUpdateInterval = 15 * 1000;
 
     /**
      * How often to check on locked transactions
@@ -121,7 +122,14 @@ const Configure = new function() {
     /**
      * Amount of blocks to request from the daemon at once
      */
-    this.blocksPerDaemonRequest = 100;
+    this.blocksPerDaemonRequest = 25;
+
+    /**
+     * User agent string
+     */
+    this.customUserAgentString = `${name}-v${version}`;
+
+    this.customRequestOptions = { pool: { maxSockets: 100 }, agent: false },
 
     /**
      * Unix timestamp of the time your chain was launched.
