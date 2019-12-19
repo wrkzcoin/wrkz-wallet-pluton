@@ -42,6 +42,8 @@ jobs:
         run: |
           rm -rf ./release/*.blockmap
           rm -rf ./release/*.zip
+          rm -rf ./release/*-unpacked
+          rm -rf ./release/mac
           export NAME=$(ls release/proton-wallet*)
           echo ::set-output name=file_name::${NAME:8}
 
