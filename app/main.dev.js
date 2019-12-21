@@ -17,7 +17,7 @@ import isDev from 'electron-is-dev';
 import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
-import iConfig from './constants/config';
+import iConfig from './mainWindow/constants/config';
 import packageInfo from '../package.json';
 
 /** disable background throttling so our sync
@@ -97,9 +97,9 @@ if (config) {
 }
 
 if (os.platform() !== 'win32') {
-  trayIcon = path.join(__dirname, 'images/icon_color_64x64.png');
+  trayIcon = path.join(__dirname, './mainWindow/images/icon_color_64x64.png');
 } else {
-  trayIcon = path.join(__dirname, 'images/icon.ico');
+  trayIcon = path.join(__dirname, './mainWindow/images/icon.ico');
 }
 
 if (os.platform() === 'darwin') {

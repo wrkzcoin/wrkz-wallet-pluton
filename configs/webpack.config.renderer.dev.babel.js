@@ -45,7 +45,7 @@ export default merge.smart(baseConfig, {
       ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
       `webpack-dev-server/client?http://localhost:${port}/`,
       'webpack/hot/only-dev-server',
-      require.resolve('../app/index')
+      require.resolve('../app/mainWindow/index')
     ]
   },
 

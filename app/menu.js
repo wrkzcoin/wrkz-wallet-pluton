@@ -8,7 +8,7 @@ import npmPackage from '../package.json';
 
 export const il8n = new LocalizedStrings({
   // eslint-disable-next-line global-require
-  en: require('./il8n/en-menu.json')
+  en: require('./mainWindow/il8n/en-menu.json')
 });
 
 const { version: currentVersion } = npmPackage;

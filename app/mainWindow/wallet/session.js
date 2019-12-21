@@ -12,7 +12,7 @@ import log from 'electron-log';
 import fs, { WriteStream } from 'fs';
 import { createObjectCsvWriter } from 'csv-writer';
 import { config, directories, eventEmitter, loginCounter } from '../index';
-import { name, version } from '../../package.json';
+import { name, version } from '../../../package.json';
 
 export default class WalletSession {
   loginFailed: boolean;

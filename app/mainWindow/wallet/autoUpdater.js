@@ -6,7 +6,7 @@ import log from 'electron-log';
 import semver from 'semver';
 import os from 'os';
 import { eventEmitter } from '../index';
-import npmPackage from '../../package.json';
+import npmPackage from '../../../package.json';
 
 const currentVersion = npmPackage.version;
 const operatingSystem = os.platform();
