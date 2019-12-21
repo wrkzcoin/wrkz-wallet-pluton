@@ -255,7 +255,7 @@ app.on('ready', async () => {
     tray.on('click', () => showMainWindow());
   }
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  mainWindow.loadURL(`file://${__dirname}/mainWindow/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
