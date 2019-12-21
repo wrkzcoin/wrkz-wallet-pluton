@@ -107,6 +107,7 @@ if (os.platform() === 'darwin') {
 }
 
 let mainWindow = null;
+let backendWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line global-require
@@ -229,6 +230,13 @@ app.on('ready', async () => {
     }
   });
 
+  backendWindow = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+
   if (os.platform() !== 'darwin') {
     tray = new Tray(trayIcon);
 
@@ -256,6 +264,7 @@ app.on('ready', async () => {
   }
 
   mainWindow.loadURL(`file://${__dirname}/mainWindow/app.html`);
+  backendWindow.loadURL(`file://${__dirname}/backendWindow/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
@@ -266,6 +275,19 @@ app.on('ready', async () => {
     } else {
       mainWindow.show();
       mainWindow.focus();
+    }
+  });
+
+  // @TODO: Use 'ready-to-show' event
+  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+  backendWindow.webContents.on('did-finish-load', () => {
+    if (!backendWindow) {
+      throw new Error('"backendWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      backendWindow.minimize();
+    } else {
+      backendWindow.show();
     }
   });
 
@@ -281,6 +303,10 @@ app.on('ready', async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+
+  backendWindow.on('closed', () => {
+    backendWindow = null;
   });
 
   mainWindow.on('unresponsive', () => {
@@ -307,6 +333,9 @@ app.on('ready', async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+
+  const backendWindowMenuBuilder = new MenuBuilder(backendWindow);
+  backendWindowMenuBuilder.buildMenu();
 });
 
 function showMainWindow() {

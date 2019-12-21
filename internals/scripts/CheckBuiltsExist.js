@@ -8,6 +8,7 @@ import fs from 'fs';
 function CheckBuildsExist() {
   const mainPath = path.join(__dirname, '..', '..', 'app', 'main.prod.js');
   const rendererPath = getRendererPath('mainWindow');
+  const backendWindowRendererPath = getRendererPath('backendWindow');
 
   if (!fs.existsSync(mainPath)) {
     throw new Error(
@@ -21,6 +22,14 @@ function CheckBuildsExist() {
     throw new Error(
       chalk.whiteBright.bgRed.bold(
         'The mainWindow renderer process is not built yet. Build it by running "yarn build-renderer"'
+      )
+    );
+  }
+
+  if (!fs.existsSync(backendWindowRendererPath)) {
+    throw new Error(
+      chalk.whiteBright.bgRed.bold(
+        'The backendWindow renderer process is not built yet. Build it by running "yarn build-renderer"'
       )
     );
   }
