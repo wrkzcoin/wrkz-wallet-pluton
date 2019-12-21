@@ -1,0 +1,18 @@
+{
+  "success": {
+    "strings": ["TurtleCoin", "[checkpoints]", "added to main chain"],
+    "class": "has-text-success has-text-weight-bold"
+  },
+  "danger": {
+    "strings": ["ERROR"],
+    "class": "has-text-danger has-text-weight-bold"
+  },
+  "primary": {
+    "strings": ["Stop signal sent"],
+    "class": "has-text-primary has-text-weight-bold"
+  },
+  "violet": {
+    "strings": ["==="],
+    "class": "has-text-violet has-text-weight-bold"
+  }
+}

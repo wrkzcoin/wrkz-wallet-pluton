@@ -1,0 +1,20 @@
+{
+  "walletFile": "",
+  "enableAutoOptimization": true,
+  "scanCoinbaseTransactions": false,
+  "autoSelectDaemon": true,
+  "minimizeToTray": false,
+  "logLevel": "DISABLED",
+  "daemonHost": "blockapi.turtlepay.io",
+  "daemonPort": 443,
+  "darkMode": true,
+  "displayCurrency": "TRTL",
+  "selectedFiat": "usd",
+  "fiatSymbol": "$",
+  "symbolLocation": "prefix",
+  "fiatDecimals": 2,
+  "autoLockInterval": 15,
+  "autoLockEnabled": true,
+  "useLocalDaemon": false,
+  "daemonLogPath": ""
+}
