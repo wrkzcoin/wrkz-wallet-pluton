@@ -21,7 +21,8 @@ export default merge.smart(baseConfig, {
   target: 'electron-renderer',
 
   entry: {
-    mainWindow: [path.join(__dirname, '..', 'app/mainWindow/index')]
+    mainWindow: [path.join(__dirname, '..', 'app/mainWindow/index')],
+    backendWindow: [path.join(__dirname, '..', 'app/backendWindow/index')]
   },
 
   output: {
