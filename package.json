@@ -50,10 +50,10 @@
     "appId": "wallet.proton.extra",
     "files": [
       "app/dist/",
-      "app/app.html",
+      "app/mainWindow/app.html",
       "app/main.prod.js",
       "app/main.prod.js.map",
-      "app/images/",
+      "app/mainWindow/images/",
       "package.json"
     ],
     "dmg": {
