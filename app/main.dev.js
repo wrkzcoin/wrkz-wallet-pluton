@@ -231,7 +231,9 @@ app.on('ready', async () => {
   });
 
   backendWindow = new BrowserWindow({
-    show: false,
+    show: isDev,
+    frame: false,
+    backgroundColor: '#121212',
     webPreferences: {
       nodeIntegration: true
     }
@@ -284,11 +286,7 @@ app.on('ready', async () => {
     if (!backendWindow) {
       throw new Error('"backendWindow" is not defined');
     }
-    if (process.env.START_MINIMIZED) {
-      backendWindow.minimize();
-    } else {
-      backendWindow.show();
-    }
+    log.debug('Backend window finished loading.');
   });
 
   mainWindow.on('close', event => {
@@ -303,9 +301,6 @@ app.on('ready', async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-  });
-
-  backendWindow.on('closed', () => {
     backendWindow = null;
   });
 
@@ -333,9 +328,6 @@ app.on('ready', async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
-
-  const backendWindowMenuBuilder = new MenuBuilder(backendWindow);
-  backendWindowMenuBuilder.buildMenu();
 });
 
 function showMainWindow() {
