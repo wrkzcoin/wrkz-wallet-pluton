@@ -9,7 +9,7 @@
     "build-main": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.main.prod.babel.js --colors",
     "build-renderer": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.renderer.prod.babel.js --colors --display-chunks --display-modules",
     "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
-    "eslint": "./node_modules/.bin/eslint '**/*.{js,jsx}'",
+    "eslint": "cross-env NODE_ENV=development ./node_modules/.bin/eslint '**/*.{js,jsx}'",
     "package": "yarn build && electron-builder build --publish never",
     "package-arm": "yarn build && electron-builder build --armv7l --publish never",
     "package-arm64": "yarn build && electron-builder build --arm64 --publish never",

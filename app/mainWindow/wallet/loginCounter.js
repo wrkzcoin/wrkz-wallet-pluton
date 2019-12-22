@@ -32,6 +32,8 @@ export default class LoginCounter {
 
   daemonFailedInit: boolean;
 
+  walletActive: boolean;
+
   constructor() {
     this.userLoginAttempted = false;
     this.isLoggedIn = false;
@@ -45,6 +47,11 @@ export default class LoginCounter {
     this.pageFocusStack = [];
     this.selectedLog = config.useLocalDaemon ? 'daemon' : 'wallet-backend';
     this.daemonFailedInit = false;
+    this.walletActive = false;
+  }
+
+  setWalletActive(status: boolean) {
+    this.walletActive = status;
   }
 
   getAnimation(currentPage: string) {

@@ -28,6 +28,9 @@ function parseMessage(message: any) {
     case 'walletPassword':
       backend.openWallet(data);
       break;
+    case 'verifyWalletPassword':
+      backend.verifyPassword(data);
+      break;
     default:
       console.log(message);
       break;

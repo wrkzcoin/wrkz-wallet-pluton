@@ -3,7 +3,6 @@
 // Please see the included LICENSE file for more information.
 
 import log from 'electron-log';
-import isDev from 'electron-is-dev';
 import os from 'os';
 import fs from 'fs';
 import path from 'path';
@@ -109,19 +108,6 @@ if (useLocalDaemon && daemonLogPath) {
   }
 }
 
-export function stopTail() {
-  daemonLogger = null;
-}
-
-export function startTail(filePath?: PathLike) {
-  try {
-    daemonLogger = new DaemonLogger(filePath || daemonLogPath);
-  } catch (error) {
-    log.error('Tail initialization failed.');
-    log.error(error);
-  }
-}
-
 let { textColor } = uiType(darkMode);
 
 eventEmitter.on('darkmodeon', () => {
@@ -131,43 +117,7 @@ eventEmitter.on('darkmodeoff', () => {
   textColor = 'has-text-dark';
 });
 
-try {
-  // eslint-disable-next-line no-unused-vars
-  let testSession = new WalletSession();
-  testSession = null;
-} catch (error) {
-  log.debug(error);
-  render(
-    <div className="wholescreen has-background-black">
-      <div className="elem-to-center box has-background-dark">
-        <h1 className="title has-text-white has-text-centered">
-          <i className="fas fa-skull" />
-          &nbsp;&nbsp;Uh oh, this isn&apos;t good.
-        </h1>
-        <p className="has-text-white">
-          Something bad happened and we couldn&apos;t open your wallet. Your
-          wallet file might be corrupted or have been moved.
-        </p>
-        <br />
-        <p className="has-text-white">{error.stack}</p>
-      </div>
-    </div>,
-    document.getElementById('root')
-  );
-}
-
 export let session = new WalletSession();
-
-if (!session.loginFailed && !session.firstStartup) {
-  log.debug('Initialized wallet session ', session.address);
-  startWallet();
-} else {
-  log.debug('Login failed, redirecting to login...');
-}
-
-function handleDonate() {
-  eventEmitter.emit('goToDonate');
-}
 
 ipcRenderer.on('handleDonate', handleDonate);
 eventEmitter.on('handleDonate', handleDonate);
@@ -208,9 +158,21 @@ eventEmitter.on('updateRequired', updateFile => {
   );
 });
 
-ipcRenderer.on('fromBackend', (event: Electron.IpcRendererEvent, data: any) => {
-  log.info(data);
-});
+ipcRenderer.on(
+  'fromBackend',
+  (event: Electron.IpcRendererEvent, message: any) => {
+    const { data, messageType } = message;
+
+    switch (messageType) {
+      case 'walletActiveStatus':
+        loginCounter.setWalletActive(data);
+        break;
+      default:
+        log.info(message);
+        break;
+    }
+  }
+);
 
 eventEmitter.on('getUpdate', () => {
   remote.shell.openExternal(latestUpdate);
@@ -346,78 +308,6 @@ ipcRenderer.on('exportToCSV', () => {
   }
 });
 
-function handleOpen() {
-  const options = {
-    defaultPath: remote.app.getPath('documents'),
-    filters: [
-      {
-        name: 'TurtleCoin Wallet File (v0)',
-        extensions: ['wallet']
-      }
-    ]
-  };
-  const getPaths = remote.dialog.showOpenDialog(null, options);
-  log.debug(getPaths);
-  if (getPaths === undefined) {
-    return;
-  }
-  if (session) {
-    loginCounter.userLoginAttempted = false;
-    loginCounter.lastLoginAttemptFailed = false;
-    loginCounter.loginsAttempted = 0;
-    session.loginFailed = false;
-    session.saveWallet(session.walletFile);
-    const [, error] = WalletBackend.openWalletFromFile(
-      session.daemon,
-      getPaths[0],
-      ''
-    );
-    if (error && error.errorCode !== 5) {
-      log.debug(`Failed to open wallet: ${error.toString()}`);
-      const message = (
-        <div>
-          <center>
-            <p className="subtitle has-text-danger">Wallet Open Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            Your wallet did not open successfully. Try again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-      return;
-    }
-    if (error !== undefined) {
-      if (error.errorCode === 5) {
-        log.debug('Login to wallet failed, firing event...');
-      }
-    }
-    const selectedPath = getPaths[0];
-    const savedSuccessfully = session.handleWalletOpen(selectedPath);
-    if (savedSuccessfully === true) {
-      session = null;
-      session = new WalletSession();
-      startWallet();
-      eventEmitter.emit('refreshLogin');
-      eventEmitter.emit('openNewWallet');
-    } else {
-      const message = (
-        <div>
-          <center>
-            <p className="subtitle has-text-danger">Wallet Open Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            Your wallet did not open successfully. Try again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-    }
-  }
-}
-
 eventEmitter.on('sendNotification', function sendNotification(amount) {
   const { notifications } = config;
 
@@ -477,241 +367,14 @@ function failedDaemonInit() {
   eventEmitter.emit('openModal', message, 'OK', null, 'initializeNewSession');
 }
 
-eventEmitter.on('initializeNewNode', (password, daemonHost, daemonPort) => {
-  session = null;
-  session = new WalletSession(password, daemonHost, daemonPort);
-  startWallet();
-  eventEmitter.emit('newNodeConnected');
-  session.firstLoadOnLogin = false;
-});
-
-eventEmitter.on('initializeNewSession', password => {
-  session = null;
-  session = new WalletSession(password);
-  startWallet();
-  eventEmitter.emit('openNewWallet');
-});
-
-export function saveNew(wallet: any, password: string) {
-  const options = {
-    defaultPath: remote.app.getPath('documents'),
-    filters: [
-      {
-        name: 'TurtleCoin Wallet File (v0)',
-        extensions: ['wallet']
-      }
-    ]
-  };
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
-    return;
-  }
-  if (session) {
-    session.saveWallet(session.walletFile);
-  }
-  if (savedInInstallDir(savePath)) {
-    const message = (
-      <div>
-        <center>
-          <p className="subtitle has-text-danger">Wallet Save Error!</p>
-        </center>
-        <br />
-        <p className={`subtitle ${textColor}`}>
-          You can not save the wallet in the installation directory. The windows
-          installer will delete all files in the directory upon upgrading the
-          application, so it is not allowed. Please save the wallet somewhere
-          else.
-        </p>
-      </div>
-    );
-    eventEmitter.emit('openModal', message, 'OK', null, null);
-    return;
-  }
-  const createdSuccessfuly = session.handleNewWallet(
-    wallet,
-    savePath,
-    password
-  );
-  if (createdSuccessfuly === false) {
-    const message = (
-      <div>
-        <center>
-          <p className="subtitle has-text-danger">Wallet Creation Error!</p>
-        </center>
-        <br />
-        <p className={`subtitle ${textColor}`}>
-          The wallet was not created successfully. Check your directory
-          permissions and try again.
-        </p>
-      </div>
-    );
-    eventEmitter.emit('openModal', message, 'OK', null, null);
-  } else {
-    const savedSuccessfully = session.handleWalletOpen(savePath);
-    if (savedSuccessfully === true) {
-      session = null;
-      session = new WalletSession(password);
-      startWallet();
-      const message = (
-        <div>
-          <center>
-            <p className={`subtitle ${textColor}`}>Success!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            Your new wallet was created successfully.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, 'goHome');
-    }
-  }
-}
-
-function handleNew() {
-  eventEmitter.emit('goToNewWallet');
-}
-
 ipcRenderer.on('handleNew', handleNew);
 eventEmitter.on('handleNew', handleNew);
 
-function handleBackup() {
-  if ((session && !session.wallet) || !loginCounter.isLoggedIn) {
-    eventEmitter.emit('refreshLogin');
-    return;
-  }
-  const message = (
-    <div>
-      <center>
-        <p className={`subtitle ${textColor}`}>Backup</p>
-      </center>
-      <br />
-      <p className={`subtitle ${textColor}`}>
-        How would you like to back up your keys?
-      </p>
-    </div>
-  );
-  eventEmitter.emit(
-    'openModal',
-    message,
-    'Copy to Clipboard',
-    null,
-    'backupToClipboard',
-    'Save to File',
-    'backupToFile'
-  );
-}
-
-function restartApplication() {
-  if (!isDev) {
-    remote.app.relaunch();
-    remote.app.quit();
-  } else {
-    log.debug(`Can't restart automatically in dev mode`);
-  }
-}
-eventEmitter.on('restartApplication', restartApplication);
-
 eventEmitter.on('backupToFile', backupToFile);
-
-function getWalletSecret(wallet?: any) {
-  const walletToBackup = wallet || session.wallet;
-
-  const publicAddress = walletToBackup.getPrimaryAddress();
-  const [
-    privateSpendKey,
-    privateViewKey
-  ] = walletToBackup.getPrimaryAddressPrivateKeys();
-  // eslint-disable-next-line prefer-const
-  let [mnemonicSeed, err] = walletToBackup.getMnemonicSeed();
-  if (err) {
-    if (err.errorCode === 41) {
-      mnemonicSeed = '';
-    } else {
-      throw err;
-    }
-  }
-
-  const secret =
-    // eslint-disable-next-line prefer-template
-    publicAddress +
-    `\n\n${il8n.private_spend_key_colon}\n\n` +
-    privateSpendKey +
-    `\n\n${il8n.private_view_key_colon}\n\n` +
-    privateViewKey +
-    (mnemonicSeed !== '' ? `\n\n${il8n.mnemonic_seed_colon}\n\n` : '') +
-    mnemonicSeed +
-    `\n\n${il8n.please_save_your_keys}`;
-
-  return secret;
-}
-
-export function backupToFile(wallet?: any) {
-  if (!session && !wallet) {
-    return;
-  }
-
-  const secret = getWalletSecret(wallet || undefined);
-
-  const options = {
-    defaultPath: remote.app.getPath('documents'),
-    filters: [
-      {
-        name: 'Text File',
-        extensions: ['txt']
-      }
-    ]
-  };
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
-    return;
-  }
-
-  fs.writeFile(savePath, secret, error => {
-    if (error) {
-      throw error;
-    }
-  });
-}
-
 eventEmitter.on('backupToClipboard', backupToClipboard);
-
-function backupToClipboard() {
-  if (!session) {
-    return;
-  }
-
-  const secret = getWalletSecret();
-
-  clipboard.writeText(secret);
-}
 
 ipcRenderer.on('handleBackup', handleBackup);
 eventEmitter.on('handleBackup', handleBackup);
-
-function handleImport() {
-  log.debug('User selected to import wallet.');
-  const message = (
-    <div>
-      <center>
-        <p className={`title ${textColor}`}>Select Import Type</p>
-      </center>
-      <br />
-      <p className={`subtitle ${textColor}`}>
-        Would you like to import from seed or keys?
-      </p>
-    </div>
-  );
-  eventEmitter.emit(
-    'openModal',
-    message,
-    'Seed',
-    null,
-    'importSeed',
-    'Keys',
-    'importKey'
-  );
-}
 
 eventEmitter.on('handleImport', handleImport);
 ipcRenderer.on('handleImport', handleImport);
@@ -743,23 +406,6 @@ const uncaughtErrorComponent = ({ componentStack, error }) => (
     </div>
   </div>
 );
-
-async function startWallet() {
-  if (session) {
-    try {
-      await session.wallet.start();
-    } catch {
-      log.debug('Password required, redirecting to login...');
-      loginCounter.isLoggedIn = true;
-      eventEmitter.emit('loginFailed');
-    }
-    eventEmitter.emit('gotNodeFee');
-  }
-}
-
-function activityDetected() {
-  eventEmitter.emit('activityDetected');
-}
 
 render(
   <AppContainer>
@@ -798,4 +444,221 @@ if (module.hot) {
       document.getElementById('root')
     );
   });
+}
+
+function handleDonate() {
+  eventEmitter.emit('goToDonate');
+}
+
+function activityDetected() {
+  eventEmitter.emit('activityDetected');
+}
+
+function handleImport() {
+  log.debug('User selected to import wallet.');
+  const message = (
+    <div>
+      <center>
+        <p className={`title ${textColor}`}>Select Import Type</p>
+      </center>
+      <br />
+      <p className={`subtitle ${textColor}`}>
+        Would you like to import from seed or keys?
+      </p>
+    </div>
+  );
+  eventEmitter.emit(
+    'openModal',
+    message,
+    'Seed',
+    null,
+    'importSeed',
+    'Keys',
+    'importKey'
+  );
+}
+
+function backupToClipboard() {
+  if (!session) {
+    return;
+  }
+
+  const secret = getWalletSecret();
+
+  clipboard.writeText(secret);
+}
+
+export function backupToFile(wallet?: any) {
+  if (!session && !wallet) {
+    return;
+  }
+
+  const secret = getWalletSecret(wallet || undefined);
+
+  const options = {
+    defaultPath: remote.app.getPath('documents'),
+    filters: [
+      {
+        name: 'Text File',
+        extensions: ['txt']
+      }
+    ]
+  };
+  const savePath = remote.dialog.showSaveDialog(null, options);
+  if (savePath === undefined) {
+    return;
+  }
+
+  fs.writeFile(savePath, secret, error => {
+    if (error) {
+      throw error;
+    }
+  });
+}
+
+function getWalletSecret(wallet?: any) {
+  const walletToBackup = wallet || session.wallet;
+
+  const publicAddress = walletToBackup.getPrimaryAddress();
+  const [
+    privateSpendKey,
+    privateViewKey
+  ] = walletToBackup.getPrimaryAddressPrivateKeys();
+  // eslint-disable-next-line prefer-const
+  let [mnemonicSeed, err] = walletToBackup.getMnemonicSeed();
+  if (err) {
+    if (err.errorCode === 41) {
+      mnemonicSeed = '';
+    } else {
+      throw err;
+    }
+  }
+
+  const secret =
+    // eslint-disable-next-line prefer-template
+    publicAddress +
+    `\n\n${il8n.private_spend_key_colon}\n\n` +
+    privateSpendKey +
+    `\n\n${il8n.private_view_key_colon}\n\n` +
+    privateViewKey +
+    (mnemonicSeed !== '' ? `\n\n${il8n.mnemonic_seed_colon}\n\n` : '') +
+    mnemonicSeed +
+    `\n\n${il8n.please_save_your_keys}`;
+
+  return secret;
+}
+
+function handleBackup() {
+  if ((session && !session.wallet) || !loginCounter.isLoggedIn) {
+    eventEmitter.emit('refreshLogin');
+    return;
+  }
+  const message = (
+    <div>
+      <center>
+        <p className={`subtitle ${textColor}`}>Backup</p>
+      </center>
+      <br />
+      <p className={`subtitle ${textColor}`}>
+        How would you like to back up your keys?
+      </p>
+    </div>
+  );
+  eventEmitter.emit(
+    'openModal',
+    message,
+    'Copy to Clipboard',
+    null,
+    'backupToClipboard',
+    'Save to File',
+    'backupToFile'
+  );
+}
+
+function handleNew() {
+  eventEmitter.emit('goToNewWallet');
+}
+
+function handleOpen() {
+  const options = {
+    defaultPath: remote.app.getPath('documents'),
+    filters: [
+      {
+        name: 'TurtleCoin Wallet File (v0)',
+        extensions: ['wallet']
+      }
+    ]
+  };
+  const getPaths = remote.dialog.showOpenDialog(null, options);
+  log.debug(getPaths);
+  if (getPaths === undefined) {
+    return;
+  }
+  if (session) {
+    loginCounter.userLoginAttempted = false;
+    loginCounter.lastLoginAttemptFailed = false;
+    loginCounter.loginsAttempted = 0;
+    session.loginFailed = false;
+    session.saveWallet(session.walletFile);
+    const [, error] = WalletBackend.openWalletFromFile(
+      session.daemon,
+      getPaths[0],
+      ''
+    );
+    if (error && error.errorCode !== 5) {
+      log.debug(`Failed to open wallet: ${error.toString()}`);
+      const message = (
+        <div>
+          <center>
+            <p className="subtitle has-text-danger">Wallet Open Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            Your wallet did not open successfully. Try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
+      return;
+    }
+    if (error !== undefined) {
+      if (error.errorCode === 5) {
+        log.debug('Login to wallet failed, firing event...');
+      }
+    }
+    const selectedPath = getPaths[0];
+    const savedSuccessfully = session.handleWalletOpen(selectedPath);
+    if (savedSuccessfully === true) {
+      session = null;
+      session = new WalletSession();
+      eventEmitter.emit('refreshLogin');
+      eventEmitter.emit('openNewWallet');
+    } else {
+      const message = (
+        <div>
+          <center>
+            <p className="subtitle has-text-danger">Wallet Open Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            Your wallet did not open successfully. Try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
+    }
+  }
+}
+
+export function stopTail() {
+  daemonLogger = null;
+}
+
+export function startTail(filePath?: PathLike) {
+  try {
+    daemonLogger = new DaemonLogger(filePath || daemonLogPath);
+  } catch (error) {
+    log.error('Tail initialization failed.');
+    log.error(error);
+  }
 }

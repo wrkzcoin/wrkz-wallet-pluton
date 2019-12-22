@@ -11,7 +11,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
-import { session, saveNew, eventEmitter, backupToFile } from '../index';
+import { session, backupToFile } from '../index';
 
 type State = {
   darkMode: boolean,
@@ -119,60 +119,11 @@ export default class NewWallet extends Component<Props, State> {
   };
 
   nextPage = () => {
-    const {
-      activePage,
-      password,
-      confirmPassword,
-      confirmSeed,
-      newWallet,
-      darkMode
-    } = this.state;
-    const { textColor } = uiType(darkMode);
+    const { activePage, password, confirmPassword, confirmSeed } = this.state;
     let currentPageNumber: number = this.evaluatePageNumber(activePage);
 
     if (currentPageNumber === 4) {
-      const [wallet, err] = WalletBackend.importWalletFromSeed(
-        session.daemon,
-        100000,
-        confirmSeed
-      );
-
-      if (err) {
-        log.error(err);
-        const message = (
-          <div>
-            <center>
-              <p className="title has-text-danger">Seed Verification Error!</p>
-            </center>
-            <br />
-            <p className={`subtitle ${textColor}`}>{err.customMessage}</p>
-          </div>
-        );
-        eventEmitter.emit('openModal', message, 'OK', null, null);
-      }
-
-      if (wallet) {
-        if (wallet.getPrimaryAddress() === newWallet.getPrimaryAddress()) {
-          saveNew(newWallet, password);
-        } else {
-          log.error('Wallet creation error.');
-          const message = (
-            <div>
-              <center>
-                <p className="title has-text-danger">Wallet Save Error!</p>
-              </center>
-              <br />
-              <p className={`subtitle ${textColor}`}>
-                The wallet failed to save to disk. Check your directory
-                permissions and try again.
-              </p>
-            </div>
-          );
-          eventEmitter.emit('openModal', message, 'OK', null, null);
-        }
-      }
-
-      return;
+      console.log('make a new wallet, bucko!', confirmSeed);
     }
 
     if (currentPageNumber === 2 && password !== confirmPassword) {
@@ -221,7 +172,7 @@ export default class NewWallet extends Component<Props, State> {
       confirmSeed,
       showPassword
     } = this.state;
-    const { backgroundColor, fillColor, textColor, elementBaseColor } = uiType(
+    const { backgroundColor, fillColor, elementBaseColor, textColor } = uiType(
       darkMode
     );
     const copiedTip = 'Copied!';

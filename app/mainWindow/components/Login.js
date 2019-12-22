@@ -36,6 +36,18 @@ export default class Login extends Component<Props, State> {
 
   componentDidMount() {
     loginCounter.navBarCount = 0;
+    ipcRenderer.on(
+      'fromBackend',
+      (event: Electron.IpcRendererEvent, message: any) => {
+        const { messageType, data } = message;
+        if (messageType === 'authenticationStatus') {
+          loginCounter.isLoggedIn = data;
+          loginCounter.lastLoginAttemptFailed = !data;
+          loginCounter.loginFailed = !data;
+          eventEmitter.emit('goHome');
+        }
+      }
+    );
   }
 
   componentWillUnmount() {}
@@ -49,23 +61,13 @@ export default class Login extends Component<Props, State> {
     event.preventDefault();
     loginCounter.loginsAttempted++;
     const password = event.target[0].value;
-    ipcRenderer.send('fromFrontend', 'walletPassword', password);
     if (password === undefined) {
       return;
     }
-    if (!session.wallet) {
-      eventEmitter.emit('initializeNewSession', password);
+    if (!loginCounter.walletActive) {
+      ipcRenderer.send('fromFrontend', 'walletPassword', password);
     } else {
-      if (password === session.walletPassword) {
-        loginCounter.isLoggedIn = true;
-        loginCounter.lastLoginAttemptFailed = false;
-        eventEmitter.emit('goHome');
-      }
-      if (password !== session.walletPassword) {
-        loginCounter.userLoginAttempted = true;
-        loginCounter.lastLoginAttemptFailed = true;
-        eventEmitter.emit('refreshLogin');
-      }
+      ipcRenderer.send('fromFrontend', 'verifyWalletPassword', password);
     }
   };
 
