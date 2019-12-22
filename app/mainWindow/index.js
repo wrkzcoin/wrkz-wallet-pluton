@@ -208,6 +208,10 @@ eventEmitter.on('updateRequired', updateFile => {
   );
 });
 
+ipcRenderer.on('fromBackend', (event: Electron.IpcRendererEvent, data: any) => {
+  log.info(data);
+});
+
 eventEmitter.on('getUpdate', () => {
   remote.shell.openExternal(latestUpdate);
   remote.app.exit();

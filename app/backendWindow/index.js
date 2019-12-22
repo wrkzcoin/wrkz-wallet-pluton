@@ -1,16 +1,35 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Fragment } from 'react';
-import { render } from 'react-dom';
-import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import Root from './containers/Root';
+import { ipcRenderer } from 'electron';
+import Backend from './Backend';
 
-const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
+let config = null;
+let backend = null;
 
-render(
-  <AppContainer>
-    <Root />
-  </AppContainer>,
-  document.getElementById('root')
+ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
+  parseMessage(message);
+});
+
+ipcRenderer.on(
+  'fromFrontend',
+  (event: Electron.IpcRendererEvent, message: any) => {
+    parseMessage(message);
+  }
 );
+
+function parseMessage(message: any) {
+  const { messageType, data } = message;
+  switch (messageType) {
+    case 'config':
+      config = data;
+      backend = new Backend(config);
+      break;
+    case 'walletPassword':
+      backend.openWallet(data);
+      break;
+    default:
+      console.log(message);
+      break;
+  }
+}

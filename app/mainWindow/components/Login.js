@@ -2,6 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import { ipcRenderer } from 'electron';
 import { session, eventEmitter, loginCounter, il8n } from '../index';
 import Redirector from './Redirector';
 import SyncReminder from './SyncReminder';
@@ -48,6 +49,7 @@ export default class Login extends Component<Props, State> {
     event.preventDefault();
     loginCounter.loginsAttempted++;
     const password = event.target[0].value;
+    ipcRenderer.send('fromFrontend', 'walletPassword', password);
     if (password === undefined) {
       return;
     }

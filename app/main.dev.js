@@ -4,6 +4,7 @@
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
+import { EventEmitter } from 'events';
 import {
   app,
   BrowserWindow,
@@ -19,6 +20,11 @@ import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
 import iConfig from './mainWindow/constants/config';
 import packageInfo from '../package.json';
+import MessageRelayer from './MessageRelayer';
+
+const windowEvents = new EventEmitter();
+
+let messageRelayer = null;
 
 /** disable background throttling so our sync
  *   speed doesn't crap out when minimized
@@ -32,6 +38,8 @@ let tray = null;
 let trayIcon = null;
 let config = null;
 const homedir = os.homedir();
+let frontendReady = false;
+let backendReady = false;
 
 const directories = [
   `${homedir}/.protonwallet`,
@@ -231,9 +239,8 @@ app.on('ready', async () => {
   });
 
   backendWindow = new BrowserWindow({
-    show: isDev,
+    show: false,
     frame: false,
-    backgroundColor: '#121212',
     webPreferences: {
       nodeIntegration: true
     }
@@ -272,6 +279,8 @@ app.on('ready', async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+    frontendReady = true;
+    if (backendReady) windowEvents.emit('bothWindowsReady');
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
@@ -280,12 +289,12 @@ app.on('ready', async () => {
     }
   });
 
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
   backendWindow.webContents.on('did-finish-load', () => {
     if (!backendWindow) {
       throw new Error('"backendWindow" is not defined');
     }
+    backendReady = true;
+    if (frontendReady) windowEvents.emit('bothWindowsReady');
     log.debug('Backend window finished loading.');
   });
 
@@ -309,7 +318,7 @@ app.on('ready', async () => {
     const userSelection = dialog.showMessageBox(mainWindow, {
       type: 'error',
       buttons: ['Kill', `Don't Kill`],
-      title: 'Unresponse Application',
+      title: 'Unresponsive Application',
       message: 'The application is unresponsive. Would you like to kill it?'
     });
     if (userSelection === 0) {
@@ -335,6 +344,11 @@ function showMainWindow() {
     mainWindow.show();
   }
 }
+
+windowEvents.on('bothWindowsReady', () => {
+  messageRelayer = new MessageRelayer(mainWindow, backendWindow);
+  messageRelayer.sendToBackend('config', config);
+});
 
 ipcMain.on('closeToTrayToggle', (event: any, state: boolean) => {
   toggleCloseToTray(state);
