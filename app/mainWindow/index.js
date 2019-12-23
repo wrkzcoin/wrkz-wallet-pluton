@@ -156,6 +156,9 @@ ipcRenderer.on(
       case 'transactionList':
         session.setTransactions(data);
         break;
+      case 'syncStatus':
+        session.setSyncStatus(data);
+        break;
       default:
         break;
     }

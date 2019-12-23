@@ -28,6 +28,10 @@ function parseMessage(message: any) {
     case 'verifyWalletPassword':
       backend.verifyPassword(data);
       break;
+    case 'transactionRequest':
+      // data is the amount of transactions to get
+      backend.getTransactions(data);
+      break;
     default:
       console.log(message);
       break;

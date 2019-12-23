@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import log from 'electron-log';
-import { remote } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import React, { Component, Fragment } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { session, eventEmitter, il8n, loginCounter, config } from '../index';
@@ -17,7 +17,6 @@ type Props = {};
 
 type State = {
   transactions: Array<any>,
-  totalTransactionCount: number,
   darkMode: boolean,
   displayCurrency: string,
   fiatPrice: number,
@@ -25,7 +24,8 @@ type State = {
   symbolLocation: string,
   fiatDecimals: number,
   pageAnimationIn: string,
-  expandedRows: string[]
+  expandedRows: string[],
+  networkBlockHeight: number
 };
 
 export default class Home extends Component<Props, State> {
@@ -36,12 +36,7 @@ export default class Home extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      transactions: session.getTransactions(
-        0,
-        displayedTransactionCount,
-        false
-      ),
-      totalTransactionCount: session.getTransactions().length,
+      transactions: session.getTransactions(),
       darkMode: session.darkMode,
       displayCurrency: config.displayCurrency,
       fiatPrice: session.fiatPrice,
@@ -49,7 +44,8 @@ export default class Home extends Component<Props, State> {
       symbolLocation: config.symbolLocation,
       fiatDecimals: config.fiatDecimals,
       pageAnimationIn: loginCounter.getAnimation('/'),
-      expandedRows: []
+      expandedRows: [],
+      networkBlockHeight: session.getNetworkBlockHeight()
     };
     this.refreshListOnNewTransaction = this.refreshListOnNewTransaction.bind(
       this
@@ -58,34 +54,42 @@ export default class Home extends Component<Props, State> {
     this.modifyCurrency = this.modifyCurrency.bind(this);
     this.expandRow = this.expandRow.bind(this);
     this.openInExplorer = this.openInExplorer.bind(this);
+    this.handleNewSyncStatus = this.handleNewSyncStatus.bind(this);
+    this.handleNewTransactions = this.handleNewTransactions.bind(this);
   }
 
   componentDidMount() {
     eventEmitter.on('openNewWallet', this.openNewWallet);
-    const { loginFailed, wallet, firstLoadOnLogin } = session;
-    if (wallet) {
-      wallet.on('transaction', this.refreshListOnNewTransaction);
-    }
+    eventEmitter.on('gotSyncStatus', this.handleNewSyncStatus);
+    eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.on('modifyCurrency', this.modifyCurrency);
+    eventEmitter.on('gotNewTransactions', this.handleNewTransactions);
+    const { loginFailed, firstLoadOnLogin } = session;
     if (firstLoadOnLogin && loginFailed === false) {
       this.switchOffAnimation();
     }
-    eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
-    eventEmitter.on('modifyCurrency', this.modifyCurrency);
   }
 
   componentWillUnmount() {
     displayedTransactionCount = 50;
-    const { wallet } = session;
-    this.setState({
-      transactions: session.getTransactions(0, displayedTransactionCount, false)
-    });
+    eventEmitter.off('gotSyncStatus', this.handleNewSyncStatus);
     eventEmitter.off('openNewWallet', this.openNewWallet);
-    if (wallet) {
-      session.wallet.off('transaction', this.refreshListOnNewTransaction);
-    }
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.off('modifyCurrency', this.modifyCurrency);
+    eventEmitter.off('gotNewTransactions', this.handleNewTransactions);
   }
+
+  handleNewTransactions = () => {
+    this.setState({
+      transactions: session.getTransactions()
+    });
+  };
+
+  handleNewSyncStatus = () => {
+    this.setState({
+      networkBlockHeight: session.getNetworkBlockHeight()
+    });
+  };
 
   openInExplorer = (event: any) => {
     const hash = event.target.value;
@@ -115,12 +119,7 @@ export default class Home extends Component<Props, State> {
     log.debug('Transaction found, refreshing transaction list...');
     displayedTransactionCount += 1;
     this.setState({
-      transactions: session.getTransactions(
-        0,
-        displayedTransactionCount,
-        false
-      ),
-      totalTransactionCount: session.getTransactions().length
+      transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
   };
 
@@ -128,37 +127,28 @@ export default class Home extends Component<Props, State> {
     log.debug('Initialized new wallet session, refreshing transaction list...');
     displayedTransactionCount = 50;
     this.setState({
-      transactions: session.getTransactions(
-        0,
-        displayedTransactionCount,
-        false
-      ),
-      totalTransactionCount: session.getTransactions().length
+      transactions: session.getTransactions(0, displayedTransactionCount, false)
     });
   };
 
-  handleLoadMore = (evt: any) => {
-    evt.preventDefault();
+  handleLoadMore = (event: any) => {
+    event.preventDefault();
     displayedTransactionCount += 50;
-    this.setState({
-      transactions: session.getTransactions(0, displayedTransactionCount, false)
-    });
+    ipcRenderer.send(
+      'fromFrontend',
+      'transactionRequest',
+      displayedTransactionCount
+    );
   };
 
-  handleShowAll = (evt: any) => {
-    evt.preventDefault();
-    const { totalTransactionCount } = this.state;
-    this.setState({
-      transactions: session.getTransactions(0, totalTransactionCount, false)
-    });
-  };
-
-  resetDefault = (evt: any) => {
-    evt.preventDefault();
+  resetDefault = (event: any) => {
+    event.preventDefault();
     displayedTransactionCount = 50;
-    this.setState({
-      transactions: session.getTransactions(0, displayedTransactionCount, false)
-    });
+    ipcRenderer.send(
+      'fromFrontend',
+      'transactionRequest',
+      displayedTransactionCount
+    );
   };
 
   expandRow = (event: any) => {
@@ -181,14 +171,14 @@ export default class Home extends Component<Props, State> {
     const {
       darkMode,
       transactions,
-      totalTransactionCount,
       fiatPrice,
       displayCurrency,
       fiatSymbol,
       symbolLocation,
       fiatDecimals,
       pageAnimationIn,
-      expandedRows
+      expandedRows,
+      networkBlockHeight
     } = this.state;
     const {
       backgroundColor,
@@ -370,11 +360,7 @@ export default class Home extends Component<Props, State> {
                                       : session.convertTimestamp(tx[0])}
                                     <br />
                                     {tx[0] !== 0
-                                      ? Math.max(
-                                          session.daemon.getNetworkBlockCount() -
-                                            tx[4],
-                                          0
-                                        )
+                                      ? Math.max(networkBlockHeight - tx[4], 0)
                                       : 0}
                                     <br />
                                     {tx[0] === 0
@@ -432,35 +418,26 @@ export default class Home extends Component<Props, State> {
                 </div>
               </div>
             )}
-            {totalTransactionCount > 50 && (
-              <form>
-                <div className="field">
-                  <div className="buttons">
-                    <button
-                      type="submit"
-                      className="button is-success"
-                      onClick={this.handleShowAll}
-                    >
-                      {il8n.show_all}
-                    </button>
-                    <button
-                      type="submit"
-                      className="button is-warning"
-                      onClick={this.handleLoadMore}
-                    >
-                      {il8n.load_more}
-                    </button>
-                    <button
-                      type="submit"
-                      className="button is-danger"
-                      onClick={this.resetDefault}
-                    >
-                      {il8n.reset}
-                    </button>
-                  </div>
+            <form>
+              <div className="field">
+                <div className="buttons">
+                  <button
+                    type="submit"
+                    className="button is-warning"
+                    onClick={this.handleLoadMore}
+                  >
+                    {il8n.load_more}
+                  </button>
+                  <button
+                    type="submit"
+                    className="button is-danger"
+                    onClick={this.resetDefault}
+                  >
+                    {il8n.reset}
+                  </button>
                 </div>
-              </form>
-            )}
+              </div>
+            </form>
           </div>
           <BottomBar darkMode={darkMode} />
         </div>

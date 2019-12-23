@@ -91,6 +91,14 @@ export default class Backend {
     return transactions;
   }
 
+  getTransactions(displayCount: number) {
+    ipcRenderer.send(
+      'fromBackend',
+      'transactionList',
+      this.getFormattedTransactions(0, displayCount, false)
+    );
+  }
+
   openWallet(password: string): void {
     this.walletPassword = password;
     const [openWallet, error] = WalletBackend.openWalletFromFile(
@@ -101,18 +109,29 @@ export default class Backend {
     if (!error) {
       this.wallet = openWallet;
       this.wallet.setLogLevel(this.evaluateLogLevel(this.logLevel));
+      this.wallet.on(
+        'heightchange',
+        (walletBlockCount, localDaemonBlockCount, networkBlockCount) => {
+          ipcRenderer.send('fromBackend', 'syncStatus', [
+            walletBlockCount,
+            localDaemonBlockCount,
+            networkBlockCount
+          ]);
+        }
+      );
       this.wallet.start();
       this.setWalletActive(true);
+      ipcRenderer.send(
+        'fromBackend',
+        'syncStatus',
+        this.wallet.getSyncStatus()
+      );
       ipcRenderer.send(
         'fromBackend',
         'primaryAddress',
         this.wallet.getPrimaryAddress()
       );
-      ipcRenderer.send(
-        'fromBackend',
-        'transactionList',
-        this.getFormattedTransactions(0, 50, false)
-      );
+      this.getTransactions(50);
       ipcRenderer.send('fromBackend', 'walletActiveStatus', true);
       ipcRenderer.send('fromBackend', 'authenticationStatus', true);
       console.log('wallet started.');

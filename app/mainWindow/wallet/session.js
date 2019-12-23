@@ -23,6 +23,8 @@ export default class WalletSession {
 
   transactions: any[] = [];
 
+  syncStatus: number[] = [0, 0, 0];
+
   constructor() {
     this.loginFailed = false;
     this.firstStartup = false;
@@ -96,6 +98,7 @@ export default class WalletSession {
 
   setTransactions(transactions: any[]) {
     this.transactions = transactions;
+    eventEmitter.emit('gotNewTransactions');
   }
 
   getUnlockedBalance() {
@@ -127,12 +130,25 @@ export default class WalletSession {
     }
   };
 
-  getDaemonSyncStatus() {
-    return 0;
+  setSyncStatus(syncStatus: number[]) {
+    this.syncStatus = syncStatus;
+    eventEmitter.emit('gotSyncStatus');
   }
 
   getSyncStatus() {
-    return 0;
+    return this.syncStatus;
+  }
+
+  getNetworkBlockHeight() {
+    return this.syncStatus[2];
+  }
+
+  getLocalBlockHeight() {
+    return this.syncStatus[1];
+  }
+
+  getWalletBlockHeight() {
+    return this.syncStatus[0];
   }
 
   formatLikeCurrency(x: number) {
