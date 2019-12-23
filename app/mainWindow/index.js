@@ -162,6 +162,9 @@ ipcRenderer.on(
       case 'balance':
         session.setBalance(data);
         break;
+      case 'nodeFee':
+        session.setNodeFee(data);
+        break;
       default:
         break;
     }

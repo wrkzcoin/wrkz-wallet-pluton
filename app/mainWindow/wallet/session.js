@@ -27,6 +27,8 @@ export default class WalletSession {
 
   balance: number[] = [0, 0];
 
+  nodeFee: number = 0;
+
   constructor() {
     this.loginFailed = false;
     this.firstStartup = false;
@@ -35,6 +37,15 @@ export default class WalletSession {
     this.selectedFiat = config.selectedFiat;
     this.fiatPrice = 0;
     this.getFiatPrice(this.selectedFiat);
+  }
+
+  setNodeFee(fee: number): void {
+    this.nodeFee = fee;
+    eventEmitter.emit('gotNodeFee');
+  }
+
+  getNodeFee(): number {
+    return this.nodeFee;
   }
 
   setBalance(balance: number[]): void {

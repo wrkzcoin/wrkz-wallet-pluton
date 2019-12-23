@@ -29,6 +29,11 @@ export default class Backend {
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
   }
 
+  async getNodeFee(): void {
+    await sleep(1000);
+    ipcRenderer.send('fromBackend', 'nodeFee', this.wallet.getNodeFee()[1]);
+  }
+
   getWalletActive(): boolean {
     return this.walletActive;
   }
@@ -147,6 +152,7 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
     ipcRenderer.send('fromBackend', 'walletActiveStatus', true);
     ipcRenderer.send('fromBackend', 'authenticationStatus', true);
+    this.getNodeFee();
     console.log('wallet started.');
   }
 
@@ -164,4 +170,8 @@ export default class Backend {
       console.log(error);
     }
   }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

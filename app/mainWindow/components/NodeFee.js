@@ -21,22 +21,22 @@ export default class NodeFee extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      nodeFee: 0
+      nodeFee: session.getNodeFee()
     };
-    this.refreshNodeFee = this.refreshNodeFee.bind(this);
+    this.handleNewNodeFee = this.handleNewNodeFee.bind(this);
   }
 
   componentDidMount() {
-    eventEmitter.on('gotNodeFee', this.refreshNodeFee);
+    eventEmitter.on('gotNodeFee', this.handleNewNodeFee);
   }
 
   componentWillUnmount() {
-    eventEmitter.off('gotNodeFee', this.refreshNodeFee);
+    eventEmitter.off('gotNodeFee', this.handleNewNodeFee);
   }
 
-  refreshNodeFee = () => {
+  handleNewNodeFee = () => {
     this.setState({
-      nodeFee: session.daemon.feeAmount
+      nodeFee: session.getNodeFee()
     });
   };
 
