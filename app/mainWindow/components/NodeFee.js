@@ -21,7 +21,7 @@ export default class NodeFee extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      nodeFee: session.daemon.feeAmount || 0
+      nodeFee: 0
     };
     this.refreshNodeFee = this.refreshNodeFee.bind(this);
   }

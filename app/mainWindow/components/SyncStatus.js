@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import ReactTooltip from 'react-tooltip';
-import { session } from '../index';
+import { session, eventEmitter } from '../index';
 
 type Props = {
   size: string,
@@ -12,7 +12,9 @@ type Props = {
 };
 
 type State = {
-  syncStatus: number
+  walletBlockheight: number,
+  networkBlockheight: number,
+  syncPercentage: number
 };
 
 export default class SyncStatus extends Component<Props, State> {
@@ -20,46 +22,47 @@ export default class SyncStatus extends Component<Props, State> {
 
   state: State;
 
-  syncInterval: IntervalID;
-
   constructor(props?: Props) {
     super(props);
     this.state = {
-      syncStatus: session.getSyncStatus()
+      walletBlockHeight: session.getWalletBlockHeight(),
+      networkBlockHeight: session.getNetworkBlockHeight(),
+      syncPercentage: session.getSyncPercentage()
     };
-    this.syncInterval = setInterval(() => this.refresh(), 1000);
+
+    this.handleNewSyncStatus = this.handleNewSyncStatus.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    eventEmitter.on('gotSyncStatus', this.handleNewSyncStatus);
+  }
 
   componentWillUnmount() {
-    clearInterval(this.syncInterval);
+    eventEmitter.off('gotSyncStatus', this.handleNewSyncStatus);
   }
 
-  refresh() {
-    this.setState(() => ({
-      syncStatus: session.getSyncStatus()
-    }));
+  handleNewSyncStatus() {
+    this.setState({
+      walletBlockHeight: session.getWalletBlockHeight(),
+      networkBlockHeight: session.getNetworkBlockHeight(),
+      syncPercentage: session.getSyncPercentage()
+    });
     ReactTooltip.rebuild();
   }
 
   render() {
-    const { syncStatus } = this.state;
+    const {
+      walletBlockHeight,
+      networkBlockHeight,
+      syncPercentage
+    } = this.state;
     const { darkMode, size } = this.props;
     const color = darkMode ? 'is-dark' : 'is-white';
 
-    let syncTooltip;
-
-    if (session.wallet) {
-      syncTooltip =
-        session.wallet.getSyncStatus()[2] === 0
-          ? 'Connecting, please wait...'
-          : `${session.wallet.getSyncStatus()[0]}/${
-              session.wallet.getSyncStatus()[2]
-            }`;
-    } else {
-      syncTooltip = 'No wallet open!';
-    }
+    const syncTooltip =
+      session.getNetworkBlockHeight() === 0
+        ? 'Connecting, please wait...'
+        : `${walletBlockHeight}/${networkBlockHeight}`;
     return (
       <div className="control statusicons">
         <div className="tags has-addons">
@@ -70,12 +73,12 @@ export default class SyncStatus extends Component<Props, State> {
           >
             Sync:
           </span>
-          {syncStatus < 100 && session.daemon.networkBlockCount !== 0 && (
+          {syncPercentage < 100 && networkBlockHeight !== 0 && (
             <span
               className={`tag is-warning ${size} sync-status`}
               data-tip={syncTooltip}
             >
-              {syncStatus}%
+              {syncPercentage}%
               <ReactLoading
                 type="bubbles"
                 color="#363636"
@@ -84,15 +87,15 @@ export default class SyncStatus extends Component<Props, State> {
               />
             </span>
           )}
-          {syncStatus === 100 && session.daemon.networkBlockCount !== 0 && (
+          {syncPercentage === 100 && networkBlockHeight !== 0 && (
             <span
               className={`tag is-success ${size} sync-status`}
               data-tip={syncTooltip}
             >
-              {syncStatus}%
+              {syncPercentage}%
             </span>
           )}
-          {session.daemon.networkBlockCount === 0 && (
+          {networkBlockHeight === 0 && (
             <span
               className={`tag is-danger ${size} sync-status`}
               data-tip={syncTooltip}

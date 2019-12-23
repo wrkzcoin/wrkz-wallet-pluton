@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip';
-import { session, loginCounter } from '../index';
+import { loginCounter } from '../index';
 import SyncStatus from './SyncStatus';
 import Balance from './Balance';
 import NodeFee from './NodeFee';
@@ -66,9 +66,8 @@ class BottomBar extends Component<Props, State> {
           multiline
           place="top"
         />
-        {session.wallet && (
+        {loginCounter.isLoggedIn && (
           <div className="field is-grouped is-grouped-multiline is-grouped-right">
-            {}
             <NodeFee size="is-large" darkMode={darkMode} />
             <SyncStatus size="is-large" darkMode={darkMode} />
             <Balance size="is-large" darkMode={darkMode} />

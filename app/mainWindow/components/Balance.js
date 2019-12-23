@@ -3,7 +3,6 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
-import log from 'electron-log';
 import ReactTooltip from 'react-tooltip';
 import { session, il8n, eventEmitter, config } from '../index';
 
@@ -38,29 +37,27 @@ export default class Balance extends Component<Props, State> {
       symbolLocation: config.symbolLocation,
       fiatDecimals: config.fiatDecimals
     };
-    this.refreshBalanceOnNewTransaction = this.refreshBalanceOnNewTransaction.bind(
-      this
-    );
     this.updateFiatPrice = this.updateFiatPrice.bind(this);
     this.switchCurrency = this.switchCurrency.bind(this);
+    this.handleNewBalance = this.handleNewBalance.bind(this);
   }
 
   componentDidMount() {
-    if (session.wallet !== undefined) {
-      session.wallet.setMaxListeners(2);
-      session.wallet.on('transaction', this.refreshBalanceOnNewTransaction);
-      eventEmitter.on('transaction', this.refreshBalanceOnNewTransaction);
-    }
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.on('gotNewBalance', this.handleNewBalance);
   }
 
   componentWillUnmount() {
-    if (session.wallet !== undefined) {
-      session.wallet.off('transaction', this.refreshBalanceOnNewTransaction);
-      eventEmitter.off('transaction', this.refreshBalanceOnNewTransaction);
-    }
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.off('gotNewBalance', this.handleNewBalance);
   }
+
+  handleNewBalance = () => {
+    this.setState({
+      unlockedBalance: session.getUnlockedBalance(),
+      lockedBalance: session.getLockedBalance()
+    });
+  };
 
   updateFiatPrice = (fiatPrice: number) => {
     this.setState({
@@ -69,15 +66,6 @@ export default class Balance extends Component<Props, State> {
       symbolLocation: config.symbolLocation,
       fiatDecimals: config.fiatDecimals
     });
-  };
-
-  refreshBalanceOnNewTransaction = () => {
-    log.debug('Transaction found, refreshing balance...');
-    this.setState({
-      unlockedBalance: session.getUnlockedBalance(),
-      lockedBalance: session.getLockedBalance()
-    });
-    ReactTooltip.rebuild();
   };
 
   switchCurrency = () => {
@@ -114,17 +102,13 @@ export default class Balance extends Component<Props, State> {
 
     let balanceTooltip;
 
-    if (session.wallet && displayCurrency === 'TRTL') {
+    if (displayCurrency === 'TRTL') {
       balanceTooltip =
         `Unlocked: ${session.atomicToHuman(unlockedBalance, true)} ${
           il8n.TRTL
         }<br>` +
         `Locked: ${session.atomicToHuman(lockedBalance, true)} ${il8n.TRTL}`;
-    } else if (
-      session.wallet &&
-      symbolLocation === 'prefix' &&
-      displayCurrency === 'fiat'
-    ) {
+    } else if (symbolLocation === 'prefix' && displayCurrency === 'fiat') {
       balanceTooltip =
         `Unlocked: ${fiatSymbol}${session.formatLikeCurrency(
           Number(
@@ -138,11 +122,7 @@ export default class Balance extends Component<Props, State> {
           ).toFixed(fiatDecimals)
         )}
         <br>`;
-    } else if (
-      session.wallet &&
-      symbolLocation === 'suffix' &&
-      displayCurrency === 'fiat'
-    ) {
+    } else if (symbolLocation === 'suffix' && displayCurrency === 'fiat') {
       balanceTooltip =
         `Unlocked: ${(
           fiatPrice * session.atomicToHuman(unlockedBalance, false)

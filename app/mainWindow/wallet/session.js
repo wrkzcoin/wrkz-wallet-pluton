@@ -25,6 +25,8 @@ export default class WalletSession {
 
   syncStatus: number[] = [0, 0, 0];
 
+  balance: number[] = [0, 0];
+
   constructor() {
     this.loginFailed = false;
     this.firstStartup = false;
@@ -33,6 +35,23 @@ export default class WalletSession {
     this.selectedFiat = config.selectedFiat;
     this.fiatPrice = 0;
     this.getFiatPrice(this.selectedFiat);
+  }
+
+  setBalance(balance: number[]): void {
+    this.balance = balance;
+    eventEmitter.emit('gotNewBalance');
+  }
+
+  getBalance(): number[] {
+    return this.balance;
+  }
+
+  getUnlockedBalance(): number {
+    return this.getBalance()[0];
+  }
+
+  getLockedBalance(): number {
+    return this.getBalance()[1];
   }
 
   toggleDarkMode(status: boolean) {
@@ -101,14 +120,6 @@ export default class WalletSession {
     eventEmitter.emit('gotNewTransactions');
   }
 
-  getUnlockedBalance() {
-    return 0;
-  }
-
-  getLockedBalance() {
-    return 0;
-  }
-
   getFiatPrice = async (fiat: string) => {
     const apiURL = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${fiat}&ids=turtlecoin&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=7d`;
 
@@ -137,6 +148,40 @@ export default class WalletSession {
 
   getSyncStatus() {
     return this.syncStatus;
+  }
+
+  getSyncPercentage() {
+    // thanks to zpalmtree for the original code
+    const [walletHeight] = this.getSyncStatus();
+    let [, , networkHeight] = this.getSyncStatus();
+    /* Since we update the network height in intervals, and we update wallet
+        height by syncing, occasionally wallet height is > network height.
+        Fix that here. */
+    if (
+      walletHeight > networkHeight &&
+      networkHeight !== 0 &&
+      networkHeight + 10 > walletHeight
+    ) {
+      networkHeight = walletHeight;
+    }
+    /* if the wallet has been synced in the past, the wallet will sometimes display
+        currentHeight / 0, so if networkHeight is 0 set it equal to block height */
+    if (networkHeight === 0 && walletHeight !== 0) {
+      networkHeight = walletHeight;
+    }
+    // Don't divide by zero
+    const syncFill = networkHeight === 0 ? 0 : walletHeight / networkHeight;
+    let percentSync = 100 * syncFill;
+    // Prevent 100% when just under
+    if (percentSync > 99.99 && percentSync < 100) {
+      percentSync = 99.99;
+    }
+
+    if (networkHeight - walletHeight === 1) {
+      percentSync = 100.0;
+    }
+
+    return this.roundToNearestHundredth(percentSync);
   }
 
   getNetworkBlockHeight() {

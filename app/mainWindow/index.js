@@ -159,6 +159,9 @@ ipcRenderer.on(
       case 'syncStatus':
         session.setSyncStatus(data);
         break;
+      case 'balance':
+        session.setBalance(data);
+        break;
       default:
         break;
     }
