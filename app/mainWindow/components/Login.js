@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
-import { session, eventEmitter, loginCounter, il8n } from '../index';
+import { session, eventEmitter, loginCounter, il8n, config } from '../index';
 import Redirector from './Redirector';
 import SyncReminder from './SyncReminder';
 import Modal from './Modal';
@@ -24,7 +24,7 @@ export default class Login extends Component<Props, State> {
     super(props);
     this.state = {
       darkMode: session.darkMode || false,
-      walletFile: session.walletFile,
+      walletFile: config.walletFile,
       wrongPassword: loginCounter.lastLoginAttemptFailed
     };
     const { wrongPassword } = this.state;

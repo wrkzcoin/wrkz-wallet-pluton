@@ -5,7 +5,6 @@
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
-import path from 'path';
 import React, { Fragment } from 'react';
 import LocalizedStrings from 'react-localization';
 import ErrorBoundary from 'react-error-boundary';
@@ -24,6 +23,10 @@ import LoginCounter from './wallet/loginCounter';
 import uiType from './utils/uitype';
 import DaemonLogger from './wallet/DaemonLogger';
 
+export function savedInInstallDir() {
+  return false;
+}
+
 const homedir = os.homedir();
 
 export const directories = [
@@ -37,19 +40,6 @@ export const il8n = new LocalizedStrings({
   // eslint-disable-next-line global-require
   fr: require('./il8n/fr.json')
 });
-
-export function savedInInstallDir(savePath: string) {
-  const programDirectory = path.resolve(remote.app.getAppPath(), '../../');
-  const saveDirectory = path.resolve(savePath, '../');
-
-  log.info(programDirectory, saveDirectory);
-
-  const relative = path.relative(programDirectory, saveDirectory);
-  return (
-    (relative && !relative.startsWith('..') && !path.isAbsolute(relative)) ||
-    programDirectory === saveDirectory
-  );
-}
 
 export let config = iConfig;
 
@@ -123,14 +113,7 @@ ipcRenderer.on('handleDonate', handleDonate);
 eventEmitter.on('handleDonate', handleDonate);
 
 ipcRenderer.on('handleClose', () => {
-  if (session && !session.loginFailed && !session.firstStartup) {
-    const saved = session.saveWallet(session.walletFile);
-    if (saved) {
-      remote.app.exit();
-    }
-  } else {
-    remote.app.exit();
-  }
+  remote.app.exit();
 });
 
 let latestUpdate = '';
@@ -168,7 +151,6 @@ ipcRenderer.on(
         loginCounter.setWalletActive(data);
         break;
       default:
-        log.info(message);
         break;
     }
   }
@@ -324,8 +306,6 @@ eventEmitter.on('sendNotification', function sendNotification(amount) {
 ipcRenderer.on('handleOpen', handleOpen);
 eventEmitter.on('handleOpen', handleOpen);
 
-ipcRenderer.on('failedDaemonInit', failedDaemonInit);
-
 function handleAbout() {
   remote.shell.openExternal(
     'http://github.com/turtlecoin/turtle-wallet-proton#readme'
@@ -345,27 +325,6 @@ function handleIssues() {
 eventEmitter.on('handleHelp', handleHelp);
 eventEmitter.on('handleAbout', handleAbout);
 eventEmitter.on('handleIssues', handleIssues);
-
-function failedDaemonInit() {
-  loginCounter.daemonFailedInit = true;
-  if (session) {
-    session.modifyConfig('useLocalDaemon', false);
-  }
-  const message = (
-    <div>
-      <center>
-        <p className="subtitle has-text-danger">Local Daemon Error!</p>
-      </center>
-      <br />
-      <p className={`subtitle ${textColor}`}>
-        Your daemon failed to initialize, and you have been placed back in
-        remote node mode automatically. You can check the log output of
-        TurtleCoind in the Terminal tab.
-      </p>
-    </div>
-  );
-  eventEmitter.emit('openModal', message, 'OK', null, 'initializeNewSession');
-}
 
 ipcRenderer.on('handleNew', handleNew);
 eventEmitter.on('handleNew', handleNew);
