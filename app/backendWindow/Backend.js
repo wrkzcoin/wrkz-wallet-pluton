@@ -29,8 +29,7 @@ export default class Backend {
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
   }
 
-  async getNodeFee(): void {
-    await sleep(1000);
+  getNodeFee(): void {
     ipcRenderer.send('fromBackend', 'nodeFee', this.wallet.getNodeFee()[1]);
   }
 
@@ -64,6 +63,25 @@ export default class Backend {
         return LogLevel.TRACE;
       default:
         return LogLevel.DISABLED;
+    }
+  }
+
+  async sendTransaction(transaction: any): void {
+    const { address, amount, paymentID } = transaction;
+
+    const [hash, error] = await this.wallet.sendTransactionBasic(
+      address,
+      amount,
+      paymentID
+    );
+
+    if (hash) {
+      const response = { status: 'SUCCESS', hash, error };
+      ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
+    }
+    if (error) {
+      const response = { status: 'FAILURE', hash, error };
+      ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
     }
   }
 
@@ -119,7 +137,7 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
   }
 
-  walletInit(wallet: any): void {
+  async walletInit(wallet: any): Promise<void> {
     this.wallet = wallet;
     this.wallet.setLogLevel(this.evaluateLogLevel(this.logLevel));
     this.wallet.on(
@@ -136,8 +154,9 @@ export default class Backend {
       this.getTransactions(this.getLastTxAmountRequested() + 1);
       this.getBalance();
     });
-    this.wallet.start();
+    await this.wallet.start();
     this.setWalletActive(true);
+    this.getNodeFee();
     ipcRenderer.send('fromBackend', 'syncStatus', this.wallet.getSyncStatus());
     ipcRenderer.send(
       'fromBackend',
@@ -152,7 +171,6 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
     ipcRenderer.send('fromBackend', 'walletActiveStatus', true);
     ipcRenderer.send('fromBackend', 'authenticationStatus', true);
-    this.getNodeFee();
     console.log('wallet started.');
   }
 
@@ -170,8 +188,4 @@ export default class Backend {
       console.log(error);
     }
   }
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }

@@ -105,7 +105,7 @@ export default class Login extends Component<Props, State> {
                     </div>
                   </label>
                   <label className={`help ${textColor}`} htmlFor="scanheight">
-                    {session.wallet
+                    {loginCounter.walletActive
                       ? il8n.currently_logged_in
                       : il8n.attempting_login_to}
                     <b>{walletFile}</b>

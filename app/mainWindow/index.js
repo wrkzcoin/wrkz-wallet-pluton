@@ -165,6 +165,52 @@ ipcRenderer.on(
       case 'nodeFee':
         session.setNodeFee(data);
         break;
+      case 'sendTransactionResponse':
+        if (data.status === 'SUCCESS') {
+          const modalMessage = (
+            <div>
+              <center>
+                <p className={`title ${textColor}`}>Success!</p>
+              </center>
+              <br />
+              <p className={`subtitle ${textColor}`}>
+                Transaction succeeded! Transaction hash:
+              </p>
+              <p className={`subtitle ${textColor}`}>{data.hash}</p>
+            </div>
+          );
+          eventEmitter.emit(
+            'openModal',
+            modalMessage,
+            'OK',
+            null,
+            'transactionCancel'
+          );
+        } else {
+          log.info(data);
+          const modalMessage = (
+            <div>
+              <center>
+                <p className="title has-text-danger">Error!</p>
+              </center>
+              <br />
+              <p className={`subtitle ${textColor}`}>
+                The transaction was not successful.
+              </p>
+              <p className={`subtitle ${textColor}`}>
+                {data.error.customMessage}
+              </p>
+            </div>
+          );
+          eventEmitter.emit(
+            'openModal',
+            modalMessage,
+            'OK',
+            null,
+            'transactionCancel'
+          );
+        }
+        break;
       default:
         break;
     }

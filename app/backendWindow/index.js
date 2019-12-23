@@ -2,6 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import { ipcRenderer, IpcRendererEvent } from 'electron';
+import log from 'electron-log';
 import Backend from './Backend';
 
 let config = null;
@@ -32,8 +33,11 @@ function parseMessage(message: any) {
       // data is the amount of transactions to get
       backend.getTransactions(data);
       break;
+    case 'sendTransactionRequest':
+      backend.sendTransaction(data);
+      break;
     default:
-      console.log(message);
+      log.info(message);
       break;
   }
 }

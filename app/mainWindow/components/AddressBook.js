@@ -229,11 +229,13 @@ class AddressBook extends Component<Props, State> {
                 className={`table is-striped is-hoverable is-fullwidth is-family-monospace ${tableMode}`}
               >
                 <thead>
-                  <th className={textColor} />
-                  <th className={textColor}>Enter Name:</th>
-                  <th className={textColor}>Enter Address:</th>
-                  <th className={textColor}>Enter Payment ID (optional):</th>
-                  <th />
+                  <tr>
+                    <th className={textColor} />
+                    <th className={textColor}>Enter Name:</th>
+                    <th className={textColor}>Enter Address:</th>
+                    <th className={textColor}>Enter Payment ID (optional):</th>
+                    <th />
+                  </tr>
                 </thead>
                 <tbody>
                   <tr>

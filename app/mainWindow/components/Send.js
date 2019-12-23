@@ -42,11 +42,10 @@ type State = {
   fiatSymbol: string,
   symbolLocation: string,
   sendToAddress: string,
-  loopTest: boolean,
-  looping: boolean,
   pageAnimationIn: string,
   selectedContact: any,
-  menuIsOpen: boolean
+  menuIsOpen: boolean,
+  nodeFee: number
 };
 
 const customStyles = {
@@ -77,8 +76,6 @@ export default class Send extends Component<Props, State> {
 
   state: State;
 
-  loopInterval: IntervalID | null;
-
   autoCompleteContacts: any[];
 
   static defaultProps: any;
@@ -97,11 +94,10 @@ export default class Send extends Component<Props, State> {
       fiatPrice: session.fiatPrice,
       fiatSymbol: config.fiatSymbol,
       symbolLocation: config.symbolLocation,
-      loopTest: loginCounter.loopTest,
-      looping: loginCounter.looping,
       pageAnimationIn: loginCounter.getAnimation('/send'),
       selectedContact: null,
-      menuIsOpen: false
+      menuIsOpen: false,
+      nodeFee: session.getNodeFee()
     };
 
     this.generatePaymentID = this.generatePaymentID.bind(this);
@@ -117,10 +113,9 @@ export default class Send extends Component<Props, State> {
     this.updateFiatPrice = this.updateFiatPrice.bind(this);
     this.handleSendToAddressChange = this.handleSendToAddressChange.bind(this);
     this.confirmTransaction = this.confirmTransaction.bind(this);
-    this.toggleLoopTest = this.toggleLoopTest.bind(this);
-    this.loopInterval = null;
     this.checkInputLength = this.checkInputLength.bind(this);
     this.handleDonate = this.handleDonate.bind(this);
+    this.handleNewNodeFee = this.handleNewNodeFee.bind(this);
     this.autoCompleteContacts = [
       ...addressList.map(contact => {
         return { label: contact.name, value: contact.address };
@@ -136,6 +131,7 @@ export default class Send extends Component<Props, State> {
     eventEmitter.on('transactionInProgress', this.handleTransactionInProgress);
     eventEmitter.on('transactionCancel', this.handleTransactionCancel);
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.on('gotNodeFee', this.handleNewNodeFee);
     eventEmitter.on('modifyCurrency', this.modifyCurrency);
     eventEmitter.on('confirmTransaction', this.sendTransaction);
     ipcRenderer.on('handleDonate', this.handleDonate);
@@ -156,18 +152,13 @@ export default class Send extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    const { looping } = this.state;
     eventEmitter.off('transactionInProgress', this.handleTransactionInProgress);
     eventEmitter.off('transactionCancel', this.handleTransactionCancel);
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.off('gotNodeFee', this.handleNewNodeFee);
     eventEmitter.off('modifyCurrency', this.modifyCurrency);
     eventEmitter.off('confirmTransaction', this.sendTransaction);
     ipcRenderer.off('handleDonate', this.handleDonate);
-
-    if (looping) {
-      clearInterval(this.loopInterval);
-      loginCounter.looping = false;
-    }
   }
 
   modifyCurrency = (displayCurrency: string) => {
@@ -195,12 +186,18 @@ export default class Send extends Component<Props, State> {
     });
   };
 
+  handleNewNodeFee = () => {
+    this.setState({
+      nodeFee: session.getNodeFee()
+    });
+  };
+
   handleDonate = () => {
     this.handleAddressChange(this.devContact);
   };
 
   handleAmountChange = (event: any) => {
-    const { displayCurrency, fiatPrice } = this.state;
+    const { displayCurrency, fiatPrice, nodeFee } = this.state;
     let enteredAmount = event.target.value;
     if (enteredAmount === '') {
       this.setState({
@@ -223,7 +220,7 @@ export default class Send extends Component<Props, State> {
     const totalAmount = (
       parseFloat(enteredAmount) +
       fee +
-      parseFloat(session.daemon.feeAmount / 100)
+      parseFloat(nodeFee / 100)
     ).toFixed(2);
     this.setState({
       enteredAmount,
@@ -239,6 +236,7 @@ export default class Send extends Component<Props, State> {
   };
 
   handleTotalAmountChange = (event: any) => {
+    const { nodeFee } = this.state;
     let totalAmount = event.target.value;
     if (totalAmount === '') {
       this.setState({
@@ -256,8 +254,7 @@ export default class Send extends Component<Props, State> {
       return;
     }
 
-    const subtractFee =
-      Number(totalAmount) * 100 - 10 - parseInt(session.daemon.feeAmount, 10);
+    const subtractFee = Number(totalAmount) * 100 - 10 - parseInt(nodeFee, 10);
 
     const enteredAmount =
       subtractFee < 0
@@ -371,12 +368,7 @@ export default class Send extends Component<Props, State> {
   };
 
   sendTransaction = async () => {
-    const {
-      loopTest,
-      displayCurrency,
-      fiatPrice,
-      transactionInProgress
-    } = this.state;
+    const { displayCurrency, fiatPrice, transactionInProgress } = this.state;
 
     if (transactionInProgress) {
       return;
@@ -388,89 +380,37 @@ export default class Send extends Component<Props, State> {
     const { sendToAddress, enteredAmount, paymentID, darkMode } = this.state;
     const { textColor } = uiType(darkMode);
 
-    const [hash, err] = await session.sendTransaction(
-      sendToAddress,
-      displayCurrency === 'TRTL'
-        ? Number(enteredAmount) * 100
-        : (Number(enteredAmount) * 100) / fiatPrice,
-      paymentID
-    );
-    if (!loopTest) {
-      if (hash) {
-        eventEmitter.emit('transaction');
-        const message = (
-          <div>
-            <center>
-              <p className={`title ${textColor}`}>Success!</p>
-            </center>
-            <br />
-            <p className={`subtitle ${textColor}`}>
-              Transaction succeeded! Transaction hash:
-            </p>
-            <p className={`subtitle ${textColor}`}>{hash}</p>
-          </div>
-        );
-        eventEmitter.emit(
-          'openModal',
-          message,
-          'OK',
-          null,
-          'transactionCancel'
-        );
-        this.resetPaymentID();
-      } else if (err) {
-        if (notSynced) {
-          const message = (
-            <div>
-              <center>
-                <p className="title has-text-danger">Error!</p>
-              </center>
-              <br />
-              <p className={`subtitle ${textColor}`}>
-                The transaction was not successful. The wallet isn&apos;t
-                synced. Wait until you are synced and try again.
-              </p>
-            </div>
-          );
-          eventEmitter.emit(
-            'openModal',
-            message,
-            'OK',
-            null,
-            'transactionCancel'
-          );
-        } else {
-          log.debug(err);
-          const message = (
-            <div>
-              <center>
-                <p className="title has-text-danger">Error!</p>
-              </center>
-              <br />
-              <p className={`subtitle ${textColor}`}>
-                The transaction was not successful.
-              </p>
-              <p className={`subtitle ${textColor}`}>{err.toString()}</p>
-            </div>
-          );
-          eventEmitter.emit(
-            'openModal',
-            message,
-            'OK',
-            null,
-            'transactionCancel'
-          );
-        }
-      }
+    if (notSynced) {
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            The transaction was not successful. The wallet isn&apos;t synced.
+            Wait until you are synced and try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
+      return;
     }
-    eventEmitter.emit('transactionCancel');
+    const transactionData = {
+      address: sendToAddress,
+      amount:
+        displayCurrency === 'TRTL'
+          ? Number(enteredAmount) * 100
+          : (Number(enteredAmount) * 100) / fiatPrice,
+      paymentID
+    };
+
+    ipcRenderer.send('fromFrontend', 'sendTransactionRequest', transactionData);
   };
 
   createTestTransaction = async () => {
-    const { loopTest, looping } = this.state;
-
     log.debug('Creating test transaction for you.');
-    const sendToAddress = await session.wallet.getPrimaryAddress();
+    const sendToAddress = await session.getPrimaryAddress();
     const amount = Math.floor(Math.random() * 100) + 1;
     const paymentID = this.generatePaymentID();
 
@@ -481,15 +421,6 @@ export default class Send extends Component<Props, State> {
       sendToAddress,
       paymentID
     });
-
-    if (loopTest && !looping) {
-      loginCounter.looping = true;
-      this.setState({
-        looping: true
-      });
-      this.loopInterval = setInterval(this.createTestTransaction, 1000);
-    }
-
     this.sendTransaction();
   };
 
@@ -519,16 +450,14 @@ export default class Send extends Component<Props, State> {
   };
 
   sendAll = () => {
-    const { unlockedBalance, fiatPrice, displayCurrency } = this.state;
+    const { unlockedBalance, fiatPrice, displayCurrency, nodeFee } = this.state;
 
     const totalAmount =
-      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
-        ? 0
-        : unlockedBalance;
+      unlockedBalance - 10 - parseInt(nodeFee, 10) <= 0 ? 0 : unlockedBalance;
     const enteredAmount =
-      unlockedBalance - 10 - parseInt(session.daemon.feeAmount, 10) <= 0
+      unlockedBalance - 10 - parseInt(nodeFee, 10) <= 0
         ? 0
-        : totalAmount - 10 - parseInt(session.daemon.feeAmount, 10);
+        : totalAmount - 10 - parseInt(nodeFee, 10);
     this.setState({
       totalAmount:
         displayCurrency === 'TRTL'
@@ -538,21 +467,6 @@ export default class Send extends Component<Props, State> {
         displayCurrency === 'TRTL'
           ? session.atomicToHuman(enteredAmount, false).toString()
           : session.atomicToHuman(enteredAmount * fiatPrice, false).toString()
-    });
-  };
-
-  toggleLoopTest = () => {
-    const { loopTest, looping } = this.state;
-    if (looping) {
-      clearInterval(this.loopInterval);
-      loginCounter.looping = false;
-      this.setState({
-        looping: false
-      });
-    }
-    loginCounter.loopTest = !loopTest;
-    this.setState({
-      loopTest: !loopTest
     });
   };
 
@@ -620,8 +534,6 @@ export default class Send extends Component<Props, State> {
       fiatSymbol,
       symbolLocation,
       sendToAddress,
-      loopTest,
-      looping,
       pageAnimationIn,
       selectedContact,
       menuIsOpen
@@ -820,62 +732,12 @@ export default class Send extends Component<Props, State> {
                       tabIndex={0}
                       type="action"
                       onMouseDown={event => event.preventDefault()}
-                      disabled={looping}
                     >
                       <span className="icon is-small">
                         <i className="fa fa-flask" />
                       </span>
                       &nbsp;&nbsp;Test
                     </a>
-                    {loopTest === true && looping === true && (
-                      <span className={textColor}>
-                        <a
-                          className="button is-primary is-large"
-                          onClick={this.toggleLoopTest}
-                          onKeyPress={this.toggleLoopTest}
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <span className="icon is-large">
-                            <i className="fas fa-sync fa-spin" />
-                          </span>
-                        </a>
-                        &nbsp;&nbsp; Looping in progress. Click to disable.
-                      </span>
-                    )}
-
-                    {loopTest === true && looping === false && (
-                      <span className={textColor}>
-                        <a
-                          className="button is-success is-large"
-                          onClick={this.toggleLoopTest}
-                          onKeyPress={this.toggleLoopTest}
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <span className="icon is-large">
-                            <i className="fas fa-check" />
-                          </span>
-                        </a>
-                        &nbsp;&nbsp; Loop Test: <b>on</b>
-                      </span>
-                    )}
-                    {loopTest === false && (
-                      <span className={textColor}>
-                        <a
-                          className="button is-danger is-large"
-                          onClick={this.toggleLoopTest}
-                          onKeyPress={this.toggleLoopTest}
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <span className="icon is-large">
-                            <i className="fas fa-times" />
-                          </span>
-                        </a>
-                        &nbsp;&nbsp; Loop Test: <b>off</b>
-                      </span>
-                    )}
                   </div>
                 )}
               </div>
