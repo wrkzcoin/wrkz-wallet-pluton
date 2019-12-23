@@ -131,6 +131,7 @@ export default class Home extends Component<Props, State> {
     });
   };
 
+  // TODO: implement paging instead of just loading +50
   handleLoadMore = (event: any) => {
     event.preventDefault();
     displayedTransactionCount += 50;

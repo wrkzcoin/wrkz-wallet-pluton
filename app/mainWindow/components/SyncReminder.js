@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { session } from '../index';
+import { session, eventEmitter } from '../index';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -10,7 +10,8 @@ type Props = {
 };
 
 type State = {
-  syncStatus: number
+  syncPercentage: number,
+  networkBlockHeight: number
 };
 
 export default class SyncReminder extends Component<Props, State> {
@@ -23,43 +24,46 @@ export default class SyncReminder extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      syncStatus: session.getSyncStatus()
+      syncPercentage: session.getSyncPercentage(),
+      networkBlockHeight: session.getNetworkBlockHeight()
     };
-    this.syncInterval = setInterval(() => this.refresh(), 1000);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    eventEmitter.on('gotSyncStatus', this.handleNewSyncStatus);
+  }
 
   componentWillUnmount() {
-    clearInterval(this.syncInterval);
+    eventEmitter.off('gotSyncStatus', this.handleNewSyncStatus);
   }
 
-  refresh() {
-    this.setState(() => ({
-      syncStatus: session.getSyncStatus()
-    }));
+  handleNewSyncStatus() {
+    this.setState({
+      networkBlockHeight: session.getNetworkBlockHeight(),
+      syncPercentage: session.getSyncPercentage()
+    });
   }
 
   render() {
-    const { syncStatus } = this.state;
+    const { syncPercentage, networkBlockHeight } = this.state;
     const { darkMode } = this.props;
     const { textColor } = uiType(darkMode);
 
     return (
       <div className="syncreminder">
-        {syncStatus < 100 && session.daemon.networkBlockCount !== 0 && (
+        {syncPercentage < 100 && networkBlockHeight !== 0 && (
           <p className={`${textColor} glow`}>
             <i className="fas fa-sync fa-spin" /> &nbsp;Don&apos;t panic! Your
             wallet is still syncing...
           </p>
         )}
-        {syncStatus === 100 && session.daemon.networkBlockCount !== 0 && (
+        {syncPercentage === 100 && networkBlockHeight !== 0 && (
           <p className={`${textColor} glow-green`}>
             <i className="fas fa-check-circle" /> &nbsp;Your wallet is fully
             synced.
           </p>
         )}
-        {session.daemon.networkBlockCount === 0 && (
+        {networkBlockHeight === 0 && (
           <p className={`${textColor} glow-red`}>
             <i className="fas fa-times" /> &nbsp;The connected node appears to
             be offline.

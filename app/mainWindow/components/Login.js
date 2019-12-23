@@ -113,7 +113,7 @@ export default class Login extends Component<Props, State> {
                 </div>
                 <div className="columns">
                   <div className="column">
-                    {session.wallet && (
+                    {loginCounter.walletActive && (
                       <SyncReminder
                         className="syncreminder"
                         darkMode={darkMode}
