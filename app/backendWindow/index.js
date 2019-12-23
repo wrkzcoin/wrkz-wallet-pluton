@@ -1,22 +1,19 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, IpcRendererEvent } from 'electron';
 import Backend from './Backend';
 
 let config = null;
 let backend = null;
 
-ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
+ipcRenderer.on('fromMain', (event: IpcRendererEvent, message: any) => {
   parseMessage(message);
 });
 
-ipcRenderer.on(
-  'fromFrontend',
-  (event: Electron.IpcRendererEvent, message: any) => {
-    parseMessage(message);
-  }
-);
+ipcRenderer.on('fromFrontend', (event: IpcRendererEvent, message: any) => {
+  parseMessage(message);
+});
 
 function parseMessage(message: any) {
   const { messageType, data } = message;

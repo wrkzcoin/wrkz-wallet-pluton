@@ -19,6 +19,10 @@ export default class WalletSession {
 
   fiatPrice: number;
 
+  primaryAddress: string;
+
+  transactions: any[] = [];
+
   constructor() {
     this.loginFailed = false;
     this.firstStartup = false;
@@ -87,7 +91,11 @@ export default class WalletSession {
   }
 
   getTransactions() {
-    return [];
+    return this.transactions;
+  }
+
+  setTransactions(transactions: any[]) {
+    this.transactions = transactions;
   }
 
   getUnlockedBalance() {
@@ -144,8 +152,12 @@ export default class WalletSession {
     return x * 100;
   }
 
-  getAddress() {
-    return '0';
+  setPrimaryAddress(address: string) {
+    this.primaryAddress = address;
+  }
+
+  getPrimaryAddress() {
+    return this.primaryAddress;
   }
 
   convertTimestamp(timestamp: Date) {

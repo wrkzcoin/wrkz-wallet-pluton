@@ -150,6 +150,12 @@ ipcRenderer.on(
       case 'walletActiveStatus':
         loginCounter.setWalletActive(data);
         break;
+      case 'primaryAddress':
+        session.setPrimaryAddress(data);
+        break;
+      case 'transactionList':
+        session.setTransactions(data);
+        break;
       default:
         break;
     }

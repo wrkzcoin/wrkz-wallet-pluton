@@ -60,6 +60,37 @@ export default class Backend {
     );
   }
 
+  getFormattedTransactions(
+    startIndex?: number,
+    numTransactions?: number,
+    includeFusions?: boolean
+  ) {
+    const rawTransactions = this.wallet.getTransactions(
+      startIndex,
+      numTransactions,
+      includeFusions || false
+    );
+    const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+    let balance = parseInt(unlockedBalance + lockedBalance, 10);
+    const transactions = [];
+
+    for (const [index, tx] of rawTransactions.entries()) {
+      transactions.push([
+        tx.timestamp,
+        tx.hash,
+        tx.totalAmount(),
+        balance,
+        tx.blockHeight,
+        tx.paymentID,
+        index,
+        tx.fee,
+        tx.unlockTime
+      ]);
+      balance -= parseInt(tx.totalAmount(), 10);
+    }
+    return transactions;
+  }
+
   openWallet(password: string): void {
     this.walletPassword = password;
     const [openWallet, error] = WalletBackend.openWalletFromFile(
@@ -72,8 +103,18 @@ export default class Backend {
       this.wallet.setLogLevel(this.evaluateLogLevel(this.logLevel));
       this.wallet.start();
       this.setWalletActive(true);
-      ipcRenderer.send('fromBackend', 'authenticationStatus', true);
+      ipcRenderer.send(
+        'fromBackend',
+        'primaryAddress',
+        this.wallet.getPrimaryAddress()
+      );
+      ipcRenderer.send(
+        'fromBackend',
+        'transactionList',
+        this.getFormattedTransactions(0, 50, false)
+      );
       ipcRenderer.send('fromBackend', 'walletActiveStatus', true);
+      ipcRenderer.send('fromBackend', 'authenticationStatus', true);
       console.log('wallet started.');
     } else {
       ipcRenderer.send('fromBackend', 'authenticationStatus', false);

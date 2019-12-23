@@ -40,7 +40,7 @@ export default class Receive extends Component<Props, State> {
     super(props);
     this.state = {
       darkMode: session.darkMode,
-      sessionAddress: session.getAddress(),
+      sessionAddress: session.getPrimaryAddress(),
       paymentID: '',
       usingIntegratedAddress: false,
       paymentIDHighlight: '',
@@ -68,7 +68,7 @@ export default class Receive extends Component<Props, State> {
   generateIntegratedAddress = (specifiedID?: string) => {
     const paymentID = specifiedID || crypto.randomBytes(32).toString('hex');
     const integratedAddress = createIntegratedAddress(
-      session.getAddress(),
+      session.getPrimaryAddress(),
       paymentID
     );
     this.setState({
@@ -83,7 +83,7 @@ export default class Receive extends Component<Props, State> {
   resetForm = () => {
     this.setState({
       usingIntegratedAddress: false,
-      sessionAddress: session.getAddress(),
+      sessionAddress: session.getPrimaryAddress(),
       paymentID: ''
     });
   };
