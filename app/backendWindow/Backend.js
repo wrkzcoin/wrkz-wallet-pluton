@@ -80,6 +80,7 @@ export default class Backend {
       ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
     }
     if (error) {
+      error.errorString = error.toString();
       const response = { status: 'FAILURE', hash, error };
       ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
     }

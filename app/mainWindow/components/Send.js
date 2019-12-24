@@ -121,6 +121,9 @@ export default class Send extends Component<Props, State> {
         return { label: contact.name, value: contact.address };
       })
     ];
+    this.handleSendTransactionResponse = this.handleSendTransactionResponse.bind(
+      this
+    );
     this.devContact = {
       label: donateInfo.name,
       value: donateInfo.address
@@ -135,6 +138,7 @@ export default class Send extends Component<Props, State> {
     eventEmitter.on('modifyCurrency', this.modifyCurrency);
     eventEmitter.on('confirmTransaction', this.sendTransaction);
     ipcRenderer.on('handleDonate', this.handleDonate);
+    ipcRenderer.on('fromBackend', this.handleSendTransactionResponse);
     // eslint-disable-next-line react/destructuring-assignment
     if (this.props && this.props.uriAddress) {
       const { uriAddress } = this.props;
@@ -159,6 +163,7 @@ export default class Send extends Component<Props, State> {
     eventEmitter.off('modifyCurrency', this.modifyCurrency);
     eventEmitter.off('confirmTransaction', this.sendTransaction);
     ipcRenderer.off('handleDonate', this.handleDonate);
+    ipcRenderer.off('fromBackend', this.handleSendTransactionResponse);
   }
 
   modifyCurrency = (displayCurrency: string) => {
@@ -226,6 +231,18 @@ export default class Send extends Component<Props, State> {
       enteredAmount,
       totalAmount
     });
+  };
+
+  handleSendTransactionResponse = (
+    event: Electron.IpcRendererEvent,
+    message: any
+  ) => {
+    const { messageType, data } = message;
+    if (messageType === 'sendTransactionResponse') {
+      if (data.status === 'SUCCESS') {
+        this.resetPaymentID();
+      }
+    }
   };
 
   handleSendToAddressChange = (event: any) => {
