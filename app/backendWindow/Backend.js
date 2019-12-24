@@ -125,6 +125,10 @@ export default class Backend {
     return transactions;
   }
 
+  stop() {
+    this.wallet.stop();
+  }
+
   getTransactions(displayCount: number): void {
     this.setLastTxAmountRequested(displayCount);
     ipcRenderer.send(
@@ -138,13 +142,13 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
   }
 
-  saveWallet(notify: boolean) {
+  saveWallet(notify: boolean, path?: string) {
     if (!this.walletActive) {
       return;
     }
 
     const status = this.wallet.saveWalletToFile(
-      this.walletFile,
+      path || this.walletFile,
       this.walletPassword
     );
 
@@ -190,7 +194,7 @@ export default class Backend {
     console.log('wallet started.');
   }
 
-  openWallet(password: string): void {
+  startWallet(password: string): void {
     this.walletPassword = password;
     const [openWallet, error] = WalletBackend.openWalletFromFile(
       this.daemon,

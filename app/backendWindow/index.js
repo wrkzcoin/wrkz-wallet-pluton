@@ -26,8 +26,15 @@ function parseMessage(message: any) {
     case 'saveWallet':
       backend.saveWallet(data);
       break;
+    case 'saveWalletAs':
+      backend.saveWallet(data.notify, data.savePath);
+      break;
+    case 'openNewWallet':
+      backend.stop();
+      backend = null;
+      break;
     case 'walletPassword':
-      backend.openWallet(data);
+      backend.startWallet(data);
       break;
     case 'verifyWalletPassword':
       backend.verifyPassword(data);

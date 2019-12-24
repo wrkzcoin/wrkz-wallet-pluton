@@ -11,7 +11,6 @@ import ErrorBoundary from 'react-error-boundary';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { ipcRenderer, remote, clipboard } from 'electron';
-import { WalletBackend } from 'turtlecoin-wallet-backend';
 import EventEmitter from 'events';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
@@ -49,7 +48,7 @@ eventEmitter.setMaxListeners(6);
 export const updater = new AutoUpdater();
 updater.getLatestVersion();
 
-export const loginCounter = new LoginCounter();
+export let loginCounter = new LoginCounter();
 
 remote.app.setAppUserModelId('wallet.proton.extra');
 
@@ -264,7 +263,7 @@ ipcRenderer.on('handleLock', () => {
 });
 
 ipcRenderer.on('handleSaveAs', () => {
-  if (session && !session.wallet) {
+  if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     eventEmitter.emit('refreshLogin');
     return;
   }
@@ -281,23 +280,9 @@ ipcRenderer.on('handleSaveAs', () => {
   if (savePath === undefined) {
     return;
   }
-  if (session) {
-    const saved = session.saveWallet(savePath);
-    if (saved) {
-      const message = (
-        <div>
-          <center>
-            <p className={`subtitle ${textColor}`}>Wallet Saved!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            The wallet was saved successfully.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
-    }
-  }
+
+  const request = { notify: true, savePath };
+  ipcRenderer.send('fromFrontend', 'saveWalletAs', request);
 });
 
 ipcRenderer.on('exportToCSV', () => {
@@ -587,6 +572,7 @@ function handleNew() {
   eventEmitter.emit('goToNewWallet');
 }
 
+// TODO: verify that it's a wallet file before opening
 function handleOpen() {
   const options = {
     defaultPath: remote.app.getPath('documents'),
@@ -598,64 +584,16 @@ function handleOpen() {
     ]
   };
   const getPaths = remote.dialog.showOpenDialog(null, options);
-  log.debug(getPaths);
   if (getPaths === undefined) {
     return;
   }
-  if (session) {
-    loginCounter.userLoginAttempted = false;
-    loginCounter.lastLoginAttemptFailed = false;
-    loginCounter.loginsAttempted = 0;
-    session.loginFailed = false;
-    session.saveWallet(session.walletFile);
-    const [, error] = WalletBackend.openWalletFromFile(
-      session.daemon,
-      getPaths[0],
-      ''
-    );
-    if (error && error.errorCode !== 5) {
-      log.debug(`Failed to open wallet: ${error.toString()}`);
-      const message = (
-        <div>
-          <center>
-            <p className="subtitle has-text-danger">Wallet Open Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            Your wallet did not open successfully. Try again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-      return;
-    }
-    if (error !== undefined) {
-      if (error.errorCode === 5) {
-        log.debug('Login to wallet failed, firing event...');
-      }
-    }
-    const selectedPath = getPaths[0];
-    const savedSuccessfully = session.handleWalletOpen(selectedPath);
-    if (savedSuccessfully === true) {
-      session = null;
-      session = new WalletSession();
-      eventEmitter.emit('refreshLogin');
-      eventEmitter.emit('openNewWallet');
-    } else {
-      const message = (
-        <div>
-          <center>
-            <p className="subtitle has-text-danger">Wallet Open Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            Your wallet did not open successfully. Try again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-    }
-  }
+  ipcRenderer.send('fromFrontend', 'openNewWallet', undefined);
+  session.modifyConfig('walletFile', getPaths[0]);
+  ipcRenderer.send('fromFrontend', 'config', config);
+  session = new WalletSession();
+  loginCounter = new LoginCounter();
+  eventEmitter.emit('goToLogin');
+  eventEmitter.emit('refreshLogin');
 }
 
 export function stopTail() {
