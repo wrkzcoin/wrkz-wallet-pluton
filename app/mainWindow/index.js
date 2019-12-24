@@ -211,6 +211,9 @@ ipcRenderer.on(
           );
         }
         break;
+      case 'backendLogLine':
+        session.addBackendLogLine(data);
+        break;
       default:
         break;
     }

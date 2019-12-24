@@ -14,7 +14,6 @@ import SettingsPage from './containers/SettingsPage';
 import LoginPage from './containers/LoginPage';
 import ChangePasswordPage from './containers/ChangePasswordPage';
 import FirstStartupPage from './containers/FirstStartupPage';
-import TerminalPage from './containers/TerminalPage';
 import AddressBookPage from './containers/AddressBookPage';
 import SearchPage from './containers/SearchPage';
 import NewWalletPage from './containers/NewWalletPage';
@@ -31,7 +30,6 @@ export default () => (
       <Route exact path={routes.SETTINGS} component={SettingsPage} />
       <Route exact path={routes.LOGIN} component={LoginPage} />
       <Route exact path={routes.FIRSTSTARTUP} component={FirstStartupPage} />
-      <Route exact path={routes.TERMINAL} component={TerminalPage} />
       <Route exact path={routes.ADDRESSBOOK} component={AddressBookPage} />
       <Route exact path={routes.NEWWALLET} component={NewWalletPage} />
       <Route

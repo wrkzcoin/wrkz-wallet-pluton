@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import log from 'electron-log';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import routes from '../constants/routes';
-import { session, eventEmitter, il8n, loginCounter, config } from '../index';
+import { session, eventEmitter, il8n, loginCounter } from '../index';
 import uiType from '../utils/uitype';
 import Modal from './Modal';
 
@@ -24,7 +24,6 @@ type Props = {
 
 type State = {
   navBarCount: number,
-  terminalActive: boolean,
   query: string,
   submitSearch: boolean
 };
@@ -42,39 +41,23 @@ class NavBar extends Component<Props, State> {
     super(props);
     this.state = {
       navBarCount: loginCounter.navBarCount,
-      terminalActive:
-        config.useLocalDaemon ||
-        config.logLevel !== 'DISABLED' ||
-        loginCounter.daemonFailedInit,
       query: props.query || '',
       submitSearch: false
     };
     this.logOut = this.logOut.bind(this);
-    this.refreshTerminalStatus = this.refreshTerminalStatus.bind(this);
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
   }
 
   componentDidMount() {
-    eventEmitter.on('logLevelChanged', this.refreshTerminalStatus);
     loginCounter.navBarCount++;
   }
 
   componentWillUnmount() {
-    eventEmitter.off('logLevelChanged', this.refreshTerminalStatus);
     if (session.walletPassword !== '') {
       clearInterval(this.activityTimer);
     }
   }
-
-  refreshTerminalStatus = () => {
-    this.setState({
-      terminalActive:
-        config.useLocalDaemon ||
-        config.logLevel !== 'DISABLED' ||
-        loginCounter.daemonFailedInit
-    });
-  };
 
   logOut = () => {
     eventEmitter.emit('logOut');
@@ -105,7 +88,7 @@ class NavBar extends Component<Props, State> {
   render() {
     // prettier-ignore
     const { location: { pathname }, darkMode } = this.props;
-    const { navBarCount, terminalActive, query, submitSearch } = this.state;
+    const { navBarCount, query, submitSearch } = this.state;
     const { fillColor, elementBaseColor, settingsCogColor } = uiType(darkMode);
 
     if (submitSearch && pathname !== `/search/${query}`) {
@@ -178,16 +161,6 @@ class NavBar extends Component<Props, State> {
                       <p>&nbsp;&nbsp;Address Book</p>
                     )}
                   </Link>
-
-                  {terminalActive && (
-                    <Link className="navbar-item" to={routes.TERMINAL}>
-                      <i className="fas fa-terminal" />
-                      {pathname === '/terminal' && (
-                        <strong>&nbsp;&nbsp;Terminal</strong>
-                      )}
-                      {pathname !== '/terminal' && <p>&nbsp;&nbsp;Terminal</p>}
-                    </Link>
-                  )}
                 </div>
                 <div className="navbar-end">
                   <div className="navbar-item">
