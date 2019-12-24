@@ -5,6 +5,7 @@ import { app, Menu, shell, BrowserWindow } from 'electron';
 import log from 'electron-log';
 import LocalizedStrings from 'react-localization';
 import npmPackage from '../package.json';
+import { messageRelayer } from './main.dev';
 
 export const il8n = new LocalizedStrings({
   // eslint-disable-next-line global-require
@@ -285,7 +286,7 @@ export default class MenuBuilder {
   }
 
   handleSave() {
-    this.mainWindow.webContents.send('handleSave');
+    messageRelayer.sendToBackend('saveWallet', true);
   }
 
   handleOpen() {

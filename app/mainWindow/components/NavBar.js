@@ -33,8 +33,6 @@ class NavBar extends Component<Props, State> {
 
   state: State;
 
-  activityTimer: IntervalID;
-
   static defaultProps: any;
 
   constructor(props?: Props) {
@@ -53,11 +51,7 @@ class NavBar extends Component<Props, State> {
     loginCounter.navBarCount++;
   }
 
-  componentWillUnmount() {
-    if (session.walletPassword !== '') {
-      clearInterval(this.activityTimer);
-    }
-  }
+  componentWillUnmount() {}
 
   logOut = () => {
     eventEmitter.emit('logOut');

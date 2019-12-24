@@ -23,6 +23,9 @@ function parseMessage(message: any) {
       config = data;
       backend = new Backend(config);
       break;
+    case 'saveWallet':
+      backend.saveWallet(data);
+      break;
     case 'walletPassword':
       backend.openWallet(data);
       break;

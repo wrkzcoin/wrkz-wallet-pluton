@@ -24,7 +24,7 @@ import MessageRelayer from './MessageRelayer';
 
 const windowEvents = new EventEmitter();
 
-let messageRelayer = null;
+export let messageRelayer = null;
 
 /** disable background throttling so our sync
  *   speed doesn't crap out when minimized

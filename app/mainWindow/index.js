@@ -147,6 +147,38 @@ ipcRenderer.on(
     const { data, messageType } = message;
 
     switch (messageType) {
+      case 'saveWalletResponse':
+        // data is a boolean indicating
+        // if save was successful
+        if (data) {
+          const modalMessage = (
+            <div>
+              <center>
+                <p className={`subtitle ${textColor}`}>Wallet Saved!</p>
+              </center>
+              <br />
+              <p className={`subtitle ${textColor}`}>
+                The wallet was saved successfully.
+              </p>
+            </div>
+          );
+          eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
+        } else {
+          const modalMessage = (
+            <div>
+              <center>
+                <p className="subtitle has-text-danger">Save Error!</p>
+              </center>
+              <br />
+              <p className={`subtitle ${textColor}`}>
+                The wallet did not save successfully. Check your directory
+                permissions and try again.
+              </p>
+            </div>
+          );
+          eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
+        }
+        break;
       case 'walletActiveStatus':
         loginCounter.setWalletActive(data);
         break;
@@ -223,53 +255,6 @@ ipcRenderer.on(
 eventEmitter.on('getUpdate', () => {
   remote.shell.openExternal(latestUpdate);
   remote.app.exit();
-});
-
-ipcRenderer.on('handleSaveSilent', () => {
-  if (session && !session.loginFailed && !session.firstStartup) {
-    const saved = session.saveWallet(session.walletFile);
-    if (saved) {
-      log.debug(`Wallet saved at ${session.walletFile}`);
-    }
-  }
-});
-
-ipcRenderer.on('handleSave', () => {
-  if (session && !session.wallet) {
-    eventEmitter.emit('refreshLogin');
-    return;
-  }
-  if (session) {
-    const saved = session.saveWallet(session.walletFile);
-    if (saved) {
-      const message = (
-        <div>
-          <center>
-            <p className={`subtitle ${textColor}`}>Wallet Saved!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            The wallet was saved successfully.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-    } else {
-      const message = (
-        <div>
-          <center>
-            <p className="subtitle has-text-danger">Save Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            The wallet did not save successfully. Check your directory
-            permissions and try again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-    }
-  }
 });
 
 ipcRenderer.on('handleLock', () => {

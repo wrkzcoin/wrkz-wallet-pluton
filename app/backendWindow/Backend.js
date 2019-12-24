@@ -138,6 +138,21 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
   }
 
+  saveWallet(notify: boolean) {
+    if (!this.walletActive) {
+      return;
+    }
+
+    const status = this.wallet.saveWalletToFile(
+      this.walletFile,
+      this.walletPassword
+    );
+
+    if (notify) {
+      ipcRenderer.send('fromBackend', 'saveWalletResponse', status);
+    }
+  }
+
   async walletInit(wallet: any): Promise<void> {
     this.wallet = wallet;
     this.wallet.setLogLevel(this.evaluateLogLevel(this.logLevel));
