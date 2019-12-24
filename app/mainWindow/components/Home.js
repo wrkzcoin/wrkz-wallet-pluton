@@ -419,26 +419,28 @@ export default class Home extends Component<Props, State> {
                 </div>
               </div>
             )}
-            <form>
-              <div className="field">
-                <div className="buttons">
-                  <button
-                    type="submit"
-                    className="button is-warning"
-                    onClick={this.handleLoadMore}
-                  >
-                    {il8n.load_more}
-                  </button>
-                  <button
-                    type="submit"
-                    className="button is-danger"
-                    onClick={this.resetDefault}
-                  >
-                    {il8n.reset}
-                  </button>
+            {transactions.length > 20 && (
+              <form>
+                <div className="field">
+                  <div className="buttons">
+                    <button
+                      type="submit"
+                      className="button is-warning"
+                      onClick={this.handleLoadMore}
+                    >
+                      {il8n.load_more}
+                    </button>
+                    <button
+                      type="submit"
+                      className="button is-danger"
+                      onClick={this.resetDefault}
+                    >
+                      {il8n.reset}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            )}
           </div>
           <BottomBar darkMode={darkMode} />
         </div>

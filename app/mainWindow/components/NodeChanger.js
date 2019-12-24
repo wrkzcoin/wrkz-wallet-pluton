@@ -5,14 +5,7 @@ import React, { Component } from 'react';
 import { remote } from 'electron';
 import log from 'electron-log';
 import { Daemon } from 'turtlecoin-wallet-backend';
-import {
-  il8n,
-  session,
-  eventEmitter,
-  config,
-  stopTail,
-  startTail
-} from '../index';
+import { il8n, session, eventEmitter, config } from '../index';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -150,12 +143,6 @@ export default class NodeChanger extends Component<Props, State> {
 
     if (!daemonLogPath) {
       return;
-    }
-
-    if (!useLocalDaemon) {
-      startTail(daemonLogPath);
-    } else {
-      stopTail();
     }
 
     session.modifyConfig('useLocalDaemon', !useLocalDaemon);

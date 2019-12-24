@@ -3,15 +3,15 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
-import { clipboard } from 'electron';
+import { clipboard, remote } from 'electron';
 import log from 'electron-log';
 import jdenticon from 'jdenticon';
-import { WalletBackend } from 'turtlecoin-wallet-backend';
+import { WalletBackend, Daemon } from 'turtlecoin-wallet-backend';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
-import { session, backupToFile } from '../index';
+import { session, backupToFile, eventEmitter, reInitWallet } from '../index';
 
 type State = {
   darkMode: boolean,
@@ -31,7 +31,9 @@ export default class NewWallet extends Component<Props, State> {
     super(props);
     this.state = {
       darkMode: session.darkMode,
-      newWallet: WalletBackend.createWallet(session.daemon),
+      newWallet: WalletBackend.createWallet(
+        new Daemon('blockapi.turtlepay.io', 443)
+      ),
       activePage: 'generate',
       password: '',
       confirmPassword: '',
@@ -119,11 +121,97 @@ export default class NewWallet extends Component<Props, State> {
   };
 
   nextPage = () => {
-    const { activePage, password, confirmPassword, confirmSeed } = this.state;
+    const {
+      activePage,
+      password,
+      confirmPassword,
+      confirmSeed,
+      darkMode,
+      newWallet
+    } = this.state;
+    const { textColor } = uiType(darkMode);
     let currentPageNumber: number = this.evaluatePageNumber(activePage);
 
     if (currentPageNumber === 4) {
-      console.log('make a new wallet, bucko!', confirmSeed);
+      // import the seed so we can confirm it works
+      const [confirmWallet, err] = WalletBackend.importWalletFromSeed(
+        new Daemon('blockapi.turtlepay.io', 443),
+        100000,
+        confirmSeed
+      );
+
+      // the seed wasn't valid
+      if (err) {
+        log.error(err);
+        const message = (
+          <div>
+            <center>
+              <p className="title has-text-danger">Seed Verification Error!</p>
+            </center>
+            <br />
+            <p className={`subtitle ${textColor}`}>{err.customMessage}</p>
+          </div>
+        );
+        eventEmitter.emit('openModal', message, 'OK', null, null);
+      }
+
+      // seed was valid, let's check if it's the same address
+      if (confirmWallet) {
+        // if the addresses match, seeds match
+        if (
+          confirmWallet.getPrimaryAddress() === newWallet.getPrimaryAddress()
+        ) {
+          // get the save as path
+          const options = {
+            defaultPath: remote.app.getPath('documents'),
+            filters: [
+              {
+                name: 'TurtleCoin Wallet File (v0)',
+                extensions: ['wallet']
+              }
+            ]
+          };
+          const savePath = remote.dialog.showSaveDialog(null, options);
+          if (savePath === undefined) {
+            return;
+          }
+          log.info(savePath);
+          const saved = newWallet.saveWalletToFile(savePath, password);
+          if (saved) {
+            reInitWallet(savePath);
+          } else {
+            const message = (
+              <div>
+                <center>
+                  <p className="subtitle has-text-danger">Wallet Save Error!</p>
+                </center>
+                <br />
+                <p className={`subtitle ${textColor}`}>
+                  The wallet was not saved successfully. Check your directory
+                  permissions and try again.
+                </p>
+              </div>
+            );
+            eventEmitter.emit('openModal', message, 'OK', null, null);
+          }
+        } else {
+          log.error('Wallet creation error.');
+          const message = (
+            <div>
+              <center>
+                <p className="title has-text-danger">Wallet Creation Error!</p>
+              </center>
+              <br />
+              <p className={`subtitle ${textColor}`}>
+                The seed you input did not match the seed of the new wallet. Try
+                again.
+              </p>
+            </div>
+          );
+          eventEmitter.emit('openModal', message, 'OK', null, null);
+        }
+      }
+      return;
     }
 
     if (currentPageNumber === 2 && password !== confirmPassword) {

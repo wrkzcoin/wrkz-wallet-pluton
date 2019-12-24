@@ -5,6 +5,7 @@
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
+import path from 'path';
 import React, { Fragment } from 'react';
 import LocalizedStrings from 'react-localization';
 import ErrorBoundary from 'react-error-boundary';
@@ -22,8 +23,17 @@ import LoginCounter from './wallet/loginCounter';
 import uiType from './utils/uitype';
 import DaemonLogger from './wallet/DaemonLogger';
 
-export function savedInInstallDir() {
-  return false;
+export function savedInInstallDir(savePath: string) {
+  const programDirectory = path.resolve(remote.app.getAppPath(), '../../');
+  const saveDirectory = path.resolve(savePath, '../');
+
+  log.info(programDirectory, saveDirectory);
+
+  const relative = path.relative(programDirectory, saveDirectory);
+  return (
+    (relative && !relative.startsWith('..') && !path.isAbsolute(relative)) ||
+    programDirectory === saveDirectory
+  );
 }
 
 const homedir = os.homedir();
@@ -587,24 +597,15 @@ function handleOpen() {
   if (getPaths === undefined) {
     return;
   }
+  reInitWallet(getPaths[0]);
+}
+
+export function reInitWallet(walletPath: string) {
   ipcRenderer.send('fromFrontend', 'openNewWallet', undefined);
-  session.modifyConfig('walletFile', getPaths[0]);
+  session.modifyConfig('walletFile', walletPath);
   ipcRenderer.send('fromFrontend', 'config', config);
   session = new WalletSession();
   loginCounter = new LoginCounter();
   eventEmitter.emit('goToLogin');
   eventEmitter.emit('refreshLogin');
-}
-
-export function stopTail() {
-  daemonLogger = null;
-}
-
-export function startTail(filePath?: PathLike) {
-  try {
-    daemonLogger = new DaemonLogger(filePath || daemonLogPath);
-  } catch (error) {
-    log.error('Tail initialization failed.');
-    log.error(error);
-  }
 }

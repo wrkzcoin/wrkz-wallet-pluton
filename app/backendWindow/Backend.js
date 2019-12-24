@@ -126,7 +126,9 @@ export default class Backend {
   }
 
   stop() {
-    this.wallet.stop();
+    if (this.wallet) {
+      this.wallet.stop();
+    }
   }
 
   getTransactions(displayCount: number): void {
