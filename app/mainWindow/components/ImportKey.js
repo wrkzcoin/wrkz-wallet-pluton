@@ -2,21 +2,18 @@
 //
 // Please see the included LICENSE file for more information.
 import { remote } from 'electron';
-import fs from 'fs';
 import React, { Component } from 'react';
-import log from 'electron-log';
+import { WalletBackend, Daemon } from 'turtlecoin-wallet-backend';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import uiType from '../utils/uitype';
 import {
-  config,
   session,
-  directories,
   eventEmitter,
   savedInInstallDir,
   il8n,
-  loginCounter
+  reInitWallet
 } from '../index';
 
 type Props = {};
@@ -51,13 +48,33 @@ export default class ImportKey extends Component<Props, State> {
 
     const spendKey = event.target[0].value;
     const viewKey = event.target[1].value;
-    let height = event.target[2].value;
+    let height = Number(event.target[2].value);
+
+    const password = event.target[3].value;
+    const confirmPassword = event.target[4].value;
 
     if (viewKey === undefined || spendKey === undefined) {
       return;
     }
+
+    if (password !== confirmPassword) {
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Password Match Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            Passwords do not match. Check entered passwords and try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
+      return;
+    }
+
     if (height === '') {
-      height = '0';
+      height = 0;
     }
     const options = {
       defaultPath: remote.app.getPath('documents'),
@@ -72,7 +89,6 @@ export default class ImportKey extends Component<Props, State> {
     if (savePath === undefined) {
       return;
     }
-    session.saveWallet(session.walletFile);
     if (savedInInstallDir(savePath)) {
       const message = (
         <div>
@@ -90,30 +106,15 @@ export default class ImportKey extends Component<Props, State> {
       eventEmitter.emit('openModal', message, 'OK', null, null);
       return;
     }
-    const importedSuccessfully = session.handleImportFromKey(
+
+    const [importedWallet, error] = WalletBackend.importWalletFromKeys(
+      new Daemon('blockapi.turtlepay.io', 443),
+      height,
       viewKey,
-      spendKey,
-      savePath,
-      parseInt(height, 10)
+      spendKey
     );
-    if (importedSuccessfully === true) {
-      const programDirectory = directories[0];
-      const modifyConfig = config;
-      modifyConfig.walletFile = savePath;
-      log.debug(`Set new config filepath to: ${modifyConfig.walletFile}`);
-      config.walletFile = savePath;
-      fs.writeFileSync(
-        `${programDirectory}/config.json`,
-        JSON.stringify(config, null, 4),
-        err => {
-          if (err) throw err;
-          log.debug(err);
-        }
-      );
-      log.debug('Wrote config file to disk.');
-      loginCounter.freshRestore = true;
-      eventEmitter.emit('initializeNewSession');
-    } else {
+
+    if (error) {
       const message = (
         <div>
           <center>
@@ -127,6 +128,25 @@ export default class ImportKey extends Component<Props, State> {
         </div>
       );
       eventEmitter.emit('openModal', message, 'OK', null, null);
+    } else {
+      const saved = importedWallet.saveWalletToFile(savePath, password);
+      if (saved) {
+        reInitWallet(savePath);
+      } else {
+        const message = (
+          <div>
+            <center>
+              <p className="subtitle has-text-danger">Wallet Save Error!</p>
+            </center>
+            <br />
+            <p className={`subtitle ${textColor}`}>
+              The wallet was not saved successfully. Check your directory
+              permissions and try again.
+            </p>
+          </div>
+        );
+        eventEmitter.emit('openModal', message, 'OK', null, null);
+      }
     }
   };
 
@@ -173,6 +193,33 @@ export default class ImportKey extends Component<Props, State> {
                       className="input is-large"
                       type="text"
                       placeholder={il8n.scan_height_input_placeholder}
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="field">
+                <label className={`label ${textColor}`} htmlFor="password">
+                  New Wallet Password
+                  <div className="control">
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder="Enter a password for your wallet."
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="field">
+                <label
+                  className={`label ${textColor}`}
+                  htmlFor="confirmPassword"
+                >
+                  Confirm Password
+                  <div className="control">
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder="Confirm password."
                     />
                   </div>
                 </label>
