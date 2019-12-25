@@ -35,3 +35,46 @@ jobs:
 
       - name: Build
         run: yarn package
+
+      - name: Prepare to Deploy
+        id: before_deploy
+        shell: bash
+        run: |
+          rm -rf ./release/*.blockmap
+          rm -rf ./release/*.zip
+          rm -rf ./release/*-unpacked
+          rm -rf ./release/mac
+          export NAME=$(ls release/proton-wallet*)
+          echo ::set-output name=file_name::${NAME:8}
+
+      # Upload to AMZ
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7 # Or other version
+      - name: Install awscli via pipx # Isolates dependencies
+        if: matrix.os == 'windows-latest'
+          run: |
+            set PATH="%PATH%;%USERPROFILE%\\.local\\bin\\"
+            pip install --user pipx
+            pipx install awscli
+        if: matrix.os == 'macOS-latest'
+          run: |
+            export PATH=$HOME/.local/bin:$PATH
+            pip install --user pipx
+            pipx install awscli
+        if: matrix.os == 'ubuntu-latest'
+          run: |
+            export PATH=$HOME/.local/bin:$PATH
+            pip install --user pipx
+            pipx install awscli
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Upload S3
+        run: |
+          aws s3 cp ./release/${{ steps.before_deploy.outputs.file_name }} s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}
+
