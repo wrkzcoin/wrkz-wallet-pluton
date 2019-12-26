@@ -361,21 +361,6 @@ ipcRenderer.on('exportToCSV', () => {
     return;
   }
   ipcRenderer.send('fromFrontend', 'exportToCSV', savePath);
-  /*
-    const message = (
-      <div>
-        <center>
-          <p className={`subtitle ${textColor}`}>CSV Exported!</p>
-        </center>
-        <br />
-        <p className={`subtitle ${textColor}`}>
-          Your transaction history has been exported to a .csv file at
-          {savePath}
-        </p>
-      </div>
-    );
-    eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
-  */
 });
 
 eventEmitter.on('sendNotification', function sendNotification(amount) {
