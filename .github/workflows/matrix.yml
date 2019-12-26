@@ -7,21 +7,21 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.TARGET }} Build
+    name: ${{ matrix.target }} Build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest, ubuntu-latest]
         include:
-          - os: windows-latest
-            TARGET: x86_64-pc-windows-msvc
-          - os: ubuntu-latest
-            TARGET: aarch64-unknown-linux-gnu
-          - os: macos-latest
-            TARGET: x86_64-apple-darwin
-          - os: ubuntu-latest
-            TARGET: x86_64-unknown-linux-gnu
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v1
@@ -44,11 +44,11 @@ jobs:
         run: yarn
 
       - name: Build aarch64
-        if: matrix.TARGET == 'aarch64-unknown-linux-gnu'
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
         run: package-arm64
 
       - name: Build Non-aarch64
-        if: matrix.TARGET != 'aarch64-unknown-linux-gnu'
+        if: matrix.target != 'aarch64-unknown-linux-gnu'
         run: yarn package
 
       - name: Prepare to Deploy
@@ -83,9 +83,9 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.TARGET }}-${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           elif [ "$RUNNER_OS" == "Linux" ]; then
-            aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.TARGET }}-${{ steps.before_deploy.outputs.file_name }}"
+            aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.TARGET }}-${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           fi
