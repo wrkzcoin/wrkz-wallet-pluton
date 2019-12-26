@@ -144,6 +144,9 @@ ipcRenderer.on(
     const { data, messageType } = message;
 
     switch (messageType) {
+      case 'daemonConnectionInfo':
+        session.setDaemonConnectionInfo(data);
+        break;
       case 'passwordChangeResponse':
         handlePasswordChangeResponse(data);
         break;

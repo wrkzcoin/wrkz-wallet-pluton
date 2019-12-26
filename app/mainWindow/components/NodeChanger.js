@@ -2,10 +2,8 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { remote } from 'electron';
-import log from 'electron-log';
-import { Daemon } from 'turtlecoin-wallet-backend';
-import { il8n, session, eventEmitter, config } from '../index';
+import { remote, ipcRenderer } from 'electron';
+import { il8n, session, eventEmitter } from '../index';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -13,11 +11,9 @@ type Props = {
 };
 
 type State = {
-  connectednode: string,
+  connectionString: string,
   nodeChangeInProgress: boolean,
-  ssl: boolean,
-  useLocalDaemon: boolean,
-  daemonLogPath: string
+  ssl: boolean
 };
 
 export default class NodeChanger extends Component<Props, State> {
@@ -27,144 +23,77 @@ export default class NodeChanger extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.daemonInfo =
-      session && session.wallet ? session.wallet.getDaemonConnectionInfo() : '';
-
     this.state = {
-      connectednode: `${this.daemonInfo.host}:${this.daemonInfo.port}`,
+      connectionString: `${session.getDaemonConnectionInfo().host}:${
+        session.getDaemonConnectionInfo().port
+      }`,
       nodeChangeInProgress: false,
-      ssl: this.daemonInfo.ssl,
-      useLocalDaemon: config.useLocalDaemon,
-      daemonLogPath: config.daemonLogPath
+      ssl: session.getDaemonConnectionInfo().ssl
     };
     this.changeNode = this.changeNode.bind(this);
-    this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
+    this.resetConnectionString = this.resetConnectionString.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);
-    this.handleNodeChangeInProgress = this.handleNodeChangeInProgress.bind(
-      this
-    );
-    this.handleNodeChangeComplete = this.handleNodeChangeComplete.bind(this);
-    this.toggleLocalDaemon = this.toggleLocalDaemon.bind(this);
-    this.browseForTurtleCoind = this.browseForTurtleCoind.bind(this);
   }
 
   componentWillMount() {
-    eventEmitter.on('newNodeConnected', this.handleNewNode);
-    eventEmitter.on('nodeChangeInProgress', this.handleNodeChangeInProgress);
-    eventEmitter.on('nodeChangeComplete', this.handleNodeChangeComplete);
+    eventEmitter.on('gotDaemonConnectionInfo', this.handleNewNode);
   }
 
   componentWillUnmount() {
-    eventEmitter.off('newNodeConnected', this.handleNewNode);
-    eventEmitter.off('nodeChangeInProgress', this.handleNodeChangeInProgress);
-    eventEmitter.off('nodeChangeComplete', this.handleNodeChangeComplete);
+    eventEmitter.off('gotDaemonConnectionInfo', this.handleNewNode);
   }
 
-  browseForTurtleCoind = () => {
-    const options = {
-      defaultPath: remote.app.getPath('documents')
-    };
-    const getPaths = remote.dialog.showOpenDialog(null, options);
-    if (getPaths === undefined) {
-      return;
-    }
+  resetConnectionString = () => {
     this.setState({
-      daemonLogPath: getPaths[0]
+      connectionString: `${session.getDaemonConnectionInfo().host}:${
+        session.getDaemonConnectionInfo().port
+      }`,
+      nodeChangeInProgress: false,
+      ssl: session.getDaemonConnectionInfo().ssl
     });
-
-    session.modifyConfig('daemonLogPath', getPaths[0]);
   };
 
-  changeNode = async (event: any) => {
+  changeNode = (event: any) => {
     event.preventDefault();
     this.setState({
-      connectednode: event.target[0].value
+      nodeChangeInProgress: true,
+      ssl: undefined
     });
-    const connectionString = event.target[0].value;
+    const { connectionString } = this.state;
     // eslint-disable-next-line prefer-const
     let [host, port] = connectionString.split(':', 2);
     if (port === undefined) {
-      port = '11898';
+      port = 11898;
     }
+    /* if the daemon entered is the same as the
+    one we're connected to, don't do anything */
     if (
-      // eslint-disable-next-line eqeqeq
-      host.trim() == session.daemonHost &&
-      // eslint-disable-next-line eqeqeq
-      port.trim() == session.daemonPort.toString()
+      host.trim() === session.getDaemonConnectionInfo().host &&
+      port.trim() === String(session.getDaemonConnectionInfo().port)
     ) {
+      this.resetConnectionString();
       return;
     }
-    eventEmitter.emit('nodeChangeInProgress');
-    const daemon = new Daemon(host, Number(port));
-    await session.wallet.swapNode(daemon);
-    session.daemon = daemon;
-    eventEmitter.emit('newNodeConnected');
-    const daemonInfo = session.wallet.getDaemonConnectionInfo();
-    log.info(`Connected to ${daemonInfo.host}:${daemonInfo.port}`);
-    session.modifyConfig('daemonHost', daemonInfo.host);
-    session.modifyConfig('daemonPort', daemonInfo.port);
+    const request = { host, port: Number(port) };
+    session.modifyConfig('daemonHost', host);
+    session.modifyConfig('daemonPort', Number(port));
+    ipcRenderer.send('fromFrontend', 'changeNode', request);
   };
 
   findNode = () => {
     remote.shell.openExternal('https://explorer.turtlecoin.lol/nodes.html');
   };
 
-  handleNodeInputChange = (event: any) => {
-    this.setState({ connectednode: event.target.value.trim() });
-  };
-
   handleNewNode = () => {
-    const daemonInfo = session.wallet.getDaemonConnectionInfo();
-
-    this.setState({
-      nodeChangeInProgress: false,
-      connectednode: `${daemonInfo.host}:${daemonInfo.port}`,
-      ssl: daemonInfo.ssl
-    });
-  };
-
-  handleNodeChangeInProgress = () => {
-    this.setState({
-      nodeChangeInProgress: true,
-      ssl: undefined
-    });
-  };
-
-  handleNodeChangeComplete = () => {
-    this.setState({
-      nodeChangeInProgress: false,
-      connectednode: `${session.daemonHost}:${session.daemonPort}`,
-      ssl: session.daemon.ssl
-    });
-  };
-
-  toggleLocalDaemon = () => {
-    const { useLocalDaemon, daemonLogPath } = this.state;
-
-    if (!daemonLogPath) {
-      return;
-    }
-
-    session.modifyConfig('useLocalDaemon', !useLocalDaemon);
-    this.setState({
-      useLocalDaemon: !useLocalDaemon
-    });
-
-    eventEmitter.emit('logLevelChanged');
+    this.resetConnectionString();
   };
 
   render() {
     const { darkMode } = this.props;
     const { textColor, linkColor } = uiType(darkMode);
-    const {
-      nodeChangeInProgress,
-      connectednode,
-      ssl,
-      useLocalDaemon,
-      daemonLogPath
-    } = this.state;
+    const { nodeChangeInProgress, connectionString, ssl } = this.state;
     return (
-      <form onSubmit={this.changeNode}>
+      <div>
         <p className={`has-text-weight-bold ${textColor}`}>
           Remote Node (node:port)
         </p>
@@ -174,8 +103,12 @@ export default class NodeChanger extends Component<Props, State> {
               <input
                 className="input has-icons-left"
                 type="text"
-                value={connectednode}
-                onChange={this.handleNodeInputChange}
+                value={connectionString}
+                onChange={event => {
+                  this.setState({
+                    connectionString: event.target.value.trim()
+                  });
+                }}
               />
             )}
             {ssl === true && (
@@ -193,7 +126,6 @@ export default class NodeChanger extends Component<Props, State> {
                 className="input"
                 type="text"
                 placeholder="connecting..."
-                onChange={this.handleNodeInputChange}
               />
             )}
             {nodeChangeInProgress === true && (
@@ -226,7 +158,7 @@ export default class NodeChanger extends Component<Props, State> {
           )}
           {nodeChangeInProgress === false && (
             <div className="control">
-              <button className="button is-success">
+              <button className="button is-success" onClick={this.changeNode}>
                 <span className="icon is-small">
                   <i className="fa fa-network-wired" />
                 </span>
@@ -235,67 +167,7 @@ export default class NodeChanger extends Component<Props, State> {
             </div>
           )}
         </div>
-        {useLocalDaemon === false && (
-          <span className={textColor}>
-            <a
-              className="button is-danger"
-              onClick={this.toggleLocalDaemon}
-              onKeyPress={this.toggleLocalDaemon}
-              role="button"
-              tabIndex={0}
-              disabled={!daemonLogPath}
-            >
-              <span className="icon is-large">
-                <i className="fas fa-times" />
-              </span>
-            </a>
-            &nbsp;&nbsp; Tail Local Daemon Log File: <b>Off</b>
-          </span>
-        )}
-        {useLocalDaemon === true && (
-          <span className={textColor}>
-            <a
-              className="button is-success"
-              onClick={this.toggleLocalDaemon}
-              onKeyPress={this.toggleLocalDaemon}
-              role="button"
-              tabIndex={0}
-              disabled={!daemonLogPath}
-            >
-              <span className="icon is-large">
-                <i className="fa fa-check" />
-              </span>
-            </a>
-            &nbsp;&nbsp; Tail Local Daemon Log File: <b>On</b> &nbsp;&nbsp;
-          </span>
-        )}
-        <br />
-        <br />
-        <p className={`has-text-weight-bold ${textColor}`}>
-          TurtleCoind.log file location:
-        </p>
-        <div className="field has-addons">
-          <div className="control is-expanded">
-            <input
-              className="input"
-              type="text"
-              value={daemonLogPath}
-              readOnly
-            />
-          </div>
-          <div className="control">
-            <button
-              className="button is-warning"
-              onClick={this.browseForTurtleCoind}
-            >
-              <span className="icon is-small">
-                <i className="fas fa-folder-open" />
-              </span>
-              &nbsp;&nbsp;Browse
-            </button>
-          </div>
-        </div>
-      </form>
+      </div>
     );
   }
 }

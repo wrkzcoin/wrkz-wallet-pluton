@@ -24,6 +24,9 @@ function parseMessage(message: any) {
       config = data;
       backend = new Backend(config);
       break;
+    case 'changeNode':
+      backend.changeNode(data);
+      break;
     case 'backupToFile':
       fs.writeFile(data, backend.getSecret(), error => {
         if (error) {

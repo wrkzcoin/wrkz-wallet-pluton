@@ -29,6 +29,8 @@ export default class WalletSession {
 
   nodeFee: number = 0;
 
+  daemonConnectionInfo: any;
+
   constructor() {
     this.loginFailed = false;
     this.firstStartup = false;
@@ -37,6 +39,15 @@ export default class WalletSession {
     this.selectedFiat = config.selectedFiat;
     this.fiatPrice = 0;
     this.getFiatPrice(this.selectedFiat);
+  }
+
+  getDaemonConnectionInfo(): any {
+    return this.daemonConnectionInfo;
+  }
+
+  setDaemonConnectionInfo(daemonConnectionInfo: any): void {
+    this.daemonConnectionInfo = daemonConnectionInfo;
+    eventEmitter.emit('gotDaemonConnectionInfo');
   }
 
   setNodeFee(fee: number): void {

@@ -30,6 +30,14 @@ export default class Backend {
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
   }
 
+  setDaemon(daemon: Daemon): void {
+    this.daemon = daemon;
+  }
+
+  getDaemon(): Daemon {
+    return this.daemon;
+  }
+
   setWalletPassword(password: string): void {
     this.walletPassword = password;
   }
@@ -216,6 +224,21 @@ export default class Backend {
     return status;
   }
 
+  async changeNode(nodeInfo: any): void {
+    const { host, port } = nodeInfo;
+    this.setDaemon(new Daemon(host, port));
+    await this.wallet.swapNode(this.daemon);
+    this.getConnectionInfo();
+  }
+
+  getConnectionInfo(): void {
+    ipcRenderer.send(
+      'fromBackend',
+      'daemonConnectionInfo',
+      this.wallet.getDaemonConnectionInfo()
+    );
+  }
+
   async walletInit(wallet: any): Promise<void> {
     this.wallet = wallet;
     this.wallet.setLogLevel(this.evaluateLogLevel(this.logLevel));
@@ -250,6 +273,11 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
     ipcRenderer.send('fromBackend', 'walletActiveStatus', true);
     ipcRenderer.send('fromBackend', 'authenticationStatus', true);
+    ipcRenderer.send(
+      'fromBackend',
+      'daemonConnectionInfo',
+      this.wallet.getDaemonConnectionInfo()
+    );
   }
 
   getSecret(): string {
@@ -296,18 +324,18 @@ export default class Backend {
     }
   }
 
-  atomicToHuman(x: number, prettyPrint?: boolean) {
+  atomicToHuman(x: number, prettyPrint?: boolean): number {
     if (prettyPrint || false) {
       return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
     }
     return x / 100;
   }
 
-  humanToAtomic(x: number) {
+  humanToAtomic(x: number): number {
     return x * 100;
   }
 
-  convertTimestamp(timestamp: Date) {
+  convertTimestamp(timestamp: Date): string {
     const d = new Date(timestamp * 1000); // Convert the passed timestamp to milliseconds
     const yyyy = d.getFullYear();
     const mm = `0${d.getMonth() + 1}`.slice(-2); // Months are zero based. Add leading 0.
@@ -319,7 +347,7 @@ export default class Backend {
     return time;
   }
 
-  formatLikeCurrency(x: number) {
+  formatLikeCurrency(x: number): string {
     const parts = x.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return parts.join('.');
