@@ -53,6 +53,7 @@ jobs:
         with:
           python-version: 3.7 # Or other version
       - name: Install awscli via pipx # Isolates dependencies
+        shell: bash
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
             set PATH="%PATH%;%USERPROFILE%\.local\bin"
@@ -68,5 +69,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
       - name: Upload S3
+        shell: bash
         run: |
           aws s3 cp ./release/${{ steps.before_deploy.outputs.file_name }} s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}
