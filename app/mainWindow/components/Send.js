@@ -428,7 +428,7 @@ export default class Send extends Component<Props, State> {
   createTestTransaction = async () => {
     log.debug('Creating test transaction for you.');
     const sendToAddress = await session.getPrimaryAddress();
-    const amount = Math.floor(Math.random() * 100) + 1;
+    const amount = 100;
     const paymentID = this.generatePaymentID();
 
     await this.setState({

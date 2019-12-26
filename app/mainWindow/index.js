@@ -21,7 +21,6 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 import uiType from './utils/uitype';
-import DaemonLogger from './wallet/DaemonLogger';
 
 export function savedInInstallDir(savePath: string) {
   const programDirectory = path.resolve(remote.app.getAppPath(), '../../');
@@ -94,18 +93,7 @@ fs.writeFile(
   }
 );
 
-const { darkMode, daemonLogPath, useLocalDaemon } = config;
-
-export let daemonLogger = null;
-
-if (useLocalDaemon && daemonLogPath) {
-  try {
-    daemonLogger = new DaemonLogger(daemonLogPath);
-  } catch (error) {
-    log.error('Tail initialization failed.');
-    log.error(error);
-  }
-}
+const { darkMode } = config;
 
 let { textColor } = uiType(darkMode);
 

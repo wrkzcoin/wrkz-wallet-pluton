@@ -219,7 +219,6 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
     ipcRenderer.send('fromBackend', 'walletActiveStatus', true);
     ipcRenderer.send('fromBackend', 'authenticationStatus', true);
-    console.log('wallet started.');
   }
 
   startWallet(password: string): void {
@@ -233,7 +232,6 @@ export default class Backend {
       this.walletInit(openWallet);
     } else {
       ipcRenderer.send('fromBackend', 'authenticationStatus', false);
-      console.log(error);
     }
   }
 }
