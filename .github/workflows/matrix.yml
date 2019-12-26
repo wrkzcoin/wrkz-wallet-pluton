@@ -54,20 +54,20 @@ jobs:
           python-version: 3.7 # Or other version
       - name: Install awscli via pipx # Isolates dependencies
         if: matrix.os == 'ubuntu-latest'
-        run: |
-          export PATH=~/.local/bin:$PATH
-          pip install --user pipx
-          pipx install awscli
+          run: |
+            export PATH=~/.local/bin:$PATH
+            pip install --user pipx
+            pipx install awscli
         if: matrix.os == 'windows-latest'
-        run: |
-          set PATH="%PATH%;%USERPROFILE%\.local\bin"
-          pip install --user pipx
-          pipx install awscli
+          run: |
+            set PATH="%PATH%;%USERPROFILE%\.local\bin"
+            pip install --user pipx
+            pipx install awscli
         if: matrix.os == 'macOS-latest'
-        run: |
-          export PATH=~/.local/bin:$PATH
-          pip install --user pipx
-          pipx install awscli
+          run: |
+            export PATH=~/.local/bin:$PATH
+            pip install --user pipx
+            pipx install awscli
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
