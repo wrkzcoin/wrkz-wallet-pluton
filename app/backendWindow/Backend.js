@@ -158,6 +158,12 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'passwordChangeResponse', response);
   }
 
+  async rescanWallet(height: number) {
+    await this.wallet.reset(height);
+    this.saveWallet(false);
+    ipcRenderer.send('fromBackend', 'rescanResponse', height);
+  }
+
   getFormattedTransactions(
     startIndex?: number,
     numTransactions?: number,

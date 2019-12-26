@@ -24,6 +24,9 @@ function parseMessage(message: any) {
       config = data;
       backend = new Backend(config);
       break;
+    case 'rescanRequest':
+      backend.rescanWallet(data);
+      break;
     case 'changeNode':
       backend.changeNode(data);
       break;

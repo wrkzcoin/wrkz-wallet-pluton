@@ -3,7 +3,8 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { remote, ipcRenderer } from 'electron';
-import { il8n, session, eventEmitter } from '../index';
+import log from 'electron-log';
+import { il8n, eventEmitter, session } from '../index';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -53,13 +54,16 @@ export default class NodeChanger extends Component<Props, State> {
     });
   };
 
-  changeNode = (event: any) => {
-    event.preventDefault();
+  changeNode = () => {
     this.setState({
       nodeChangeInProgress: true,
       ssl: undefined
     });
     const { connectionString } = this.state;
+    const { darkMode } = this.props;
+    log.info(darkMode);
+    const { textColor } = uiType(darkMode);
+    log.info(textColor);
     // eslint-disable-next-line prefer-const
     let [host, port] = connectionString.split(':', 2);
     if (port === undefined) {
@@ -74,10 +78,26 @@ export default class NodeChanger extends Component<Props, State> {
       this.resetConnectionString();
       return;
     }
-    const request = { host, port: Number(port) };
-    session.modifyConfig('daemonHost', host);
-    session.modifyConfig('daemonPort', Number(port));
-    ipcRenderer.send('fromFrontend', 'changeNode', request);
+    if (!Number.isNaN(parseInt(port, 10))) {
+      const request = { host, port: parseInt(port, 10) };
+      session.modifyConfig('daemonHost', host);
+      session.modifyConfig('daemonPort', parseInt(port, 10));
+      ipcRenderer.send('fromFrontend', 'changeNode', request);
+    } else {
+      this.resetConnectionString();
+      const modalMessage = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            Port number must be an integer!
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
+    }
   };
 
   findNode = () => {
@@ -104,6 +124,11 @@ export default class NodeChanger extends Component<Props, State> {
                 className="input has-icons-left"
                 type="text"
                 value={connectionString}
+                onKeyPress={event => {
+                  if (event.key === 'Enter') {
+                    this.changeNode();
+                  }
+                }}
                 onChange={event => {
                   this.setState({
                     connectionString: event.target.value.trim()

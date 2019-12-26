@@ -2,8 +2,8 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import log from 'electron-log';
-import { il8n, session, eventEmitter } from '../index';
+import { ipcRenderer } from 'electron';
+import { il8n, eventEmitter } from '../index';
 import uiType from '../utils/uitype';
 
 type Props = {
@@ -29,14 +29,24 @@ export default class Rescanner extends Component<Props, State> {
     this.setRescanInProgress = this.setRescanInProgress.bind(this);
     this.confirmRescan = this.confirmRescan.bind(this);
     this.rescanWallet = this.rescanWallet.bind(this);
+    this.handleRescanResponse = this.handleRescanResponse.bind(this);
   }
 
   componentWillMount() {
     eventEmitter.on('rescanWallet', this.rescanWallet);
+    ipcRenderer.on('fromBackend', this.handleRescanResponse);
   }
 
   componentWillUnmount() {
     eventEmitter.off('rescanWallet', this.rescanWallet);
+    ipcRenderer.off('fromBackend', this.handleRescanResponse);
+  }
+
+  handleRescanResponse(event: Electron.IpcRendererEvent, message: any) {
+    const { messageType } = message;
+    if (messageType === 'rescanResponse') {
+      this.setRescanInProgress(false);
+    }
   }
 
   handleScanHeightChange = (event: any) => {
@@ -49,47 +59,21 @@ export default class Rescanner extends Component<Props, State> {
     });
   };
 
-  rescanWallet = async () => {
+  rescanWallet = () => {
     this.setRescanInProgress(true);
-    const { darkMode } = this.props;
-    const { textColor } = uiType(darkMode);
     const { scanHeight } = this.state;
-    log.debug(`Resetting wallet from block ${scanHeight}`);
-    this.setState({
-      scanHeight: ''
-    });
-    await session.wallet.reset(Number(scanHeight));
-    const message = (
-      <div>
-        <center>
-          <p className={`title ${textColor}`}>Success!</p>
-        </center>
-        <br />
-        <p className={`subtitle ${textColor}`}>
-          {`Your wallet is now syncing again from block ${scanHeight}. Patience is a virtue!`}
-        </p>
-        <p className={`subtitle ${textColor}`} />
-      </div>
-    );
-    eventEmitter.emit('openModal', message, 'OK', null, null);
-    this.setRescanInProgress(false);
+    ipcRenderer.send('fromFrontend', 'rescanRequest', parseInt(scanHeight, 10));
     this.setState({
       scanHeight: ''
     });
   };
 
-  confirmRescan = async (event: any) => {
+  confirmRescan = () => {
     const { darkMode } = this.props;
     const { textColor } = uiType(darkMode);
-    event.preventDefault();
-    let scanHeight = event.target[0].value;
-    if (scanHeight === '') {
-      return;
-    }
-    scanHeight = parseInt(event.target[0].value, 10);
+    const { scanHeight } = this.state;
 
-    if (Number.isNaN(scanHeight)) {
-      log.debug('User provided invalid height.');
+    if (Number.isNaN(parseInt(scanHeight, 10))) {
       const message = (
         <div>
           <center>
@@ -129,7 +113,7 @@ export default class Rescanner extends Component<Props, State> {
     const { scanHeight, rescanInProgress } = this.state;
 
     return (
-      <form onSubmit={this.confirmRescan}>
+      <div>
         <p className={`has-text-weight-bold ${textColor}`}>
           {il8n.rescan_wallet}
         </p>
@@ -140,7 +124,14 @@ export default class Rescanner extends Component<Props, State> {
               type="text"
               placeholder="Enter a height to scan from..."
               value={scanHeight}
-              onChange={this.handleScanHeightChange}
+              onChange={event => {
+                this.setState({ scanHeight: event.target.value });
+              }}
+              onKeyPress={event => {
+                if (event.key === 'Enter') {
+                  this.confirmRescan();
+                }
+              }}
             />
           </div>
           <div className="control">
@@ -148,6 +139,7 @@ export default class Rescanner extends Component<Props, State> {
               className={`button is-danger ${
                 rescanInProgress ? 'is-loading' : ''
               }`}
+              onClick={this.confirmRescan}
             >
               <span className="icon is-small">
                 <i className="fa fa-undo" />
@@ -156,7 +148,7 @@ export default class Rescanner extends Component<Props, State> {
             </button>
           </div>
         </div>
-      </form>
+      </div>
     );
   }
 }

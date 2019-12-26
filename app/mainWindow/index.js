@@ -144,6 +144,9 @@ ipcRenderer.on(
     const { data, messageType } = message;
 
     switch (messageType) {
+      case 'rescanResponse':
+        handleRescanResponse(data);
+        break;
       case 'daemonConnectionInfo':
         session.setDaemonConnectionInfo(data);
         break;
@@ -182,6 +185,21 @@ ipcRenderer.on(
     }
   }
 );
+
+function handleRescanResponse(height: string) {
+  const modalMessage = (
+    <div>
+      <center>
+        <p className={`title ${textColor}`}>Success!</p>
+      </center>
+      <br />
+      <p className={`subtitle ${textColor}`}>
+        Your wallet is now rescanning from block {height} Patience is a virtue!
+      </p>
+    </div>
+  );
+  eventEmitter.emit('openModal', modalMessage, 'OK', null, 'transactionCancel');
+}
 
 function handleSendTransactionResponse(response: any) {
   if (response.status === 'SUCCESS') {
