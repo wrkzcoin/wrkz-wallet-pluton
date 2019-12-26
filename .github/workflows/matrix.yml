@@ -54,9 +54,9 @@ jobs:
           python-version: 3.7 # Or other version
       - name: Install awscli via pipx # Isolates dependencies
         run: |
-          if [ "$RUNNER_OS" == "Windows" ]
+          if [ "$RUNNER_OS" == "Windows" ]; then
             set PATH="%PATH%;%USERPROFILE%\.local\bin"
-          elif [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]
+          elif [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
             export PATH=~/.local/bin:$PATH
           fi
           pip install --user pipx
