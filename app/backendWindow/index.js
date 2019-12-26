@@ -39,6 +39,9 @@ function parseMessage(message: any) {
     case 'verifyWalletPassword':
       backend.verifyPassword(data);
       break;
+    case 'changePasswordRequest':
+      backend.changePassword(data);
+      break;
     case 'transactionRequest':
       // data is the amount of transactions to get
       backend.getTransactions(data);

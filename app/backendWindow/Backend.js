@@ -29,6 +29,14 @@ export default class Backend {
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
   }
 
+  setWalletPassword(password: string): void {
+    this.walletPassword = password;
+  }
+
+  getWalletPassword(): string {
+    return this.walletPassword;
+  }
+
   getNodeFee(): void {
     ipcRenderer.send('fromBackend', 'nodeFee', this.wallet.getNodeFee()[1]);
   }
@@ -94,6 +102,23 @@ export default class Backend {
     );
   }
 
+  changePassword(passwords: any): void {
+    const { oldPassword, newPassword } = passwords;
+    let response;
+    if (this.getWalletPassword() !== oldPassword) {
+      response = { status: 'FAILURE', error: 'AUTHERROR' };
+    } else {
+      this.setWalletPassword(newPassword);
+      const saved = this.saveWallet(false);
+      if (saved) {
+        response = { status: 'SUCCESS', error: undefined };
+      } else {
+        response = { status: 'FAILURE', error: 'SAVEERROR' };
+      }
+    }
+    ipcRenderer.send('fromBackend', 'passwordChangeResponse', response);
+  }
+
   getFormattedTransactions(
     startIndex?: number,
     numTransactions?: number,
@@ -144,7 +169,7 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
   }
 
-  saveWallet(notify: boolean, path?: string) {
+  saveWallet(notify: boolean, path?: string): boolean {
     if (!this.walletActive) {
       return;
     }
@@ -157,6 +182,7 @@ export default class Backend {
     if (notify) {
       ipcRenderer.send('fromBackend', 'saveWalletResponse', status);
     }
+    return status;
   }
 
   async walletInit(wallet: any): Promise<void> {

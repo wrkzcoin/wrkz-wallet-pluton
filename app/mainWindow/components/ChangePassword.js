@@ -2,7 +2,8 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { config, session, eventEmitter, il8n, loginCounter } from '../index';
+import { ipcRenderer } from 'electron';
+import { session, eventEmitter, il8n, loginCounter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -24,38 +25,22 @@ export default class ChangePassword extends Component<Props, State> {
     super(props);
     this.state = {
       darkMode: session.darkMode,
-      pageAnimationIn: loginCounter.getAnimation('/changepassword')
+      pageAnimationIn: loginCounter.getAnimation('/changepassword'),
+      oldPassword: '',
+      newPassword: '',
+      passwordConfirm: ''
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.changePassword = this.changePassword.bind(this);
   }
 
   componentDidMount() {}
 
   componentWillUnmount() {}
 
-  handleSubmit = (event: any) => {
-    const { darkMode } = this.state;
+  changePassword = () => {
+    const { oldPassword, newPassword, passwordConfirm, darkMode } = this.state;
     const { textColor } = uiType(darkMode);
-    // We're preventing the default refresh of the page that occurs on form submit
-    event.preventDefault();
-    const oldPassword = event.target[0].value;
-    const newPassword = event.target[1].value;
-    const passwordConfirm = event.target[2].value;
-    if (oldPassword !== session.walletPassword) {
-      const message = (
-        <div>
-          <center>
-            <p className="title has-text-danger">Incorrect Password!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            You did not enter your current password correctly. Please try again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-      return;
-    }
+    console.log(this.state);
     if (newPassword !== passwordConfirm) {
       const message = (
         <div>
@@ -71,40 +56,18 @@ export default class ChangePassword extends Component<Props, State> {
       eventEmitter.emit('openModal', message, 'OK', null, null);
       return;
     }
-    session.walletPassword = newPassword;
-    const saved = session.saveWallet(config.walletFile);
-    if (saved) {
-      const message = (
-        <div>
-          <center>
-            <p className={`title ${textColor}`}>Success!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            The password was changed successfully. Take care not to forget it.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, 'openNewWallet');
-    } else {
-      const message = (
-        <div>
-          <center>
-            <p className="title has-text-danger">Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            The password was not changed sucessfully. Check that you have write
-            permissions to the file and try again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-    }
+    const request = { oldPassword, newPassword };
+    ipcRenderer.send('fromFrontend', 'changePasswordRequest', request);
   };
 
   render() {
-    const { darkMode, pageAnimationIn } = this.state;
+    const {
+      darkMode,
+      pageAnimationIn,
+      oldPassword,
+      newPassword,
+      passwordConfirm
+    } = this.state;
     const { backgroundColor, fillColor, textColor } = uiType(darkMode);
 
     return (
@@ -113,86 +76,69 @@ export default class ChangePassword extends Component<Props, State> {
         <div className={`wholescreen ${fillColor}`}>
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor} ${pageAnimationIn}`}>
-            <form onSubmit={this.handleSubmit}>
-              {session.walletPassword !== '' && (
-                <div className="field">
-                  <label className={`label ${textColor}`} htmlFor="scanheight">
-                    {il8n.change_passwd_enter_current_passwd}
-                    <div className="control">
-                      <input
-                        className="input is-large"
-                        type="password"
-                        placeholder={
-                          il8n.change_passwd_enter_current_passwd_input_placeholder
-                        }
-                      />
-                    </div>
-                  </label>
+            <div className="field">
+              <label className={`label ${textColor}`} htmlFor="scanheight">
+                {il8n.change_passwd_enter_current_passwd}
+                <div className="control">
+                  <input
+                    className="input is-large"
+                    type="password"
+                    placeholder={
+                      il8n.change_passwd_enter_current_passwd_input_placeholder
+                    }
+                    value={oldPassword}
+                    onChange={event => {
+                      this.setState({ oldPassword: event.target.value });
+                    }}
+                  />
                 </div>
-              )}
-              {session.walletPassword === '' && (
-                <div className="field">
-                  <label
-                    className={`label ${textColor} is-hidden`}
-                    htmlFor="scanheight"
-                  >
-                    {il8n.change_passwd_enter_current_passwd}
-                    <div className="control">
-                      <input
-                        className="input is-large is-hidden"
-                        type="password"
-                        placeholder={
-                          il8n.change_passwd_enter_current_passwd_no_passwd_input_placeholder
-                        }
-                        disabled
-                      />
-                    </div>
-                  </label>
+              </label>
+            </div>
+            <div className="field">
+              <label className={`label ${textColor}`} htmlFor="scanheight">
+                {il8n.change_passwd_enter_new_passwd}
+                <div className="control">
+                  <input
+                    className="input is-large"
+                    type="password"
+                    placeholder={
+                      il8n.change_passwd_enter_new_passwd_input_placeholder
+                    }
+                    value={newPassword}
+                    onChange={event => {
+                      this.setState({ newPassword: event.target.value });
+                    }}
+                  />
                 </div>
-              )}
-              <div className="field">
-                <label className={`label ${textColor}`} htmlFor="scanheight">
-                  {il8n.change_passwd_enter_new_passwd}
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="password"
-                      placeholder={
-                        il8n.change_passwd_enter_new_passwd_input_placeholder
-                      }
-                    />
-                  </div>
-                </label>
-              </div>
-              <div className="field">
-                <label className={`label ${textColor}`} htmlFor="scanheight">
-                  {il8n.change_passwd_confirm_new_passwd}
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="password"
-                      placeholder={
-                        il8n.change_passwd_confirm_new_passwd_input_placeholder
-                      }
-                    />
-                  </div>
-                </label>
-              </div>
-              {session.walletPassword !== '' && (
-                <div className="buttons is-right">
-                  <button type="submit" className="button is-success is-large">
-                    {il8n.change}
-                  </button>
+              </label>
+            </div>
+            <div className="field">
+              <label className={`label ${textColor}`} htmlFor="scanheight">
+                {il8n.change_passwd_confirm_new_passwd}
+                <div className="control">
+                  <input
+                    className="input is-large"
+                    type="password"
+                    placeholder={
+                      il8n.change_passwd_confirm_new_passwd_input_placeholder
+                    }
+                    value={passwordConfirm}
+                    onChange={event => {
+                      this.setState({ passwordConfirm: event.target.value });
+                    }}
+                  />
                 </div>
-              )}
-              {session.walletPassword === '' && (
-                <div className="buttons is-right">
-                  <button type="submit" className="button is-success is-large">
-                    {il8n.set_password}
-                  </button>
-                </div>
-              )}
-            </form>
+              </label>
+            </div>
+            <div className="buttons is-right">
+              <button
+                type="submit"
+                className="button is-success is-large"
+                onClick={this.changePassword}
+              >
+                {il8n.change}
+              </button>
+            </div>
           </div>
           <BottomBar darkMode={darkMode} />
         </div>

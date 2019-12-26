@@ -156,37 +156,11 @@ ipcRenderer.on(
     const { data, messageType } = message;
 
     switch (messageType) {
+      case 'passwordChangeResponse':
+        handlePasswordChangeResponse(data);
+        break;
       case 'saveWalletResponse':
-        // data is a boolean indicating
-        // if save was successful
-        if (data) {
-          const modalMessage = (
-            <div>
-              <center>
-                <p className={`subtitle ${textColor}`}>Wallet Saved!</p>
-              </center>
-              <br />
-              <p className={`subtitle ${textColor}`}>
-                The wallet was saved successfully.
-              </p>
-            </div>
-          );
-          eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
-        } else {
-          const modalMessage = (
-            <div>
-              <center>
-                <p className="subtitle has-text-danger">Save Error!</p>
-              </center>
-              <br />
-              <p className={`subtitle ${textColor}`}>
-                The wallet did not save successfully. Check your directory
-                permissions and try again.
-              </p>
-            </div>
-          );
-          eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
-        }
+        handleSaveWalletResponse(data);
         break;
       case 'walletActiveStatus':
         loginCounter.setWalletActive(data);
@@ -207,50 +181,7 @@ ipcRenderer.on(
         session.setNodeFee(data);
         break;
       case 'sendTransactionResponse':
-        if (data.status === 'SUCCESS') {
-          const modalMessage = (
-            <div>
-              <center>
-                <p className={`title ${textColor}`}>Success!</p>
-              </center>
-              <br />
-              <p className={`subtitle ${textColor}`}>
-                Transaction succeeded! Transaction hash:
-              </p>
-              <p className={`subtitle ${textColor}`}>{data.hash}</p>
-            </div>
-          );
-          eventEmitter.emit(
-            'openModal',
-            modalMessage,
-            'OK',
-            null,
-            'transactionCancel'
-          );
-        } else {
-          log.info(data);
-          const modalMessage = (
-            <div>
-              <center>
-                <p className="title has-text-danger">Error!</p>
-              </center>
-              <br />
-              <p className={`subtitle ${textColor}`}>
-                The transaction was not successful.
-              </p>
-              <p className={`subtitle ${textColor}`}>
-                {data.error.customMessage}
-              </p>
-            </div>
-          );
-          eventEmitter.emit(
-            'openModal',
-            modalMessage,
-            'OK',
-            null,
-            'transactionCancel'
-          );
-        }
+        handleSendTransactionResponse(data);
         break;
       case 'backendLogLine':
         session.addBackendLogLine(data);
@@ -260,6 +191,134 @@ ipcRenderer.on(
     }
   }
 );
+
+function handleSendTransactionResponse(response: any) {
+  if (response.status === 'SUCCESS') {
+    const modalMessage = (
+      <div>
+        <center>
+          <p className={`title ${textColor}`}>Success!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          Transaction succeeded! Transaction hash:
+        </p>
+        <p className={`subtitle ${textColor}`}>{response.hash}</p>
+      </div>
+    );
+    eventEmitter.emit(
+      'openModal',
+      modalMessage,
+      'OK',
+      null,
+      'transactionCancel'
+    );
+  } else {
+    const modalMessage = (
+      <div>
+        <center>
+          <p className="title has-text-danger">Error!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          The transaction was not successful.
+        </p>
+        <p className={`subtitle ${textColor}`}>
+          {response.error.customMessage}
+        </p>
+      </div>
+    );
+    eventEmitter.emit(
+      'openModal',
+      modalMessage,
+      'OK',
+      null,
+      'transactionCancel'
+    );
+  }
+}
+
+function handleSaveWalletResponse(response: any) {
+  // response is a boolean indicating
+  // if save was successful
+  if (response) {
+    const modalMessage = (
+      <div>
+        <center>
+          <p className={`subtitle ${textColor}`}>Wallet Saved!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          The wallet was saved successfully.
+        </p>
+      </div>
+    );
+    eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
+  } else {
+    const modalMessage = (
+      <div>
+        <center>
+          <p className="subtitle has-text-danger">Save Error!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          The wallet did not save successfully. Check your directory permissions
+          and try again.
+        </p>
+      </div>
+    );
+    eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
+  }
+}
+
+function handlePasswordChangeResponse(response: any) {
+  const { status, error } = response;
+  if (status === 'SUCCESS') {
+    const message = (
+      <div>
+        <center>
+          <p className={`title ${textColor}`}>Success!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          The password was changed successfully. Take care not to forget it.
+        </p>
+      </div>
+    );
+    eventEmitter.emit('openModal', message, 'OK', null, 'openNewWallet');
+  } else {
+    if (error === 'AUTHERROR') {
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Incorrect Password!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            You did not enter your current password correctly. Please try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
+    }
+    if (error === 'SAVEERROR') {
+      const message = (
+        <div>
+          <center>
+            <p className="title has-text-danger">Error!</p>
+          </center>
+          <br />
+          <p className={`subtitle ${textColor}`}>
+            The password was not changed sucessfully because the wallet could
+            not be saved to disk. Check that you have write permissions to the
+            file and try again.
+          </p>
+        </div>
+      );
+      eventEmitter.emit('openModal', message, 'OK', null, null);
+    }
+  }
+}
 
 eventEmitter.on('getUpdate', () => {
   remote.shell.openExternal(latestUpdate);
