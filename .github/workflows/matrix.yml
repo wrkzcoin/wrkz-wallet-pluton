@@ -7,12 +7,31 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }} Build
+    name: ${{ matrix.target }} Build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        target:
+          [
+            x86_64-pc-windows-msvc,
+            aarch64-unknown-linux-gnu,
+            armv7-unknown-linux-gnueabihf,
+            x86_64-apple-darwin,
+            x86_64-unknown-linux-gnu,
+          ]
+        include:
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: armv7-unknown-linux-gnueabihf
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v1
 
@@ -33,5 +52,53 @@ jobs:
       - name: Dependencies
         run: yarn
 
-      - name: Build
+      - name: Build aarch64
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: yarn package-arm64
+
+      - name: Build armv7
+        if: matrix.target == 'armv7-unknown-linux-gnueabihf'
+        run: yarn package-arm
+
+      - name: Build Non-aarch64
+        if: matrix.target != 'aarch64-unknown-linux-gnu' && matrix.target != 'armv7-unknown-linux-gnueabihf'
         run: yarn package
+
+      - name: Prepare to Deploy
+        id: before_deploy
+        shell: bash
+        run: |
+          rm -rf ./release/*.blockmap
+          rm -rf ./release/*.zip
+          rm -rf ./release/*-unpacked
+          rm -rf ./release/mac
+          export NAME=$(ls release/pluton-wallet*)
+          echo ::set-output name=file_name::${NAME:8}
+
+      # Upload to AMZ
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7 # Or other version
+      - name: Install awscli via pipx # Isolates dependencies
+        shell: bash
+        run: |
+          export PATH=~/.local/bin:$PATH
+          pip install --user pipx
+          pipx install awscli
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Upload S3
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+          elif [ "$RUNNER_OS" == "Linux" ]; then
+            aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+          fi
