@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }} Build
+    name: ${{ matrix.target }} Build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -81,9 +81,9 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           elif [ "$RUNNER_OS" == "Linux" ]; then
-            aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}"
+            aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           fi
