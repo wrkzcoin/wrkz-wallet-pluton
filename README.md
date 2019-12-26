@@ -1,9 +1,9 @@
 # WRKZ Pluton Wallet
 
-![Download Count](https://img.shields.io/github/downloads/wrkzcoin/wrkz-wallet-pluton/total.svg)
+![Download Count](https://img.shields.io/github/downloads/wrkzcoin/wrkz-wallet-pluton/total.svg?include_prereleases)
 ![Open Issue Count](https://img.shields.io/github/issues/wrkzcoin/wrkz-wallet-pluton)
 ![License](https://img.shields.io/github/license/wrkzcoin/wrkz-wallet-pluton)
-![Version](https://img.shields.io/github/v/release/wrkzcoin/wrkz-wallet-pluton)
+![Version](https://img.shields.io/github/v/release/wrkzcoin/wrkz-wallet-pluton?include_prereleases)
 
 ### Master Build Status
 
