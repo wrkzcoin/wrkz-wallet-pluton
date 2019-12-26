@@ -53,12 +53,9 @@ jobs:
         with:
           python-version: 3.7 # Or other version
       - name: Install awscli via pipx # Isolates dependencies
+        shell: bash
         run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            set PATH="%PATH%;%USERPROFILE%\.local\bin"
-          elif [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
-            export PATH=~/.local/bin:$PATH
-          fi
+          export PATH=~/.local/bin:$PATH
           pip install --user pipx
           pipx install awscli
       - name: Configure AWS Credentials
@@ -68,9 +65,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
       - name: Upload S3
+        shell: bash
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            %USERPROFILE%\.local\bin\aws s3 cp ./release/${{ steps.before_deploy.outputs.file_name }} s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}
+            ~/.local/bin/aws s3 cp ./release/${{ steps.before_deploy.outputs.file_name }} s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}
           elif [ "$RUNNER_OS" == "Linux" ]; then
             aws s3 cp ./release/${{ steps.before_deploy.outputs.file_name }} s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}
           elif [ "$RUNNER_OS" == "macOS" ]; then
