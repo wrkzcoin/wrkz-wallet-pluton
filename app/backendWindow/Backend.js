@@ -221,6 +221,36 @@ export default class Backend {
     ipcRenderer.send('fromBackend', 'authenticationStatus', true);
   }
 
+  getSecret(): string {
+    const publicAddress = this.wallet.getPrimaryAddress();
+    const [
+      privateSpendKey,
+      privateViewKey
+    ] = this.wallet.getPrimaryAddressPrivateKeys();
+    // eslint-disable-next-line prefer-const
+    let [mnemonicSeed, err] = this.wallet.getMnemonicSeed();
+    if (err) {
+      if (err.errorCode === 41) {
+        mnemonicSeed = '';
+      } else {
+        throw err;
+      }
+    }
+
+    const secret =
+      // eslint-disable-next-line prefer-template
+      publicAddress +
+      `\n\nPrivate Spend Key:\n\n` +
+      privateSpendKey +
+      `\n\nPrivate View Key:\n\n` +
+      privateViewKey +
+      (mnemonicSeed !== '' ? `\n\nMnemonic Seed:\n\n` : '') +
+      mnemonicSeed +
+      `\n\nPlease save these keys safely and securely. \nIf you lose your keys, you will not be able to recover your funds.`;
+
+    return secret;
+  }
+
   startWallet(password: string): void {
     this.walletPassword = password;
     const [openWallet, error] = WalletBackend.openWalletFromFile(

@@ -1,7 +1,8 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import { ipcRenderer, IpcRendererEvent } from 'electron';
+import fs from 'fs';
+import { ipcRenderer, IpcRendererEvent, clipboard } from 'electron';
 import log from 'electron-log';
 import Backend from './Backend';
 
@@ -22,6 +23,16 @@ function parseMessage(message: any) {
     case 'config':
       config = data;
       backend = new Backend(config);
+      break;
+    case 'backupToFile':
+      fs.writeFile(data, backend.getSecret(), error => {
+        if (error) {
+          throw error;
+        }
+      });
+      break;
+    case 'backupToClipboard':
+      clipboard.writeText(backend.getSecret());
       break;
     case 'saveWallet':
       backend.saveWallet(data);

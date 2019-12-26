@@ -11,7 +11,7 @@ import LocalizedStrings from 'react-localization';
 import ErrorBoundary from 'react-error-boundary';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { ipcRenderer, remote, clipboard } from 'electron';
+import { ipcRenderer, remote } from 'electron';
 import EventEmitter from 'events';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
@@ -529,21 +529,17 @@ function handleImport() {
 }
 
 function backupToClipboard() {
-  if (!session) {
+  if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     return;
   }
 
-  const secret = getWalletSecret();
-
-  clipboard.writeText(secret);
+  ipcRenderer.send('fromFrontend', 'backupToClipboard', undefined);
 }
 
-export function backupToFile(wallet?: any) {
-  if (!session && !wallet) {
+export function backupToFile() {
+  if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     return;
   }
-
-  const secret = getWalletSecret(wallet || undefined);
 
   const options = {
     defaultPath: remote.app.getPath('documents'),
@@ -554,52 +550,17 @@ export function backupToFile(wallet?: any) {
       }
     ]
   };
+
   const savePath = remote.dialog.showSaveDialog(null, options);
   if (savePath === undefined) {
     return;
   }
 
-  fs.writeFile(savePath, secret, error => {
-    if (error) {
-      throw error;
-    }
-  });
-}
-
-function getWalletSecret(wallet?: any) {
-  const walletToBackup = wallet || session.wallet;
-
-  const publicAddress = walletToBackup.getPrimaryAddress();
-  const [
-    privateSpendKey,
-    privateViewKey
-  ] = walletToBackup.getPrimaryAddressPrivateKeys();
-  // eslint-disable-next-line prefer-const
-  let [mnemonicSeed, err] = walletToBackup.getMnemonicSeed();
-  if (err) {
-    if (err.errorCode === 41) {
-      mnemonicSeed = '';
-    } else {
-      throw err;
-    }
-  }
-
-  const secret =
-    // eslint-disable-next-line prefer-template
-    publicAddress +
-    `\n\n${il8n.private_spend_key_colon}\n\n` +
-    privateSpendKey +
-    `\n\n${il8n.private_view_key_colon}\n\n` +
-    privateViewKey +
-    (mnemonicSeed !== '' ? `\n\n${il8n.mnemonic_seed_colon}\n\n` : '') +
-    mnemonicSeed +
-    `\n\n${il8n.please_save_your_keys}`;
-
-  return secret;
+  ipcRenderer.send('fromFrontend', 'backupToFile', savePath);
 }
 
 function handleBackup() {
-  if ((session && !session.wallet) || !loginCounter.isLoggedIn) {
+  if (!loginCounter.isLoggedIn) {
     eventEmitter.emit('refreshLogin');
     return;
   }
