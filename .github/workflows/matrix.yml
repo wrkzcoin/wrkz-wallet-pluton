@@ -43,7 +43,12 @@ jobs:
       - name: Dependencies
         run: yarn
 
-      - name: Build
+      - name: Build aarch64
+        if: matrix.TARGET == 'aarch64-unknown-linux-gnu'
+        run: package-arm64
+
+      - name: Build Non-aarch64
+        if: matrix.TARGET != 'aarch64-unknown-linux-gnu'
         run: yarn package
 
       - name: Prepare to Deploy
