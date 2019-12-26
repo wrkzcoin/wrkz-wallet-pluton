@@ -61,7 +61,7 @@ jobs:
         run: yarn package-arm
 
       - name: Build Non-aarch64
-        if: matrix.target != 'aarch64-unknown-linux-gnu'
+        if: matrix.target != 'aarch64-unknown-linux-gnu' && matrix.target != 'armv7-unknown-linux-gnueabihf'
         run: yarn package
 
       - name: Prepare to Deploy
