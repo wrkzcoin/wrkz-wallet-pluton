@@ -7,41 +7,46 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }} Build
+    name: ${{ matrix.build_name }} Build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        target:
-          - x86_64-pc-windows-msvc
-          - aarch64-unknown-linux-gnu
-          - x86_64-apple-darwin
-          - x86_64-unknown-linux-gnu
+        build_name:
+          [
+            macos-latest,
+            ubuntu-armv7-latest,
+            ubuntu-aarch64-latest,
+            ubuntu-x86_64-latest,
+            windows-latest,
+          ]
         include:
-          - target: x86_64-pc-windows-msvc
-            os: windows-latest
-          - target: aarch64-unknown-linux-gnu
-            os: ubuntu-latest
-          - target: x86_64-apple-darwin
-            os: macos-latest
-          - target: x86_64-unknown-linux-gnu
-            os: ubuntu-latest
+          - build_name: 'macos-latest'
+            TARGET: x86_64-apple-darwin
+          - build_name: 'ubuntu-armv7-latest'
+            TARGET: armv7-unknown-linux-musleabihf
+          - build_name: 'ubuntu-aarch64-latest'
+            TARGET: aarch64-unknown-linux-gnu
+          - build_name: 'ubuntu-x86_64-latest'
+            TARGET: x86_64-unknown-linux-gnu
+          - build_name: 'windows-latest'
+            TARGET: x86_64-pc-windows-msvc
     steps:
       - uses: actions/checkout@v1
-
+      - run: echo ${{matrix.TARGET}}
       - uses: actions/setup-node@v1
         with:
           node-version: '10.x'
 
       - name: Setup MSBuild.exe
-        if: matrix.os == 'windows-latest'
+        if: matrix.build_name == 'windows-latest'
         uses: warrenbuckley/Setup-MSBuild@v1
 
       - name: Setup Cache
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ matrix.os }}-deps
+          key: ${{ matrix.build_name }}-deps
 
       - name: Dependencies
         run: yarn
@@ -81,9 +86,9 @@ jobs:
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
-            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.TARGET }}-${{ steps.before_deploy.outputs.file_name }}"
           elif [ "$RUNNER_OS" == "Linux" ]; then
-            aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}"
+            aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.TARGET }}-${{ steps.before_deploy.outputs.file_name }}"
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.TARGET }}-${{ steps.before_deploy.outputs.file_name }}"
           fi
