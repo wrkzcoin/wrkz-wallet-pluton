@@ -53,17 +53,17 @@ jobs:
         with:
           python-version: 3.7 # Or other version
       - name: Install awscli via pipx # Isolates dependencies
-        if: matrix.os == 'ubuntu-latest'
+        - if: matrix.os == 'ubuntu-latest'
           run: |
             export PATH=~/.local/bin:$PATH
             pip install --user pipx
             pipx install awscli
-        if: matrix.os == 'windows-latest'
+        - if: matrix.os == 'windows-latest'
           run: |
             set PATH="%PATH%;%USERPROFILE%\.local\bin"
             pip install --user pipx
             pipx install awscli
-        if: matrix.os == 'macOS-latest'
+        - if: matrix.os == 'macOS-latest'
           run: |
             export PATH=~/.local/bin:$PATH
             pip install --user pipx
