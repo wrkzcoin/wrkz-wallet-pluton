@@ -27,6 +27,7 @@ export default class SyncReminder extends Component<Props, State> {
       syncPercentage: session.getSyncPercentage(),
       networkBlockHeight: session.getNetworkBlockHeight()
     };
+    this.handleNewSyncStatus = this.handleNewSyncStatus.bind(this);
   }
 
   componentDidMount() {

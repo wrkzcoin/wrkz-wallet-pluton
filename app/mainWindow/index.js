@@ -343,42 +343,39 @@ ipcRenderer.on('handleSaveAs', () => {
 });
 
 ipcRenderer.on('exportToCSV', () => {
-  if ((session && !session.wallet) || !loginCounter.isLoggedIn) {
+  if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     eventEmitter.emit('refreshLogin');
     return;
   }
-  if (session) {
-    const options = {
-      defaultPath: remote.app.getPath('documents'),
-      filters: [
-        {
-          name: 'CSV Text File',
-          extensions: ['csv']
-        }
-      ]
-    };
-    const savePath = remote.dialog.showSaveDialog(null, options);
-    if (savePath === undefined) {
-      return;
-    }
-    log.debug(`Exporting transactions to csv file at ${savePath}`);
-    if (session) {
-      session.exportToCSV(savePath);
-      const message = (
-        <div>
-          <center>
-            <p className={`subtitle ${textColor}`}>CSV Exported!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            Your transaction history has been exported to a .csv file at
-            {savePath}
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
-    }
+  const options = {
+    defaultPath: remote.app.getPath('documents'),
+    filters: [
+      {
+        name: 'CSV Text File',
+        extensions: ['csv']
+      }
+    ]
+  };
+  const savePath = remote.dialog.showSaveDialog(null, options);
+  if (savePath === undefined) {
+    return;
   }
+  ipcRenderer.send('fromFrontend', 'exportToCSV', savePath);
+  /*
+    const message = (
+      <div>
+        <center>
+          <p className={`subtitle ${textColor}`}>CSV Exported!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          Your transaction history has been exported to a .csv file at
+          {savePath}
+        </p>
+      </div>
+    );
+    eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
+  */
 });
 
 eventEmitter.on('sendNotification', function sendNotification(amount) {

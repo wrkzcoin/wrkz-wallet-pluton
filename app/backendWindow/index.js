@@ -34,6 +34,9 @@ function parseMessage(message: any) {
     case 'backupToClipboard':
       clipboard.writeText(backend.getSecret());
       break;
+    case 'exportToCSV':
+      backend.exportToCSV(data);
+      break;
     case 'saveWallet':
       backend.saveWallet(data);
       break;

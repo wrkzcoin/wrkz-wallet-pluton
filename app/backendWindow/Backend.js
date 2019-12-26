@@ -3,6 +3,7 @@
 // Please see the included LICENSE file for more information.
 import { Daemon, WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
 import { ipcRenderer } from 'electron';
+import { createObjectCsvWriter } from 'csv-writer';
 
 export default class Backend {
   daemon: Daemon;
@@ -72,6 +73,36 @@ export default class Backend {
       default:
         return LogLevel.DISABLED;
     }
+  }
+
+  exportToCSV(savePath: string) {
+    const rawTransactions = this.getFormattedTransactions(
+      undefined,
+      undefined,
+      false
+    );
+    const csvWriter = createObjectCsvWriter({
+      path: savePath,
+      header: [
+        { id: 'date', title: 'Date' },
+        { id: 'blockHeight', title: 'Block Height' },
+        { id: 'transactionHash', title: 'Transaction Hash' },
+        { id: 'pid', title: 'Payment ID' },
+        { id: 'amount', title: 'Amount' },
+        { id: 'bal', title: 'balance' }
+      ]
+    });
+    const csvData = rawTransactions.map(item => {
+      return {
+        date: this.convertTimestamp(item[0]),
+        blockHeight: item[4],
+        transactionHash: item[1],
+        pid: item[5],
+        amount: this.atomicToHuman(item[2], true),
+        bal: this.atomicToHuman(item[3], true)
+      };
+    });
+    csvWriter.writeRecords(csvData);
   }
 
   async sendTransaction(transaction: any): void {
@@ -263,5 +294,34 @@ export default class Backend {
     } else {
       ipcRenderer.send('fromBackend', 'authenticationStatus', false);
     }
+  }
+
+  atomicToHuman(x: number, prettyPrint?: boolean) {
+    if (prettyPrint || false) {
+      return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
+    }
+    return x / 100;
+  }
+
+  humanToAtomic(x: number) {
+    return x * 100;
+  }
+
+  convertTimestamp(timestamp: Date) {
+    const d = new Date(timestamp * 1000); // Convert the passed timestamp to milliseconds
+    const yyyy = d.getFullYear();
+    const mm = `0${d.getMonth() + 1}`.slice(-2); // Months are zero based. Add leading 0.
+    const dd = `0${d.getDate()}`.slice(-2); // Add leading 0.
+    const hh = `0${d.getHours()}`.slice(-2);
+    const min = `0${d.getMinutes()}`.slice(-2); // Add leading 0.
+    // ie: 2013-02-18, 16:35
+    const time = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+    return time;
+  }
+
+  formatLikeCurrency(x: number) {
+    const parts = x.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
   }
 }
