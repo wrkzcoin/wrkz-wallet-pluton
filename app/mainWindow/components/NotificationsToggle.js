@@ -2,6 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import { ipcRenderer } from 'electron';
 import { session, config } from '../index';
 import uiType from '../utils/uitype';
 
@@ -33,6 +34,7 @@ export default class NotificationsToggle extends Component<Props, State> {
     this.setState({
       notifications: !notifications
     });
+    ipcRenderer.send('fromFrontend', 'notificationsRequest', !notifications);
   };
 
   render() {

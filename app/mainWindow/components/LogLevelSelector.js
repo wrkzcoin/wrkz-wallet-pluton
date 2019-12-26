@@ -3,7 +3,9 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import Select from 'react-select';
-import { config, session, eventEmitter } from '../index';
+import { ipcRenderer } from 'electron';
+import { config, session } from '../index';
+import search from '../utils/search';
 import uiType from '../utils/uitype';
 
 const logLevels = [
@@ -52,7 +54,7 @@ export default class LogLevelSelector extends Component<Props, State> {
     super(props);
     this.options = logLevels;
     this.state = {
-      selectedLogLevel: this.search(config.logLevel, logLevels, 'value')
+      selectedLogLevel: search(config.logLevel, logLevels, 'value')
     };
     this.handleLogLevelChange = this.handleLogLevelChange.bind(this);
   }
@@ -65,22 +67,13 @@ export default class LogLevelSelector extends Component<Props, State> {
     this.setState({ selectedLogLevel });
   };
 
-  search(searchedValue: any, arrayToSearch: any[], objectPropertyName: string) {
-    for (let i = 0; i < arrayToSearch.length; i++) {
-      if (arrayToSearch[i][objectPropertyName] === searchedValue) {
-        return arrayToSearch[i];
-      }
-    }
-  }
-
   handleLogLevelChange = (event: any) => {
-    const logLevel = this.search(event.value, logLevels, 'value');
+    const logLevel = search(event.value, logLevels, 'value');
     this.setState({
-      selectedLogLevel: this.search(logLevel, logLevels, 'value')
+      selectedLogLevel: search(logLevel, logLevels, 'value')
     });
     session.modifyConfig('logLevel', event.value);
-    session.wallet.setLogLevel(session.evaluateLogLevel(event.value));
-    eventEmitter.emit('logLevelChanged');
+    ipcRenderer.send('fromFrontend', 'logLevelRequest', event.value);
   };
 
   render() {

@@ -24,6 +24,15 @@ function parseMessage(message: any) {
       config = data;
       backend = new Backend(config);
       break;
+    case 'notificationsRequest':
+      backend.setNotifications(data);
+      break;
+    case 'logLevelRequest':
+      backend.setLogLevel(data);
+      break;
+    case 'scanCoinbaseRequest':
+      backend.setScanCoinbaseTransactions(data);
+      break;
     case 'rescanRequest':
       backend.rescanWallet(data);
       break;

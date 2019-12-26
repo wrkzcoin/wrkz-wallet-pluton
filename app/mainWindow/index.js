@@ -1,7 +1,6 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-
 import log from 'electron-log';
 import os from 'os';
 import fs from 'fs';
@@ -194,7 +193,7 @@ function handleRescanResponse(height: string) {
       </center>
       <br />
       <p className={`subtitle ${textColor}`}>
-        Your wallet is now rescanning from block {height} Patience is a virtue!
+        Your wallet is now rescanning from block {height}. Patience is a virtue!
       </p>
     </div>
   );
@@ -382,19 +381,6 @@ ipcRenderer.on('exportToCSV', () => {
     return;
   }
   ipcRenderer.send('fromFrontend', 'exportToCSV', savePath);
-});
-
-eventEmitter.on('sendNotification', function sendNotification(amount) {
-  const { notifications } = config;
-
-  if (notifications) {
-    const notif = new window.Notification('Transaction Received!', {
-      body: `${il8n.just_received} ${amount} ${il8n.TRTL}`
-    });
-    if (notif) {
-      log.debug(`Sent notification: You've just received ${amount} TRTL.`);
-    }
-  }
 });
 
 ipcRenderer.on('handleOpen', handleOpen);

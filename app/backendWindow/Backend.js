@@ -4,8 +4,11 @@
 import { Daemon, WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
 import { ipcRenderer } from 'electron';
 import { createObjectCsvWriter } from 'csv-writer';
+import log from 'electron-log';
 
 export default class Backend {
+  notifications: boolean;
+
   daemon: Daemon;
 
   daemonHost: string;
@@ -23,11 +26,17 @@ export default class Backend {
   lastTxAmountRequested: number = 50;
 
   constructor(config: any): Backend {
+    this.notifications = config.notifications;
     this.daemonHost = config.daemonHost;
     this.daemonPort = config.daemonPort;
     this.walletFile = config.walletFile;
     this.logLevel = config.logLevel;
     this.daemon = new Daemon(this.daemonHost, this.daemonPort);
+  }
+
+  setNotifications(status: boolean) {
+    this.notifications = status;
+    log.info(this.notifications);
   }
 
   setDaemon(daemon: Daemon): void {
@@ -111,6 +120,10 @@ export default class Backend {
       };
     });
     csvWriter.writeRecords(csvData);
+  }
+
+  setScanCoinbaseTransactions(value: boolean) {
+    this.wallet.scanCoinbaseTransactions(value);
   }
 
   async sendTransaction(transaction: any): void {
@@ -245,9 +258,14 @@ export default class Backend {
     );
   }
 
+  setLogLevel(logLevel: string): void {
+    this.logLevel = logLevel;
+    this.wallet.setLogLevel(this.evaluateLogLevel(this.logLevel));
+  }
+
   async walletInit(wallet: any): Promise<void> {
     this.wallet = wallet;
-    this.wallet.setLogLevel(this.evaluateLogLevel(this.logLevel));
+    this.setLogLevel(this.logLevel);
     this.wallet.on(
       'heightchange',
       (walletBlockCount, localDaemonBlockCount, networkBlockCount) => {
@@ -261,6 +279,18 @@ export default class Backend {
     this.wallet.on('transaction', () => {
       this.getTransactions(this.getLastTxAmountRequested() + 1);
       this.getBalance();
+    });
+
+    this.wallet.on('incomingtx', transaction => {
+      if (this.notifications) {
+        // eslint-disable-next-line no-new
+        new window.Notification('Transaction Received!', {
+          body: `You've just received ${this.atomicToHuman(
+            transaction.totalAmount(),
+            true
+          )} TRTL.`
+        });
+      }
     });
     await this.wallet.start();
     this.setWalletActive(true);

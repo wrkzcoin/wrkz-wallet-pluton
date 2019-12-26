@@ -2,7 +2,8 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { session, eventEmitter, config } from '../index';
+import { ipcRenderer } from 'electron';
+import { session, config } from '../index';
 import uiType from '../utils/uitype';
 
 type State = {
@@ -19,32 +20,24 @@ export default class ScanCoinbaseToggle extends Component<Props, State> {
     this.state = {
       scanCoinbaseTransactions: config.scanCoinbaseTransactions || false
     };
-    this.scanCoinbaseTransactionsOn = this.scanCoinbaseTransactionsOn.bind(
-      this
-    );
-    this.scanCoinbaseTransactionsOff = this.scanCoinbaseTransactionsOff.bind(
-      this
-    );
+    this.toggleScanCoinbase = this.toggleScanCoinbase.bind(this);
   }
 
   componentWillMount() {}
 
   componentWillUnmount() {}
 
-  scanCoinbaseTransactionsOn = () => {
-    session.modifyConfig('scanCoinbaseTransactions', true);
+  toggleScanCoinbase = () => {
+    const { scanCoinbaseTransactions } = this.state;
+    session.modifyConfig('scanCoinbaseTransactions', !scanCoinbaseTransactions);
     this.setState({
-      scanCoinbaseTransactions: true
+      scanCoinbaseTransactions: !scanCoinbaseTransactions
     });
-    eventEmitter.emit('scanCoinbaseTransactionsOn');
-  };
-
-  scanCoinbaseTransactionsOff = () => {
-    session.modifyConfig('scanCoinbaseTransactions', false);
-    this.setState({
-      scanCoinbaseTransactions: false
-    });
-    eventEmitter.emit('scanCoinbaseTransactionsOff');
+    ipcRenderer.send(
+      'fromFrontend',
+      'scanCoinbaseRequest',
+      !scanCoinbaseTransactions
+    );
   };
 
   render() {
@@ -57,8 +50,8 @@ export default class ScanCoinbaseToggle extends Component<Props, State> {
           <span className={textColor}>
             <a
               className="button is-danger"
-              onClick={this.scanCoinbaseTransactionsOn}
-              onKeyPress={this.scanCoinbaseTransactionsOn}
+              onClick={this.toggleScanCoinbase}
+              onKeyPress={this.toggleScanCoinbase}
               role="button"
               tabIndex={0}
             >
@@ -73,8 +66,8 @@ export default class ScanCoinbaseToggle extends Component<Props, State> {
           <span className={textColor}>
             <a
               className="button is-success"
-              onClick={this.scanCoinbaseTransactionsOff}
-              onKeyPress={this.scanCoinbaseTransactionsOff}
+              onClick={this.toggleScanCoinbase}
+              onKeyPress={this.toggleScanCoinbase}
               role="button"
               tabIndex={0}
             >
