@@ -73,7 +73,10 @@ export default class Rescanner extends Component<Props, State> {
     const { textColor } = uiType(darkMode);
     const { scanHeight } = this.state;
 
-    if (Number.isNaN(parseInt(scanHeight, 10))) {
+    if (
+      Number.isNaN(parseInt(scanHeight, 10)) ||
+      parseInt(scanHeight, 10) < 0
+    ) {
       const message = (
         <div>
           <center>
