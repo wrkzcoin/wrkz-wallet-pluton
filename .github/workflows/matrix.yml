@@ -44,7 +44,7 @@ jobs:
           rm -rf ./release/*.zip
           rm -rf ./release/*-unpacked
           rm -rf ./release/mac
-          export NAME=$(ls release/proton-wallet*)
+          export NAME=$(ls release/pluton-wallet*)
           echo ::set-output name=file_name::${NAME:8}
 
       # Upload to AMZ
