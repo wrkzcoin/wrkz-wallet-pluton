@@ -6,7 +6,6 @@ import { ipcRenderer, IpcRendererEvent, clipboard } from 'electron';
 import log from 'electron-log';
 import Backend from './Backend';
 
-let config = null;
 let backend = null;
 
 ipcRenderer.on('fromMain', (event: IpcRendererEvent, message: any) => {
@@ -21,8 +20,10 @@ function parseMessage(message: any) {
   const { messageType, data } = message;
   switch (messageType) {
     case 'config':
-      config = data;
-      backend = new Backend(config);
+      backend = new Backend(data);
+      break;
+    case 'transactionSearchQuery':
+      backend.transactionSearch(data);
       break;
     case 'notificationsRequest':
       backend.setNotifications(data);

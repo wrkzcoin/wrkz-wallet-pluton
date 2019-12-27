@@ -243,6 +243,44 @@ export default class Backend {
     return status;
   }
 
+  transactionSearch(query: string) {
+    const transactions = this.wallet.getTransactions();
+    const possibleTransactionValues = ['blockHeight', 'hash', 'paymentID'];
+    const transactionResults = possibleTransactionValues.map(value => {
+      return this.search(query, transactions, value);
+    });
+    let sanitizedResults = [];
+    /* the search function returns a separate array of results for each
+    value searched, we need to concat them together with spread */
+    for (let i = 0; i < transactionResults.length; i++) {
+      sanitizedResults = [...transactionResults[i], ...sanitizedResults];
+    }
+    ipcRenderer.send(
+      'fromBackend',
+      'transactionSearchResponse',
+      sanitizedResults
+    );
+  }
+
+  search(searchedValue: any, arrayToSearch: any[], objectPropertyName: string) {
+    const resultsToReturn = [];
+    for (let i = 0; i < arrayToSearch.length; i++) {
+      // will resolve to true if the selected value contains the substring, case insensitive
+      if (
+        String(arrayToSearch[i][objectPropertyName])
+          .toUpperCase()
+          .includes(searchedValue.toUpperCase())
+      ) {
+        /* we have to disable this because the function gets lost
+        when we send the object over ipc */
+        // eslint-disable-next-line no-param-reassign
+        arrayToSearch[i].totalTxAmount = arrayToSearch[i].totalAmount();
+        resultsToReturn.push(arrayToSearch[i]);
+      }
+    }
+    return resultsToReturn;
+  }
+
   async changeNode(nodeInfo: any): void {
     const { host, port } = nodeInfo;
     this.setDaemon(new Daemon(host, port));

@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component, Fragment } from 'react';
-import { remote } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import { Link, Redirect } from 'react-router-dom';
 import jdenticon from 'jdenticon';
 import NavBar from './NavBar';
@@ -67,10 +67,12 @@ export default class Search extends Component<Props, States> {
       redirect: false
     };
     this.addressList = addressList;
-    this.transactions = session.wallet.getTransactions();
     this.getContactResults = this.getContactResults.bind(this);
     this.getTransactionResults = this.getTransactionResults.bind(this);
     this.getSettingsResults = this.getSettingsResults.bind(this);
+    this.handleTransactionSearchResponse = this.handleTransactionSearchResponse.bind(
+      this
+    );
   }
 
   componentDidMount() {
@@ -84,6 +86,7 @@ export default class Search extends Component<Props, States> {
 
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.on('modifyCurrency', this.modifyCurrency);
+    ipcRenderer.on('fromBackend', this.handleTransactionSearchResponse);
   }
 
   componentWillReceiveProps(newProps: any) {
@@ -94,12 +97,13 @@ export default class Search extends Component<Props, States> {
     this.setState({
       query
     });
-
-    eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
-    eventEmitter.off('modifyCurrency', this.modifyCurrency);
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.off('modifyCurrency', this.modifyCurrency);
+    ipcRenderer.off('fromBackend', this.handleTransactionSearchResponse);
+  }
 
   expandRow = (event: any) => {
     const hash = event.target.value;
@@ -115,6 +119,18 @@ export default class Search extends Component<Props, States> {
     this.setState({
       expandedRows
     });
+  };
+
+  handleTransactionSearchResponse = (
+    event: Electron.IpcRendererEvent,
+    message: any
+  ) => {
+    const { messageType, data } = message;
+    if (messageType === 'transactionSearchResponse') {
+      this.setState({
+        transactionResults: data
+      });
+    }
   };
 
   modifyCurrency = (displayCurrency: string) => {
@@ -190,28 +206,7 @@ export default class Search extends Component<Props, States> {
   };
 
   getTransactionResults = (query: string) => {
-    if (query.length < 4) {
-      return;
-    }
-    const transactions = session.wallet.getTransactions();
-
-    const possibleTransactionValues = ['blockHeight', 'hash', 'paymentID'];
-
-    const transactionResults = possibleTransactionValues.map(value => {
-      return this.search(query, transactions, value);
-    });
-
-    let sanitizedResults = [];
-
-    /* the search function returns a separate array of results for each
-    value searched, we need to concat them together with spread */
-    for (let i = 0; i < transactionResults.length; i++) {
-      sanitizedResults = [...transactionResults[i], ...sanitizedResults];
-    }
-
-    this.setState({
-      transactionResults: sanitizedResults
-    });
+    ipcRenderer.send('fromFrontend', 'transactionSearchQuery', query);
   };
 
   goToSetting(location: string) {
@@ -402,7 +397,7 @@ export default class Search extends Component<Props, States> {
                       blockHeight
                     } = tx;
 
-                    const amount = tx.totalAmount();
+                    const amount = tx.totalAmount;
                     const rowIsExpanded = expandedRows.includes(hash);
                     const toggleSymbol = rowIsExpanded ? '-' : '+';
                     return (

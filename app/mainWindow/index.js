@@ -231,9 +231,7 @@ function handleSendTransactionResponse(response: any) {
         <p className={`subtitle ${textColor}`}>
           The transaction was not successful.
         </p>
-        <p className={`subtitle ${textColor}`}>
-          {response.error.customMessage}
-        </p>
+        <p className={`subtitle ${textColor}`}>{response.error.errorString}</p>
       </div>
     );
     eventEmitter.emit(
