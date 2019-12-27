@@ -75,15 +75,30 @@ jobs:
           export NAME=$(ls release/pluton-wallet*)
           echo ::set-output name=file_name::${NAME:8}
 
-      # Upload to FTP
-      - name: FTP-Deploy-Action
-        uses: SamKirkland/FTP-Deploy-Action@2.0.0
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          METHOD: ${{ secrets.FTP_METHOD }}
-          PORT: ${{ secrets.FTP_PORT }}
-          LOCAL_DIR: ./release
-          REMOTE_DIR: /wrkz-bin.bot.tips/pluton
-          ARGS: --include-glob=*.pkg --include-glob=*.exe --include-glob=*.AppImage --include-glob=*.dmg
+      # Upload to AMZ
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7 # Or other version
+      - name: Install awscli via pipx # Isolates dependencies
+        shell: bash
+        run: |
+          export PATH=~/.local/bin:$PATH
+          pip install --user pipx
+          pipx install awscli
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Upload S3
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+          elif [ "$RUNNER_OS" == "Linux" ]; then
+            aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+          fi
