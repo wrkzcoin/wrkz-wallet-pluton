@@ -346,12 +346,12 @@ export default class Backend {
     );
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
     ipcRenderer.send('fromBackend', 'walletActiveStatus', true);
-    ipcRenderer.send('fromBackend', 'authenticationStatus', true);
     ipcRenderer.send(
       'fromBackend',
       'daemonConnectionInfo',
       this.wallet.getDaemonConnectionInfo()
     );
+    ipcRenderer.send('fromBackend', 'authenticationStatus', true);
   }
 
   getSecret(): string {

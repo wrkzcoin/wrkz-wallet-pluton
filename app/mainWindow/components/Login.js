@@ -3,6 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
+import ReactLoading from 'react-loading';
 import { session, eventEmitter, loginCounter, il8n, config } from '../index';
 import Redirector from './Redirector';
 import SyncReminder from './SyncReminder';
@@ -14,7 +15,8 @@ type Props = {};
 type State = {
   darkMode: boolean,
   walletFile: string,
-  wrongPassword: boolean
+  wrongPassword: boolean,
+  loginInProgress: boolean
 };
 
 export default class Login extends Component<Props, State> {
@@ -25,7 +27,8 @@ export default class Login extends Component<Props, State> {
     this.state = {
       darkMode: session.darkMode || false,
       walletFile: config.walletFile,
-      wrongPassword: loginCounter.lastLoginAttemptFailed
+      wrongPassword: loginCounter.lastLoginAttemptFailed,
+      loginInProgress: false
     };
     const { wrongPassword } = this.state;
     if (!wrongPassword && !session.wallet) {
@@ -58,6 +61,9 @@ export default class Login extends Component<Props, State> {
 
   handleSubmit = async (event: any) => {
     // We're preventing the default refresh of the app that occurs on form submit
+    this.setState({
+      loginInProgress: true
+    });
     event.preventDefault();
     loginCounter.loginsAttempted++;
     const password = event.target[0].value;
@@ -72,7 +78,7 @@ export default class Login extends Component<Props, State> {
   };
 
   render() {
-    const { darkMode, wrongPassword, walletFile } = this.state;
+    const { darkMode, wrongPassword, walletFile, loginInProgress } = this.state;
     const { backgroundColor, fillColor, textColor } = uiType(darkMode);
     return (
       <div>
@@ -88,49 +94,69 @@ export default class Login extends Component<Props, State> {
               }
             >
               <form onSubmit={this.handleSubmit}>
-                <div className="field">
-                  <label className={`label ${textColor}`} htmlFor="scanheight">
-                    {il8n.password}
-                    <div className="control">
-                      <input
-                        ref={input => input && input.focus()}
-                        className={
-                          wrongPassword
-                            ? 'input is-large is-danger'
-                            : 'input is-large'
-                        }
-                        type="password"
-                        placeholder={il8n.password_input_placeholder}
-                      />
-                    </div>
-                  </label>
-                  <label className={`help ${textColor}`} htmlFor="scanheight">
-                    {loginCounter.walletActive
-                      ? il8n.currently_logged_in
-                      : il8n.attempting_login_to}
-                    <b>{walletFile}</b>
-                  </label>
-                </div>
-                <div className="columns">
-                  <div className="column">
-                    {loginCounter.walletActive && (
-                      <SyncReminder
-                        className="syncreminder"
-                        darkMode={darkMode}
-                      />
-                    )}
-                  </div>
-                  <div className="column">
-                    <div className="buttons is-right">
-                      <button
-                        type="submit"
-                        className="button is-success is-large"
+                {!loginInProgress && (
+                  <div>
+                    <div className="field">
+                      <label
+                        className={`label ${textColor}`}
+                        htmlFor="scanheight"
                       >
-                        {session.wallet ? il8n.unlock : il8n.login}
-                      </button>
+                        {il8n.password}
+                        <div className="control">
+                          <input
+                            ref={input => input && input.focus()}
+                            className={
+                              wrongPassword
+                                ? 'input is-large is-danger'
+                                : 'input is-large'
+                            }
+                            type="password"
+                            placeholder={il8n.password_input_placeholder}
+                          />
+                        </div>
+                      </label>
+                      <label
+                        className={`help ${textColor}`}
+                        htmlFor="scanheight"
+                      >
+                        {loginCounter.walletActive
+                          ? il8n.currently_logged_in
+                          : il8n.attempting_login_to}
+                        <b>{walletFile}</b>
+                      </label>
+                    </div>
+                    <div className="columns">
+                      <div className="column">
+                        {loginCounter.walletActive && (
+                          <SyncReminder
+                            className="syncreminder"
+                            darkMode={darkMode}
+                          />
+                        )}
+                      </div>
+                      <div className="column">
+                        <div className="buttons is-right">
+                          <button
+                            type="submit"
+                            className="button is-success is-large"
+                          >
+                            {session.wallet ? il8n.unlock : il8n.login}
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+                {loginInProgress && (
+                  <center>
+                    <ReactLoading
+                      type="spinningBubbles"
+                      color={darkMode ? '#F5F5F5' : '#0A0A0A'}
+                      height={170}
+                      width={170}
+                    />
+                  </center>
+                )}
               </form>
             </div>
           </div>
