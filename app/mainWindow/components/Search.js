@@ -37,7 +37,8 @@ type States = {
   redirect: boolean,
   redirectTo: string,
   settingsResults: any[],
-  fiatDecimals: number
+  fiatDecimals: number,
+  backendResultsReceived: boolean
 };
 
 export default class Search extends Component<Props, States> {
@@ -64,7 +65,8 @@ export default class Search extends Component<Props, States> {
       query: props.query,
       settingsResults: [],
       redirectTo: '',
-      redirect: false
+      redirect: false,
+      backendResultsReceived: false
     };
     this.addressList = addressList;
     this.getContactResults = this.getContactResults.bind(this);
@@ -95,7 +97,8 @@ export default class Search extends Component<Props, States> {
     this.getSettingsResults(query);
     this.getTransactionResults(query);
     this.setState({
-      query
+      query,
+      backendResultsReceived: false
     });
   }
 
@@ -128,7 +131,8 @@ export default class Search extends Component<Props, States> {
     const { messageType, data } = message;
     if (messageType === 'transactionSearchResponse') {
       this.setState({
-        transactionResults: data
+        transactionResults: data,
+        backendResultsReceived: true
       });
     }
   };
@@ -265,7 +269,8 @@ export default class Search extends Component<Props, States> {
       fiatDecimals,
       settingsResults,
       redirectTo,
-      redirect
+      redirect,
+      backendResultsReceived
     } = this.state;
 
     if (redirect) {
@@ -612,31 +617,34 @@ export default class Search extends Component<Props, States> {
                 </table>
               </Fragment>
             )}
-            {resultsFound === 0 && (
-              <div className={`box elem-to-center ${fillColor}`}>
-                <p className="title has-text-danger has-text-centered">
-                  No results found!
-                </p>{' '}
-                {query.length === 64 && (
-                  <Fragment>
-                    <center>
-                      <br />
-                      <span
-                        className={`button ${settingsCogColor}`}
-                        onClick={this.openSearchInExplorer}
-                        onKeyPress={this.openSearchInExplorer}
-                        role="button"
-                        tabIndex={0}
-                        onMouseDown={event => event.preventDefault()}
-                      >
-                        Seach on Block Explorer
-                      </span>
-                    </center>
-                  </Fragment>
+            {backendResultsReceived && (
+              <div>
+                {resultsFound === 0 && (
+                  <div className={`box elem-to-center ${fillColor}`}>
+                    <p className="title has-text-danger has-text-centered">
+                      No results found!
+                    </p>{' '}
+                    {query.length === 64 && (
+                      <Fragment>
+                        <center>
+                          <br />
+                          <span
+                            className={`button ${settingsCogColor}`}
+                            onClick={this.openSearchInExplorer}
+                            onKeyPress={this.openSearchInExplorer}
+                            role="button"
+                            tabIndex={0}
+                            onMouseDown={event => event.preventDefault()}
+                          >
+                            Seach on Block Explorer
+                          </span>
+                        </center>
+                      </Fragment>
+                    )}
+                  </div>
                 )}
               </div>
             )}
-            <br />
           </div>
           <BottomBar darkMode={darkMode} />
         </div>
