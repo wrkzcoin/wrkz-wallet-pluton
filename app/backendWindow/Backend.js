@@ -25,6 +25,14 @@ export default class Backend {
 
   lastTxAmountRequested: number = 50;
 
+  blocksSinceLastSave: number = 0;
+
+  saveInterval: IntervalID = setInterval(
+    this.saveWallet.bind(this),
+    1000 * 60 * 5,
+    false
+  );
+
   constructor(config: any): Backend {
     this.notifications = config.notifications;
     this.daemonHost = config.daemonHost;
@@ -210,6 +218,7 @@ export default class Backend {
 
   stop() {
     if (this.wallet) {
+      clearInterval(this.saveInterval);
       this.wallet.stop();
     }
   }
@@ -228,9 +237,11 @@ export default class Backend {
   }
 
   saveWallet(notify: boolean, path?: string): boolean {
-    if (!this.walletActive) {
+    if (!this.getWalletActive()) {
       return;
     }
+
+    log.info('Saving wallet to file...');
 
     const status = this.wallet.saveWalletToFile(
       path || this.walletFile,
