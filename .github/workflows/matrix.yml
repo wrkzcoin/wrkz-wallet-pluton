@@ -96,6 +96,7 @@ jobs:
           AWS_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
           SOURCE_DIR: 'release' # optional: defaults to entire repository
           DEST_DIR: 'pluton'
+          SHA8: ${GITHUB_SHA::8}
         shell: bash
         run: |
           DATE_WITH_TIME=`date "+%Y%m%d-%H%M"`
@@ -103,7 +104,7 @@ jobs:
             ~/.local/bin/aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
             ~/.local/bin/aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
             ~/.local/bin/aws configure set default.region ${AWS_REGION}
-            ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}" --no-progress --endpoint-url "${AWS_ENDPOINT} --acl public-read"
+            ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${SHA8}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}" --no-progress --endpoint-url "${AWS_ENDPOINT}" --acl public-read
             ~/.local/bin/aws configure set aws_access_key_id null
             ~/.local/bin/aws configure set aws_secret_access_key null
             ~/.local/bin/aws configure set default.region null
@@ -111,7 +112,7 @@ jobs:
             aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
             aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
             aws configure set default.region ${AWS_REGION}
-            aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}" --no-progress --endpoint-url "${AWS_ENDPOINT} --acl public-read"
+            aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${SHA8}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}" --no-progress --endpoint-url "${AWS_ENDPOINT}" --acl public-read
             aws configure set aws_access_key_id null
             aws configure set aws_secret_access_key null
             aws configure set default.region null
