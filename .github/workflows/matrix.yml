@@ -89,16 +89,17 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+          aws-access-key-id: ${{ secrets.S3_KEY }}
+          aws-secret-access-key: ${{ secrets.S3_SECRET }}
+          aws-region: ${{ secrets.S3_REGION }}
       - name: Upload S3
         shell: bash
         run: |
+          DATE_WITH_TIME=`date "+%Y%m%d-%H%M"`
           if [ "$RUNNER_OS" == "Windows" ]; then
-            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws --endpoint-url ${{ secrets.S3_ENDPOINT }} s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           elif [ "$RUNNER_OS" == "Linux" ]; then
-            aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+            aws --endpoint-url ${{ secrets.S3_ENDPOINT }} s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           elif [ "$RUNNER_OS" == "macOS" ]; then
-            ~/.local/bin/aws s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton-wrkz-wallet/${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws --endpoint-url ${{ secrets.S3_ENDPOINT }} s3 cp "./release/${{ steps.before_deploy.outputs.file_name }}" "s3://wrkzcoin/pluton/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           fi
