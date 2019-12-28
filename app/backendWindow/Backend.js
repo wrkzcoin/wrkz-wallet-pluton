@@ -152,6 +152,7 @@ export default class Backend {
       const response = { status: 'FAILURE', hash, error };
       ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
     }
+    this.getTransactions(this.getLastTxAmountRequested() + 1);
   }
 
   verifyPassword(password: string): void {
@@ -221,6 +222,7 @@ export default class Backend {
       clearInterval(this.saveInterval);
       this.wallet.stop();
     }
+    ipcRenderer.send('fromBackend', 'backendStoppedSignal', true);
   }
 
   getTransactions(displayCount: number): void {
