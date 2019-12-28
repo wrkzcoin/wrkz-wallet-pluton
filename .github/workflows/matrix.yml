@@ -122,5 +122,7 @@ jobs:
             aws configure set aws_access_key_id null
             aws configure set aws_secret_access_key null
             aws configure set default.region null
+          fi
+          if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
             curl --silent --show-error --fail -H "Content-Type: application/json" -X POST -d '{"username": "BuildBot", "content": $BUILD_CONTENT}' ${BINARY_DISCORD_HOOK}
           fi
