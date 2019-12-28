@@ -94,54 +94,55 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_DEFAULT_REGION }} # optional: defaults to us-east-1
           SOURCE_DIR: 'release' # optional: defaults to entire repository
           DEST_DIR: 'pluton'
-        cmd: |
-          DATE_WITH_TIME=`date "+%Y%m%d-%H%M"`
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-            ${AWS_ACCESS_KEY_ID}
-            ${AWS_SECRET_ACCESS_KEY}
-            ${AWS_REGION}
-            text
-            EOF
-            
-            ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }} --profile s3-sync-action --no-progress --endpoint-url ${{ secrets.S3_ENDPOINT }}"
-            ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-            null
-            null
-            null
-            text
-            EOF
-            
-          elif [ "$RUNNER_OS" == "Linux" ]; then
-            aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-            ${AWS_ACCESS_KEY_ID}
-            ${AWS_SECRET_ACCESS_KEY}
-            ${AWS_REGION}
-            text
-            EOF
-            
-            aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }} --profile s3-sync-action --no-progress --endpoint-url ${{ secrets.S3_ENDPOINT }}"
-            aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-            null
-            null
-            null
-            text
-            EOF
-            
-          elif [ "$RUNNER_OS" == "macOS" ]; then
-            ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-            ${AWS_ACCESS_KEY_ID}
-            ${AWS_SECRET_ACCESS_KEY}
-            ${AWS_REGION}
-            text
-            EOF
-            
-            ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }} --profile s3-sync-action --no-progress --endpoint-url ${{ secrets.S3_ENDPOINT }}"
-            ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-            null
-            null
-            null
-            text
-            EOF
+        shell:
+          cmd: |
+            DATE_WITH_TIME=`date "+%Y%m%d-%H%M"`
+            if [ "$RUNNER_OS" == "Windows" ]; then
+              ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
+              ${AWS_ACCESS_KEY_ID}
+              ${AWS_SECRET_ACCESS_KEY}
+              ${AWS_REGION}
+              text
+              EOF
+
+              ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }} --profile s3-sync-action --no-progress --endpoint-url ${{ secrets.S3_ENDPOINT }}"
+              ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
+              null
+              null
+              null
+              text
+              EOF
+
+            elif [ "$RUNNER_OS" == "Linux" ]; then
+              aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
+              ${AWS_ACCESS_KEY_ID}
+              ${AWS_SECRET_ACCESS_KEY}
+              ${AWS_REGION}
+              text
+              EOF
+
+              aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }} --profile s3-sync-action --no-progress --endpoint-url ${{ secrets.S3_ENDPOINT }}"
+              aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
+              null
+              null
+              null
+              text
+              EOF
+
+            elif [ "$RUNNER_OS" == "macOS" ]; then
+              ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
+              ${AWS_ACCESS_KEY_ID}
+              ${AWS_SECRET_ACCESS_KEY}
+              ${AWS_REGION}
+              text
+              EOF
+
+              ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }} --profile s3-sync-action --no-progress --endpoint-url ${{ secrets.S3_ENDPOINT }}"
+              ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
+              null
+              null
+              null
+              text
+              EOF
         args:
           executable: /bin/bash
