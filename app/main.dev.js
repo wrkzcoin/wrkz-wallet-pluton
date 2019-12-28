@@ -26,6 +26,8 @@ const windowEvents = new EventEmitter();
 
 export let messageRelayer = null;
 
+let quitTimeout = null;
+
 /** disable background throttling so our sync
  *   speed doesn't crap out when minimized
  */
@@ -304,7 +306,8 @@ app.on('ready', async () => {
       log.debug('Closing to system tray or dock.');
       mainWindow.hide();
     } else if (mainWindow) {
-      mainWindow.webContents.send('handleClose');
+      quitTimeout = setTimeout(app.exit, 1000 * 10);
+      messageRelayer.sendToBackend('stopRequest');
     }
   });
 
@@ -352,6 +355,11 @@ windowEvents.on('bothWindowsReady', () => {
 
 ipcMain.on('closeToTrayToggle', (event: any, state: boolean) => {
   toggleCloseToTray(state);
+});
+
+ipcMain.on('backendStopped', () => {
+  clearTimeout(quitTimeout);
+  app.exit();
 });
 
 function toggleCloseToTray(state: boolean) {

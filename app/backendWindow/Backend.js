@@ -44,7 +44,6 @@ export default class Backend {
 
   setNotifications(status: boolean) {
     this.notifications = status;
-    log.info(this.notifications);
   }
 
   setDaemon(daemon: Daemon): void {
@@ -217,12 +216,15 @@ export default class Backend {
     return transactions;
   }
 
-  stop() {
+  stop(isShuttingDown: boolean) {
     if (this.wallet) {
+      this.saveWallet(false);
       clearInterval(this.saveInterval);
       this.wallet.stop();
     }
-    ipcRenderer.send('fromBackend', 'backendStoppedSignal', true);
+    if (isShuttingDown) {
+      ipcRenderer.send('backendStopped');
+    }
   }
 
   getTransactions(displayCount: number): void {
@@ -243,8 +245,7 @@ export default class Backend {
       return;
     }
 
-    log.info('Saving wallet to file...');
-
+    log.info('Saving to disk.');
     const status = this.wallet.saveWalletToFile(
       path || this.walletFile,
       this.walletPassword

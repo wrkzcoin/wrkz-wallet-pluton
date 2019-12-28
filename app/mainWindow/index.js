@@ -108,10 +108,6 @@ export let session = new WalletSession();
 ipcRenderer.on('handleDonate', handleDonate);
 eventEmitter.on('handleDonate', handleDonate);
 
-ipcRenderer.on('handleClose', () => {
-  remote.app.exit();
-});
-
 let latestUpdate = '';
 
 eventEmitter.on('updateRequired', updateFile => {

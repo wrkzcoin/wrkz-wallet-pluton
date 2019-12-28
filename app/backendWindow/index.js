@@ -22,6 +22,9 @@ function parseMessage(message: any) {
     case 'config':
       backend = new Backend(data);
       break;
+    case 'stopRequest':
+      backend.stop(true);
+      break;
     case 'transactionSearchQuery':
       backend.transactionSearch(data);
       break;
@@ -60,7 +63,7 @@ function parseMessage(message: any) {
       backend.saveWallet(data.notify, data.savePath);
       break;
     case 'openNewWallet':
-      backend.stop();
+      backend.stop(false);
       backend = null;
       break;
     case 'walletPassword':
