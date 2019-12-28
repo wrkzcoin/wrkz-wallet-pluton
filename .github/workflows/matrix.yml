@@ -103,6 +103,7 @@ jobs:
             ${AWS_REGION}
             text
             EOF
+            
             ~/.local/bin/aws --endpoint-url ${{ secrets.S3_ENDPOINT }} s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
             ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
             null
@@ -110,6 +111,7 @@ jobs:
             null
             text
             EOF
+            
           elif [ "$RUNNER_OS" == "Linux" ]; then
             aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
             ${AWS_ACCESS_KEY_ID}
@@ -117,6 +119,7 @@ jobs:
             ${AWS_REGION}
             text
             EOF
+            
             aws --endpoint-url ${{ secrets.S3_ENDPOINT }} s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
             aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
             null
@@ -124,6 +127,7 @@ jobs:
             null
             text
             EOF
+            
           elif [ "$RUNNER_OS" == "macOS" ]; then
             ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
             ${AWS_ACCESS_KEY_ID}
@@ -131,6 +135,7 @@ jobs:
             ${AWS_REGION}
             text
             EOF
+            
             ~/.local/bin/aws --endpoint-url ${{ secrets.S3_ENDPOINT }} s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
             ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
             null
