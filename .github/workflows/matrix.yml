@@ -94,7 +94,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_DEFAULT_REGION }} # optional: defaults to us-east-1
           SOURCE_DIR: 'release' # optional: defaults to entire repository
           DEST_DIR: 'pluton'
-        run: |
+        cmd: |
           DATE_WITH_TIME=`date "+%Y%m%d-%H%M"`
           if [ "$RUNNER_OS" == "Windows" ]; then
             ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
@@ -143,3 +143,5 @@ jobs:
             null
             text
             EOF
+        args:
+          executable: /bin/bash
