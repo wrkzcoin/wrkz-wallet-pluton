@@ -89,6 +89,8 @@ jobs:
           pip install --user pipx awscli-plugin-endpoint
       - name: S3 Upload
         env:
+          BINARY_DISCORD_HOOK: ${{ secrets.DISCORD_HOOK }}
+          BINARY_UPLOAD: ${{ secrets.SW_BINARY_UPLOAD }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -100,20 +102,24 @@ jobs:
         shell: bash
         run: |
           DATE_WITH_TIME=`date "+%Y%m%d-%H%M"`
+          OUT_FILENAME=${DATE_WITH_TIME}-${COMMIT_SHA::8}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}
+          URL_FILE=${BINARY_UPLOAD}${DEST_DIR}/${OUT_FILENAME}
           if [ "$RUNNER_OS" == "Windows" ] || [ "$RUNNER_OS" == "macOS" ]; then
             ~/.local/bin/aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
             ~/.local/bin/aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
             ~/.local/bin/aws configure set default.region ${AWS_REGION}
-            ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${COMMIT_SHA::8}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}" --no-progress --endpoint-url "${AWS_ENDPOINT}" --acl public-read
+            ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${OUT_FILENAME}" --no-progress --endpoint-url "${AWS_ENDPOINT}" --acl public-read
             ~/.local/bin/aws configure set aws_access_key_id null
             ~/.local/bin/aws configure set aws_secret_access_key null
             ~/.local/bin/aws configure set default.region null
+            curl -H "Content-Type: application/json" -X POST -d '{"username": "BuildBot", "content": "${RUNNER_OS}-${{ matrix.target }} Build completed `${COMMIT_SHA::8}`, link: \n```${URL_FILE}```"}' ${BINARY_DISCORD_HOOK}
           elif [ "$RUNNER_OS" == "Linux" ]; then
             aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
             aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
             aws configure set default.region ${AWS_REGION}
-            aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${COMMIT_SHA::8}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}" --no-progress --endpoint-url "${AWS_ENDPOINT}" --acl public-read
+            aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${OUT_FILENAME}" --no-progress --endpoint-url "${AWS_ENDPOINT}" --acl public-read
             aws configure set aws_access_key_id null
             aws configure set aws_secret_access_key null
             aws configure set default.region null
+            curl -H "Content-Type: application/json" -X POST -d '{"username": "BuildBot", "content": "${RUNNER_OS}-${{ matrix.target }} Build completed `${COMMIT_SHA::8}`, link: \n```${URL_FILE}```"}' ${BINARY_DISCORD_HOOK}
           fi
