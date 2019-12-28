@@ -104,7 +104,7 @@ jobs:
             text
             EOF
             
-            ~/.local/bin/aws --endpoint-url ${{ secrets.S3_ENDPOINT }} s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }} --profile s3-sync-action --no-progress --endpoint-url ${{ secrets.S3_ENDPOINT }}"
             ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
             null
             null
@@ -120,7 +120,7 @@ jobs:
             text
             EOF
             
-            aws --endpoint-url ${{ secrets.S3_ENDPOINT }} s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+            aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }} --profile s3-sync-action --no-progress --endpoint-url ${{ secrets.S3_ENDPOINT }}"
             aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
             null
             null
@@ -136,7 +136,7 @@ jobs:
             text
             EOF
             
-            ~/.local/bin/aws --endpoint-url ${{ secrets.S3_ENDPOINT }} s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
+            ~/.local/bin/aws s3 cp "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" "s3://${AWS_S3_BUCKET}/${DEST_DIR}/${DATE_WITH_TIME}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }} --profile s3-sync-action --no-progress --endpoint-url ${{ secrets.S3_ENDPOINT }}"
             ~/.local/bin/aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
             null
             null
