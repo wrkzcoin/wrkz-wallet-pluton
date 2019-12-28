@@ -124,10 +124,5 @@ jobs:
             aws configure set default.region null
           fi
           if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
-            echo A
-            curl -H "Content-Type: application/json" -X POST -d '{"username": "BuildBot1", "content": "${BUILD_CONTENT}"}' ${BINARY_DISCORD_HOOK}
-            echo B
-            curl -H "Content-Type: application/json" -X POST -d '{"username": "BuildBot2", "content": ${BUILD_CONTENT}}' ${BINARY_DISCORD_HOOK}
-            echo C
-            curl -H "Content-Type: application/json" -X POST -d '{"username": "BuildBot3", "content": "$BUILD_CONTENT"}' ${BINARY_DISCORD_HOOK}
+            curl -H "Content-Type: application/json" -X POST -d '{\"username\": \"BuildBot3\", \"content\": \"$BUILD_CONTENT\"}' ${BINARY_DISCORD_HOOK}
           fi
