@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 import { session, config } from '../index';
 
 type State = {

@@ -8,7 +8,7 @@ import { session, eventEmitter, loginCounter, il8n, config } from '../index';
 import Redirector from './Redirector';
 import SyncReminder from './SyncReminder';
 import Modal from './Modal';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 
 type Props = {};
 

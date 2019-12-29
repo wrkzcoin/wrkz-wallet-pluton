@@ -19,7 +19,7 @@ import WalletSession from './wallet/session';
 import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
-import uiType from './utils/uitype';
+import { uiType } from './utils/utils';
 
 export function savedInInstallDir(savePath: string) {
   const programDirectory = path.resolve(remote.app.getAppPath(), '../../');

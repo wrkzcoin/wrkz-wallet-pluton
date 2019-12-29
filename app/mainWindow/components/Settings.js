@@ -13,7 +13,7 @@ import FiatSelector from './FiatSelector';
 import TimeoutSelector from './TimeoutSelector';
 import LogLevelSelector from './LogLevelSelector';
 import NodeChanger from './NodeChanger';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 import Rescanner from './Rescanner';
 import DarkModeToggle from './DarkModeToggle';
 import CloseToTrayToggle from './CloseToTrayToggle';

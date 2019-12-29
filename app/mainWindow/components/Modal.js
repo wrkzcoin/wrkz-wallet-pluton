@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 import { eventEmitter } from '../index';
 
 type State = {

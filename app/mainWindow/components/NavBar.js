@@ -7,7 +7,7 @@ import log from 'electron-log';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import routes from '../constants/routes';
 import { session, eventEmitter, il8n, loginCounter } from '../index';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 import Modal from './Modal';
 
 type Location = {

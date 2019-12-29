@@ -9,7 +9,12 @@ import { session, eventEmitter, il8n, loginCounter, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import uiType from '../utils/uitype';
+import {
+  uiType,
+  formatLikeCurrency,
+  atomicToHuman,
+  convertTimestamp
+} from '../utils/utils';
 
 let displayedTransactionCount: number = 50;
 
@@ -255,38 +260,30 @@ export default class Home extends Component<Props, State> {
                               {il8n.unconfirmed}
                             </p>
                           )}
-                          {tx[0] > 0 && (
-                            <p>{session.convertTimestamp(tx[0])}</p>
-                          )}
+                          {tx[0] > 0 && <p>{convertTimestamp(tx[0])}</p>}
                         </td>
                         <td>{tx[1]}</td>
                         {tx[2] < 0 && (
                           <td>
                             <p className="has-text-danger has-text-right">
                               {displayCurrency === 'TRTL' &&
-                                session.atomicToHuman(tx[2], true)}
+                                atomicToHuman(tx[2], true)}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'prefix' &&
                                 fiatPrice !== 0 &&
-                                `-${fiatSymbol}${session
-                                  .formatLikeCurrency(
-                                    (
-                                      fiatPrice *
-                                      session.atomicToHuman(tx[2], false)
-                                    ).toFixed(fiatDecimals)
-                                  )
-                                  .substring(1)}`}
+                                `-${fiatSymbol}${formatLikeCurrency(
+                                  (
+                                    fiatPrice * atomicToHuman(tx[2], false)
+                                  ).toFixed(fiatDecimals)
+                                ).substring(1)}`}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'suffix' &&
                                 fiatPrice !== 0 &&
-                                `-${session
-                                  .formatLikeCurrency(
-                                    (
-                                      fiatPrice *
-                                      session.atomicToHuman(tx[2], false)
-                                    ).toFixed(2)
-                                  )
-                                  .substring(1)}${fiatSymbol}`}
+                                `-${formatLikeCurrency(
+                                  (
+                                    fiatPrice * atomicToHuman(tx[2], false)
+                                  ).toFixed(2)
+                                ).substring(1)}${fiatSymbol}`}
                               {displayCurrency === 'fiat' &&
                                 fiatPrice === 0 &&
                                 ''}
@@ -297,21 +294,19 @@ export default class Home extends Component<Props, State> {
                           <td>
                             <p className="has-text-right">
                               {displayCurrency === 'TRTL' &&
-                                session.atomicToHuman(tx[2], true)}
+                                atomicToHuman(tx[2], true)}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'prefix' &&
-                                `${fiatSymbol}${session.formatLikeCurrency(
+                                `${fiatSymbol}${formatLikeCurrency(
                                   (
-                                    fiatPrice *
-                                    session.atomicToHuman(tx[2], false)
+                                    fiatPrice * atomicToHuman(tx[2], false)
                                   ).toFixed(fiatDecimals)
                                 )}`}
                               {displayCurrency === 'fiat' &&
                                 symbolLocation === 'suffix' &&
-                                `${session.formatLikeCurrency(
+                                `${formatLikeCurrency(
                                   (
-                                    fiatPrice *
-                                    session.atomicToHuman(tx[2], false)
+                                    fiatPrice * atomicToHuman(tx[2], false)
                                   ).toFixed(fiatDecimals)
                                 )}${fiatSymbol}`}
                             </p>
@@ -320,21 +315,19 @@ export default class Home extends Component<Props, State> {
                         <td>
                           <p className="has-text-right">
                             {displayCurrency === 'TRTL' &&
-                              session.atomicToHuman(tx[3], true)}
+                              atomicToHuman(tx[3], true)}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'prefix' &&
-                              `${fiatSymbol}${session.formatLikeCurrency(
+                              `${fiatSymbol}${formatLikeCurrency(
                                 (
-                                  fiatPrice *
-                                  session.atomicToHuman(tx[3], false)
+                                  fiatPrice * atomicToHuman(tx[3], false)
                                 ).toFixed(fiatDecimals)
                               )}`}
                             {displayCurrency === 'fiat' &&
                               symbolLocation === 'suffix' &&
-                              `${session.formatLikeCurrency(
+                              `${formatLikeCurrency(
                                 (
-                                  fiatPrice *
-                                  session.atomicToHuman(tx[3], false)
+                                  fiatPrice * atomicToHuman(tx[3], false)
                                 ).toFixed(fiatDecimals)
                               )}${fiatSymbol}`}
                           </p>
@@ -370,7 +363,7 @@ export default class Home extends Component<Props, State> {
                                   <td>
                                     {tx[0] === 0
                                       ? 'Still In Memory Pool'
-                                      : session.convertTimestamp(tx[0])}
+                                      : convertTimestamp(tx[0])}
                                     <br />
                                     {tx[0] !== 0
                                       ? Math.max(networkBlockHeight - tx[4], 0)
@@ -378,13 +371,13 @@ export default class Home extends Component<Props, State> {
                                     <br />
                                     {tx[0] === 0
                                       ? 'Still In Memory Pool'
-                                      : session.formatLikeCurrency(tx[4])}
+                                      : formatLikeCurrency(tx[4])}
                                     <br />
                                     {tx[8]} <br />
                                     {tx[1]} <br />
                                     {tx[5] !== '' ? tx[5] : 'none'}
                                     <br />
-                                    {session.atomicToHuman(tx[7], true)} TRTL
+                                    {atomicToHuman(tx[7], true)} TRTL
                                     <br />
                                     <p
                                       className={
@@ -393,7 +386,7 @@ export default class Home extends Component<Props, State> {
                                           : ''
                                       }
                                     >
-                                      {session.atomicToHuman(tx[2], true)} TRTL
+                                      {atomicToHuman(tx[2], true)} TRTL
                                     </p>
                                     <br />
                                     <br />

@@ -6,7 +6,7 @@ import Select from 'react-select';
 import log from 'electron-log';
 import { config, session } from '../index';
 import currencies from '../constants/currencies.json';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 
 type Props = {
   darkMode: boolean

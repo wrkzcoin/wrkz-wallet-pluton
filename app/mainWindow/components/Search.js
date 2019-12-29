@@ -8,7 +8,12 @@ import jdenticon from 'jdenticon';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import uiType from '../utils/uitype';
+import {
+  uiType,
+  formatLikeCurrency,
+  atomicToHuman,
+  convertTimestamp
+} from '../utils/utils';
 import {
   session,
   addressList,
@@ -425,7 +430,7 @@ export default class Search extends Component<Props, States> {
                               </p>
                             )}
                             {timestamp > 0 && (
-                              <p>{session.convertTimestamp(timestamp)}</p>
+                              <p>{convertTimestamp(timestamp)}</p>
                             )}
                           </td>
                           <td>{hash}</td>
@@ -433,15 +438,14 @@ export default class Search extends Component<Props, States> {
                             <td>
                               <p className="has-text-danger has-text-right">
                                 {displayCurrency === 'TRTL' &&
-                                  session.atomicToHuman(amount, true)}
+                                  atomicToHuman(amount, true)}
                                 {displayCurrency === 'fiat' &&
                                   symbolLocation === 'prefix' &&
                                   fiatPrice !== 0 &&
                                   `-${fiatSymbol}${session
                                     .formatLikeCurrency(
                                       (
-                                        fiatPrice *
-                                        session.atomicToHuman(amount, false)
+                                        fiatPrice * atomicToHuman(amount, false)
                                       ).toFixed(fiatDecimals)
                                     )
                                     .substring(1)}`}
@@ -451,8 +455,7 @@ export default class Search extends Component<Props, States> {
                                   `-${session
                                     .formatLikeCurrency(
                                       (
-                                        fiatPrice *
-                                        session.atomicToHuman(amount, false)
+                                        fiatPrice * atomicToHuman(amount, false)
                                       ).toFixed(2)
                                     )
                                     .substring(1)}${fiatSymbol}`}
@@ -466,21 +469,19 @@ export default class Search extends Component<Props, States> {
                             <td>
                               <p className="has-text-right">
                                 {displayCurrency === 'TRTL' &&
-                                  session.atomicToHuman(amount, true)}
+                                  atomicToHuman(amount, true)}
                                 {displayCurrency === 'fiat' &&
                                   symbolLocation === 'prefix' &&
-                                  `${fiatSymbol}${session.formatLikeCurrency(
+                                  `${fiatSymbol}${formatLikeCurrency(
                                     (
-                                      fiatPrice *
-                                      session.atomicToHuman(amount, false)
+                                      fiatPrice * atomicToHuman(amount, false)
                                     ).toFixed(fiatDecimals)
                                   )}`}
                                 {displayCurrency === 'fiat' &&
                                   symbolLocation === 'suffix' &&
-                                  `${session.formatLikeCurrency(
+                                  `${formatLikeCurrency(
                                     (
-                                      fiatPrice *
-                                      session.atomicToHuman(amount, false)
+                                      fiatPrice * atomicToHuman(amount, false)
                                     ).toFixed(fiatDecimals)
                                   )}${fiatSymbol}`}
                               </p>
@@ -524,7 +525,7 @@ export default class Search extends Component<Props, States> {
                                     <td>
                                       {timestamp === 0
                                         ? 'Still In Memory Pool'
-                                        : session.convertTimestamp(timestamp)}
+                                        : convertTimestamp(timestamp)}
                                       <br />
                                       {timestamp !== 0
                                         ? Math.max(
@@ -536,15 +537,13 @@ export default class Search extends Component<Props, States> {
                                       <br />
                                       {timestamp === 0
                                         ? 'Still In Memory Pool'
-                                        : session.formatLikeCurrency(
-                                            blockHeight
-                                          )}
+                                        : formatLikeCurrency(blockHeight)}
                                       <br />
                                       {unlockTime} <br />
                                       {hash} <br />
                                       {paymentID !== '' ? paymentID : 'none'}
                                       <br />
-                                      {session.atomicToHuman(fee, true)} TRTL
+                                      {atomicToHuman(fee, true)} TRTL
                                       <br />
                                       <p
                                         className={
@@ -553,8 +552,7 @@ export default class Search extends Component<Props, States> {
                                             : ''
                                         }
                                       >
-                                        {session.atomicToHuman(amount, true)}{' '}
-                                        TRTL
+                                        {atomicToHuman(amount, true)} TRTL
                                       </p>
                                       <br />
                                       <br />

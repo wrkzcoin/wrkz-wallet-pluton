@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
 import { il8n, eventEmitter } from '../index';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 
 type Props = {
   darkMode: boolean

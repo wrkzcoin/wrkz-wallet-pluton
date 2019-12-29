@@ -8,7 +8,7 @@ import { loginCounter } from '../index';
 import SyncStatus from './SyncStatus';
 import Balance from './Balance';
 import NodeFee from './NodeFee';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 
 type Location = {
   hash: string,

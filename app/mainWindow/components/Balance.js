@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import ReactTooltip from 'react-tooltip';
 import { session, il8n, eventEmitter, config } from '../index';
+import { formatLikeCurrency, atomicToHuman } from '../utils/utils';
 
 type Props = {
   size: string,
@@ -104,33 +105,31 @@ export default class Balance extends Component<Props, State> {
 
     if (displayCurrency === 'TRTL') {
       balanceTooltip =
-        `Unlocked: ${session.atomicToHuman(unlockedBalance, true)} ${
-          il8n.TRTL
-        }<br>` +
-        `Locked: ${session.atomicToHuman(lockedBalance, true)} ${il8n.TRTL}`;
+        `Unlocked: ${atomicToHuman(unlockedBalance, true)} ${il8n.TRTL}<br>` +
+        `Locked: ${atomicToHuman(lockedBalance, true)} ${il8n.TRTL}`;
     } else if (symbolLocation === 'prefix' && displayCurrency === 'fiat') {
       balanceTooltip =
-        `Unlocked: ${fiatSymbol}${session.formatLikeCurrency(
-          Number(
-            fiatPrice * session.atomicToHuman(unlockedBalance, false)
-          ).toFixed(fiatDecimals)
+        `Unlocked: ${fiatSymbol}${formatLikeCurrency(
+          Number(fiatPrice * atomicToHuman(unlockedBalance, false)).toFixed(
+            fiatDecimals
+          )
         )}
         <br>` +
-        `Locked: ${fiatSymbol}${session.formatLikeCurrency(
-          Number(
-            fiatPrice * session.atomicToHuman(lockedBalance, false)
-          ).toFixed(fiatDecimals)
+        `Locked: ${fiatSymbol}${formatLikeCurrency(
+          Number(fiatPrice * atomicToHuman(lockedBalance, false)).toFixed(
+            fiatDecimals
+          )
         )}
         <br>`;
     } else if (symbolLocation === 'suffix' && displayCurrency === 'fiat') {
       balanceTooltip =
         `Unlocked: ${(
-          fiatPrice * session.atomicToHuman(unlockedBalance, false)
+          fiatPrice * atomicToHuman(unlockedBalance, false)
         ).toFixed(fiatDecimals)}${fiatSymbol}
         <br>` +
-        `Locked: ${(
-          fiatPrice * session.atomicToHuman(lockedBalance, false)
-        ).toFixed(fiatDecimals)}${fiatSymbol}`;
+        `Locked: ${(fiatPrice * atomicToHuman(lockedBalance, false)).toFixed(
+          fiatDecimals
+        )}${fiatSymbol}`;
     } else {
       balanceTooltip = 'No wallet open!';
     }
@@ -161,7 +160,7 @@ export default class Balance extends Component<Props, State> {
                 <i className="fa fa-unlock" />
               )}
               &nbsp;
-              {session.atomicToHuman(unlockedBalance + lockedBalance, true)}
+              {atomicToHuman(unlockedBalance + lockedBalance, true)}
               &nbsp;{il8n.TRTL}
             </span>
           )}
@@ -183,14 +182,11 @@ export default class Balance extends Component<Props, State> {
               {fiatPrice !== 0 ? (
                 // eslint-disable-next-line prefer-template
                 fiatSymbol +
-                session.formatLikeCurrency(
+                formatLikeCurrency(
                   Number(
                     (
                       fiatPrice *
-                      session.atomicToHuman(
-                        unlockedBalance + lockedBalance,
-                        false
-                      )
+                      atomicToHuman(unlockedBalance + lockedBalance, false)
                     ).toFixed(fiatDecimals)
                   )
                 )
@@ -221,14 +217,11 @@ export default class Balance extends Component<Props, State> {
               &nbsp;
               {fiatPrice !== 0 ? (
                 // eslint-disable-next-line prefer-template
-                session.formatLikeCurrency(
+                formatLikeCurrency(
                   Number(
                     (
                       fiatPrice *
-                      session.atomicToHuman(
-                        unlockedBalance + lockedBalance,
-                        false
-                      )
+                      atomicToHuman(unlockedBalance + lockedBalance, false)
                     ).toFixed(fiatDecimals)
                   )
                 ) + fiatSymbol

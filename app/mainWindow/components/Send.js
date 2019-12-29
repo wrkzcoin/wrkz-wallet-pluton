@@ -22,7 +22,7 @@ import {
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import uiType from '../utils/uitype';
+import { uiType, atomicToHuman } from '../utils/utils';
 import donateInfo from '../constants/donateInfo.json';
 
 type Props = {
@@ -274,9 +274,7 @@ export default class Send extends Component<Props, State> {
     const subtractFee = Number(totalAmount) * 100 - 10 - parseInt(nodeFee, 10);
 
     const enteredAmount =
-      subtractFee < 0
-        ? ''
-        : session.atomicToHuman(subtractFee, false).toFixed(2);
+      subtractFee < 0 ? '' : atomicToHuman(subtractFee, false).toFixed(2);
 
     this.setState({
       enteredAmount,
@@ -478,12 +476,12 @@ export default class Send extends Component<Props, State> {
     this.setState({
       totalAmount:
         displayCurrency === 'TRTL'
-          ? session.atomicToHuman(totalAmount, false).toString()
-          : session.atomicToHuman(totalAmount * fiatPrice, false).toString(),
+          ? atomicToHuman(totalAmount, false).toString()
+          : atomicToHuman(totalAmount * fiatPrice, false).toString(),
       enteredAmount:
         displayCurrency === 'TRTL'
-          ? session.atomicToHuman(enteredAmount, false).toString()
-          : session.atomicToHuman(enteredAmount * fiatPrice, false).toString()
+          ? atomicToHuman(enteredAmount, false).toString()
+          : atomicToHuman(enteredAmount * fiatPrice, false).toString()
     });
   };
 

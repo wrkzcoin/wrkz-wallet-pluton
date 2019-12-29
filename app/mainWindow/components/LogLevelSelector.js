@@ -5,8 +5,7 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import { ipcRenderer } from 'electron';
 import { config, session } from '../index';
-import search from '../utils/search';
-import uiType from '../utils/uitype';
+import { uiType, search } from '../utils/utils';
 
 const logLevels = [
   {

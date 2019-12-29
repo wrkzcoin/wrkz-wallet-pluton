@@ -6,7 +6,7 @@ import log from 'electron-log';
 import { session, eventEmitter, il8n } from '../index';
 import Redirector from './Redirector';
 import Modal from './Modal';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 
 // import styles from './Send.css';
 

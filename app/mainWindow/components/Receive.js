@@ -13,7 +13,7 @@ import { session, il8n, loginCounter } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 
 type Props = {
   copyToClipboard: string => void

@@ -5,6 +5,7 @@ import request from 'request-promise';
 import log from 'electron-log';
 import fs from 'fs';
 import { config, directories, eventEmitter } from '../index';
+import { roundToNearestHundredth } from '../utils/utils';
 
 export default class WalletSession {
   loginFailed: boolean;
@@ -213,7 +214,7 @@ export default class WalletSession {
       percentSync = 100.0;
     }
 
-    return this.roundToNearestHundredth(percentSync);
+    return roundToNearestHundredth(percentSync);
   }
 
   getNetworkBlockHeight() {
@@ -228,44 +229,11 @@ export default class WalletSession {
     return this.syncStatus[0];
   }
 
-  formatLikeCurrency(x: number) {
-    const parts = x.toString().split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return parts.join('.');
-  }
-
-  atomicToHuman(x: number, prettyPrint?: boolean) {
-    if (prettyPrint || false) {
-      return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
-    }
-    return x / 100;
-  }
-
-  humanToAtomic(x: number) {
-    return x * 100;
-  }
-
   setPrimaryAddress(address: string) {
     this.primaryAddress = address;
   }
 
   getPrimaryAddress() {
     return this.primaryAddress;
-  }
-
-  convertTimestamp(timestamp: Date) {
-    const d = new Date(timestamp * 1000); // Convert the passed timestamp to milliseconds
-    const yyyy = d.getFullYear();
-    const mm = `0${d.getMonth() + 1}`.slice(-2); // Months are zero based. Add leading 0.
-    const dd = `0${d.getDate()}`.slice(-2); // Add leading 0.
-    const hh = `0${d.getHours()}`.slice(-2);
-    const min = `0${d.getMinutes()}`.slice(-2); // Add leading 0.
-    // ie: 2013-02-18, 16:35
-    const time = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
-    return time;
-  }
-
-  roundToNearestHundredth(x: number) {
-    return Math.ceil(x * 100) / 100;
   }
 }

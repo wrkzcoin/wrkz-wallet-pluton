@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
 import { session, config } from '../index';
-import uiType from '../utils/uitype';
+import { uiType } from '../utils/utils';
 
 type State = {
   notifications: boolean
