@@ -131,6 +131,6 @@ jobs:
           elif [ "$RUNNER_OS" == "Windows" ]; then
             URL_FILE="``````${BINARY_UPLOAD}${DEST_DIR}/$OUT_FILENAME``````"
             FILESIZE="Size: ${FILESIZE}"
-            BODY="{``"username``": ``"BuildBot-$RUNNER_OS-$REPO``", ``"content``": ``"$RUNNER_OS-${{ matrix.target }}-$SHA8 ${FILESIZE} $URL_FILE``"}"
+            BODY="{``"username``": ``"BuildBot-$RUNNER_OS-$REPO``", ``"content``": ``"$RUNNER_OS-${{ matrix.target }}-$SHA8 $URL_FILE``"}"
             Invoke-WebRequest -Uri ${BINARY_DISCORD_HOOK} -Headers @{ "Content-Type" = "application/json" } -Method POST -Body $BODY
           fi
