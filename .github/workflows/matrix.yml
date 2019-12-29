@@ -129,6 +129,7 @@ jobs:
           if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
             curl -H "Content-Type: application/json" -X POST -d "{\"username\": \"BuildBot-$RUNNER_OS-$REPO\", \"content\": \"$BUILD_CONTENT\"}" ${BINARY_DISCORD_HOOK}
           elif [ "$RUNNER_OS" == "Windows" ]; then
-            BODY="{`"username`": `"BuildBot-${RUNNER_OS}-$REPO`", `"content`":`"${BUILD_CONTENT}`"}"
+            URL_FILE="``````${BINARY_UPLOAD}${DEST_DIR}/$OUT_FILENAME``````"
+            BODY="{`"username`": `"BuildBot-$RUNNER_OS-$REPO`", `"content`": `"$BUILD_CONTENT`"}"
             Invoke-WebRequest -Uri ${BINARY_DISCORD_HOOK} -Headers @{ "Content-Type" = "application/json" } -Method POST -Body $BODY
           fi
