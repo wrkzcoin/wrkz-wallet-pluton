@@ -103,7 +103,7 @@ jobs:
           REPO: 'wrkz-wallet-pluton'
         shell: bash
         run: |
-          $env:PATH = "$env:PATH;$env:MINGW64_PATH"
+          export PATH=$MINGW64_PATH:$PATH
           FILENAME="./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}"
           FILESIZE=$(ls -lah "$FILENAME" | awk '{ print $5}')
           DATE_WITH_TIME=`date "+%Y%m%d-%H%M"`
