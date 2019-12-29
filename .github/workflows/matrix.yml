@@ -103,7 +103,7 @@ jobs:
         shell: bash
         run: |
           FILENAME="./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}"
-          FILESIZE=$(ls -lah $FILENAME | awk '{ print $5}')
+          FILESIZE=$(ls -lah "$FILENAME" | awk '{ print $5}')
           DATE_WITH_TIME=`date "+%Y%m%d-%H%M"`
           SHA8=${COMMIT_SHA::8}
           OUT_FILENAME="${DATE_WITH_TIME}-${COMMIT_SHA::8}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
