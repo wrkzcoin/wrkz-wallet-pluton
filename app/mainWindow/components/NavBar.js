@@ -218,11 +218,19 @@ class NavBar extends Component<Props, State> {
                 <div className="navbar-brand" />
                 <div className="navbar-end">
                   <div className="navbar-item">
-                    <Link className="buttons" to={routes.SETTINGS}>
-                      <span className="icon button is-large is-danger">
-                        <i className="fas fa-chevron-left" />
-                      </span>
-                    </Link>
+                    <span
+                      className="icon button is-large is-danger"
+                      onClick={() => {
+                        eventEmitter.emit('goToLogin');
+                      }}
+                      onKeyPress={() => {
+                        eventEmitter.emit('goToLogin');
+                      }}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <i className="fas fa-chevron-left" />
+                    </span>
                   </div>
                 </div>
               </div>

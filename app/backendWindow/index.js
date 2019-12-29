@@ -20,7 +20,9 @@ function parseMessage(message: any) {
   const { messageType, data } = message;
   switch (messageType) {
     case 'config':
-      backend = new Backend(data);
+      if (data.walletFile !== '') {
+        backend = new Backend(data);
+      }
       break;
     case 'stopRequest':
       backend.stop(true);

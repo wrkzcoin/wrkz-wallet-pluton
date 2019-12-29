@@ -9,7 +9,7 @@ import { config, directories, eventEmitter } from '../index';
 export default class WalletSession {
   loginFailed: boolean;
 
-  firstStartup: boolean;
+  firstStartup: boolean = config.walletFile === '';
 
   darkMode: boolean;
 
@@ -33,7 +33,6 @@ export default class WalletSession {
 
   constructor() {
     this.loginFailed = false;
-    this.firstStartup = false;
     this.darkMode = config.darkMode || false;
     this.firstLoadOnLogin = true;
     this.selectedFiat = config.selectedFiat;

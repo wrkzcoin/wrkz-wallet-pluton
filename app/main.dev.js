@@ -42,6 +42,7 @@ let config = null;
 const homedir = os.homedir();
 let frontendReady = false;
 let backendReady = false;
+let configReady = false;
 
 const directories = [
   `${homedir}/.protonwallet`,
@@ -70,6 +71,8 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
     // if it isn't, set the internal config to the user config
     config = iConfig;
   }
+  configReady = true;
+  if (frontendReady && backendReady) windowEvents.emit('bothWindowsReady');
 }
 
 if (fs.existsSync(`${programDirectory}/addressBook.json`)) {
@@ -282,7 +285,7 @@ app.on('ready', async () => {
       throw new Error('"mainWindow" is not defined');
     }
     frontendReady = true;
-    if (backendReady) windowEvents.emit('bothWindowsReady');
+    if (backendReady && configReady) windowEvents.emit('bothWindowsReady');
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
@@ -296,7 +299,7 @@ app.on('ready', async () => {
       throw new Error('"backendWindow" is not defined');
     }
     backendReady = true;
-    if (frontendReady) windowEvents.emit('bothWindowsReady');
+    if (frontendReady && configReady) windowEvents.emit('bothWindowsReady');
     log.debug('Backend window finished loading.');
   });
 

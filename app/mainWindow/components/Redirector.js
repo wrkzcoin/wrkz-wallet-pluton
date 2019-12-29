@@ -263,6 +263,7 @@ class Redirector extends Component<Props, State> {
       newWallet,
       donate
     } = this.state;
+
     if (freshRestore === true && pathname !== '/changepassword') {
       loginCounter.freshRestore = false;
       return <Redirect to="/changepassword" />;
