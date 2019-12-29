@@ -5,6 +5,7 @@ import { Daemon, WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
 import { ipcRenderer } from 'electron';
 import { createObjectCsvWriter } from 'csv-writer';
 import log from 'electron-log';
+import { atomicToHuman, convertTimestamp } from '../mainWindow/utils/utils';
 
 export default class Backend {
   notifications: boolean;
@@ -120,12 +121,12 @@ export default class Backend {
     });
     const csvData = rawTransactions.map(item => {
       return {
-        date: this.convertTimestamp(item[0]),
+        date: convertTimestamp(item[0]),
         blockHeight: item[4],
         transactionHash: item[1],
         pid: item[5],
-        amount: this.atomicToHuman(item[2], true),
-        bal: this.atomicToHuman(item[3], true)
+        amount: atomicToHuman(item[2], true),
+        bal: atomicToHuman(item[3], true)
       };
     });
     csvWriter.writeRecords(csvData);
@@ -344,7 +345,7 @@ export default class Backend {
       if (this.notifications) {
         // eslint-disable-next-line no-new
         new window.Notification('Transaction Received!', {
-          body: `You've just received ${this.atomicToHuman(
+          body: `You've just received ${atomicToHuman(
             transaction.totalAmount(),
             true
           )} TRTL.`
@@ -418,34 +419,5 @@ export default class Backend {
     } else {
       ipcRenderer.send('fromBackend', 'authenticationStatus', false);
     }
-  }
-
-  atomicToHuman(x: number, prettyPrint?: boolean): number {
-    if (prettyPrint || false) {
-      return `${this.formatLikeCurrency((x / 100).toFixed(2))}`;
-    }
-    return x / 100;
-  }
-
-  humanToAtomic(x: number): number {
-    return x * 100;
-  }
-
-  convertTimestamp(timestamp: Date): string {
-    const d = new Date(timestamp * 1000); // Convert the passed timestamp to milliseconds
-    const yyyy = d.getFullYear();
-    const mm = `0${d.getMonth() + 1}`.slice(-2); // Months are zero based. Add leading 0.
-    const dd = `0${d.getDate()}`.slice(-2); // Add leading 0.
-    const hh = `0${d.getHours()}`.slice(-2);
-    const min = `0${d.getMinutes()}`.slice(-2); // Add leading 0.
-    // ie: 2013-02-18, 16:35
-    const time = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
-    return time;
-  }
-
-  formatLikeCurrency(x: number): string {
-    const parts = x.toString().split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return parts.join('.');
   }
 }
