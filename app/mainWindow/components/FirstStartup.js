@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import log from 'electron-log';
-import { session, eventEmitter, il8n } from '../index';
+import { eventEmitter, il8n, config } from '../index';
 import Redirector from './Redirector';
 import Modal from './Modal';
 import { uiType } from '../utils/utils';
@@ -24,7 +24,7 @@ export default class FirstStartup extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode
+      darkMode: config.darkMode
     };
   }
 

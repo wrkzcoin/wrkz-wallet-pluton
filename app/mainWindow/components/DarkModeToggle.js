@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { uiType } from '../utils/utils';
-import { session, eventEmitter } from '../index';
+import { config, eventEmitter, configManager } from '../index';
 
 type State = {
   darkMode: boolean
@@ -15,7 +15,7 @@ export default class DarkModeToggle extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode
+      darkMode: config.darkMode
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
@@ -29,8 +29,8 @@ export default class DarkModeToggle extends Component<Props, State> {
     this.setState({
       darkMode: true
     });
-    session.darkMode = true;
-    session.toggleDarkMode(true);
+    config.darkMode = true;
+    configManager.modifyConfig('darkmode', true);
     eventEmitter.emit('darkmodeon');
   };
 
@@ -38,8 +38,8 @@ export default class DarkModeToggle extends Component<Props, State> {
     this.setState({
       darkMode: false
     });
-    session.darkMode = false;
-    session.toggleDarkMode(false);
+    config.darkMode = false;
+    configManager.modifyConfig('darkmode', true);
     eventEmitter.emit('darkmodeoff');
   };
 

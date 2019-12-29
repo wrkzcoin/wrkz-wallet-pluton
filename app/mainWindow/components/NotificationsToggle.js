@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
-import { session, config } from '../index';
+import { config, configManager } from '../index';
 import { uiType } from '../utils/utils';
 
 type State = {
@@ -30,7 +30,7 @@ export default class NotificationsToggle extends Component<Props, State> {
   toggle = () => {
     const { notifications } = this.state;
 
-    session.modifyConfig('notifications', !notifications);
+    configManager.modifyConfig('notifications', !notifications);
     this.setState({
       notifications: !notifications
     });

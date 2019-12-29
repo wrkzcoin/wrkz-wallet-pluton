@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import { ipcRenderer } from 'electron';
-import { config, session } from '../index';
+import { config, configManager } from '../index';
 import { uiType, search } from '../utils/utils';
 
 const logLevels = [
@@ -71,7 +71,7 @@ export default class LogLevelSelector extends Component<Props, State> {
     this.setState({
       selectedLogLevel: search(logLevel, logLevels, 'value')
     });
-    session.modifyConfig('logLevel', event.value);
+    configManager.modifyConfig('logLevel', event.value);
     ipcRenderer.send('fromFrontend', 'logLevelRequest', event.value);
   };
 

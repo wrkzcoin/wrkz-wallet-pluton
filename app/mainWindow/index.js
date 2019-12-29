@@ -20,6 +20,7 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 import { uiType } from './utils/utils';
+import ProtonConfig from './wallet/protonConfig';
 
 export function savedInInstallDir(savePath: string) {
   const programDirectory = path.resolve(remote.app.getAppPath(), '../../');
@@ -49,6 +50,7 @@ export const il8n = new LocalizedStrings({
 });
 
 export let config = iConfig;
+export let configManager = null;
 
 export const eventEmitter = new EventEmitter();
 eventEmitter.setMaxListeners(6);
@@ -131,6 +133,18 @@ eventEmitter.on('updateRequired', updateFile => {
     `Not Right Now`,
     'getUpdate'
   );
+});
+
+ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
+  const { data, messageType } = message;
+  switch (messageType) {
+    case 'config':
+      configManager = new ProtonConfig(data.config, data.configPath);
+      break;
+    default:
+      log.info(data);
+      break;
+  }
 });
 
 ipcRenderer.on(
@@ -596,7 +610,7 @@ function handleOpen() {
 
 export function reInitWallet(walletPath: string) {
   ipcRenderer.send('fromFrontend', 'openNewWallet', undefined);
-  session.modifyConfig('walletFile', walletPath);
+  configManager.modifyConfig('walletFile', walletPath);
   ipcRenderer.send('fromFrontend', 'config', config);
   session = new WalletSession();
   loginCounter = new LoginCounter();

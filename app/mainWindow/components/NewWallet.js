@@ -11,7 +11,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import { uiType } from '../utils/utils';
-import { session, backupToFile, eventEmitter, reInitWallet } from '../index';
+import { backupToFile, eventEmitter, reInitWallet, config } from '../index';
 
 type State = {
   darkMode: boolean,
@@ -30,7 +30,7 @@ export default class NewWallet extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
+      darkMode: config.darkMode,
       newWallet: WalletBackend.createWallet(
         new Daemon('blockapi.turtlepay.io', 443)
       ),

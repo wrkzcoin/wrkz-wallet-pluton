@@ -3,16 +3,13 @@
 // Please see the included LICENSE file for more information.
 import request from 'request-promise';
 import log from 'electron-log';
-import fs from 'fs';
-import { config, directories, eventEmitter } from '../index';
+import { config, eventEmitter } from '../index';
 import { roundToNearestHundredth } from '../utils/utils';
 
 export default class WalletSession {
   loginFailed: boolean;
 
   firstStartup: boolean = config.walletFile === '';
-
-  darkMode: boolean;
 
   firstLoadOnLogin: boolean;
 
@@ -36,7 +33,6 @@ export default class WalletSession {
 
   constructor() {
     this.loginFailed = false;
-    this.darkMode = config.darkMode || false;
     this.firstLoadOnLogin = true;
     this.selectedFiat = config.selectedFiat;
     this.fiatPrice = 0;
@@ -85,63 +81,6 @@ export default class WalletSession {
   setTransactionCount(txCount: number): void {
     this.transactionCount = txCount;
     eventEmitter.emit('gotTransactionCount');
-  }
-
-  toggleDarkMode(status: boolean) {
-    const programDirectory = directories[0];
-    const modifyConfig = config;
-    modifyConfig.darkMode = status;
-    log.debug(`Dark mode changed to ${status.toString()}`);
-    config.darkMode = status;
-    fs.writeFileSync(
-      `${programDirectory}/config.json`,
-      JSON.stringify(config, null, 4),
-      err => {
-        if (err) throw err;
-        log.debug(err);
-        return false;
-      }
-    );
-    log.debug('Wrote config file to disk.');
-  }
-
-  toggleCloseToTray(status: boolean) {
-    const programDirectory = directories[0];
-    const modifyConfig = config;
-    modifyConfig.closeToTray = status;
-    log.debug(`Close to tray set to ${status.toString()}`);
-    config.closeToTray = status;
-    fs.writeFileSync(
-      `${programDirectory}/config.json`,
-      JSON.stringify(config, null, 4),
-      err => {
-        if (err) throw err;
-        log.debug(err);
-        return false;
-      }
-    );
-    log.debug('Wrote config file to disk.');
-  }
-
-  modifyConfig(propertyName: string, value: any) {
-    const programDirectory = directories[0];
-    log.debug(`Config update: ${propertyName} set to ${value.toString()}`);
-    config[propertyName] = value;
-    fs.writeFileSync(
-      `${programDirectory}/config.json`,
-      JSON.stringify(config, null, 4),
-      err => {
-        if (err) throw err;
-        log.debug(err);
-        return false;
-      }
-    );
-  }
-
-  readConfigFromDisk() {
-    const programDirectory = directories[0];
-    const rawUserConfig = fs.readFileSync(`${programDirectory}/config.json`);
-    return JSON.parse(rawUserConfig.toString());
   }
 
   getTransactions() {

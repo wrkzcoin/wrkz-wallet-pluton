@@ -58,7 +58,7 @@ export default class Search extends Component<Props, States> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
+      darkMode: config.darkMode,
       contactResults: [],
       transactionResults: [],
       expandedRows: [],

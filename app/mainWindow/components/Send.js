@@ -88,7 +88,7 @@ export default class Send extends Component<Props, State> {
       totalAmount: '',
       sendToAddress: props.uriAddress || '',
       paymentID: props.uriPaymentID || '',
-      darkMode: session.darkMode,
+      darkMode: config.darkMode,
       transactionInProgress: false,
       displayCurrency: config.displayCurrency,
       fiatPrice: session.fiatPrice,

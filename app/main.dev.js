@@ -354,6 +354,10 @@ function showMainWindow() {
 windowEvents.on('bothWindowsReady', () => {
   messageRelayer = new MessageRelayer(mainWindow, backendWindow);
   messageRelayer.sendToBackend('config', config);
+  messageRelayer.sendToFrontend('config', {
+    config,
+    configPath: directories[0]
+  });
 });
 
 ipcMain.on('closeToTrayToggle', (event: any, state: boolean) => {

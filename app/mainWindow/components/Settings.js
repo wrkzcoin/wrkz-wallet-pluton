@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import log from 'electron-log';
 import os from 'os';
 import ReactTooltip from 'react-tooltip';
-import { session, eventEmitter, loginCounter } from '../index';
+import { eventEmitter, loginCounter, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -43,7 +43,7 @@ export default class Settings extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
+      darkMode: config.darkMode,
       activeTab: loginCounter.lastSettingsTab,
       previousTab: '',
       inAnimation: '',

@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
-import { config, session, eventEmitter } from '../index';
+import { config, eventEmitter, configManager } from '../index';
 import { uiType } from '../utils/utils';
 
 type Props = {
@@ -39,7 +39,7 @@ export default class TimeoutSelector extends Component<Props, State> {
     this.setState({
       timeoutEnabled: false
     });
-    session.modifyConfig('autoLockEnabled', false);
+    configManager.modifyConfig('autoLockEnabled', false);
     eventEmitter.emit('setAutoLock', false);
   };
 
@@ -47,7 +47,7 @@ export default class TimeoutSelector extends Component<Props, State> {
     this.setState({
       timeoutEnabled: true
     });
-    session.modifyConfig('autoLockEnabled', true);
+    configManager.modifyConfig('autoLockEnabled', true);
     eventEmitter.emit('setAutoLock', true);
   };
 
@@ -87,7 +87,7 @@ export default class TimeoutSelector extends Component<Props, State> {
       eventEmitter.emit('openModal', message, 'OK', null, null);
       return;
     }
-    if (interval) session.modifyConfig('autoLockInterval', interval);
+    if (interval) configManager.modifyConfig('autoLockInterval', interval);
     eventEmitter.emit('newLockInterval', interval);
   };
 

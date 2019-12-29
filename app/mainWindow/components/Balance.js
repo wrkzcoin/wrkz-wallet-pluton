@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import ReactLoading from 'react-loading';
 import ReactTooltip from 'react-tooltip';
-import { session, il8n, eventEmitter, config } from '../index';
+import { session, il8n, eventEmitter, config, configManager } from '../index';
 import { formatLikeCurrency, atomicToHuman } from '../utils/utils';
 
 type Props = {
@@ -75,14 +75,14 @@ export default class Balance extends Component<Props, State> {
       this.setState({
         displayCurrency: 'fiat'
       });
-      session.modifyConfig('displayCurrency', 'fiat');
+      configManager.modifyConfig('displayCurrency', 'fiat');
       eventEmitter.emit('modifyCurrency', 'fiat');
     }
     if (displayCurrency === 'fiat') {
       this.setState({
         displayCurrency: 'TRTL'
       });
-      session.modifyConfig('displayCurrency', 'TRTL');
+      configManager.modifyConfig('displayCurrency', 'TRTL');
       eventEmitter.emit('modifyCurrency', 'TRTL');
     }
     ReactTooltip.rebuild();

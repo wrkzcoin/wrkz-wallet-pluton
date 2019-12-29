@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
-import { session, eventEmitter, il8n, loginCounter } from '../index';
+import { eventEmitter, il8n, loginCounter, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -24,7 +24,7 @@ export default class ChangePassword extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
+      darkMode: config.darkMode,
       pageAnimationIn: loginCounter.getAnimation('/changepassword'),
       oldPassword: '',
       newPassword: '',

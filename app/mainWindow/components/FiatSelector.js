@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import log from 'electron-log';
-import { config, session } from '../index';
+import { config, session, configManager } from '../index';
 import currencies from '../constants/currencies.json';
 import { uiType } from '../utils/utils';
 
@@ -55,10 +55,10 @@ export default class FiatSelector extends Component<Props, State> {
     log.debug(
       `User has selected ${selectedFiat} as alternate display currency.`
     );
-    session.modifyConfig('selectedFiat', selectedFiat);
-    session.modifyConfig('fiatSymbol', fiatSymbol);
-    session.modifyConfig('symbolLocation', symbolLocation);
-    session.modifyConfig('fiatDecimals', fiatDecimals);
+    configManager.modifyConfig('selectedFiat', selectedFiat);
+    configManager.modifyConfig('fiatSymbol', fiatSymbol);
+    configManager.modifyConfig('symbolLocation', symbolLocation);
+    configManager.modifyConfig('fiatDecimals', fiatDecimals);
     session.getFiatPrice(selectedFiat);
     this.setState({
       selectedFiat: this.search(config.selectedFiat, this.options, 'value')

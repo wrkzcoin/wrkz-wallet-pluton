@@ -25,7 +25,7 @@ export default class Login extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode || false,
+      darkMode: config.darkMode || false,
       walletFile: config.walletFile,
       wrongPassword: loginCounter.lastLoginAttemptFailed,
       loginInProgress: false

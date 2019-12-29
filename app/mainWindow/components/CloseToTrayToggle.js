@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { ipcRenderer } from 'electron';
 import { uiType } from '../utils/utils';
-import { session, config } from '../index';
+import { config, configManager } from '../index';
 
 type State = {
   closeToTray: boolean
@@ -32,7 +32,7 @@ export default class CloseToTrayToggle extends Component<Props, State> {
     this.setState({
       closeToTray: true
     });
-    session.toggleCloseToTray(true);
+    configManager.modifyConfig('closeToTray', true);
     ipcRenderer.send('closeToTrayToggle', true);
   };
 
@@ -40,7 +40,7 @@ export default class CloseToTrayToggle extends Component<Props, State> {
     this.setState({
       closeToTray: false
     });
-    session.toggleCloseToTray(false);
+    configManager.modifyConfig('closeToTray', true);
     ipcRenderer.send('closeToTrayToggle', false);
   };
 

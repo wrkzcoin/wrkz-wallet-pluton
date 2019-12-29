@@ -9,7 +9,7 @@ import {
   createIntegratedAddress,
   validatePaymentID
 } from 'turtlecoin-wallet-backend';
-import { session, il8n, loginCounter } from '../index';
+import { session, il8n, loginCounter, config } from '../index';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
@@ -39,7 +39,7 @@ export default class Receive extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
+      darkMode: config.darkMode,
       sessionAddress: session.getPrimaryAddress(),
       paymentID: '',
       usingIntegratedAddress: false,

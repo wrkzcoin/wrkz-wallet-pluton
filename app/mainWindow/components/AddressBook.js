@@ -13,7 +13,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import { uiType } from '../utils/utils';
-import { session, addressList, directories, loginCounter } from '../index';
+import { addressList, directories, loginCounter, config } from '../index';
 import routes from '../constants/routes';
 
 type State = {
@@ -39,7 +39,7 @@ class AddressBook extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode,
+      darkMode: config.darkMode,
       showNewContactForm: false,
       newName: '',
       newAddress: '',

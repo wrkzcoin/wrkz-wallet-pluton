@@ -3,7 +3,7 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { remote, ipcRenderer } from 'electron';
-import { il8n, eventEmitter, session } from '../index';
+import { il8n, eventEmitter, session, configManager } from '../index';
 import { uiType } from '../utils/utils';
 
 type Props = {
@@ -77,8 +77,8 @@ export default class NodeChanger extends Component<Props, State> {
     }
     if (!Number.isNaN(parseInt(port, 10))) {
       const request = { host, port: parseInt(port, 10) };
-      session.modifyConfig('daemonHost', host);
-      session.modifyConfig('daemonPort', parseInt(port, 10));
+      configManager.modifyConfig('daemonHost', host);
+      configManager.modifyConfig('daemonPort', parseInt(port, 10));
       ipcRenderer.send('fromFrontend', 'changeNode', request);
     } else {
       this.resetConnectionString();

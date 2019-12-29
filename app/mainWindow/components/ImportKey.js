@@ -9,11 +9,11 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import { uiType } from '../utils/utils';
 import {
-  session,
   eventEmitter,
   savedInInstallDir,
   il8n,
-  reInitWallet
+  reInitWallet,
+  config
 } from '../index';
 
 type Props = {};
@@ -30,7 +30,7 @@ export default class ImportKey extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      darkMode: session.darkMode
+      darkMode: config.darkMode
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }

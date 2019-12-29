@@ -44,7 +44,7 @@ export default class Home extends Component<Props, State> {
     this.state = {
       transactions: session.getTransactions(),
       transactionCount: session.getTransactionCount(),
-      darkMode: session.darkMode,
+      darkMode: config.darkMode,
       displayCurrency: config.displayCurrency,
       fiatPrice: session.fiatPrice,
       fiatSymbol: config.fiatSymbol,
