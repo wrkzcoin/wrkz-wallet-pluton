@@ -128,6 +128,6 @@ jobs:
             aws configure set aws_secret_access_key null
             aws configure set default.region null
           fi
-          if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ] || [ "$RUNNER_OS" == "macOS" ]; then
+          if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ] || [ "$RUNNER_OS" == "Windows" ]; then
             curl -H "Content-Type: application/json" -X POST -d "{\"username\": \"BuildBot-$RUNNER_OS-$REPO\", \"content\": \"$BUILD_CONTENT\"}" ${BINARY_DISCORD_HOOK}
           fi
