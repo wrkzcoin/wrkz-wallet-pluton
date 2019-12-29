@@ -29,6 +29,8 @@ export default class WalletSession {
 
   nodeFee: number = 0;
 
+  transactionCount: number = 0;
+
   daemonConnectionInfo: any;
 
   constructor() {
@@ -73,6 +75,15 @@ export default class WalletSession {
 
   getLockedBalance(): number {
     return this.getBalance()[1];
+  }
+
+  getTransactionCount(): number {
+    return this.transactionCount;
+  }
+
+  setTransactionCount(txCount: number): void {
+    this.transactionCount = txCount;
+    eventEmitter.emit('gotTransactionCount');
   }
 
   toggleDarkMode(status: boolean) {

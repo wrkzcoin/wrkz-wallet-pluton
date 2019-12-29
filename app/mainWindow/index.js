@@ -139,6 +139,9 @@ ipcRenderer.on(
     const { data, messageType } = message;
 
     switch (messageType) {
+      case 'transactionCount':
+        session.setTransactionCount(data);
+        break;
       case 'rescanResponse':
         handleRescanResponse(data);
         break;

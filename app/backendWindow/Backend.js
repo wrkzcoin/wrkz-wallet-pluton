@@ -27,6 +27,8 @@ export default class Backend {
 
   blocksSinceLastSave: number = 0;
 
+  transactionCount: number = 0;
+
   saveInterval: IntervalID = setInterval(
     this.saveWallet.bind(this),
     1000 * 60 * 5,
@@ -236,6 +238,10 @@ export default class Backend {
     );
   }
 
+  getTransactionCount(): void {
+    ipcRenderer.send('fromBackend', 'transactionCount', this.transactionCount);
+  }
+
   getBalance(): void {
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
   }
@@ -329,6 +335,7 @@ export default class Backend {
       }
     );
     this.wallet.on('transaction', () => {
+      this.getTransactionCount();
       this.getTransactions(this.getLastTxAmountRequested() + 1);
       this.getBalance();
     });
@@ -344,9 +351,7 @@ export default class Backend {
         });
       }
     });
-    await this.wallet.start();
     this.setWalletActive(true);
-    this.getNodeFee();
     ipcRenderer.send('fromBackend', 'syncStatus', this.wallet.getSyncStatus());
     ipcRenderer.send(
       'fromBackend',
@@ -358,14 +363,17 @@ export default class Backend {
       'transactionList',
       this.getFormattedTransactions(0, 50, false)
     );
+    this.getTransactionCount();
     ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
     ipcRenderer.send('fromBackend', 'walletActiveStatus', true);
+    ipcRenderer.send('fromBackend', 'authenticationStatus', true);
+    await this.wallet.start();
     ipcRenderer.send(
       'fromBackend',
       'daemonConnectionInfo',
       this.wallet.getDaemonConnectionInfo()
     );
-    ipcRenderer.send('fromBackend', 'authenticationStatus', true);
+    this.getNodeFee();
   }
 
   getSecret(): string {

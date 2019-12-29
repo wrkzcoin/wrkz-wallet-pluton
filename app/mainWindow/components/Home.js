@@ -17,6 +17,7 @@ type Props = {};
 
 type State = {
   transactions: Array<any>,
+  transactionCount: number,
   darkMode: boolean,
   displayCurrency: string,
   fiatPrice: number,
@@ -37,6 +38,7 @@ export default class Home extends Component<Props, State> {
     super(props);
     this.state = {
       transactions: session.getTransactions(),
+      transactionCount: session.getTransactionCount(),
       darkMode: session.darkMode,
       displayCurrency: config.displayCurrency,
       fiatPrice: session.fiatPrice,
@@ -56,6 +58,7 @@ export default class Home extends Component<Props, State> {
     this.openInExplorer = this.openInExplorer.bind(this);
     this.handleNewSyncStatus = this.handleNewSyncStatus.bind(this);
     this.handleNewTransactions = this.handleNewTransactions.bind(this);
+    this.handleNewTransactionCount = this.handleNewTransactionCount.bind(this);
   }
 
   componentDidMount() {
@@ -63,6 +66,7 @@ export default class Home extends Component<Props, State> {
     eventEmitter.on('gotSyncStatus', this.handleNewSyncStatus);
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.on('modifyCurrency', this.modifyCurrency);
+    eventEmitter.on('gotTransactionCount', this.handleNewTransactionCount);
     eventEmitter.on('gotNewTransactions', this.handleNewTransactions);
     const { loginFailed, firstLoadOnLogin } = session;
     if (firstLoadOnLogin && loginFailed === false) {
@@ -76,8 +80,15 @@ export default class Home extends Component<Props, State> {
     eventEmitter.off('openNewWallet', this.openNewWallet);
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.off('modifyCurrency', this.modifyCurrency);
+    eventEmitter.off('gotTransactionCount', this.handleNewTransactionCount);
     eventEmitter.off('gotNewTransactions', this.handleNewTransactions);
   }
+
+  handleNewTransactionCount = () => {
+    this.setState({
+      transactionCount: session.getTransactionCount()
+    });
+  };
 
   handleNewTransactions = () => {
     this.setState({
@@ -172,6 +183,7 @@ export default class Home extends Component<Props, State> {
     const {
       darkMode,
       transactions,
+      transactionCount,
       fiatPrice,
       displayCurrency,
       fiatSymbol,
@@ -419,7 +431,7 @@ export default class Home extends Component<Props, State> {
                 </div>
               </div>
             )}
-            {transactions.length > 20 && (
+            {transactions.length > transactionCount && (
               <form>
                 <div className="field">
                   <div className="buttons">

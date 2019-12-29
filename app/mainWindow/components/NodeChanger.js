@@ -3,7 +3,6 @@
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import { remote, ipcRenderer } from 'electron';
-import log from 'electron-log';
 import { il8n, eventEmitter, session } from '../index';
 import uiType from '../utils/uitype';
 
@@ -61,9 +60,7 @@ export default class NodeChanger extends Component<Props, State> {
     });
     const { connectionString } = this.state;
     const { darkMode } = this.props;
-    log.info(darkMode);
     const { textColor } = uiType(darkMode);
-    log.info(textColor);
     // eslint-disable-next-line prefer-const
     let [host, port] = connectionString.split(':', 2);
     if (port === undefined) {
