@@ -1,134 +1,186 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import { remote } from 'electron';
 import React, { Component } from 'react';
+import ReactTooltip from 'react-tooltip';
+import { remote } from 'electron';
+import log from 'electron-log';
 import { WalletBackend, Daemon } from 'turtlecoin-wallet-backend';
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import { uiType } from '../utils/utils';
-import {
-  eventEmitter,
-  savedInInstallDir,
-  il8n,
-  reInitWallet,
-  config
-} from '../index';
+import { eventEmitter, reInitWallet, config } from '../index';
+
+type State = {
+  darkMode: boolean,
+  password: string,
+  confirmPassword: string,
+  confirmSeed: string,
+  activePage: string,
+  showPassword: boolean,
+  darkMode: boolean,
+  privateSpendKey: string,
+  privateViewKey: string,
+  importedWallet: any,
+  scanHeight: string
+};
 
 type Props = {};
 
-type State = {
-  darkMode: boolean
-};
-
 export default class ImportKey extends Component<Props, State> {
-  props: Props;
-
-  state: State;
-
-  constructor(props?: Props) {
+  constructor(props: Props) {
     super(props);
     this.state = {
-      darkMode: config.darkMode
+      darkMode: config.darkMode,
+      activePage: 'enter_seed',
+      password: '',
+      confirmPassword: '',
+      privateSpendKey: '',
+      privateViewKey: '',
+      scanHeight: '',
+      confirmSeed: '',
+      showPassword: false,
+      importedWallet: null
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.nextPage = this.nextPage.bind(this);
+    this.prevPage = this.prevPage.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(
+      this
+    );
+    this.handleConfirmSeedChange = this.handleConfirmSeedChange.bind(this);
+    this.toggleShowPassword = this.toggleShowPassword.bind(this);
+    this.ref = null;
+    this.handleCopiedTip = this.handleCopiedTip.bind(this);
   }
 
-  componentDidMount() {}
+  componentWillMount() {}
 
   componentWillUnmount() {}
 
-  handleSubmit = (event: any) => {
-    // We're preventing the default refresh of the page that occurs on form submit
-    event.preventDefault();
+  toggleShowPassword() {
+    const { showPassword } = this.state;
 
-    const { darkMode } = this.state;
+    this.setState({
+      showPassword: !showPassword
+    });
+  }
+
+  evaluatePageNumber = (pageName: string) => {
+    switch (pageName) {
+      default:
+        log.error('Programmer error!');
+        break;
+      case 'enter_seed':
+        return 1;
+      case 'verify':
+        return 2;
+      case 'secure':
+        return 3;
+    }
+  };
+
+  evaluatePageName = (pageNumber: number) => {
+    switch (pageNumber) {
+      default:
+        log.error('Programmer error!');
+        break;
+      case 1:
+        return 'enter_seed';
+      case 2:
+        return 'verify';
+      case 3:
+        return 'secure';
+    }
+  };
+
+  handleCopiedTip = () => {
+    ReactTooltip.show(this.ref);
+    setTimeout(() => {
+      ReactTooltip.hide(this.ref);
+    }, 500);
+  };
+
+  prevPage = () => {
+    const { activePage } = this.state;
+    let currentPageNumber: number = this.evaluatePageNumber(activePage);
+
+    if (currentPageNumber === 1) {
+      return;
+    }
+
+    currentPageNumber--;
+    const newPageName = this.evaluatePageName(currentPageNumber);
+
+    this.setState({
+      activePage: newPageName
+    });
+  };
+
+  nextPage = () => {
+    const {
+      activePage,
+      password,
+      confirmPassword,
+      privateSpendKey,
+      privateViewKey,
+      scanHeight,
+      darkMode,
+      importedWallet
+    } = this.state;
+
+    log.info(this.state);
     const { textColor } = uiType(darkMode);
+    let currentPageNumber: number = this.evaluatePageNumber(activePage);
 
-    const spendKey = event.target[0].value;
-    const viewKey = event.target[1].value;
-    let height = Number(event.target[2].value);
-
-    const password = event.target[3].value;
-    const confirmPassword = event.target[4].value;
-
-    if (viewKey === undefined || spendKey === undefined) {
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      const message = (
-        <div>
-          <center>
-            <p className="title has-text-danger">Password Match Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            Passwords do not match. Check entered passwords and try again.
-          </p>
-        </div>
+    if (currentPageNumber === 1) {
+      const [restoredWallet, error] = WalletBackend.importWalletFromKeys(
+        new Daemon('blockapi.turtlepay.io', 443),
+        scanHeight === '' ? 0 : Number(scanHeight),
+        privateViewKey,
+        privateSpendKey
       );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-      return;
+
+      if (error) {
+        const message = (
+          <div>
+            <center>
+              <p className="title has-text-danger">Restore Error!</p>
+            </center>
+            <br />
+            <p className={`subtitle ${textColor}`}>
+              The restore was not successful, is your seed correct? Please check
+              your details and try again.
+            </p>
+          </div>
+        );
+        eventEmitter.emit('openModal', message, 'OK', null, null);
+        return;
+      }
+      this.setState({
+        importedWallet: restoredWallet
+      });
     }
 
-    if (height === '') {
-      height = 0;
-    }
-    const options = {
-      defaultPath: remote.app.getPath('documents'),
-      filters: [
-        {
-          name: 'TurtleCoin Wallet File (v0)',
-          extensions: ['wallet']
-        }
-      ]
-    };
-    const savePath = remote.dialog.showSaveDialog(null, options);
-    if (savePath === undefined) {
-      return;
-    }
-    if (savedInInstallDir(savePath)) {
-      const message = (
-        <div>
-          <center>
-            <p className="title has-text-danger">Restore Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            You can not save the wallet in the installation directory. The
-            windows installer will delete all files in the directory upon
-            upgrading the application, so it is not allowed.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-      return;
-    }
-
-    const [importedWallet, error] = WalletBackend.importWalletFromKeys(
-      new Daemon('blockapi.turtlepay.io', 443),
-      height,
-      viewKey,
-      spendKey
-    );
-
-    if (error) {
-      const message = (
-        <div>
-          <center>
-            <p className="title has-text-danger">Restore Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            The restore was not successful. Please check your details and try
-            again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
-    } else {
+    if (currentPageNumber === 3) {
+      if (password !== confirmPassword) {
+        return;
+      }
+      const options = {
+        defaultPath: remote.app.getPath('documents'),
+        filters: [
+          {
+            name: 'TurtleCoin Wallet File (v0)',
+            extensions: ['wallet']
+          }
+        ]
+      };
+      const savePath = remote.dialog.showSaveDialog(null, options);
+      if (savePath === undefined) {
+        return;
+      }
       const saved = importedWallet.saveWalletToFile(savePath, password);
       if (saved) {
         reInitWallet(savePath);
@@ -147,95 +199,314 @@ export default class ImportKey extends Component<Props, State> {
         );
         eventEmitter.emit('openModal', message, 'OK', null, null);
       }
+      return;
     }
+
+    currentPageNumber++;
+    const newPageName = this.evaluatePageName(currentPageNumber);
+
+    this.setState({
+      activePage: newPageName
+    });
   };
 
+  handlePasswordChange(event: any) {
+    const password = event.target.value;
+
+    this.setState({
+      password
+    });
+  }
+
+  handleConfirmSeedChange(event: any) {
+    const confirmSeed = event.target.value;
+
+    this.setState({
+      confirmSeed
+    });
+  }
+
+  handleConfirmPasswordChange(event: any) {
+    const confirmPassword = event.target.value;
+
+    this.setState({
+      confirmPassword
+    });
+  }
+
   render() {
-    const { darkMode } = this.state;
-    const { backgroundColor, textColor, elementBaseColor } = uiType(darkMode);
+    const {
+      darkMode,
+      activePage,
+      password,
+      confirmPassword,
+      privateSpendKey,
+      privateViewKey,
+      showPassword,
+      importedWallet,
+      scanHeight
+    } = this.state;
+    const { backgroundColor, fillColor, textColor } = uiType(darkMode);
 
     return (
       <div>
         <Redirector />
-        <div className={`wholescreen ${backgroundColor}`}>
+        <div className={`wholescreen ${fillColor} hide-scrollbar`}>
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor}`}>
-            <form onSubmit={this.handleSubmit}>
-              <div className="field">
-                <label className={`label ${textColor}`} htmlFor="scanheight">
-                  {il8n.private_spend_key}
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="text"
-                      placeholder={il8n.private_spend_key_input_placeholder}
-                    />
-                  </div>
-                </label>
+            <div className={`steps ${textColor} is-dark`} id="stepsDemo">
+              <div
+                className={`step-item ${
+                  activePage === 'enter_seed' ? 'is-active' : ''
+                } ${
+                  this.evaluatePageNumber(activePage) > 1 ? 'is-completed' : ''
+                } is-success`}
+              >
+                <div className="step-marker">
+                  {this.evaluatePageNumber(activePage) > 1 ? (
+                    <i className="fas fa-check" />
+                  ) : (
+                    '1'
+                  )}
+                </div>
+                <div className="step-details">
+                  <p className="step-title">Enter Seed</p>
+                </div>
               </div>
-              <div className="field">
-                <label className={`label ${textColor}`} htmlFor="scanheight">
-                  {il8n.private_view_key}
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="text"
-                      placeholder={il8n.private_view_key_input_placeholder}
-                    />
-                  </div>
-                </label>
+              <div
+                className={`step-item ${
+                  activePage === 'verify' ? 'is-active' : ''
+                } ${
+                  this.evaluatePageNumber(activePage) > 2 ? 'is-completed' : ''
+                } is-success`}
+              >
+                <div className="step-marker">
+                  {' '}
+                  {this.evaluatePageNumber(activePage) > 2 ? (
+                    <i className="fas fa-check" />
+                  ) : (
+                    '2'
+                  )}
+                </div>
+                <div className="step-details">
+                  <p className="step-title">Verify</p>
+                </div>
               </div>
-              <div className="field">
-                <label className={`label ${textColor}`} htmlFor="scanheight">
-                  {il8n.scan_height}
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="text"
-                      placeholder={il8n.scan_height_input_placeholder}
-                    />
-                  </div>
-                </label>
+              <div
+                className={`step-item ${
+                  activePage === 'secure' ? 'is-active' : ''
+                } ${
+                  this.evaluatePageNumber(activePage) > 3 ? 'is-completed' : ''
+                } is-success`}
+              >
+                <div className="step-marker">
+                  {' '}
+                  {this.evaluatePageNumber(activePage) > 3 ? (
+                    <i className="fas fa-check" />
+                  ) : (
+                    '3'
+                  )}
+                </div>
+                <div className="step-details">
+                  <p className="step-title">Secure</p>
+                </div>
               </div>
-              <div className="field">
-                <label className={`label ${textColor}`} htmlFor="password">
-                  New Wallet Password
-                  <div className="control">
-                    <input
+            </div>
+
+            {activePage === 'enter_seed' && (
+              <div>
+                <p className={`subtitle ${textColor}`}>
+                  Welcome to the wallet import wizard. Please enter your wallet
+                  keys.
+                </p>
+                <div>
+                  <label className={`label ${textColor}`} htmlFor="spendKey">
+                    Private Spend Key:
+                    <textarea
                       className="input is-large"
-                      type="text"
-                      placeholder="Enter a password for your wallet."
+                      placeholder="Enter your private spend key"
+                      onChange={event => {
+                        this.setState({ privateSpendKey: event.target.value });
+                      }}
+                      value={privateSpendKey}
+                      onKeyPress={event => {
+                        if (event.key === 'Enter') {
+                          this.nextPage();
+                        }
+                      }}
                     />
-                  </div>
-                </label>
+                  </label>
+                  <label className={`label ${textColor}`} htmlFor="viewKey">
+                    Private View Key:
+                    <textarea
+                      className="input is-large"
+                      placeholder="Enter your private view key"
+                      onChange={event => {
+                        this.setState({ privateViewKey: event.target.value });
+                      }}
+                      value={privateViewKey}
+                      onKeyPress={event => {
+                        if (event.key === 'Enter') {
+                          this.nextPage();
+                        }
+                      }}
+                    />
+                  </label>
+                  <label className={`label ${textColor}`} htmlFor="scanHeight">
+                    Scan Height: (Optional)
+                    <textarea
+                      className="input is-large"
+                      placeholder="0"
+                      onChange={event => {
+                        this.setState({ scanHeight: event.target.value });
+                      }}
+                      value={scanHeight}
+                      onKeyPress={event => {
+                        if (event.key === 'Enter') {
+                          this.nextPage();
+                        }
+                      }}
+                    />
+                    <p className={`${textColor} help`}>
+                      Optional. Defaults to 0 if you&apos;re not sure.
+                    </p>
+                  </label>
+                </div>
               </div>
-              <div className="field">
-                <label
-                  className={`label ${textColor}`}
-                  htmlFor="confirmPassword"
+            )}
+
+            {activePage === 'verify' && (
+              <div>
+                <p className={`subtitle ${textColor}`}>
+                  Confirm the address below is the one you expect.{' '}
+                  <span className="has-text-danger has-text-weight-bold ">
+                    If it isn&apos;t correct, go back and double check your
+                    keys.
+                  </span>
+                </p>
+                <p className={`label ${textColor}`}>
+                  Imported Wallet Address:
+                  <textarea
+                    className="textarea no-resize is-large"
+                    value={importedWallet.getPrimaryAddress()}
+                    rows="4"
+                    readOnly
+                  />
+                </p>
+              </div>
+            )}
+
+            {activePage === 'secure' && (
+              <div>
+                <p className={`subtitle ${textColor}`}>
+                  Set a password for your wallet. Take care not to forget it.
+                </p>
+                <div className="field">
+                  <label className={`label ${textColor}`} htmlFor="scanheight">
+                    Enter a Password:
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type={showPassword ? 'input' : 'password'}
+                        placeholder="Enter a password"
+                        value={password}
+                        onChange={this.handlePasswordChange}
+                        onKeyPress={event => {
+                          if (event.key === 'Enter') {
+                            this.nextPage();
+                          }
+                        }}
+                      />
+                    </div>
+                  </label>
+                </div>
+                <div className="field">
+                  <label className={`label ${textColor}`} htmlFor="scanheight">
+                    Confirm Password:{' '}
+                    {password !== confirmPassword ? (
+                      <span className="has-text-danger">
+                        &nbsp;&nbsp;Passwords do not match!
+                      </span>
+                    ) : (
+                      ''
+                    )}
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        type={showPassword ? 'input' : 'password'}
+                        placeholder="Confirm password"
+                        value={confirmPassword}
+                        onChange={this.handleConfirmPasswordChange}
+                        onKeyPress={event => {
+                          if (event.key === 'Enter') {
+                            this.nextPage();
+                          }
+                        }}
+                      />
+                    </div>
+                  </label>
+                </div>
+                {showPassword === false && (
+                  <span className={textColor}>
+                    <a
+                      className="button is-danger"
+                      onClick={this.toggleShowPassword}
+                      onKeyPress={this.toggleShowPassword}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <span className="icon is-large">
+                        <i className="fas fa-times" />
+                      </span>
+                    </a>
+                    &nbsp;&nbsp; Show Password: <b>Off</b>
+                  </span>
+                )}
+                {showPassword === true && (
+                  <span className={textColor}>
+                    <a
+                      className="button is-success"
+                      onClick={this.toggleShowPassword}
+                      onKeyPress={this.toggleShowPassword}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <span className="icon is-large">
+                        <i className="fa fa-check" />
+                      </span>
+                    </a>
+                    &nbsp;&nbsp; Show Password: <b>On</b> &nbsp;&nbsp;
+                  </span>
+                )}
+              </div>
+            )}
+
+            <br />
+            <center>
+              <div className="buttons bottombuttons">
+                <span
+                  className="button is-warning is-large"
+                  onClick={this.prevPage}
+                  onKeyPress={this.prevPage}
+                  role="button"
+                  tabIndex={0}
+                  onMouseDown={event => event.preventDefault()}
                 >
-                  Confirm Password
-                  <div className="control">
-                    <input
-                      className="input is-large"
-                      type="text"
-                      placeholder="Confirm password."
-                    />
-                  </div>
-                </label>
-              </div>
-              <div className="buttons">
-                <button type="submit" className="button is-success is-large ">
-                  {il8n.import}
-                </button>
-                <button
-                  type="reset"
-                  className={`button is-large ${elementBaseColor}`}
+                  Back
+                </span>
+                &nbsp;&nbsp;
+                <span
+                  className="button is-success is-large"
+                  onClick={this.nextPage}
+                  onKeyPress={this.nextPage}
+                  role="button"
+                  tabIndex={0}
+                  onMouseDown={event => event.preventDefault()}
                 >
-                  {il8n.clear}
-                </button>
+                  {activePage === 'secure' ? 'Save Wallet As' : 'Next'}
+                </span>
               </div>
-            </form>
+            </center>
           </div>
           <BottomBar darkMode={darkMode} />
         </div>

@@ -394,6 +394,11 @@ export default class NewWallet extends Component<Props, State> {
                         placeholder="Enter a password"
                         value={password}
                         onChange={this.handlePasswordChange}
+                        onKeyPress={event => {
+                          if (event.key === 'Enter') {
+                            this.nextPage();
+                          }
+                        }}
                       />
                     </div>
                   </label>
@@ -415,6 +420,11 @@ export default class NewWallet extends Component<Props, State> {
                         placeholder="Confirm password"
                         value={confirmPassword}
                         onChange={this.handleConfirmPasswordChange}
+                        onKeyPress={event => {
+                          if (event.key === 'Enter') {
+                            this.nextPage();
+                          }
+                        }}
                       />
                     </div>
                   </label>
@@ -517,6 +527,11 @@ export default class NewWallet extends Component<Props, State> {
                     value={confirmSeed}
                     onChange={this.handleConfirmSeedChange}
                     rows="4"
+                    onKeyPress={event => {
+                      if (event.key === 'Enter') {
+                        this.nextPage();
+                      }
+                    }}
                   />
                 </p>
               </div>

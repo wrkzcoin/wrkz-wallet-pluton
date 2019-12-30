@@ -160,11 +160,10 @@ export default class Import extends Component<Props, State> {
       });
     }
 
-    if (currentPageNumber === 2 && password !== confirmPassword) {
-      return;
-    }
-
     if (currentPageNumber === 3) {
+      if (password !== confirmPassword) {
+        return;
+      }
       const options = {
         defaultPath: remote.app.getPath('documents'),
         filters: [
@@ -325,6 +324,11 @@ export default class Import extends Component<Props, State> {
                       onChange={event => {
                         this.setState({ mnemonicSeed: event.target.value });
                       }}
+                      onKeyPress={event => {
+                        if (event.key === 'Enter') {
+                          this.nextPage();
+                        }
+                      }}
                       value={mnemonicSeed}
                     />
                   </label>
@@ -336,6 +340,11 @@ export default class Import extends Component<Props, State> {
                       rows={4}
                       onChange={event => {
                         this.setState({ scanHeight: event.target.value });
+                      }}
+                      onKeyPress={event => {
+                        if (event.key === 'Enter') {
+                          this.nextPage();
+                        }
                       }}
                       value={scanHeight}
                     />
@@ -383,6 +392,11 @@ export default class Import extends Component<Props, State> {
                         placeholder="Enter a password"
                         value={password}
                         onChange={this.handlePasswordChange}
+                        onKeyPress={event => {
+                          if (event.key === 'Enter') {
+                            this.nextPage();
+                          }
+                        }}
                       />
                     </div>
                   </label>
@@ -404,6 +418,11 @@ export default class Import extends Component<Props, State> {
                         placeholder="Confirm password"
                         value={confirmPassword}
                         onChange={this.handleConfirmPasswordChange}
+                        onKeyPress={event => {
+                          if (event.key === 'Enter') {
+                            this.nextPage();
+                          }
+                        }}
                       />
                     </div>
                   </label>
