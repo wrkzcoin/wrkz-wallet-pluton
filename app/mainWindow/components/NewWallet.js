@@ -175,7 +175,6 @@ export default class NewWallet extends Component<Props, State> {
           if (savePath === undefined) {
             return;
           }
-          log.info(savePath);
           const saved = newWallet.saveWalletToFile(savePath, password);
           if (saved) {
             reInitWallet(savePath);
