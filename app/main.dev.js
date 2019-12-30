@@ -257,7 +257,8 @@ app.on('ready', async () => {
           label: 'Quit',
           click() {
             isQuitting = true;
-            app.quit();
+            quitTimeout = setTimeout(app.exit, 1000 * 10);
+            messageRelayer.sendToBackend('stopRequest');
           }
         }
       ])
@@ -297,9 +298,8 @@ app.on('ready', async () => {
     if (!isQuitting && mainWindow) {
       log.debug('Closing to system tray or dock.');
       mainWindow.hide();
-    } else if (mainWindow) {
-      quitTimeout = setTimeout(app.exit, 1000 * 10);
-      messageRelayer.sendToBackend('stopRequest');
+    } else {
+      app.quit();
     }
   });
 
