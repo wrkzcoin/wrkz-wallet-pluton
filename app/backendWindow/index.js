@@ -3,6 +3,7 @@
 // Please see the included LICENSE file for more information.
 import fs from 'fs';
 import { ipcRenderer, IpcRendererEvent, clipboard, remote } from 'electron';
+import isDev from 'electron-is-dev';
 import log from 'electron-log';
 import Backend from './Backend';
 
@@ -25,7 +26,11 @@ function parseMessage(message: any) {
       }
       break;
     case 'showDevConsole':
-      remote.getCurrentWebContents().openDevTools({ mode: 'detach' });
+      if (isDev) {
+        remote.getCurrentWebContents().toggleDevTools();
+      } else {
+        remote.getCurrentWebContents().openDevTools({ mode: 'detach' });
+      }
       break;
     case 'stopRequest':
       backend.stop(true);
