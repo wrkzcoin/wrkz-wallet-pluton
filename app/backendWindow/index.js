@@ -2,7 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import fs from 'fs';
-import { ipcRenderer, IpcRendererEvent, clipboard } from 'electron';
+import { ipcRenderer, IpcRendererEvent, clipboard, remote } from 'electron';
 import log from 'electron-log';
 import Backend from './Backend';
 
@@ -23,6 +23,9 @@ function parseMessage(message: any) {
       if (data.walletFile !== '') {
         backend = new Backend(data);
       }
+      break;
+    case 'showDevConsole':
+      remote.getCurrentWindow().toggleDevTools();
       break;
     case 'stopRequest':
       backend.stop(true);

@@ -18,6 +18,8 @@ const { productName } = npmPackage;
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 
+  backendWindow: BrowserWindow;
+
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
   }

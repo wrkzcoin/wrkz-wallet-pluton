@@ -2,6 +2,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component, Fragment } from 'react';
+import { ipcRenderer } from 'electron';
 import log from 'electron-log';
 import os from 'os';
 import ReactTooltip from 'react-tooltip';
@@ -175,7 +176,8 @@ export default class Settings extends Component<Props, State> {
       backgroundColor,
       textColor,
       menuActiveColor,
-      toolTipColor
+      toolTipColor,
+      elementBaseColor
     } = uiType(darkMode);
 
     let platform;
@@ -309,6 +311,22 @@ export default class Settings extends Component<Props, State> {
                     <ScanCoinbaseToggle darkMode={darkMode} />
                     <br />
                     <LogLevelSelector darkMode={darkMode} />
+                    <br />
+                    <button
+                      className={`button ${elementBaseColor}`}
+                      onClick={() => {
+                        ipcRenderer.send(
+                          'fromFrontend',
+                          'showDevConsole',
+                          undefined
+                        );
+                      }}
+                    >
+                      <span className="icon is-small">
+                        <i className="fa fa-terminal" />
+                      </span>
+                      &nbsp;&nbsp; Toggle Console
+                    </button>
                   </div>
                 )}
 
