@@ -25,7 +25,7 @@ function parseMessage(message: any) {
       }
       break;
     case 'showDevConsole':
-      remote.getCurrentWindow().toggleDevTools();
+      remote.getCurrentWebContents().openDevTools({ mode: 'detach' });
       break;
     case 'stopRequest':
       backend.stop(true);

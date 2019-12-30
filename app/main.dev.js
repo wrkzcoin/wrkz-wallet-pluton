@@ -128,13 +128,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
-  // eslint-disable-next-line global-require
-  require('electron-debug')();
-}
+require('electron-debug')();
 
 const installExtensions = async () => {
   // eslint-disable-next-line global-require
@@ -219,12 +213,7 @@ contextMenu({
 });
 
 app.on('ready', async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
+  await installExtensions();
 
   mainWindow = new BrowserWindow({
     title: `Proton v${version}`,
