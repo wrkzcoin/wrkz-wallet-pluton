@@ -325,7 +325,7 @@ export default class Settings extends Component<Props, State> {
                       <span className="icon is-small">
                         <i className="fa fa-terminal" />
                       </span>
-                      &nbsp;&nbsp; Toggle Console
+                      &nbsp;&nbsp; Show Console
                     </button>
                   </div>
                 )}

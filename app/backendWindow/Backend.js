@@ -4,7 +4,6 @@
 import { Daemon, WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
 import { ipcRenderer } from 'electron';
 import { createObjectCsvWriter } from 'csv-writer';
-import log from 'electron-log';
 import { atomicToHuman, convertTimestamp } from '../mainWindow/utils/utils';
 
 export default class Backend {
@@ -251,8 +250,6 @@ export default class Backend {
     if (!this.getWalletActive()) {
       return;
     }
-
-    log.info('Saving to disk.');
     const status = this.wallet.saveWalletToFile(
       path || this.walletFile,
       this.walletPassword
