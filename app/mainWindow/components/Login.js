@@ -35,25 +35,27 @@ export default class Login extends Component<Props, State> {
       this.switchAnimation();
     }
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleBackendMessage = this.handleBackendMessage.bind(this);
   }
 
   componentDidMount() {
     loginCounter.navBarCount = 0;
-    ipcRenderer.on(
-      'fromBackend',
-      (event: Electron.IpcRendererEvent, message: any) => {
-        const { messageType, data } = message;
-        if (messageType === 'authenticationStatus') {
-          loginCounter.isLoggedIn = data;
-          loginCounter.lastLoginAttemptFailed = !data;
-          loginCounter.loginFailed = !data;
-          eventEmitter.emit('goHome');
-        }
-      }
-    );
+    ipcRenderer.on('fromBackend', this.handleLoginMessage);
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    ipcRenderer.off('fromBackend', this.handleLoginMessage);
+  }
+
+  handleBackendMessage = (event: Electron.IpcRendererEvent, message: any) => {
+    const { messageType, data } = message;
+    if (messageType === 'authenticationStatus') {
+      loginCounter.isLoggedIn = data;
+      loginCounter.lastLoginAttemptFailed = !data;
+      loginCounter.loginFailed = !data;
+      eventEmitter.emit('goHome');
+    }
+  };
 
   switchAnimation() {
     loginCounter.userLoginAttempted = true;
