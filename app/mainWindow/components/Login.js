@@ -40,11 +40,11 @@ export default class Login extends Component<Props, State> {
 
   componentDidMount() {
     loginCounter.navBarCount = 0;
-    ipcRenderer.on('fromBackend', this.handleLoginMessage);
+    ipcRenderer.on('fromBackend', this.handleBackendMessage);
   }
 
   componentWillUnmount() {
-    ipcRenderer.off('fromBackend', this.handleLoginMessage);
+    ipcRenderer.off('fromBackend', this.handleBackendMessage);
   }
 
   handleBackendMessage = (event: Electron.IpcRendererEvent, message: any) => {
