@@ -261,7 +261,7 @@
     "semver": "^6.2.0",
     "source-code-pro": "^2.30.2",
     "tail": "^2.0.3",
-    "turtlecoin-wallet-backend": "https://github.com/turtlecoin/turtlecoin-wallet-backend-js/"
+    "turtlecoin-wallet-backend": "^5.0.0"
   },
   "devEngines": {
     "node": ">=10.x",
