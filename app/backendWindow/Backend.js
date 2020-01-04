@@ -162,8 +162,21 @@ export default class Backend {
           result.transactionHash
         }, fee ${prettyPrintAmount(result.fee)}`
       );
+      const response = {
+        status: 'SUCCESS',
+        hash: result.transactionHash,
+        error: undefined
+      };
+      ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
     } else {
       console.log(`Failed to send transaction: ${result.error.toString()}`);
+      result.error.errorString = result.error.toString();
+      const response = {
+        status: 'FAILURE',
+        hash: undefined,
+        error: result.error
+      };
+      ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
     }
 
     /* const [hash, error] = await this.wallet.sendTransactionBasic(
