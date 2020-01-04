@@ -1,7 +1,12 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import { Daemon, WalletBackend, LogLevel } from 'turtlecoin-wallet-backend';
+import {
+  Daemon,
+  WalletBackend,
+  LogLevel,
+  prettyPrintAmount
+} from 'turtlecoin-wallet-backend';
 import { ipcRenderer } from 'electron';
 import { createObjectCsvWriter } from 'csv-writer';
 import { atomicToHuman, convertTimestamp } from '../mainWindow/utils/utils';
@@ -138,7 +143,30 @@ export default class Backend {
   async sendTransaction(transaction: any): void {
     const { address, amount, paymentID } = transaction;
 
-    const [hash, error] = await this.wallet.sendTransactionBasic(
+    const destinations = [[address, amount]];
+
+    const result = await this.wallet.sendTransactionAdvanced(
+      destinations, // destinations
+      undefined, // mixin
+      undefined, // fee
+      paymentID, // paymentID
+      undefined, // subwalletsToTakeFrom
+      undefined, // changeAddress
+      false, // relayToNetwork
+      false // sendAll
+    );
+
+    if (result.success) {
+      console.log(
+        `Sent transaction, hash ${
+          result.transactionHash
+        }, fee ${prettyPrintAmount(result.fee)}`
+      );
+    } else {
+      console.log(`Failed to send transaction: ${result.error.toString()}`);
+    }
+
+    /* const [hash, error] = await this.wallet.sendTransactionBasic(
       address,
       amount,
       paymentID
@@ -153,7 +181,7 @@ export default class Backend {
       const response = { status: 'FAILURE', hash, error };
       ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
     }
-    this.getTransactions(this.getLastTxAmountRequested() + 1);
+    this.getTransactions(this.getLastTxAmountRequested() + 1); */
   }
 
   verifyPassword(password: string): void {
