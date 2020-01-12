@@ -153,6 +153,9 @@ ipcRenderer.on(
     const { data, messageType } = message;
 
     switch (messageType) {
+      case 'prepareTransactionResponse':
+        handlePrepareTransactionResponse(data);
+        break;
       case 'transactionCount':
         session.setTransactionCount(data);
         break;
@@ -211,6 +214,30 @@ function handleRescanResponse(height: string) {
     </div>
   );
   eventEmitter.emit('openModal', modalMessage, 'OK', null, 'transactionCancel');
+}
+
+function handlePrepareTransactionResponse(response: any) {
+  if (response.status === 'FAILURE') {
+    const modalMessage = (
+      <div>
+        <center>
+          <p className="title has-text-danger">Error!</p>
+        </center>
+        <br />
+        <p className={`subtitle ${textColor}`}>
+          The transaction was not successful.
+        </p>
+        <p className={`subtitle ${textColor}`}>{response.error.errorString}</p>
+      </div>
+    );
+    eventEmitter.emit(
+      'openModal',
+      modalMessage,
+      'OK',
+      null,
+      'transactionCancel'
+    );
+  }
 }
 
 function handleSendTransactionResponse(response: any) {

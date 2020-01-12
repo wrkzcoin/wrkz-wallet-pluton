@@ -12,18 +12,6 @@
     "keywords": ""
   },
   {
-    "settingName": "Tail Local Daemon Log File",
-    "location": "node",
-    "description": "Show the log output of your local TurtleCoind in the Terminal tab",
-    "keywords": ""
-  },
-  {
-    "settingName": "TurtleCoind Log File Location",
-    "location": "node",
-    "description": "Set the path to the TurtleCoind log",
-    "keywords": ""
-  },
-  {
     "settingName": "Wallet Settings",
     "location": "scan",
     "description": "All settings related to the wallet itself",
