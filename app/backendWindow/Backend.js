@@ -8,6 +8,7 @@ import {
   prettyPrintAmount
 } from 'turtlecoin-wallet-backend';
 import { ipcRenderer } from 'electron';
+import log from 'electron-log';
 import { createObjectCsvWriter } from 'csv-writer';
 import { atomicToHuman, convertTimestamp } from '../mainWindow/utils/utils';
 
@@ -168,6 +169,7 @@ export default class Backend {
         error: undefined
       };
       ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
+      this.getTransactions(this.getLastTxAmountRequested() + 1);
     } else {
       console.log(`Failed to send transaction: ${result.error.toString()}`);
       result.error.errorString = result.error.toString();
@@ -195,6 +197,54 @@ export default class Backend {
       ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
     }
     this.getTransactions(this.getLastTxAmountRequested() + 1); */
+  }
+
+  async prepareTransaction(transaction): void {
+    const { address, amount, paymentID } = transaction;
+
+    const destinations = [[address, amount]];
+
+    const result = await this.wallet.sendTransactionAdvanced(
+      destinations, // destinations
+      undefined, // mixin
+      undefined, // fee
+      paymentID, // paymentID
+      undefined, // subwalletsToTakeFrom
+      undefined, // changeAddress
+      false, // relayToNetwork
+      false // sendAll
+    );
+
+    log.info(result);
+
+    if (result.success) {
+      const response = {
+        status: 'SUCCESS',
+        hash: result.transactionHash,
+        address,
+        paymentID,
+        amount,
+        fee: result.fee,
+        nodeFee: this.wallet.getNodeFee()[1],
+        error: undefined
+      };
+      ipcRenderer.send('fromBackend', 'prepareTransactionResponse', response);
+      this.getTransactions(this.getLastTxAmountRequested() + 1);
+    } else {
+      console.log(`Failed to send transaction: ${result.error.toString()}`);
+      result.error.errorString = result.error.toString();
+      const response = {
+        status: 'FAILURE',
+        hash: undefined,
+        address,
+        paymentID,
+        amount,
+        fee: result.fee,
+        nodeFee: this.wallet.getNodeFee()[1],
+        error: result.error
+      };
+      ipcRenderer.send('fromBackend', 'prepareTransactionResponse', response);
+    }
   }
 
   verifyPassword(password: string): void {

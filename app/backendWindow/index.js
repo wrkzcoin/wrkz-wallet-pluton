@@ -91,8 +91,8 @@ function parseMessage(message: any) {
       // data is the amount of transactions to get
       backend.getTransactions(data);
       break;
-    case 'sendTransactionRequest':
-      backend.sendTransaction(data);
+    case 'prepareTransactionRequest':
+      backend.prepareTransaction(data);
       break;
     default:
       log.info(message);

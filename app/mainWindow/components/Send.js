@@ -22,7 +22,7 @@ import {
 import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
-import { uiType, atomicToHuman } from '../utils/utils';
+import { uiType, atomicToHuman, search } from '../utils/utils';
 import donateInfo from '../constants/donateInfo.json';
 
 type Props = {
@@ -85,7 +85,6 @@ export default class Send extends Component<Props, State> {
     this.state = {
       unlockedBalance: session.getUnlockedBalance(),
       enteredAmount: '',
-      totalAmount: '',
       sendToAddress: props.uriAddress || '',
       paymentID: props.uriPaymentID || '',
       darkMode: config.darkMode,
@@ -101,18 +100,17 @@ export default class Send extends Component<Props, State> {
     };
 
     this.generatePaymentID = this.generatePaymentID.bind(this);
-    this.resetPaymentID = this.resetPaymentID.bind(this);
+    this.resetForm = this.resetForm.bind(this);
     this.handleTransactionInProgress = this.handleTransactionInProgress.bind(
       this
     );
     this.handleTransactionCancel = this.handleTransactionCancel.bind(this);
     this.handleAmountChange = this.handleAmountChange.bind(this);
-    this.handleTotalAmountChange = this.handleTotalAmountChange.bind(this);
     this.sendAll = this.sendAll.bind(this);
     this.handlePaymentIDChange = this.handlePaymentIDChange.bind(this);
     this.updateFiatPrice = this.updateFiatPrice.bind(this);
     this.handleSendToAddressChange = this.handleSendToAddressChange.bind(this);
-    this.confirmTransaction = this.confirmTransaction.bind(this);
+    this.prepareTransaction = this.prepareTransaction.bind(this);
     this.checkInputLength = this.checkInputLength.bind(this);
     this.handleDonate = this.handleDonate.bind(this);
     this.handleNewNodeFee = this.handleNewNodeFee.bind(this);
@@ -121,9 +119,7 @@ export default class Send extends Component<Props, State> {
         return { label: contact.name, value: contact.address };
       })
     ];
-    this.handleSendTransactionResponse = this.handleSendTransactionResponse.bind(
-      this
-    );
+    this.handleBackendMessages = this.handleBackendMessages.bind(this);
     this.devContact = {
       label: donateInfo.name,
       value: donateInfo.address
@@ -136,14 +132,13 @@ export default class Send extends Component<Props, State> {
     eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.on('gotNodeFee', this.handleNewNodeFee);
     eventEmitter.on('modifyCurrency', this.modifyCurrency);
-    eventEmitter.on('confirmTransaction', this.sendTransaction);
     ipcRenderer.on('handleDonate', this.handleDonate);
-    ipcRenderer.on('fromBackend', this.handleSendTransactionResponse);
+    ipcRenderer.on('fromBackend', this.handleBackendMessages);
     // eslint-disable-next-line react/destructuring-assignment
     if (this.props && this.props.uriAddress) {
       const { uriAddress } = this.props;
 
-      const selectedContact = this.search(
+      const selectedContact = search(
         uriAddress,
         [this.devContact, ...this.autoCompleteContacts],
         'value'
@@ -161,9 +156,8 @@ export default class Send extends Component<Props, State> {
     eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
     eventEmitter.off('gotNodeFee', this.handleNewNodeFee);
     eventEmitter.off('modifyCurrency', this.modifyCurrency);
-    eventEmitter.off('confirmTransaction', this.sendTransaction);
     ipcRenderer.off('handleDonate', this.handleDonate);
-    ipcRenderer.off('fromBackend', this.handleSendTransactionResponse);
+    ipcRenderer.off('fromBackend', this.handleBackendMessages);
   }
 
   modifyCurrency = (displayCurrency: string) => {
@@ -202,12 +196,10 @@ export default class Send extends Component<Props, State> {
   };
 
   handleAmountChange = (event: any) => {
-    const { displayCurrency, fiatPrice, nodeFee } = this.state;
     let enteredAmount = event.target.value;
     if (enteredAmount === '') {
       this.setState({
-        enteredAmount: '',
-        totalAmount: ''
+        enteredAmount: ''
       });
       return;
     }
@@ -220,27 +212,69 @@ export default class Send extends Component<Props, State> {
       return;
     }
 
-    const fee = displayCurrency === 'TRTL' ? 0.1 : 0.1 * fiatPrice;
-
-    const totalAmount = (
-      parseFloat(enteredAmount) +
-      fee +
-      parseFloat(nodeFee / 100)
-    ).toFixed(2);
     this.setState({
-      enteredAmount,
-      totalAmount
+      enteredAmount
     });
   };
 
-  handleSendTransactionResponse = (
-    event: Electron.IpcRendererEvent,
-    message: any
-  ) => {
+  handleBackendMessages = (event: Electron.IpcRendererEvent, message: any) => {
     const { messageType, data } = message;
+    const { darkMode } = this.state;
+    const { textColor } = uiType(darkMode);
     if (messageType === 'sendTransactionResponse') {
       if (data.status === 'SUCCESS') {
-        this.resetPaymentID();
+        this.resetForm();
+      }
+    }
+    if (messageType === 'prepareTransactionResponse') {
+      eventEmitter.emit('transactionCancel');
+      if (data.status === 'SUCCESS') {
+        log.info(data);
+        const { address, paymentID, amount, fee, nodeFee } = data;
+        const modalMessage = (
+          <div>
+            <center>
+              <p className={`title ${textColor}`}>Confirm Transaction</p>
+            </center>
+            <br />
+            <p className={`subtitle ${textColor}`}>
+              <b>Send to:</b>
+              <br />
+              {address}
+            </p>
+            <p className={`subtitle ${textColor}`}>
+              <b>Amount:</b>
+              <br />
+              {atomicToHuman(amount, true)} TRTL
+            </p>
+            <p className={`subtitle ${textColor}`}>
+              <b>Fee:</b>
+              <br />
+              {atomicToHuman(nodeFee + fee, true)} TRTL
+              {nodeFee > 0 &&
+                ` (including a node fee of ${atomicToHuman(
+                  nodeFee,
+                  true
+                )} TRTL)`}
+            </p>{' '}
+            {paymentID !== '' && (
+              <p className={`subtitle ${textColor}`}>
+                <b>Payment ID:</b>
+                <br />
+                {paymentID}
+              </p>
+            )}
+          </div>
+        );
+        eventEmitter.emit(
+          'openModal',
+          modalMessage,
+          'Send it!',
+          'Wait a minute...',
+          'prepareTransaction'
+        );
+      } else {
+        log.info(data);
       }
     }
   };
@@ -252,60 +286,31 @@ export default class Send extends Component<Props, State> {
     });
   };
 
-  handleTotalAmountChange = (event: any) => {
-    const { nodeFee } = this.state;
-    let totalAmount = event.target.value;
-    if (totalAmount === '') {
-      this.setState({
-        enteredAmount: '',
-        totalAmount: ''
-      });
-      return;
-    }
-    if (totalAmount === '.') {
-      totalAmount = '0.';
-    }
-
-    const regex = /^\d*(\.(\d\d?)?)?$/;
-    if (!regex.test(totalAmount) === true) {
-      return;
-    }
-
-    const subtractFee = Number(totalAmount) * 100 - 10 - parseInt(nodeFee, 10);
-
-    const enteredAmount =
-      subtractFee < 0 ? '' : atomicToHuman(subtractFee, false).toFixed(2);
-
-    this.setState({
-      enteredAmount,
-      totalAmount
-    });
-  };
-
-  confirmTransaction = (event: any) => {
+  prepareTransaction = (event: any) => {
     event.preventDefault();
     const {
       sendToAddress,
-      totalAmount,
       paymentID,
       darkMode,
       displayCurrency,
-      fiatSymbol,
-      symbolLocation
+      enteredAmount,
+      fiatPrice
     } = this.state;
     const { textColor } = uiType(darkMode);
     const sufficientFunds =
       (session.getUnlockedBalance() + session.getLockedBalance()) / 100 >=
-      Number(totalAmount);
+      Number(enteredAmount);
 
     const sufficientUnlockedFunds =
-      session.getUnlockedBalance() > Number(totalAmount) / 100;
+      session.getUnlockedBalance() > Number(enteredAmount) / 100;
 
-    if (sendToAddress === '' || totalAmount === '') {
+    if (sendToAddress === '' || enteredAmount === '') {
       return;
     }
 
     if (!sufficientFunds) {
+      log.info(session.getUnlockedBalance(), session.getLockedBalance());
+      log.info(enteredAmount);
       const message = (
         <div>
           <center>
@@ -338,10 +343,25 @@ export default class Send extends Component<Props, State> {
           </p>
         </div>
       );
-      eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
+      eventEmitter.emit('openModal', message, 'OK', null, null);
+      eventEmitter.emit('transactionCancel');
       return;
     }
 
+    const transactionData = {
+      address: sendToAddress,
+      amount:
+        displayCurrency === 'TRTL'
+          ? Number(enteredAmount) * 100
+          : (Number(enteredAmount) * 100) / fiatPrice,
+      paymentID
+    };
+    ipcRenderer.send(
+      'fromFrontend',
+      'prepareTransactionRequest',
+      transactionData
+    );
+    /*
     const message = (
       <div>
         <center>
@@ -378,8 +398,8 @@ export default class Send extends Component<Props, State> {
       message,
       'Send it!',
       'Wait a minute...',
-      'confirmTransaction'
-    );
+      'prepareTransaction'
+    ); */
   };
 
   sendTransaction = async () => {
@@ -420,11 +440,14 @@ export default class Send extends Component<Props, State> {
       paymentID
     };
 
-    ipcRenderer.send('fromFrontend', 'sendTransactionRequest', transactionData);
+    ipcRenderer.send(
+      'fromFrontend',
+      'prepareTransactionRequest',
+      transactionData
+    );
   };
 
   createTestTransaction = async () => {
-    log.debug('Creating test transaction for you.');
     const sendToAddress = await session.getPrimaryAddress();
     const amount = 100;
     const paymentID = this.generatePaymentID();
@@ -432,7 +455,6 @@ export default class Send extends Component<Props, State> {
     await this.setState({
       selectedContact: { label: sendToAddress, value: sendToAddress },
       enteredAmount: String(amount / 100),
-      totalAmount: String((amount + 10) / 100),
       sendToAddress,
       paymentID
     });
@@ -450,18 +472,17 @@ export default class Send extends Component<Props, State> {
     this.setState({ paymentID: event.target.value });
   };
 
-  resetPaymentID = () => {
+  resetForm = () => {
     this.setState({
       paymentID: '',
       enteredAmount: '',
-      totalAmount: '',
       sendToAddress: '',
       selectedContact: null
     });
   };
 
   resetAmounts = () => {
-    this.setState({ enteredAmount: '', totalAmount: '' });
+    this.setState({ enteredAmount: '' });
   };
 
   sendAll = () => {
@@ -474,24 +495,12 @@ export default class Send extends Component<Props, State> {
         ? 0
         : totalAmount - 10 - parseInt(nodeFee, 10);
     this.setState({
-      totalAmount:
-        displayCurrency === 'TRTL'
-          ? atomicToHuman(totalAmount, false).toString()
-          : atomicToHuman(totalAmount * fiatPrice, false).toString(),
       enteredAmount:
         displayCurrency === 'TRTL'
           ? atomicToHuman(enteredAmount, false).toString()
           : atomicToHuman(enteredAmount * fiatPrice, false).toString()
     });
   };
-
-  search(searchedValue: any, arrayToSearch: any[], objectPropertyName: string) {
-    for (let i = 0; i < arrayToSearch.length; i++) {
-      if (arrayToSearch[i][objectPropertyName] === searchedValue) {
-        return arrayToSearch[i];
-      }
-    }
-  }
 
   checkInputLength = (input: string) => {
     if (input.length > 1) {
@@ -516,7 +525,7 @@ export default class Send extends Component<Props, State> {
         return;
       }
 
-      const { paymentID } = this.search(
+      const { paymentID } = search(
         event.value,
         [donateInfo, ...addressList],
         'address'
@@ -542,7 +551,6 @@ export default class Send extends Component<Props, State> {
     const {
       darkMode,
       enteredAmount,
-      totalAmount,
       paymentID,
       transactionInProgress,
       displayCurrency,
@@ -603,7 +611,7 @@ export default class Send extends Component<Props, State> {
           />
           <NavBar darkMode={darkMode} />
           <div className={`maincontent ${backgroundColor} ${pageAnimationIn}`}>
-            <form onSubmit={this.confirmTransaction}>
+            <form onSubmit={this.prepareTransaction}>
               <div className="field">
                 <div className="control">
                   <label
@@ -633,51 +641,29 @@ export default class Send extends Component<Props, State> {
               </div>
               <div className="field">
                 <div className="control">
-                  <div className="columns">
-                    <div className="column">
-                      <label className={`label ${textColor}`} htmlFor="amount">
-                        {il8n.amount_to_send}
-                        <input
-                          className="input is-large"
-                          type="text"
-                          placeholder={`How much to send (eg. ${
-                            displayCurrency === 'fiat'
-                              ? exampleAmount
-                              : '100 TRTL'
-                          })`}
-                          value={enteredAmount}
-                          onChange={this.handleAmountChange}
-                          id="amount"
-                        />
-                        <a
-                          onClick={this.sendAll}
-                          onKeyPress={this.sendAll}
-                          role="button"
-                          tabIndex={0}
-                          className={linkColor}
-                          onMouseDown={event => event.preventDefault()}
-                        >
-                          {il8n.send_all}
-                        </a>
-                      </label>
-                    </div>
-                    <div className="column">
-                      <label
-                        className={`label ${textColor}`}
-                        htmlFor="totalamount"
-                      >
-                        {il8n.total_with_fees}
-                        <input
-                          className="input is-large"
-                          type="text"
-                          placeholder={il8n.total_with_fees_input_placeholder}
-                          value={totalAmount}
-                          onChange={this.handleTotalAmountChange}
-                          id="totalamount"
-                        />
-                      </label>
-                    </div>
-                  </div>
+                  <label className={`label ${textColor}`} htmlFor="amount">
+                    {il8n.amount_to_send}
+                    <input
+                      className="input is-large"
+                      type="text"
+                      placeholder={`How much to send (eg. ${
+                        displayCurrency === 'fiat' ? exampleAmount : '100 TRTL'
+                      })`}
+                      value={enteredAmount}
+                      onChange={this.handleAmountChange}
+                      id="amount"
+                    />
+                    <a
+                      onClick={this.sendAll}
+                      onKeyPress={this.sendAll}
+                      role="button"
+                      tabIndex={0}
+                      className={linkColor}
+                      onMouseDown={event => event.preventDefault()}
+                    >
+                      {il8n.send_all}
+                    </a>
+                  </label>
                 </div>
               </div>
               <div className="field">
@@ -730,7 +716,7 @@ export default class Send extends Component<Props, State> {
                 <button
                   type="reset"
                   className={`button is-large ${elementBaseColor}`}
-                  onClick={this.resetPaymentID}
+                  onClick={this.resetForm}
                 >
                   <span className="icon is-small">
                     <i className="fa fa-undo" />
