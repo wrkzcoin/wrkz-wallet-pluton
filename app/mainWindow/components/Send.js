@@ -229,8 +229,8 @@ export default class Send extends Component<Props, State> {
     if (messageType === 'prepareTransactionResponse') {
       eventEmitter.emit('transactionCancel');
       if (data.status === 'SUCCESS') {
-        log.info(data);
-        const { address, paymentID, amount, fee, nodeFee } = data;
+        const { address, paymentID, amount, fee, nodeFee, hash } = data;
+        session.setPreparedTransactionHash(hash);
         const modalMessage = (
           <div>
             <center>
@@ -243,9 +243,9 @@ export default class Send extends Component<Props, State> {
               {address}
             </p>
             <p className={`subtitle ${textColor}`}>
-              <b>Amount:</b>
+              <b>Total Amount: (includes fees)</b>
               <br />
-              {atomicToHuman(amount, true)} TRTL
+              {atomicToHuman(amount + nodeFee + fee, true)} TRTL
             </p>
             <p className={`subtitle ${textColor}`}>
               <b>Fee:</b>
@@ -271,7 +271,7 @@ export default class Send extends Component<Props, State> {
           modalMessage,
           'Send it!',
           'Wait a minute...',
-          'prepareTransaction'
+          'sendTransaction'
         );
       } else {
         log.info(data);

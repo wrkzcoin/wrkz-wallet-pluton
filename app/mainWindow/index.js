@@ -112,6 +112,8 @@ eventEmitter.on('handleDonate', handleDonate);
 
 let latestUpdate = '';
 
+eventEmitter.on('sendTransaction', handleSendTransaction);
+
 eventEmitter.on('updateRequired', updateFile => {
   latestUpdate = updateFile;
   const message = (
@@ -521,6 +523,14 @@ if (module.hot) {
       document.getElementById('root')
     );
   });
+}
+
+function handleSendTransaction() {
+  ipcRenderer.send(
+    'fromFrontend',
+    'sendTransactionRequest',
+    session.getPreparedTransactionHash()
+  );
 }
 
 function handleDonate() {

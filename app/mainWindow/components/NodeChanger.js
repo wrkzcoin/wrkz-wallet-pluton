@@ -24,11 +24,12 @@ export default class NodeChanger extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      connectionString: `${session.getDaemonConnectionInfo().host}:${
-        session.getDaemonConnectionInfo().port
-      }`,
+      connectionString:
+        `${session.getDaemonConnectionInfo().host}:${
+          session.getDaemonConnectionInfo().port
+        }` || 'Connecting, please wait...',
       nodeChangeInProgress: false,
-      ssl: session.getDaemonConnectionInfo().ssl
+      ssl: session.getDaemonConnectionInfo().ssl || false
     };
     this.changeNode = this.changeNode.bind(this);
     this.resetConnectionString = this.resetConnectionString.bind(this);

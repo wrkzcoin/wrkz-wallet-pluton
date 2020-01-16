@@ -31,12 +31,22 @@ export default class WalletSession {
 
   daemonConnectionInfo: any;
 
+  preparedTransactionHash: string = '';
+
   constructor() {
     this.loginFailed = false;
     this.firstLoadOnLogin = true;
     this.selectedFiat = config.selectedFiat;
     this.fiatPrice = 0;
     this.getFiatPrice(this.selectedFiat);
+  }
+
+  setPreparedTransactionHash(hash: string): void {
+    this.preparedTransactionHash = hash;
+  }
+
+  getPreparedTransactionHash(): string {
+    return this.preparedTransactionHash;
   }
 
   getDaemonConnectionInfo(): any {

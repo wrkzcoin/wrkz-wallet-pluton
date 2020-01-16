@@ -8,7 +8,6 @@ import {
   prettyPrintAmount
 } from 'turtlecoin-wallet-backend';
 import { ipcRenderer } from 'electron';
-import log from 'electron-log';
 import { createObjectCsvWriter } from 'csv-writer';
 import { atomicToHuman, convertTimestamp } from '../mainWindow/utils/utils';
 
@@ -141,21 +140,8 @@ export default class Backend {
     this.wallet.scanCoinbaseTransactions(value);
   }
 
-  async sendTransaction(transaction: any): void {
-    const { address, amount, paymentID } = transaction;
-
-    const destinations = [[address, amount]];
-
-    const result = await this.wallet.sendTransactionAdvanced(
-      destinations, // destinations
-      undefined, // mixin
-      undefined, // fee
-      paymentID, // paymentID
-      undefined, // subwalletsToTakeFrom
-      undefined, // changeAddress
-      false, // relayToNetwork
-      false // sendAll
-    );
+  async sendTransaction(hash: string): void {
+    const result = await this.wallet.sendPreparedTransaction(hash);
 
     if (result.success) {
       console.log(
@@ -180,23 +166,6 @@ export default class Backend {
       };
       ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
     }
-
-    /* const [hash, error] = await this.wallet.sendTransactionBasic(
-      address,
-      amount,
-      paymentID
-    );
-
-    if (hash) {
-      const response = { status: 'SUCCESS', hash, error };
-      ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
-    }
-    if (error) {
-      error.errorString = error.toString();
-      const response = { status: 'FAILURE', hash, error };
-      ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
-    }
-    this.getTransactions(this.getLastTxAmountRequested() + 1); */
   }
 
   async prepareTransaction(transaction): void {
@@ -214,8 +183,6 @@ export default class Backend {
       false, // relayToNetwork
       false // sendAll
     );
-
-    log.info(result);
 
     if (result.success) {
       const response = {

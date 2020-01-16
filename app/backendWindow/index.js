@@ -94,6 +94,9 @@ function parseMessage(message: any) {
     case 'prepareTransactionRequest':
       backend.prepareTransaction(data);
       break;
+    case 'sendTransactionRequest':
+      backend.sendTransaction(data);
+      break;
     default:
       log.info(message);
       break;
