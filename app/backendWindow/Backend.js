@@ -7,6 +7,7 @@ import {
   LogLevel,
   prettyPrintAmount
 } from 'turtlecoin-wallet-backend';
+import log from 'electron-log';
 import { ipcRenderer } from 'electron';
 import { createObjectCsvWriter } from 'csv-writer';
 import { atomicToHuman, convertTimestamp } from '../mainWindow/utils/utils';
@@ -169,9 +170,9 @@ export default class Backend {
   }
 
   async prepareTransaction(transaction): void {
-    const { address, amount, paymentID } = transaction;
+    const { address, amount, paymentID, sendAll } = transaction;
 
-    const destinations = [[address, amount]];
+    const destinations = [[address, sendAll ? 100000 : amount]];
 
     const result = await this.wallet.sendTransactionAdvanced(
       destinations, // destinations
@@ -181,16 +182,20 @@ export default class Backend {
       undefined, // subwalletsToTakeFrom
       undefined, // changeAddress
       false, // relayToNetwork
-      false // sendAll
+      sendAll // sendAll
     );
 
+    log.info(result);
+
     if (result.success) {
+      const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+      const balance = parseInt(unlockedBalance + lockedBalance, 10);
       const response = {
         status: 'SUCCESS',
         hash: result.transactionHash,
         address,
         paymentID,
-        amount,
+        amount: sendAll ? balance : amount,
         fee: result.fee,
         nodeFee: this.wallet.getNodeFee()[1],
         error: undefined

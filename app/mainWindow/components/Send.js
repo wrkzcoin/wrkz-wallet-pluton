@@ -45,7 +45,8 @@ type State = {
   pageAnimationIn: string,
   selectedContact: any,
   menuIsOpen: boolean,
-  nodeFee: number
+  nodeFee: number,
+  sendAll: boolean
 };
 
 const customStyles = {
@@ -96,7 +97,8 @@ export default class Send extends Component<Props, State> {
       pageAnimationIn: loginCounter.getAnimation('/send'),
       selectedContact: null,
       menuIsOpen: false,
-      nodeFee: session.getNodeFee()
+      nodeFee: session.getNodeFee(),
+      sendAll: false
     };
 
     this.generatePaymentID = this.generatePaymentID.bind(this);
@@ -287,24 +289,28 @@ export default class Send extends Component<Props, State> {
   };
 
   prepareTransaction = (event: any) => {
-    event.preventDefault();
+    if (event) event.preventDefault();
     const {
       sendToAddress,
       paymentID,
       darkMode,
       displayCurrency,
       enteredAmount,
-      fiatPrice
+      fiatPrice,
+      sendAll
     } = this.state;
     const { textColor } = uiType(darkMode);
-    const sufficientFunds =
-      (session.getUnlockedBalance() + session.getLockedBalance()) / 100 >=
-      Number(enteredAmount);
 
-    const sufficientUnlockedFunds =
-      session.getUnlockedBalance() > Number(enteredAmount) / 100;
+    const sufficientFunds = sendAll
+      ? true
+      : (session.getUnlockedBalance() + session.getLockedBalance()) / 100 >=
+        Number(enteredAmount);
 
-    if (sendToAddress === '' || enteredAmount === '') {
+    const sufficientUnlockedFunds = sendAll
+      ? true
+      : session.getUnlockedBalance() > Number(enteredAmount) / 100;
+
+    if (!sendAll && (sendToAddress === '' || enteredAmount === '')) {
       return;
     }
 
@@ -354,90 +360,8 @@ export default class Send extends Component<Props, State> {
         displayCurrency === 'TRTL'
           ? Number(enteredAmount) * 100
           : (Number(enteredAmount) * 100) / fiatPrice,
-      paymentID
-    };
-    ipcRenderer.send(
-      'fromFrontend',
-      'prepareTransactionRequest',
-      transactionData
-    );
-    /*
-    const message = (
-      <div>
-        <center>
-          <p className={`title ${textColor}`}>Confirm Transaction</p>
-        </center>
-        <br />
-        <p className={`subtitle ${textColor}`}>
-          <b>Send to:</b>
-          <br />
-          {sendToAddress}
-        </p>
-        <p className={`subtitle ${textColor}`}>
-          <b>Amount (w/ fee):</b>
-          <br />
-          {displayCurrency === 'fiat' &&
-            symbolLocation === 'prefix' &&
-            fiatSymbol}
-          {totalAmount}
-          {displayCurrency === 'fiat' &&
-            symbolLocation === 'suffix' &&
-            fiatSymbol}
-        </p>
-        {paymentID !== '' && (
-          <p className={`subtitle ${textColor}`}>
-            <b>Payment ID:</b>
-            <br />
-            {paymentID}
-          </p>
-        )}
-      </div>
-    );
-    eventEmitter.emit(
-      'openModal',
-      message,
-      'Send it!',
-      'Wait a minute...',
-      'prepareTransaction'
-    ); */
-  };
-
-  sendTransaction = async () => {
-    const { displayCurrency, fiatPrice, transactionInProgress } = this.state;
-
-    if (transactionInProgress) {
-      return;
-    }
-
-    eventEmitter.emit('transactionInProgress');
-
-    const notSynced = session.getSyncStatus() < 99.99;
-    const { sendToAddress, enteredAmount, paymentID, darkMode } = this.state;
-    const { textColor } = uiType(darkMode);
-
-    if (notSynced) {
-      const message = (
-        <div>
-          <center>
-            <p className="title has-text-danger">Error!</p>
-          </center>
-          <br />
-          <p className={`subtitle ${textColor}`}>
-            The transaction was not successful. The wallet isn&apos;t synced.
-            Wait until you are synced and try again.
-          </p>
-        </div>
-      );
-      eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
-      return;
-    }
-    const transactionData = {
-      address: sendToAddress,
-      amount:
-        displayCurrency === 'TRTL'
-          ? Number(enteredAmount) * 100
-          : (Number(enteredAmount) * 100) / fiatPrice,
-      paymentID
+      paymentID,
+      sendAll
     };
 
     ipcRenderer.send(
@@ -456,9 +380,10 @@ export default class Send extends Component<Props, State> {
       selectedContact: { label: sendToAddress, value: sendToAddress },
       enteredAmount: String(amount / 100),
       sendToAddress,
-      paymentID
+      paymentID,
+      sendAll: false
     });
-    this.sendTransaction();
+    this.prepareTransaction();
   };
 
   generatePaymentID = () => {
@@ -559,7 +484,8 @@ export default class Send extends Component<Props, State> {
       sendToAddress,
       pageAnimationIn,
       selectedContact,
-      menuIsOpen
+      menuIsOpen,
+      sendAll
     } = this.state;
 
     const exampleAmount =
@@ -569,8 +495,8 @@ export default class Send extends Component<Props, State> {
       backgroundColor,
       textColor,
       elementBaseColor,
-      linkColor,
-      toolTipColor
+      toolTipColor,
+      linkColor
     } = uiType(darkMode);
 
     const addressInput = (
@@ -646,23 +572,35 @@ export default class Send extends Component<Props, State> {
                     <input
                       className="input is-large"
                       type="text"
-                      placeholder={`How much to send (eg. ${
-                        displayCurrency === 'fiat' ? exampleAmount : '100 TRTL'
-                      })`}
+                      placeholder={
+                        sendAll
+                          ? 'Sending entire wallet balance '
+                          : `How much to send (eg. ${
+                              displayCurrency === 'fiat'
+                                ? exampleAmount
+                                : '100 TRTL'
+                            })`
+                      }
                       value={enteredAmount}
                       onChange={this.handleAmountChange}
                       id="amount"
+                      disabled={sendAll}
                     />
-                    <a
-                      onClick={this.sendAll}
-                      onKeyPress={this.sendAll}
-                      role="button"
-                      tabIndex={0}
-                      className={linkColor}
-                      onMouseDown={event => event.preventDefault()}
-                    >
-                      {il8n.send_all}
-                    </a>
+                    <label className="checkbox">
+                      <p className={textColor}>
+                        <input
+                          type="checkbox"
+                          checked={sendAll}
+                          onChange={event => {
+                            this.setState({
+                              sendAll: event.target.checked,
+                              enteredAmount: ''
+                            });
+                          }}
+                        />{' '}
+                        Send all
+                      </p>
+                    </label>
                   </label>
                 </div>
               </div>
