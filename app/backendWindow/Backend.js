@@ -362,6 +362,7 @@ export default class Backend {
     this.setDaemon(new Daemon(host, port));
     await this.wallet.swapNode(this.daemon);
     this.getConnectionInfo();
+    this.getNodeFee();
   }
 
   getConnectionInfo(): void {
