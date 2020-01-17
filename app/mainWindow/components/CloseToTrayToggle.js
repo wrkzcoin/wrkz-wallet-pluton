@@ -40,7 +40,7 @@ export default class CloseToTrayToggle extends Component<Props, State> {
     this.setState({
       closeToTray: false
     });
-    configManager.modifyConfig('closeToTray', true);
+    configManager.modifyConfig('closeToTray', false);
     ipcRenderer.send('closeToTrayToggle', false);
   };
 

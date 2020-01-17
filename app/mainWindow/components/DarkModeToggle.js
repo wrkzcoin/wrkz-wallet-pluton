@@ -39,7 +39,7 @@ export default class DarkModeToggle extends Component<Props, State> {
       darkMode: false
     });
     config.darkMode = false;
-    configManager.modifyConfig('darkmode', true);
+    configManager.modifyConfig('darkmode', false);
     eventEmitter.emit('darkmodeoff');
   };
 
