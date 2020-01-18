@@ -12,12 +12,6 @@
     "keywords": ""
   },
   {
-    "settingName": "Wrkzd Log File Location",
-    "location": "node",
-    "description": "Set the path to the Wrkzd log",
-    "keywords": ""
-  },
-  {
     "settingName": "Wallet Settings",
     "location": "scan",
     "description": "All settings related to the wallet itself",

@@ -20,7 +20,7 @@ import iConfig from './constants/config';
 import AutoUpdater from './wallet/autoUpdater';
 import LoginCounter from './wallet/loginCounter';
 import { uiType } from './utils/utils';
-import ProtonConfig from './wallet/protonConfig';
+import PlutonConfig from './wallet/plutonConfig';
 
 export function savedInInstallDir(savePath: string) {
   const programDirectory = path.resolve(remote.app.getAppPath(), '../../');
@@ -141,7 +141,7 @@ ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
   const { data, messageType } = message;
   switch (messageType) {
     case 'config':
-      configManager = new ProtonConfig(data.config, data.configPath);
+      configManager = new PlutonConfig(data.config, data.configPath);
       break;
     default:
       log.info(data);

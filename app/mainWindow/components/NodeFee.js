@@ -26,7 +26,7 @@ export default class NodeFee extends Component<Props, State> {
     super(props);
     this.state = {
       nodeFee: session.getNodeFee() || 0,
-	  connectednode: session.daemon.host + ':' + session.daemon.port
+      connectednode: (session.getDaemonConnectionInfo()) ? (session.getDaemonConnectionInfo().host + ':' + session.getDaemonConnectionInfo().port): 'Connecting, please wait...'
     };
     this.handleNewNodeFee = this.handleNewNodeFee.bind(this);
   }
@@ -42,7 +42,7 @@ export default class NodeFee extends Component<Props, State> {
   handleNewNodeFee = () => {
     this.setState({
       nodeFee: session.getNodeFee(),
-      connectednode: session.daemon.host + ':' + session.daemon.port,
+      connectednode: (session.getDaemonConnectionInfo()) ? (session.getDaemonConnectionInfo().host + ':' + session.getDaemonConnectionInfo().port): 'Connecting, please wait...'
     });
   };
 

@@ -5,6 +5,7 @@ import request from 'request-promise';
 import log from 'electron-log';
 import { config, eventEmitter } from '../index';
 import { roundToNearestHundredth } from '../utils/utils';
+import Configure from '../../Configure';
 
 export default class WalletSession {
   loginFailed: boolean;
@@ -39,6 +40,7 @@ export default class WalletSession {
     this.selectedFiat = config.selectedFiat;
     this.fiatPrice = 0;
     this.getFiatPrice(this.selectedFiat);
+    this.updateNodeList();
   }
 
   setPreparedTransactionHash(hash: string): void {
@@ -103,7 +105,7 @@ export default class WalletSession {
   }
 
   getFiatPrice = async (fiat: string) => {
-    const apiURL = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${fiat}&ids=turtlecoin&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=7d`;
+    const apiURL = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${fiat}&ids=${Configure.coinName.toLowerCase()}&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=7d`;
 
     const requestOptions = {
       method: 'GET',
@@ -120,6 +122,40 @@ export default class WalletSession {
     } catch (err) {
       log.debug(`Request failed, CoinGecko API call error: \n`, err);
       return undefined;
+    }
+  };
+
+  updateNodeList = async () => {
+    const apiURL = `${Configure.nodeListURL}`;
+
+    const requestOptions = {
+      method: 'GET',
+      timeout: Configure.requestTimeout,
+      uri: apiURL,
+      headers: {},
+      json: true,
+      gzip: false
+    };
+    try {
+      const result = await request(requestOptions);
+      if (result.nodes) {
+         const activeNodes = [];
+         for (let i = 0; i < result.nodes.length; i++) {
+            if (result.nodes[i].online === true) {
+               activeNodes.push(
+                  {
+                     value: result.nodes[i].url + ':' + result.nodes[i].port.toString(),
+                     label: result.nodes[i].url + ':' + result.nodes[i].port.toString()
+                  });
+            }
+         }
+         log.debug(
+            `Get Total Online nodes: ${result.nodes.length}`
+         );
+         this.daemons = activeNodes;
+      }
+    } catch (err) {
+      log.debug(`Failed to get node list from API: : \n`, err);
     }
   };
 

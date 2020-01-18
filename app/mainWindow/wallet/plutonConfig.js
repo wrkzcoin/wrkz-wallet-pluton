@@ -5,7 +5,7 @@ import fs from 'fs';
 import log from 'electron-log';
 import { config } from '../index';
 
-export default class ProtonConfig {
+export default class PlutonConfig {
   configPath;
 
   constructor(pConfig: any, configPath: string) {
