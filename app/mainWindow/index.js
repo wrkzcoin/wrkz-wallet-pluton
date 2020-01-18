@@ -38,8 +38,8 @@ export function savedInInstallDir(savePath: string) {
 const homedir = os.homedir();
 
 export const directories = [
-  `${homedir}/.protonwallet`,
-  `${homedir}/.protonwallet/logs`
+  `${homedir}/.plutonwallet`,
+  `${homedir}/.plutonwallet/logs`
 ];
 
 export const il8n = new LocalizedStrings({
@@ -388,7 +388,7 @@ ipcRenderer.on('handleSaveAs', () => {
     defaultPath: remote.app.getPath('documents'),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
+        name: 'WrkzCoin Wallet File (v0)',
         extensions: ['wallet']
       }
     ]
@@ -428,17 +428,17 @@ eventEmitter.on('handleOpen', handleOpen);
 
 function handleAbout() {
   remote.shell.openExternal(
-    'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+    `${Configure.GitHubRepo}/issues#readme`
   );
 }
 
 function handleHelp() {
-  remote.shell.openExternal('https://discord.gg/P7urHQs');
+  remote.shell.openExternal(`${Configure.DiscordURL}`)
 }
 
 function handleIssues() {
   remote.shell.openExternal(
-    'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+    `${Configure.GitHubRepo}/issues`
   );
 }
 
@@ -633,7 +633,7 @@ function handleOpen() {
     defaultPath: remote.app.getPath('documents'),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
+        name: 'WrkzCoin Wallet File (v0)',
         extensions: ['wallet']
       }
     ]
