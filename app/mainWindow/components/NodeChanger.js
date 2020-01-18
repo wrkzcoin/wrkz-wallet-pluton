@@ -63,7 +63,7 @@ export default class NodeChanger extends Component<Props, State> {
   }
 
   refreshNodeFee = () => {
-    NodeFee.nodeFee = session.daemon.feeAmount
+    NodeFee.nodeFee = session.getNodeFee() || 0;
   };
 
   resetConnectionString = () => {
@@ -171,7 +171,16 @@ export default class NodeChanger extends Component<Props, State> {
                 className="input has-icons-left"
                 type="text"
                 value={connectionString}
-                onChange={this.handleNodeInputChange}
+                onKeyPress={event => {
+                  if (event.key === 'Enter') {
+                    this.changeNode();
+                  }
+                }}
+                onChange={event => {
+                  this.setState({
+                    connectionString: event.target.value.trim()
+                  });
+                }}
               />
             )}
             {ssl === true && (
@@ -222,7 +231,7 @@ export default class NodeChanger extends Component<Props, State> {
           )}
           {nodeChangeInProgress === false && (
             <div className="control">
-              <button className="button is-success">
+              <button className="button is-success" onClick={this.changeNode}>
                 <span className="icon is-small">
                   <i className="fa fa-network-wired" />
                 </span>
@@ -234,4 +243,4 @@ export default class NodeChanger extends Component<Props, State> {
       </form>
     );
   }
-} 
+}
