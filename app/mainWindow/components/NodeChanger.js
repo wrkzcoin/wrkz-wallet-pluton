@@ -3,6 +3,7 @@
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
+import Select from 'react-select';
 import { remote, ipcRenderer } from 'electron';
 import { il8n, eventEmitter, session, configManager } from '../index';
 import { uiType } from '../utils/utils';
@@ -66,6 +67,10 @@ export default class NodeChanger extends Component<Props, State> {
     eventEmitter.off('gotNodeFee', this.refreshNodeFee);
   }
 
+  refreshNodeFee = () => {
+    NodeFee.nodeFee = session.daemon.feeAmount
+  };
+
   resetConnectionString = () => {
     this.setState({
       connectionString: `${session.getDaemonConnectionInfo().host}:${
@@ -74,6 +79,29 @@ export default class NodeChanger extends Component<Props, State> {
       nodeChangeInProgress: false,
       ssl: session.getDaemonConnectionInfo().ssl
     });
+  };
+
+  handleNodeListChange = (selectedOptions, data) => {
+    this.setState({ selectedOptions });
+    this.setState({ connectednode: selectedOptions.label });
+  }
+
+  handleNodeChangeInProgress = () => {
+    this.setState({
+      nodeChangeInProgress: true,
+      ssl: undefined,
+      node_NewFee: undefined
+    });
+  };
+
+  handleNodeChangeComplete = () => {
+    this.setState({
+      nodeChangeInProgress: false,
+      connectednode: `${session.daemonHost}:${session.daemonPort}`,
+      ssl: session.daemon.ssl,
+      node_NewFee: daemonFee.nodeFeeAmount || 0
+    });
+    log.debug(`Network Fee ${daemonFee.nodeFeeAmount  || 0}`);
   };
 
   changeNode = () => {
