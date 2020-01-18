@@ -29,21 +29,16 @@ export default class NodeChanger extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.daemonInfo =
-      session && session.wallet ? session.wallet.getDaemonConnectionInfo() : '';
-    this.daemonFee =
-      session && session.wallet ? session.wallet.getNodeFee() : '';
     this.state = {
       connectionString:
-        `${session.getDaemonConnectionInfo().host}:${
-          session.getDaemonConnectionInfo().port
-        }` || 'Connecting, please wait...',
+        `${session.getDaemonConnectionInfo().host ? (session.getDaemonConnectionInfo().host + ':' +session.getDaemonConnectionInfo().port) : 'Connecting, please wait...'}`,
       nodeChangeInProgress: false,
       ssl: session.getDaemonConnectionInfo().ssl || false,
       Selected_Node: Configure.defaultDaemon,
-      Fee: this.daemonFee.nodeFeeAmount
+      Fee: session.getNodeFee() || 0
     };
     this.changeNode = this.changeNode.bind(this);
+    this.handleNodeInputChange = this.handleNodeInputChange.bind(this);
     this.resetConnectionString = this.resetConnectionString.bind(this);
     this.handleNewNode = this.handleNewNode.bind(this);
     this.handleNodeListChange = this.handleNodeListChange.bind(this);
@@ -73,17 +68,19 @@ export default class NodeChanger extends Component<Props, State> {
 
   resetConnectionString = () => {
     this.setState({
-      connectionString: `${session.getDaemonConnectionInfo().host}:${
-        session.getDaemonConnectionInfo().port
-      }`,
+      connectionString: `${session.getDaemonConnectionInfo().host ? (session.getDaemonConnectionInfo().host + ':' +session.getDaemonConnectionInfo().port) : 'Connecting, please wait...'}`,
       nodeChangeInProgress: false,
       ssl: session.getDaemonConnectionInfo().ssl
     });
   };
 
+  handleNodeInputChange = (event: any) => {
+    this.setState({ connectionString: event.target.value.trim() });
+  };
+
   handleNodeListChange = (selectedOptions, data) => {
     this.setState({ selectedOptions });
-    this.setState({ connectednode: selectedOptions.label });
+    this.setState({ connectionString: selectedOptions.label });
   }
 
   handleNodeChangeInProgress = () => {
@@ -97,11 +94,11 @@ export default class NodeChanger extends Component<Props, State> {
   handleNodeChangeComplete = () => {
     this.setState({
       nodeChangeInProgress: false,
-      connectednode: `${session.daemonHost}:${session.daemonPort}`,
+      connectionString: `${session.daemonHost}:${session.daemonPort}`,
       ssl: session.daemon.ssl,
-      node_NewFee: daemonFee.nodeFeeAmount || 0
+      node_NewFee: session.getNodeFee() || 0
     });
-    log.debug(`Network Fee ${daemonFee.nodeFeeAmount  || 0}`);
+    log.debug(`Network Fee ${session.getNodeFee()  || 0}`);
   };
 
   changeNode = () => {
