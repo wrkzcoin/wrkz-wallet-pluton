@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { session, eventEmitter, il8n } from '../index';
 import { atomicToHuman } from '../utils/utils';
-import Configure from '../Configure';
+import Configure from '../../Configure';
 
 type Props = {
   size: string,

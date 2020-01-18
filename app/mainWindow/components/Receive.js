@@ -1,12 +1,11 @@
 // Copyright (C) 2019 ExtraHash
-// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 import crypto from 'crypto';
 import React, { Component } from 'react';
 import QRCode from 'qrcode.react';
 import ReactTooltip from 'react-tooltip';
-import Configure from '../Configure';
+import Configure from '../../Configure';
 
 import {
   createIntegratedAddress,

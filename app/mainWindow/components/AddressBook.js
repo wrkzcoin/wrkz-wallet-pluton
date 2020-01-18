@@ -16,7 +16,7 @@ import Redirector from './Redirector';
 import { uiType } from '../utils/utils';
 import { addressList, directories, loginCounter, config } from '../index';
 import routes from '../constants/routes';
-import Configure from '../Configure';
+import Configure from '../../Configure';
 
 type State = {
   darkMode: boolean,

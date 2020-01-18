@@ -1,11 +1,10 @@
 // Copyright (C) 2019 ExtraHash
-// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { clipboard, remote } from 'electron';
-import Configure from '../Configure';
+import Configure from '../../Configure';
 import log from 'electron-log';
 import jdenticon from 'jdenticon';
 import { WalletBackend, Daemon } from 'turtlecoin-wallet-backend';

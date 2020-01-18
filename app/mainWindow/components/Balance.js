@@ -1,5 +1,4 @@
 // Copyright (C) 2019 ExtraHash
-// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 import React, { Component } from 'react';
@@ -7,7 +6,7 @@ import ReactLoading from 'react-loading';
 import ReactTooltip from 'react-tooltip';
 import { session, il8n, eventEmitter, config, configManager } from '../index';
 import { formatLikeCurrency, atomicToHuman } from '../utils/utils';
-import Configure from '../Configure';
+import Configure from '../../Configure';
 
 type Props = {
   size: string,

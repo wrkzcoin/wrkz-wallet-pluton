@@ -1,5 +1,4 @@
 // Copyright (C) 2019 ExtraHash
-// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 import React, { Component, Fragment } from 'react';
@@ -25,7 +24,7 @@ import {
 } from '../index';
 import routes from '../constants/routes';
 import settings from '../constants/settings';
-import Configure from '../Configure';
+import Configure from '../../Configure';
 
 type Props = {
   query: string

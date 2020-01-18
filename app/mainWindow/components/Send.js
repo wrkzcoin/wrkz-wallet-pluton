@@ -1,5 +1,4 @@
 // Copyright (C) 2019 ExtraHash
-// Copyright (C) 2019, WrkzCoin
 //
 // Please see the included LICENSE file for more information.
 
@@ -25,7 +24,7 @@ import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import { uiType, atomicToHuman, search } from '../utils/utils';
 import donateInfo from '../constants/donateInfo.json';
-import Configure from '../Configure';
+import Configure from '../../Configure';
 
 type Props = {
   uriAddress?: string,
