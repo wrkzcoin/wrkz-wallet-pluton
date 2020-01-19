@@ -13,6 +13,10 @@ import { createObjectCsvWriter } from 'csv-writer';
 import { atomicToHuman, convertTimestamp } from '../mainWindow/utils/utils';
 import Configure from '../Configure';
 
+export function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export default class Backend {
   notifications: boolean;
 
@@ -143,6 +147,9 @@ export default class Backend {
   }
 
   async sendTransaction(hash: string): void {
+    /* Wait for UI to load before blocking thread */
+    await delay(500);
+
     const result = await this.wallet.sendPreparedTransaction(hash);
 
     if (result.success) {
@@ -159,6 +166,8 @@ export default class Backend {
       ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
       this.getTransactions(this.getLastTxAmountRequested() + 1);
     } else {
+      /* TODO: Optionally allow retries in case of network error? */
+      this.wallet.deletePreparedTransaction(hash);
       console.log(`Failed to send transaction: ${result.error.toString()}`);
       result.error.errorString = result.error.toString();
       const response = {
@@ -175,32 +184,46 @@ export default class Backend {
 
     const networkHeight: number = this.daemon.getNetworkBlockCount();
 
+    const [feeAddress, nodeFee] = this.wallet.getNodeFee();
+
     let txFee = Configure.minimumFee;
 
     const { address, amount, paymentID, sendAll } = transaction;
 
-    let actualAmount = amount;
+    const payments = [];
 
-    const destinations = [[address, sendAll ? 1 : amount]];
+    if (sendAll) {
+        payments.push([
+            address,
+            (networkHeight >= Configure.feePerByteHeight) ? 1 : (unlockedBalance - nodeFee - txFee), /* Amount does not matter for sendAll destination */
+        ]);
+    } else {
+        payments.push([
+            address,
+            amount,
+        ]);
+    }
 
     const result = await this.wallet.sendTransactionAdvanced(
-      destinations, // destinations
+      payments, // destinations
       undefined, // mixin
       (networkHeight >= Configure.feePerByteHeight) ? undefined : {isFixedFee: true, fixedFee: txFee}, // fee
       paymentID, // paymentID
       undefined, // subwalletsToTakeFrom
       undefined, // changeAddress
       false, // relayToNetwork
-      sendAll ? true : false // sendAll
+      sendAll // sendAll
     );
 
     log.info(result);
 
     if (result.success) {
-      const balance = parseInt(unlockedBalance, 10);
+      let actualAmount = amount;
+
       if (networkHeight >= Configure.feePerByteHeight) {
         txFee = result.fee;
       }
+
       if (sendAll) {
         let transactionSum = 0;
 
@@ -212,7 +235,7 @@ export default class Backend {
         }
         actualAmount = transactionSum
                      - txFee
-                     - (this.wallet.getNodeFee() ? this.wallet.getNodeFee()[1] : 0);
+                     - nodeFee;
       }
       const response = {
         status: 'SUCCESS',
@@ -221,7 +244,7 @@ export default class Backend {
         paymentID,
         amount: actualAmount,
         fee: txFee,
-        nodeFee: this.wallet.getNodeFee()[1],
+        nodeFee: nodeFee,
         error: undefined
       };
       ipcRenderer.send('fromBackend', 'prepareTransactionResponse', response);
@@ -236,7 +259,7 @@ export default class Backend {
         paymentID,
         amount,
         fee: txFee,
-        nodeFee: this.wallet.getNodeFee()[1],
+        nodeFee: nodeFee,
         error: result.error
       };
       ipcRenderer.send('fromBackend', 'prepareTransactionResponse', response);

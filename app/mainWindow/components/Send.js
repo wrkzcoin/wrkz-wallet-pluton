@@ -309,12 +309,12 @@ export default class Send extends Component<Props, State> {
 
     const sufficientFunds = sendAll
       ? true
-      : (session.getUnlockedBalance() + session.getLockedBalance()) / 100 >=
+      : (session.getUnlockedBalance() + session.getLockedBalance()) / (10 ** Configure.decimalPlaces) >=
         Number(enteredAmount);
 
     const sufficientUnlockedFunds = sendAll
       ? true
-      : session.getUnlockedBalance() > Number(enteredAmount) / 100;
+      : session.getUnlockedBalance() > Number(enteredAmount) / (10 ** Configure.decimalPlaces);
 
     if (!sendAll && (sendToAddress === '' || enteredAmount === '')) {
       return;
@@ -364,8 +364,8 @@ export default class Send extends Component<Props, State> {
       address: sendToAddress,
       amount:
         displayCurrency === Configure.ticker
-          ? Number(enteredAmount) * 100
-          : (Number(enteredAmount) * 100) / fiatPrice,
+          ? Number(enteredAmount) * (10 ** Configure.decimalPlaces)
+          : (Number(enteredAmount) * (10 ** Configure.decimalPlaces)) / fiatPrice,
       paymentID,
       sendAll
     };
@@ -384,7 +384,7 @@ export default class Send extends Component<Props, State> {
 
     await this.setState({
       selectedContact: { label: sendToAddress, value: sendToAddress },
-      enteredAmount: String((amount + Configure.minimumFee) / 100),
+      enteredAmount: String(amount / (10 ** Configure.decimalPlaces)),
       sendToAddress,
       paymentID,
       sendAll: false
@@ -420,11 +420,11 @@ export default class Send extends Component<Props, State> {
     const { unlockedBalance, fiatPrice, displayCurrency, nodeFee } = this.state;
 
     const totalAmount =
-      unlockedBalance - Configure.minimumFee - parseInt(nodeFee, 10) <= 0 ? 0 : unlockedBalance;
+      unlockedBalance - parseInt(nodeFee, 10) <= 0 ? 0 : unlockedBalance;
     const enteredAmount =
-      unlockedBalance - Configure.minimumFee - parseInt(nodeFee, 10) <= 0
+      unlockedBalance - parseInt(nodeFee, 10) <= 0
         ? 0
-        : totalAmount - Configure.minimumFee - parseInt(nodeFee, 10);
+        : totalAmount - parseInt(nodeFee, 10);
     this.setState({
       enteredAmount:
         displayCurrency === Configure.ticker
@@ -584,7 +584,7 @@ export default class Send extends Component<Props, State> {
                           : `How much to send (eg. ${
                               displayCurrency === 'fiat'
                                 ? exampleAmount
-                                : '1000 WRKZ'
+                                : '1000 ' + Configure.ticker
                             })`
                       }
                       value={enteredAmount}
