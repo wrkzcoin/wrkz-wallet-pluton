@@ -109,7 +109,21 @@ jobs:
           OUT_FILENAME="${DATE_WITH_TIME}-${COMMIT_SHA::8}-${{ matrix.target }}-${{ steps.before_deploy.outputs.file_name }}"
           URL_FILE="\`\`\`${BINARY_UPLOAD}${DEST_DIR}/$OUT_FILENAME\`\`\`"
           BUILD_CONTENT="$RUNNER_OS-${{ matrix.target }}-$SHA8 Size: $FILESIZE "$URL_FILE
-          if [ "$RUNNER_OS" == "Windows" ] || [ "$RUNNER_OS" == "macOS" ]; then
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            resource="./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}"
+            contentType="application/octet-stream"
+            dateValue=`date -R`
+            stringToSign="PUT\n\n${contentType}\n${dateValue}\n${resource}"
+            s3Key=${AWS_ACCESS_KEY_ID}
+            s3Secret=${AWS_SECRET_ACCESS_KEY}
+            signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3Secret} -binary | base64`
+            curl -X PUT -T "./${SOURCE_DIR}/${{ steps.before_deploy.outputs.file_name }}" \
+              -H "Host: wrkzcoin.s3.fr-par.scw.cloud" \
+              -H "Date: ${dateValue}" \
+              -H "Content-Type: ${contentType}" \
+              -H "Authorization: AWS ${s3Key}:${signature}" \
+              "${BINARY_UPLOAD}${DEST_DIR}/${OUT_FILENAME}"
+          elif [ "$RUNNER_OS" == "macOS" ]; then
             ~/.local/bin/aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
             ~/.local/bin/aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
             ~/.local/bin/aws configure set default.region ${AWS_REGION}
