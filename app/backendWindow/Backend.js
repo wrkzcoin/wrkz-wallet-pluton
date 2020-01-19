@@ -171,13 +171,17 @@ export default class Backend {
   }
 
   async prepareTransaction(transaction): void {
+    const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+
     const networkHeight: number = this.daemon.getNetworkBlockCount();
 
     let txFee = Configure.minimumFee;
 
     const { address, amount, paymentID, sendAll } = transaction;
 
-    const destinations = [[address, sendAll ? 100000 : amount]];
+    let actualAmount = amount;
+
+    const destinations = [[address, sendAll ? 1 : amount]];
 
     const result = await this.wallet.sendTransactionAdvanced(
       destinations, // destinations
@@ -187,21 +191,36 @@ export default class Backend {
       undefined, // subwalletsToTakeFrom
       undefined, // changeAddress
       false, // relayToNetwork
-      sendAll // sendAll
+      sendAll ? true : false // sendAll
     );
 
     log.info(result);
 
     if (result.success) {
-      const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
-      const balance = parseInt(unlockedBalance + lockedBalance, 10);
+      const balance = parseInt(unlockedBalance, 10);
+      if (networkHeight >= Configure.feePerByteHeight) {
+        txFee = result.fee;
+      }
+      if (sendAll) {
+        let transactionSum = 0;
+
+        /* We could just get the sum by calling getBalance.. but it's
+        * possibly just changed. Safest to iterate over prepared
+        * transaction and calculate it. */
+        for (const input of result.preparedTransaction.inputs) {
+          transactionSum += input.input.amount;
+        }
+        actualAmount = transactionSum
+                     - txFee
+                     - (this.wallet.getNodeFee() ? this.wallet.getNodeFee()[1] : 0);
+      }
       const response = {
         status: 'SUCCESS',
         hash: result.transactionHash,
         address,
         paymentID,
-        amount: sendAll ? balance : amount,
-        fee: result.fee,
+        amount: actualAmount,
+        fee: txFee,
         nodeFee: this.wallet.getNodeFee()[1],
         error: undefined
       };
@@ -216,7 +235,7 @@ export default class Backend {
         address,
         paymentID,
         amount,
-        fee: result.fee,
+        fee: txFee,
         nodeFee: this.wallet.getNodeFee()[1],
         error: result.error
       };
@@ -414,7 +433,7 @@ export default class Backend {
           body: `You've just received ${atomicToHuman(
             transaction.totalAmount(),
             true
-          )} TRTL.`
+          )} {Configure.ticker}.`
         });
       }
     });
