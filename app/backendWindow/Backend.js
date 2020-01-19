@@ -149,7 +149,7 @@ export default class Backend {
       console.log(
         `Sent transaction, hash ${
           result.transactionHash
-        }, fee ${prettyPrintAmount(result.fee)}`
+        }, fee ${prettyPrintAmount(result.fee, Configure)}`
       );
       const response = {
         status: 'SUCCESS',
@@ -171,6 +171,10 @@ export default class Backend {
   }
 
   async prepareTransaction(transaction): void {
+    const networkHeight: number = this.daemon.getNetworkBlockCount();
+
+    let txFee = Configure.minimumFee;
+
     const { address, amount, paymentID, sendAll } = transaction;
 
     const destinations = [[address, sendAll ? 100000 : amount]];
@@ -178,7 +182,7 @@ export default class Backend {
     const result = await this.wallet.sendTransactionAdvanced(
       destinations, // destinations
       undefined, // mixin
-      undefined, // fee
+      (networkHeight >= Configure.feePerByteHeight) ? undefined : {isFixedFee: true, fixedFee: txFee}, // fee
       paymentID, // paymentID
       undefined, // subwalletsToTakeFrom
       undefined, // changeAddress

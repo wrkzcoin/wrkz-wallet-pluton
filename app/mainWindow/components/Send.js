@@ -232,7 +232,12 @@ export default class Send extends Component<Props, State> {
     if (messageType === 'prepareTransactionResponse') {
       eventEmitter.emit('transactionCancel');
       if (data.status === 'SUCCESS') {
+        let networkHeight = session.getNetworkBlockHeight();
+        let txFee = Configure.minimumFee;
         const { address, paymentID, amount, fee, nodeFee, hash } = data;
+        if (networkHeight >= Configure.feePerByteHeight) {
+          txFee = fee;
+        }
         session.setPreparedTransactionHash(hash);
         const modalMessage = (
           <div>
@@ -248,17 +253,17 @@ export default class Send extends Component<Props, State> {
             <p className={`subtitle ${textColor}`}>
               <b>Total Amount: (includes fees)</b>
               <br />
-              {atomicToHuman(amount + nodeFee + fee, true)} TRTL
+              {atomicToHuman(amount + nodeFee + txFee, true)} {Configure.ticker}
             </p>
             <p className={`subtitle ${textColor}`}>
               <b>Fee:</b>
               <br />
-              {atomicToHuman(nodeFee + fee, true)} TRTL
+              {atomicToHuman(nodeFee + txFee, true)} {Configure.ticker}
               {nodeFee > 0 &&
                 ` (including a node fee of ${atomicToHuman(
                   nodeFee,
                   true
-                )} TRTL)`}
+                )} ${Configure.ticker})`}
             </p>{' '}
             {paymentID !== '' && (
               <p className={`subtitle ${textColor}`}>
@@ -358,7 +363,7 @@ export default class Send extends Component<Props, State> {
     const transactionData = {
       address: sendToAddress,
       amount:
-        displayCurrency === 'TRTL'
+        displayCurrency === Configure.ticker
           ? Number(enteredAmount) * 100
           : (Number(enteredAmount) * 100) / fiatPrice,
       paymentID,
