@@ -83,6 +83,11 @@ const Configure = new function() {
     this.minimumFee = 50000;
 
     /**
+     * Fee per byte height
+     */
+    this.feePerByteHeight = 832000;
+
+    /**
      * Mapping of height to mixin maximum and mixin minimum
      */
     this.mixinLimits = new MixinLimits([

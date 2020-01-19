@@ -1,15 +1,15 @@
 {
   "name": "pluton-wallet",
   "productName": "Pluton",
-  "version": "1.2.1",
+  "version": "2.0.1",
   "description": "WrkzCoin wallet based on React, React Router, Webpack, and React Hot Loader",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
     "build-main": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.main.prod.babel.js --colors",
-    "build-renderer": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.renderer.prod.babel.js --colors",
+    "build-renderer": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.renderer.prod.babel.js --colors --display-chunks --display-modules",
     "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
-    "eslint": "./node_modules/.bin/eslint '**/*.{js,jsx}'",
+    "eslint": "cross-env NODE_ENV=development ./node_modules/.bin/eslint '**/*.{js,jsx}'",
     "package": "yarn build && electron-builder build --publish never",
     "package-arm": "yarn build && electron-builder build --armv7l --publish never",
     "package-arm64": "yarn build && electron-builder build --arm64 --publish never",
@@ -20,7 +20,7 @@
     "postinstall": "electron-builder install-app-deps package.json && yarn build-dll",
     "preinstall": "node ./internals/scripts/CheckYarn.js",
     "prestart": "yarn build",
-    "prettier": "node ./node_modules/prettier/bin-prettier.js '**/*.{ts,tsx,json,md}' --ignore-path .gitignore --single-quote --write",
+    "prettier": "node ./node_modules/prettier/bin-prettier.js '**/*.{js,jsx,json,md}' --ignore-path .gitignore --single-quote --write",
     "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r @babel/register ./app/main.dev.js",
     "start-renderer-dev": "cross-env NODE_ENV=development webpack-dev-server --config configs/webpack.config.renderer.dev.babel.js"
@@ -50,10 +50,11 @@
     "appId": "work.wrkz.pluton",
     "files": [
       "app/dist/",
-      "app/app.html",
+      "app/mainWindow/app.html",
+      "app/backendWindow/app.html",
       "app/main.prod.js",
       "app/main.prod.js.map",
-      "app/images/",
+      "app/mainWindow/images/",
       "package.json"
     ],
     "dmg": {
@@ -99,7 +100,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wrkzdev/wrkz-wallet-pluton.git"
+    "url": "git+https://github.com/wrkzcoin/wrkz-wallet-pluton.git"
   },
   "author": {
     "name": "Wrkz",
@@ -125,7 +126,7 @@
   ],
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/wrkzdev/wrkz-wallet-pluton/issues"
+    "url": "https://github.com/wrkzcoin/wrkz-wallet-pluton/issues"
   },
   "keywords": [
     "turtlecoin",
@@ -218,7 +219,7 @@
     "jest": "^24.5.0",
     "lint-staged": "^8.1.5",
     "mini-css-extract-plugin": "^0.5.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.13.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "prettier": "^1.16.4",
     "react-test-renderer": "^16.8.6",
@@ -271,7 +272,6 @@
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
     "react-select": "^3.0.5",
-    "react-spinkit": "^3.0.0",
     "react-tooltip": "^3.10.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
@@ -280,7 +280,7 @@
     "semver": "^6.2.0",
     "source-code-pro": "^2.30.2",
     "tail": "^2.0.3",
-    "turtlecoin-wallet-backend": "^4.0.8"
+    "turtlecoin-wallet-backend": "^5.0.0"
   },
   "devEngines": {
     "node": ">=10.x",

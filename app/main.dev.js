@@ -5,6 +5,7 @@
 import path from 'path';
 import os from 'os';
 import fs from 'fs';
+import { EventEmitter } from 'events';
 import {
   app,
   BrowserWindow,
@@ -18,8 +19,15 @@ import isDev from 'electron-is-dev';
 import log from 'electron-log';
 import contextMenu from 'electron-context-menu';
 import MenuBuilder from './menu';
-import iConfig from './constants/config';
+import iConfig from './mainWindow/constants/config';
 import packageInfo from '../package.json';
+import MessageRelayer from './MessageRelayer';
+
+const windowEvents = new EventEmitter();
+
+export let messageRelayer = null;
+
+let quitTimeout = null;
 
 /** disable background throttling so our sync
  *   speed doesn't crap out when minimized
@@ -33,6 +41,9 @@ let tray = null;
 let trayIcon = null;
 let config = null;
 const homedir = os.homedir();
+let frontendReady = false;
+let backendReady = false;
+let configReady = false;
 
 const directories = [
   `${homedir}/.plutonwallet`,
@@ -61,6 +72,8 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
     // if it isn't, set the internal config to the user config
     config = iConfig;
   }
+  configReady = true;
+  if (frontendReady && backendReady) windowEvents.emit('bothWindowsReady');
 }
 
 if (fs.existsSync(`${programDirectory}/addressBook.json`)) {
@@ -98,9 +111,9 @@ if (config) {
 }
 
 if (os.platform() !== 'win32') {
-  trayIcon = path.join(__dirname, 'images/icon_color_64x64.png');
+  trayIcon = path.join(__dirname, './mainWindow/images/icon_color_64x64.png');
 } else {
-  trayIcon = path.join(__dirname, 'images/icon.ico');
+  trayIcon = path.join(__dirname, './mainWindow/images/icon.ico');
 }
 
 if (os.platform() === 'darwin') {
@@ -108,6 +121,7 @@ if (os.platform() === 'darwin') {
 }
 
 let mainWindow = null;
+let backendWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
   // eslint-disable-next-line global-require
@@ -115,13 +129,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
-  // eslint-disable-next-line global-require
-  require('electron-debug')();
-}
+require('electron-debug')();
 
 const installExtensions = async () => {
   // eslint-disable-next-line global-require
@@ -206,12 +214,7 @@ contextMenu({
 });
 
 app.on('ready', async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
+  await installExtensions();
 
   mainWindow = new BrowserWindow({
     title: `Pluton v${version}`,
@@ -226,6 +229,14 @@ app.on('ready', async () => {
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegrationInWorker: true,
+      nodeIntegration: true
+    }
+  });
+
+  backendWindow = new BrowserWindow({
+    show: false,
+    frame: false,
+    webPreferences: {
       nodeIntegration: true
     }
   });
@@ -247,7 +258,8 @@ app.on('ready', async () => {
           label: 'Quit',
           click() {
             isQuitting = true;
-            app.quit();
+            quitTimeout = setTimeout(app.exit, 1000 * 10);
+            messageRelayer.sendToBackend('stopRequest');
           }
         }
       ])
@@ -256,12 +268,15 @@ app.on('ready', async () => {
     tray.on('click', () => showMainWindow());
   }
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  mainWindow.loadURL(`file://${__dirname}/mainWindow/app.html`);
+  backendWindow.loadURL(`file://${__dirname}/backendWindow/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+    frontendReady = true;
+    if (backendReady && configReady) windowEvents.emit('bothWindowsReady');
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
@@ -270,18 +285,30 @@ app.on('ready', async () => {
     }
   });
 
+  backendWindow.webContents.on('did-finish-load', () => {
+    if (!backendWindow) {
+      throw new Error('"backendWindow" is not defined');
+    }
+    backendReady = true;
+    if (frontendReady && configReady) windowEvents.emit('bothWindowsReady');
+    log.debug('Backend window finished loading.');
+  });
+
   mainWindow.on('close', event => {
     event.preventDefault();
     if (!isQuitting && mainWindow) {
       log.debug('Closing to system tray or dock.');
       mainWindow.hide();
-    } else if (mainWindow) {
-      mainWindow.webContents.send('handleClose');
+    } else {
+      isQuitting = true;
+      quitTimeout = setTimeout(app.exit, 1000 * 10);
+      messageRelayer.sendToBackend('stopRequest');
     }
   });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    backendWindow = null;
   });
 
   mainWindow.on('unresponsive', () => {
@@ -289,7 +316,7 @@ app.on('ready', async () => {
     const userSelection = dialog.showMessageBox(mainWindow, {
       type: 'error',
       buttons: ['Kill', `Don't Kill`],
-      title: 'Unresponse Application',
+      title: 'Unresponsive Application',
       message: 'The application is unresponsive. Would you like to kill it?'
     });
     if (userSelection === 0) {
@@ -316,8 +343,22 @@ function showMainWindow() {
   }
 }
 
+windowEvents.on('bothWindowsReady', () => {
+  messageRelayer = new MessageRelayer(mainWindow, backendWindow);
+  messageRelayer.sendToBackend('config', config);
+  messageRelayer.sendToFrontend('config', {
+    config,
+    configPath: directories[0]
+  });
+});
+
 ipcMain.on('closeToTrayToggle', (event: any, state: boolean) => {
   toggleCloseToTray(state);
+});
+
+ipcMain.on('backendStopped', () => {
+  clearTimeout(quitTimeout);
+  app.exit();
 });
 
 function toggleCloseToTray(state: boolean) {

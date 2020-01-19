@@ -6,11 +6,12 @@ import { app, Menu, shell, BrowserWindow } from 'electron';
 import log from 'electron-log';
 import LocalizedStrings from 'react-localization';
 import npmPackage from '../package.json';
+import { messageRelayer } from './main.dev';
 import Configure from './Configure';
 
 export const il8n = new LocalizedStrings({
   // eslint-disable-next-line global-require
-  en: require('./il8n/en-menu.json')
+  en: require('./mainWindow/il8n/en-menu.json')
 });
 
 const { version: currentVersion } = npmPackage;
@@ -18,6 +19,8 @@ const { productName } = npmPackage;
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
+
+  backendWindow: BrowserWindow;
 
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
@@ -287,7 +290,7 @@ export default class MenuBuilder {
   }
 
   handleSave() {
-    this.mainWindow.webContents.send('handleSave');
+    messageRelayer.sendToBackend('saveWallet', true);
   }
 
   handleOpen() {

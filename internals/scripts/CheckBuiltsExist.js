@@ -7,14 +7,8 @@ import fs from 'fs';
 
 function CheckBuildsExist() {
   const mainPath = path.join(__dirname, '..', '..', 'app', 'main.prod.js');
-  const rendererPath = path.join(
-    __dirname,
-    '..',
-    '..',
-    'app',
-    'dist',
-    'renderer.prod.js'
-  );
+  const rendererPath = getRendererPath('mainWindow');
+  const backendWindowRendererPath = getRendererPath('backendWindow');
 
   if (!fs.existsSync(mainPath)) {
     throw new Error(
@@ -27,10 +21,29 @@ function CheckBuildsExist() {
   if (!fs.existsSync(rendererPath)) {
     throw new Error(
       chalk.whiteBright.bgRed.bold(
-        'The renderer process is not built yet. Build it by running "yarn build-renderer"'
+        'The mainWindow renderer process is not built yet. Build it by running "yarn build-renderer"'
       )
     );
   }
+
+  if (!fs.existsSync(backendWindowRendererPath)) {
+    throw new Error(
+      chalk.whiteBright.bgRed.bold(
+        'The backendWindow renderer process is not built yet. Build it by running "yarn build-renderer"'
+      )
+    );
+  }
+}
+
+function getRendererPath(name: string) {
+  return path.join(
+    __dirname,
+    '..',
+    '..',
+    'app',
+    'dist',
+    `${name}.renderer.prod.js`
+  );
 }
 
 CheckBuildsExist();
