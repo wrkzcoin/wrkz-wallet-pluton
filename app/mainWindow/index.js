@@ -60,7 +60,7 @@ updater.getLatestVersion();
 
 export let loginCounter = new LoginCounter();
 
-remote.app.setAppUserModelId('wallet.proton.extra');
+remote.app.setAppUserModelId('work.wrkz.pluton');
 
 log.debug(`Proton wallet started...`);
 
