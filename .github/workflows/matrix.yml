@@ -122,7 +122,7 @@ jobs:
               -H "Date: ${dateValue}" \
               -H "Content-Type: ${contentType}" \
               -H "Authorization: AWS ${s3Key}:${signature}" \
-              "${BINARY_UPLOAD}${DEST_DIR}/${OUT_FILENAME}"
+              https://${AWS_S3_BUCKET}.s3.fr-par.scw.cloud/${DEST_DIR}/${OUT_FILENAME}
           elif [ "$RUNNER_OS" == "macOS" ]; then
             ~/.local/bin/aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
             ~/.local/bin/aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
