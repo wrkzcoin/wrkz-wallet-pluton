@@ -73,6 +73,10 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
   }
   configReady = true;
   if (frontendReady && backendReady) windowEvents.emit('bothWindowsReady');
+} else {
+  config = iConfig;
+  configReady = true;
+  if (frontendReady && backendReady) windowEvents.emit('bothWindowsReady');
 }
 
 if (fs.existsSync(`${programDirectory}/addressBook.json`)) {
