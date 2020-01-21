@@ -38,7 +38,6 @@ export default class Import extends Component<Props, State> {
       confirmPassword: '',
       mnemonicSeed: '',
       scanHeight: '',
-      confirmSeed: '',
       showPassword: false,
       importedWallet: null
     };
@@ -49,7 +48,6 @@ export default class Import extends Component<Props, State> {
     this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(
       this
     );
-    this.handleConfirmSeedChange = this.handleConfirmSeedChange.bind(this);
     this.toggleShowPassword = this.toggleShowPassword.bind(this);
     this.ref = null;
     this.handleCopiedTip = this.handleCopiedTip.bind(this);
@@ -128,8 +126,6 @@ export default class Import extends Component<Props, State> {
       darkMode,
       importedWallet
     } = this.state;
-
-    log.info(this.state);
     const { textColor } = uiType(darkMode);
     let currentPageNumber: number = this.evaluatePageNumber(activePage);
 
@@ -213,14 +209,6 @@ export default class Import extends Component<Props, State> {
 
     this.setState({
       password
-    });
-  }
-
-  handleConfirmSeedChange(event: any) {
-    const confirmSeed = event.target.value;
-
-    this.setState({
-      confirmSeed
     });
   }
 
