@@ -3,6 +3,7 @@
 // Please see the included LICENSE file for more information.
 import request from 'request-promise';
 import log from 'electron-log';
+import { DaemonConnection } from 'turtlecoin-wallet-backend';
 import { config, eventEmitter } from '../index';
 import { roundToNearestHundredth } from '../utils/utils';
 import Configure from '../../Configure';
@@ -30,7 +31,14 @@ export default class WalletSession {
 
   transactionCount: number = 0;
 
-  daemonConnectionInfo: any;
+  daemonConnectionInfo: DaemonConnection = {
+    daemonType: 1,
+    daemonTypeDetermined: true,
+    host: 'blockapi.turtlepay.io',
+    port: 443,
+    ssl: true,
+    sslDetermined: true
+  };
 
   preparedTransactionHash: string = '';
 
@@ -55,8 +63,9 @@ export default class WalletSession {
     return this.daemonConnectionInfo;
   }
 
-  setDaemonConnectionInfo(daemonConnectionInfo: any): void {
+  setDaemonConnectionInfo(daemonConnectionInfo: DaemonConnection): void {
     this.daemonConnectionInfo = daemonConnectionInfo;
+    log.info(this.daemonConnectionInfo);
     eventEmitter.emit('gotDaemonConnectionInfo');
   }
 
