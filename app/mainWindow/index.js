@@ -155,6 +155,9 @@ ipcRenderer.on(
     const { data, messageType } = message;
 
     switch (messageType) {
+      case 'authenticationError':
+        handleAuthenticationError(data);
+        break;
       case 'prepareTransactionResponse':
         handlePrepareTransactionResponse(data);
         break;
@@ -317,6 +320,19 @@ function handleSaveWalletResponse(response: any) {
     );
     eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
   }
+}
+
+function handleAuthenticationError(error: any) {
+  const message = (
+    <div>
+      <center>
+        <p className="title has-text-danger">Wallet Open Error!</p>
+      </center>
+      <br />
+      <p className={`subtitle ${textColor}`}>{error.errorString}</p>
+    </div>
+  );
+  eventEmitter.emit('openModal', message, 'OK', null, null);
 }
 
 function handlePasswordChangeResponse(response: any) {
