@@ -5,7 +5,8 @@ import {
   Daemon,
   WalletBackend,
   LogLevel,
-  prettyPrintAmount
+  prettyPrintAmount,
+  WalletErrorCode
 } from 'turtlecoin-wallet-backend';
 import log from 'electron-log';
 import { ipcRenderer } from 'electron';
@@ -477,8 +478,11 @@ export default class Backend {
     );
     if (!error) {
       this.walletInit(openWallet);
-    } else {
+    } else if (error.errorCode === WalletErrorCode.WRONG_PASSWORD) {
       ipcRenderer.send('fromBackend', 'authenticationStatus', false);
+    } else {
+      error.errorString = error.toString();
+      ipcRenderer.send('fromBackend', 'authenticationError', error);
     }
   }
 }

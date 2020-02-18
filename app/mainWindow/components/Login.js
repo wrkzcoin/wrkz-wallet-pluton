@@ -55,6 +55,11 @@ export default class Login extends Component<Props, State> {
       loginCounter.loginFailed = !data;
       eventEmitter.emit('goHome');
     }
+    if (messageType === 'authenticationError') {
+      this.setState({
+        loginInProgress: false
+      });
+    }
   };
 
   switchAnimation() {
