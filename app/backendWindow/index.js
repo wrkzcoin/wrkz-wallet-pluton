@@ -51,6 +51,9 @@ function parseMessage(message: any) {
     case 'scanCoinbaseRequest':
       backend.setScanCoinbaseTransactions(data);
       break;
+    case 'AutoOptimizationRequest':
+      backend.setenableAutoOptimization(data);
+      break;
     case 'rescanRequest':
       backend.rescanWallet(data);
       break;

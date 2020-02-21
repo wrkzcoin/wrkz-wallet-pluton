@@ -78,6 +78,11 @@ const Configure = new function() {
     this.scanCoinbaseTransactions = false;
 
     /**
+     * Disable AutoOptimization by default
+     */
+    this.enableAutoOptimization = false;
+
+    /**
      * The minimum fee allowed for transactions, in ATOMIC units
      */
     this.minimumFee = 50000;

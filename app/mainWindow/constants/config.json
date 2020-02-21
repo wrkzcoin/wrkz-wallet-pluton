@@ -1,6 +1,6 @@
 {
   "walletFile": "",
-  "enableAutoOptimization": true,
+  "enableAutoOptimization": false,
   "scanCoinbaseTransactions": false,
   "autoSelectDaemon": true,
   "minimizeToTray": false,

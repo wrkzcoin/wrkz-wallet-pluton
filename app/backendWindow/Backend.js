@@ -147,6 +147,10 @@ export default class Backend {
     this.wallet.scanCoinbaseTransactions(value);
   }
 
+  setenableAutoOptimization(value: boolean) {
+    this.wallet.enableAutoOptimization(value);
+  }
+
   async sendTransaction(hash: string): void {
     /* Wait for UI to load before blocking thread */
     await delay(500);
