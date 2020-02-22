@@ -112,7 +112,7 @@ export default class Home extends Component<Props, State> {
     const hash = event.target.value;
 
     remote.shell.openExternal(
-      `${Configure.ExplorerURL}/?hash=${encodeURIComponent(hash)}#blockchain_transaction`
+      `${Configure.ExplorerURL}/transaction.html?hash=${encodeURIComponent(hash)}`
     );
   };
 
