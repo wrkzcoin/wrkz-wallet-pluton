@@ -22,6 +22,7 @@ import MenuBuilder from './menu';
 import iConfig from './mainWindow/constants/config';
 import packageInfo from '../package.json';
 import MessageRelayer from './MessageRelayer';
+import Configure from './Configure';
 
 const windowEvents = new EventEmitter();
 
@@ -185,7 +186,7 @@ contextMenu({
       visible: params.selectionText.trim().length === 64,
       click: () => {
         shell.openExternal(
-          `https://explorer.turtlecoin.lol/?search=${encodeURIComponent(
+          `${Configure.ExplorerURL}/?search=${encodeURIComponent(
             params.selectionText
           )}`
         );
