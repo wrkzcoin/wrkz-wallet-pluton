@@ -359,10 +359,12 @@ export default class Send extends Component<Props, State> {
       amount:
         displayCurrency === 'TRTL'
           ? Number(enteredAmount) * 100
-          : (Number(enteredAmount) * 100) / fiatPrice,
+          : parseInt((Number(enteredAmount) * 100) / fiatPrice, 10),
       paymentID,
       sendAll
     };
+
+    log.info(transactionData);
 
     ipcRenderer.send(
       'fromFrontend',
