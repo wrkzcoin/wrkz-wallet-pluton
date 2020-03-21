@@ -365,10 +365,12 @@ export default class Send extends Component<Props, State> {
       amount:
         displayCurrency === Configure.ticker
           ? Number(enteredAmount) * (10 ** Configure.decimalPlaces)
-          : (Number(enteredAmount) * (10 ** Configure.decimalPlaces)) / fiatPrice,
+          : parseInt((Number(enteredAmount) * (10 ** Configure.decimalPlaces)) / fiatPrice, 10),
       paymentID,
       sendAll
     };
+
+    log.info(transactionData);
 
     ipcRenderer.send(
       'fromFrontend',
