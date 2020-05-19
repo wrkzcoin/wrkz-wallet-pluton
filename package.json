@@ -14,7 +14,7 @@
     "package-arm": "yarn build && electron-builder build --armv7l --publish never",
     "package-arm64": "yarn build && electron-builder build --arm64 --publish never",
     "package-all": "yarn build && electron-builder build -mwl",
-    "package-ci": "yarn postinstall && yarn build && electron-builder --publish always",
+    "package-ci": "yarn postinstall && yarn build && electron-builder --publish never",
     "package-linux": "yarn build && electron-builder build --linux",
     "package-win": "yarn build && electron-builder build --win --x64",
     "postinstall": "electron-builder install-app-deps package.json && yarn build-dll",

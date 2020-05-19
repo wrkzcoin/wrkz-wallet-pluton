@@ -33,7 +33,7 @@ jobs:
             os: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - uses: actions/setup-node@v1
         with:
@@ -77,9 +77,9 @@ jobs:
 
       # Upload to AMZ
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
-          python-version: 3.7 # Or other version
+          python-version: 3.8 # Or other version
       - name: Install awscli via pipx # Isolates dependencies
         shell: bash
         run: |
