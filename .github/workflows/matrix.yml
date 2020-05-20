@@ -43,11 +43,18 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: warrenbuckley/Setup-MSBuild@v1
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
       - name: Setup Cache
         uses: actions/cache@v1.2.0
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
-          path: node_modules
-          key: ${{ matrix.os }}-deps
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ matrix.target }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ matrix.target }}-yarn-
 
       - name: Dependencies
         run: yarn
