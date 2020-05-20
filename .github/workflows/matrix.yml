@@ -49,13 +49,8 @@ jobs:
           path: node_modules
           key: ${{ matrix.os }}-deps
 
-      - name: Yarn Dependencies Windows
-        if: matrix.build_name == 'x86_64-pc-windows-msvc'
-        run: del yarn.lock && yarn
-
-      - name: Yarn Dependencies Others
-        if: matrix.build_name != 'x86_64-pc-windows-msvc'
-        run: rm -f yarn.lock && yarn
+      - name: Dependencies
+        run: yarn
 
       - name: Build aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
