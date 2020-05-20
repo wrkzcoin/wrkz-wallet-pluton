@@ -44,7 +44,7 @@ jobs:
         uses: warrenbuckley/Setup-MSBuild@v1
 
       - name: Setup Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v1.2.0
         with:
           path: node_modules
           key: ${{ matrix.os }}-deps
