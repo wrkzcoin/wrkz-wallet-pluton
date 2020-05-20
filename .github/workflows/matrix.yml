@@ -57,7 +57,7 @@ jobs:
             ${{ matrix.target }}-yarn-
 
       - name: Dependencies
-        run: yarn --network-concurrency 1
+        run: yarn --network-concurrency 1 --network-timeout 120000
 
       - name: Build aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
@@ -92,7 +92,8 @@ jobs:
         run: |
           export PATH=~/.local/bin:$PATH
           pip install --user pipx
-          pip install --user pipx awscli-plugin-endpoint awscli
+          pipx install awscli
+          pip install --user pipx awscli-plugin-endpoint
       - name: S3 Upload
         env:
           MINGW64_PATH: 'C:/Program Files/Git/mingw64/bin'
