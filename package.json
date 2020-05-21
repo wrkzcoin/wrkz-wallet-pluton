@@ -280,7 +280,7 @@
     "semver": "^6.2.0",
     "source-code-pro": "^2.30.2",
     "tail": "^2.0.3",
-    "turtlecoin-wallet-backend": "https://github.com/wrkzcoin/turtlecoin-wallet-backend-js#fusion_with_fee"
+    "turtlecoin-wallet-backend": "https://github.com/wrkzcoin/turtlecoin-wallet-backend-js#fusion_fee_504"
   },
   "devEngines": {
     "node": ">=10.x",
