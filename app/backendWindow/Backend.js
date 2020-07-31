@@ -235,11 +235,7 @@ export default class Backend {
   }
 
   verifyPassword(password: string): void {
-    ipcRenderer.send(
-      'fromBackend',
-      'authenticationStatus',
-      password === this.walletPassword
-    );
+    this.send('authenticationStatus', password === this.walletPassword);
   }
 
   changePassword(passwords: any): void {
@@ -309,8 +305,7 @@ export default class Backend {
 
   getTransactions(displayCount: number): void {
     this.setLastTxAmountRequested(displayCount);
-    ipcRenderer.send(
-      'fromBackend',
+    this.send(
       'transactionList',
       this.getFormattedTransactions(0, displayCount, false)
     );
@@ -353,11 +348,7 @@ export default class Backend {
       sanitizedResults = [...transactionResults[i], ...sanitizedResults];
     }
 
-    ipcRenderer.send(
-      'fromBackend',
-      'transactionSearchResponse',
-      sanitizedResults
-    );
+    this.send('transactionSearchResponse', sanitizedResults);
   }
 
   search(searchedValue: any, arrayToSearch: any[], objectPropertyName: string) {
@@ -397,11 +388,7 @@ export default class Backend {
   }
 
   getConnectionInfo(): void {
-    ipcRenderer.send(
-      'fromBackend',
-      'daemonConnectionInfo',
-      this.wallet.getDaemonConnectionInfo()
-    );
+    this.send('daemonConnectionInfo', this.wallet.getDaemonConnectionInfo());
   }
 
   setLogLevel(logLevel: string): void {
@@ -441,26 +428,14 @@ export default class Backend {
     });
     this.setWalletActive(true);
     this.send('syncStatus', this.wallet.getSyncStatus());
-    ipcRenderer.send(
-      'fromBackend',
-      'primaryAddress',
-      this.wallet.getPrimaryAddress()
-    );
-    ipcRenderer.send(
-      'fromBackend',
-      'transactionList',
-      this.getFormattedTransactions(0, 50, false)
-    );
+    this.send('primaryAddress', this.wallet.getPrimaryAddress());
+    this.send('transactionList', this.getFormattedTransactions(0, 50, false));
     this.getTransactionCount();
     this.send('balance', this.wallet.getBalance());
     this.send('walletActiveStatus', true);
     this.send('authenticationStatus', true);
     await this.wallet.start();
-    ipcRenderer.send(
-      'fromBackend',
-      'daemonConnectionInfo',
-      this.wallet.getDaemonConnectionInfo()
-    );
+    this.send('daemonConnectionInfo', this.wallet.getDaemonConnectionInfo());
     this.getNodeFee();
   }
 
