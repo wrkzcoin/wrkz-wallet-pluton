@@ -1,9 +1,9 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
-import { config, eventEmitter, configManager } from '../index';
-import { uiType } from '../utils/utils';
+import React, { Component } from "react";
+import { config, eventEmitter, configManager } from "../index";
+import { uiType } from "../utils/utils";
 
 type Props = {
   darkMode: boolean
@@ -39,16 +39,16 @@ export default class TimeoutSelector extends Component<Props, State> {
     this.setState({
       timeoutEnabled: false
     });
-    configManager.modifyConfig('autoLockEnabled', false);
-    eventEmitter.emit('setAutoLock', false);
+    configManager.modifyConfig("autoLockEnabled", false);
+    eventEmitter.emit("setAutoLock", false);
   };
 
   enableTimeout = () => {
     this.setState({
       timeoutEnabled: true
     });
-    configManager.modifyConfig('autoLockEnabled', true);
-    eventEmitter.emit('setAutoLock', true);
+    configManager.modifyConfig("autoLockEnabled", true);
+    eventEmitter.emit("setAutoLock", true);
   };
 
   handleTimeoutChange = (event: any) => {
@@ -67,7 +67,7 @@ export default class TimeoutSelector extends Component<Props, State> {
     event.preventDefault();
     const { darkMode } = this.props;
     const { textColor } = uiType(darkMode);
-    if (event.target[0].value === '' || event.target[0].value === '0') {
+    if (event.target[0].value === "" || event.target[0].value === "0") {
       return;
     }
     const interval: number = Number(event.target[0].value);
@@ -84,11 +84,11 @@ export default class TimeoutSelector extends Component<Props, State> {
           </p>
         </div>
       );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
+      eventEmitter.emit("openModal", message, "OK", null, null);
       return;
     }
-    if (interval) configManager.modifyConfig('autoLockInterval', interval);
-    eventEmitter.emit('newLockInterval', interval);
+    if (interval) configManager.modifyConfig("autoLockInterval", interval);
+    eventEmitter.emit("newLockInterval", interval);
   };
 
   render() {

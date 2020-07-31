@@ -1,14 +1,14 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import ReactTooltip from 'react-tooltip';
-import { loginCounter } from '../index';
-import SyncStatus from './SyncStatus';
-import Balance from './Balance';
-import NodeFee from './NodeFee';
-import { uiType } from '../utils/utils';
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
+import { loginCounter } from "../index";
+import SyncStatus from "./SyncStatus";
+import Balance from "./Balance";
+import NodeFee from "./NodeFee";
+import { uiType } from "../utils/utils";
 
 type Location = {
   hash: string,
@@ -53,11 +53,11 @@ class BottomBar extends Component<Props, State> {
           // eslint-disable-next-line no-nested-ternary
           darkMode
             ? navBarCount > 0
-              ? 'footerbar has-background-black noselect'
-              : 'footerbar-slideup has-background-black noselect'
+              ? "footerbar has-background-black noselect"
+              : "footerbar-slideup has-background-black noselect"
             : navBarCount > 0
-            ? 'footerbar has-background-light noselect'
-            : 'footerbar-slideup has-background-light noselect'
+            ? "footerbar has-background-light noselect"
+            : "footerbar-slideup has-background-light noselect"
         }
       >
         <ReactTooltip

@@ -1,16 +1,16 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import request from 'request-promise';
-import log from 'electron-log';
-import { DaemonConnection } from 'turtlecoin-wallet-backend';
-import { config, eventEmitter } from '../index';
-import { roundToNearestHundredth } from '../utils/utils';
+import request from "request-promise";
+import log from "electron-log";
+import { DaemonConnection } from "turtlecoin-wallet-backend";
+import { config, eventEmitter } from "../index";
+import { roundToNearestHundredth } from "../utils/utils";
 
 export default class WalletSession {
   loginFailed: boolean;
 
-  firstStartup: boolean = config.walletFile === '';
+  firstStartup: boolean = config.walletFile === "";
 
   firstLoadOnLogin: boolean;
 
@@ -33,13 +33,13 @@ export default class WalletSession {
   daemonConnectionInfo: DaemonConnection = {
     daemonType: 1,
     daemonTypeDetermined: true,
-    host: 'blockapi.turtlepay.io',
+    host: "blockapi.turtlepay.io",
     port: 443,
     ssl: true,
     sslDetermined: true
   };
 
-  preparedTransactionHash: string = '';
+  preparedTransactionHash: string = "";
 
   constructor() {
     this.loginFailed = false;
@@ -64,12 +64,12 @@ export default class WalletSession {
   setDaemonConnectionInfo(daemonConnectionInfo: DaemonConnection): void {
     this.daemonConnectionInfo = daemonConnectionInfo;
     log.info(this.daemonConnectionInfo);
-    eventEmitter.emit('gotDaemonConnectionInfo');
+    eventEmitter.emit("gotDaemonConnectionInfo");
   }
 
   setNodeFee(fee: number): void {
     this.nodeFee = fee;
-    eventEmitter.emit('gotNodeFee');
+    eventEmitter.emit("gotNodeFee");
   }
 
   getNodeFee(): number {
@@ -78,7 +78,7 @@ export default class WalletSession {
 
   setBalance(balance: number[]): void {
     this.balance = balance;
-    eventEmitter.emit('gotNewBalance');
+    eventEmitter.emit("gotNewBalance");
   }
 
   getBalance(): number[] {
@@ -99,7 +99,7 @@ export default class WalletSession {
 
   setTransactionCount(txCount: number): void {
     this.transactionCount = txCount;
-    eventEmitter.emit('gotTransactionCount');
+    eventEmitter.emit("gotTransactionCount");
   }
 
   getTransactions() {
@@ -108,14 +108,14 @@ export default class WalletSession {
 
   setTransactions(transactions: any[]) {
     this.transactions = transactions;
-    eventEmitter.emit('gotNewTransactions');
+    eventEmitter.emit("gotNewTransactions");
   }
 
   getFiatPrice = async (fiat: string) => {
     const apiURL = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${fiat}&ids=turtlecoin&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=7d`;
 
     const requestOptions = {
-      method: 'GET',
+      method: "GET",
       uri: apiURL,
       headers: {},
       json: true,
@@ -124,7 +124,7 @@ export default class WalletSession {
     try {
       const result = await request(requestOptions);
       this.fiatPrice = result[0].current_price;
-      eventEmitter.emit('gotFiatPrice', result[0].current_price);
+      eventEmitter.emit("gotFiatPrice", result[0].current_price);
       return result[0].current_price;
     } catch (err) {
       log.debug(`Request failed, CoinGecko API call error: \n`, err);
@@ -134,7 +134,7 @@ export default class WalletSession {
 
   setSyncStatus(syncStatus: number[]) {
     this.syncStatus = syncStatus;
-    eventEmitter.emit('gotSyncStatus');
+    eventEmitter.emit("gotSyncStatus");
   }
 
   getSyncStatus() {

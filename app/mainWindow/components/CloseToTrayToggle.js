@@ -1,10 +1,10 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
-import { ipcRenderer } from 'electron';
-import { uiType } from '../utils/utils';
-import { config, configManager } from '../index';
+import React, { Component } from "react";
+import { ipcRenderer } from "electron";
+import { uiType } from "../utils/utils";
+import { config, configManager } from "../index";
 
 type State = {
   closeToTray: boolean
@@ -32,16 +32,16 @@ export default class CloseToTrayToggle extends Component<Props, State> {
     this.setState({
       closeToTray: true
     });
-    configManager.modifyConfig('closeToTray', true);
-    ipcRenderer.send('closeToTrayToggle', true);
+    configManager.modifyConfig("closeToTray", true);
+    ipcRenderer.send("closeToTrayToggle", true);
   };
 
   closeToTrayOff = () => {
     this.setState({
       closeToTray: false
     });
-    configManager.modifyConfig('closeToTray', false);
-    ipcRenderer.send('closeToTrayToggle', false);
+    configManager.modifyConfig("closeToTray", false);
+    ipcRenderer.send("closeToTrayToggle", false);
   };
 
   render() {

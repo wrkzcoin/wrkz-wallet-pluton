@@ -1,25 +1,25 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component, Fragment } from 'react';
-import { ipcRenderer } from 'electron';
-import log from 'electron-log';
-import os from 'os';
-import ReactTooltip from 'react-tooltip';
-import { eventEmitter, loginCounter, config } from '../index';
-import NavBar from './NavBar';
-import BottomBar from './BottomBar';
-import Redirector from './Redirector';
-import FiatSelector from './FiatSelector';
-import TimeoutSelector from './TimeoutSelector';
-import LogLevelSelector from './LogLevelSelector';
-import NodeChanger from './NodeChanger';
-import { uiType } from '../utils/utils';
-import Rescanner from './Rescanner';
-import DarkModeToggle from './DarkModeToggle';
-import CloseToTrayToggle from './CloseToTrayToggle';
-import ScanCoinbaseToggle from './ScanCoinbaseToggle';
-import NotificationsToggle from './NotificationsToggle';
+import React, { Component, Fragment } from "react";
+import { ipcRenderer } from "electron";
+import log from "electron-log";
+import os from "os";
+import ReactTooltip from "react-tooltip";
+import { eventEmitter, loginCounter, config } from "../index";
+import NavBar from "./NavBar";
+import BottomBar from "./BottomBar";
+import Redirector from "./Redirector";
+import FiatSelector from "./FiatSelector";
+import TimeoutSelector from "./TimeoutSelector";
+import LogLevelSelector from "./LogLevelSelector";
+import NodeChanger from "./NodeChanger";
+import { uiType } from "../utils/utils";
+import Rescanner from "./Rescanner";
+import DarkModeToggle from "./DarkModeToggle";
+import CloseToTrayToggle from "./CloseToTrayToggle";
+import ScanCoinbaseToggle from "./ScanCoinbaseToggle";
+import NotificationsToggle from "./NotificationsToggle";
 
 type Props = {};
 
@@ -46,11 +46,11 @@ export default class Settings extends Component<Props, State> {
     this.state = {
       darkMode: config.darkMode,
       activeTab: loginCounter.lastSettingsTab,
-      previousTab: '',
-      inAnimation: '',
-      outAnimation: '',
+      previousTab: "",
+      inAnimation: "",
+      outAnimation: "",
       masterSwitch: false,
-      pageAnimationIn: loginCounter.getAnimation('/settings')
+      pageAnimationIn: loginCounter.getAnimation("/settings")
     };
     this.darkModeOn = this.darkModeOn.bind(this);
     this.darkModeOff = this.darkModeOff.bind(this);
@@ -62,14 +62,14 @@ export default class Settings extends Component<Props, State> {
   }
 
   componentDidMount() {
-    eventEmitter.on('darkmodeon', this.darkModeOn);
-    eventEmitter.on('darkmodeoff', this.darkModeOff);
+    eventEmitter.on("darkmodeon", this.darkModeOn);
+    eventEmitter.on("darkmodeoff", this.darkModeOff);
   }
 
   componentWillUnmount() {
     const { activeTab } = this.state;
-    eventEmitter.off('darkmodeon', this.darkModeOn);
-    eventEmitter.off('darkmodeoff', this.darkModeOff);
+    eventEmitter.off("darkmodeon", this.darkModeOn);
+    eventEmitter.off("darkmodeoff", this.darkModeOff);
     loginCounter.lastSettingsTab = activeTab;
   }
 
@@ -106,20 +106,20 @@ export default class Settings extends Component<Props, State> {
       this.evaluatePosition(requestedPage) > this.evaluatePosition(previousPage)
     ) {
       this.setState({
-        inAnimation: 'slide-in-bottom',
-        outAnimation: 'slide-out-top'
+        inAnimation: "slide-in-bottom",
+        outAnimation: "slide-out-top"
       });
     } else if (
       this.evaluatePosition(requestedPage) < this.evaluatePosition(previousPage)
     ) {
       this.setState({
-        inAnimation: 'slide-in-top',
-        outAnimation: 'slide-out-bottom'
+        inAnimation: "slide-in-top",
+        outAnimation: "slide-out-bottom"
       });
     } else {
       this.setState({
-        inAnimation: '',
-        outAnimation: '',
+        inAnimation: "",
+        outAnimation: "",
         masterSwitch: false
       });
     }
@@ -132,34 +132,34 @@ export default class Settings extends Component<Props, State> {
   evaluatePosition = (tabName: string) => {
     let tabValue: number;
     switch (tabName) {
-      case 'node':
+      case "node":
         tabValue = 0;
         break;
-      case 'scan':
+      case "scan":
         tabValue = 1;
         break;
-      case 'display':
+      case "display":
         tabValue = 2;
         break;
-      case 'security':
+      case "security":
         tabValue = 3;
         break;
-      case 'platform':
+      case "platform":
         tabValue = 4;
         break;
       default:
-        log.debug('Programmer error!');
+        log.debug("Programmer error!");
         break;
     }
     return tabValue;
   };
 
   handlePasswordChange = () => {
-    eventEmitter.emit('handlePasswordChange');
+    eventEmitter.emit("handlePasswordChange");
   };
 
   handleBackup = () => {
-    eventEmitter.emit('handleBackup');
+    eventEmitter.emit("handleBackup");
   };
 
   render() {
@@ -182,17 +182,17 @@ export default class Settings extends Component<Props, State> {
 
     let platform;
     switch (os.platform()) {
-      case 'win32':
-        platform = 'Windows';
+      case "win32":
+        platform = "Windows";
         break;
-      case 'linux':
-        platform = 'Linux';
+      case "linux":
+        platform = "Linux";
         break;
-      case 'darwin':
-        platform = 'MacOS';
+      case "darwin":
+        platform = "MacOS";
         break;
       default:
-        platform = 'OS';
+        platform = "OS";
         break;
     }
 
@@ -217,80 +217,80 @@ export default class Settings extends Component<Props, State> {
                   <ul className="menu-list settings-menu">
                     <li
                       className={
-                        activeTab === 'node' ? `${menuActiveColor}` : ''
+                        activeTab === "node" ? `${menuActiveColor}` : ""
                       }
                     >
                       <a
-                        onClick={() => this.setActiveTab('node')}
-                        onKeyPress={() => this.setActiveTab('node')}
+                        onClick={() => this.setActiveTab("node")}
+                        onKeyPress={() => this.setActiveTab("node")}
                         role="button"
                         tabIndex={0}
                         onMouseDown={event => event.preventDefault()}
-                        className={darkMode ? 'menu-link-dark' : ''}
+                        className={darkMode ? "menu-link-dark" : ""}
                       >
                         <p className={textColor}>Node</p>
                       </a>
                     </li>
                     <li
                       className={
-                        activeTab === 'scan' ? `${menuActiveColor}` : ''
+                        activeTab === "scan" ? `${menuActiveColor}` : ""
                       }
                     >
                       <a
-                        onClick={() => this.setActiveTab('scan')}
-                        onKeyPress={() => this.setActiveTab('scan')}
+                        onClick={() => this.setActiveTab("scan")}
+                        onKeyPress={() => this.setActiveTab("scan")}
                         role="button"
                         tabIndex={0}
                         onMouseDown={event => event.preventDefault()}
-                        className={darkMode ? 'menu-link-dark' : ''}
+                        className={darkMode ? "menu-link-dark" : ""}
                       >
                         <p className={textColor}>Wallet</p>
                       </a>
                     </li>
                     <li
                       className={
-                        activeTab === 'display' ? `${menuActiveColor}` : ''
+                        activeTab === "display" ? `${menuActiveColor}` : ""
                       }
                     >
                       <a
-                        onClick={() => this.setActiveTab('display')}
-                        onKeyPress={() => this.setActiveTab('display')}
+                        onClick={() => this.setActiveTab("display")}
+                        onKeyPress={() => this.setActiveTab("display")}
                         role="button"
                         tabIndex={0}
                         onMouseDown={event => event.preventDefault()}
-                        className={darkMode ? 'menu-link-dark' : ''}
+                        className={darkMode ? "menu-link-dark" : ""}
                       >
                         <p className={textColor}>Display</p>
                       </a>
                     </li>
                     <li
                       className={
-                        activeTab === 'security' ? `${menuActiveColor}` : ''
+                        activeTab === "security" ? `${menuActiveColor}` : ""
                       }
                     >
                       <a
-                        onClick={() => this.setActiveTab('security')}
-                        onKeyPress={() => this.setActiveTab('security')}
+                        onClick={() => this.setActiveTab("security")}
+                        onKeyPress={() => this.setActiveTab("security")}
                         role="button"
                         tabIndex={0}
                         onMouseDown={event => event.preventDefault()}
-                        className={darkMode ? 'menu-link-dark' : ''}
+                        className={darkMode ? "menu-link-dark" : ""}
                       >
                         <p className={textColor}>Security</p>
                       </a>
                     </li>
                     <li
                       className={
-                        activeTab === 'platform' ? `${menuActiveColor}` : ''
+                        activeTab === "platform" ? `${menuActiveColor}` : ""
                       }
                     >
                       <a
-                        onClick={() => this.setActiveTab('platform')}
-                        onKeyPress={() => this.setActiveTab('platform')}
+                        onClick={() => this.setActiveTab("platform")}
+                        onKeyPress={() => this.setActiveTab("platform")}
                         role="button"
                         tabIndex={0}
                         onMouseDown={event => event.preventDefault()}
-                        className={darkMode ? 'menu-link-dark' : ''}
+                        className={darkMode ? "menu-link-dark" : ""}
                       >
                         <p className={textColor}>{platform} Settings</p>
                       </a>
@@ -299,12 +299,12 @@ export default class Settings extends Component<Props, State> {
                 </aside>
               </div>
               <div className="column is-one-third">
-                {activeTab === 'node' && (
+                {activeTab === "node" && (
                   <div className={inAnimation}>
                     <NodeChanger darkMode={darkMode} />
                   </div>
                 )}
-                {activeTab === 'scan' && (
+                {activeTab === "scan" && (
                   <div className={inAnimation}>
                     <Rescanner darkMode={darkMode} />
                     <br />
@@ -316,8 +316,8 @@ export default class Settings extends Component<Props, State> {
                       className={`button ${elementBaseColor}`}
                       onClick={() => {
                         ipcRenderer.send(
-                          'fromFrontend',
-                          'showDevConsole',
+                          "fromFrontend",
+                          "showDevConsole",
                           undefined
                         );
                       }}
@@ -330,7 +330,7 @@ export default class Settings extends Component<Props, State> {
                   </div>
                 )}
 
-                {activeTab === 'display' && (
+                {activeTab === "display" && (
                   <div className={inAnimation}>
                     <FiatSelector darkMode={darkMode} />
                     <br />
@@ -338,7 +338,7 @@ export default class Settings extends Component<Props, State> {
                   </div>
                 )}
 
-                {activeTab === 'security' && (
+                {activeTab === "security" && (
                   <div className={inAnimation}>
                     <TimeoutSelector darkMode={darkMode} />
                     <br />
@@ -364,10 +364,10 @@ export default class Settings extends Component<Props, State> {
                     </button>
                   </div>
                 )}
-                {activeTab === 'platform' && (
+                {activeTab === "platform" && (
                   <div className={inAnimation}>
                     <div className="button-settings-page">
-                      {os.platform() !== 'darwin' && (
+                      {os.platform() !== "darwin" && (
                         <Fragment>
                           <CloseToTrayToggle darkMode={darkMode} />
                           <br />
@@ -378,26 +378,26 @@ export default class Settings extends Component<Props, State> {
                   </div>
                 )}
                 <div className="settings-overlay">
-                  {previousTab === 'node' && masterSwitch && (
+                  {previousTab === "node" && masterSwitch && (
                     <div className={outAnimation}>
                       <NodeChanger darkMode={darkMode} />
                     </div>
                   )}
-                  {previousTab === 'scan' && masterSwitch && (
+                  {previousTab === "scan" && masterSwitch && (
                     <div className={outAnimation}>
                       <Rescanner darkMode={darkMode} />
                       <br />
                       <ScanCoinbaseToggle darkMode={darkMode} />
                     </div>
                   )}
-                  {previousTab === 'display' && masterSwitch && (
+                  {previousTab === "display" && masterSwitch && (
                     <div className={outAnimation}>
                       <FiatSelector darkMode={darkMode} />
                       <br />
                       <DarkModeToggle darkMode={darkMode} />
                     </div>
                   )}
-                  {previousTab === 'security' && masterSwitch && (
+                  {previousTab === "security" && masterSwitch && (
                     <div className={outAnimation}>
                       <TimeoutSelector darkMode={darkMode} />
                       <br />
@@ -423,10 +423,10 @@ export default class Settings extends Component<Props, State> {
                       </button>
                     </div>
                   )}
-                  {previousTab === 'platform' && masterSwitch && (
+                  {previousTab === "platform" && masterSwitch && (
                     <div className={outAnimation}>
                       <div className="button-settings-page">
-                        {os.platform() !== 'darwin' && (
+                        {os.platform() !== "darwin" && (
                           <Fragment>
                             <CloseToTrayToggle darkMode={darkMode} />
                             <br />

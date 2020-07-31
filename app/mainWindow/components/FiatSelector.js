@@ -1,12 +1,12 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
-import Select from 'react-select';
-import log from 'electron-log';
-import { config, session, configManager } from '../index';
-import currencies from '../constants/currencies.json';
-import { uiType } from '../utils/utils';
+import React, { Component } from "react";
+import Select from "react-select";
+import log from "electron-log";
+import { config, session, configManager } from "../index";
+import currencies from "../constants/currencies.json";
+import { uiType } from "../utils/utils";
 
 type Props = {
   darkMode: boolean
@@ -32,7 +32,7 @@ export default class FiatSelector extends Component<Props, State> {
       };
     });
     this.state = {
-      selectedFiat: this.search(config.selectedFiat, this.options, 'value')
+      selectedFiat: this.search(config.selectedFiat, this.options, "value")
     };
     this.changeCurrency = this.changeCurrency.bind(this);
     this.handleFiatChange = this.handleFiatChange.bind(this);
@@ -55,13 +55,13 @@ export default class FiatSelector extends Component<Props, State> {
     log.debug(
       `User has selected ${selectedFiat} as alternate display currency.`
     );
-    configManager.modifyConfig('selectedFiat', selectedFiat);
-    configManager.modifyConfig('fiatSymbol', fiatSymbol);
-    configManager.modifyConfig('symbolLocation', symbolLocation);
-    configManager.modifyConfig('fiatDecimals', fiatDecimals);
+    configManager.modifyConfig("selectedFiat", selectedFiat);
+    configManager.modifyConfig("fiatSymbol", fiatSymbol);
+    configManager.modifyConfig("symbolLocation", symbolLocation);
+    configManager.modifyConfig("fiatDecimals", fiatDecimals);
     session.getFiatPrice(selectedFiat);
     this.setState({
-      selectedFiat: this.search(config.selectedFiat, this.options, 'value')
+      selectedFiat: this.search(config.selectedFiat, this.options, "value")
     });
   };
 
@@ -74,7 +74,7 @@ export default class FiatSelector extends Component<Props, State> {
   }
 
   handleFiatChange = (event: any) => {
-    const currency = this.search(event.value, currencies, 'ticker');
+    const currency = this.search(event.value, currencies, "ticker");
     if (currency) {
       this.changeCurrency(
         currency.ticker,

@@ -1,11 +1,11 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
-import ReactLoading from 'react-loading';
-import ReactTooltip from 'react-tooltip';
-import { session, il8n, eventEmitter, config, configManager } from '../index';
-import { formatLikeCurrency, atomicToHuman } from '../utils/utils';
+import React, { Component } from "react";
+import ReactLoading from "react-loading";
+import ReactTooltip from "react-tooltip";
+import { session, il8n, eventEmitter, config, configManager } from "../index";
+import { formatLikeCurrency, atomicToHuman } from "../utils/utils";
 
 type Props = {
   size: string,
@@ -44,13 +44,13 @@ export default class Balance extends Component<Props, State> {
   }
 
   componentDidMount() {
-    eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
-    eventEmitter.on('gotNewBalance', this.handleNewBalance);
+    eventEmitter.on("gotFiatPrice", this.updateFiatPrice);
+    eventEmitter.on("gotNewBalance", this.handleNewBalance);
   }
 
   componentWillUnmount() {
-    eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
-    eventEmitter.off('gotNewBalance', this.handleNewBalance);
+    eventEmitter.off("gotFiatPrice", this.updateFiatPrice);
+    eventEmitter.off("gotNewBalance", this.handleNewBalance);
   }
 
   handleNewBalance = () => {
@@ -71,19 +71,19 @@ export default class Balance extends Component<Props, State> {
 
   switchCurrency = () => {
     const { displayCurrency } = this.state;
-    if (displayCurrency === 'TRTL') {
+    if (displayCurrency === "TRTL") {
       this.setState({
-        displayCurrency: 'fiat'
+        displayCurrency: "fiat"
       });
-      configManager.modifyConfig('displayCurrency', 'fiat');
-      eventEmitter.emit('modifyCurrency', 'fiat');
+      configManager.modifyConfig("displayCurrency", "fiat");
+      eventEmitter.emit("modifyCurrency", "fiat");
     }
-    if (displayCurrency === 'fiat') {
+    if (displayCurrency === "fiat") {
       this.setState({
-        displayCurrency: 'TRTL'
+        displayCurrency: "TRTL"
       });
-      configManager.modifyConfig('displayCurrency', 'TRTL');
-      eventEmitter.emit('modifyCurrency', 'TRTL');
+      configManager.modifyConfig("displayCurrency", "TRTL");
+      eventEmitter.emit("modifyCurrency", "TRTL");
     }
     ReactTooltip.rebuild();
   };
@@ -99,15 +99,15 @@ export default class Balance extends Component<Props, State> {
       symbolLocation,
       fiatDecimals
     } = this.state;
-    const color = darkMode ? 'is-dark' : 'is-white';
+    const color = darkMode ? "is-dark" : "is-white";
 
     let balanceTooltip;
 
-    if (displayCurrency === 'TRTL') {
+    if (displayCurrency === "TRTL") {
       balanceTooltip =
         `Unlocked: ${atomicToHuman(unlockedBalance, true)} ${il8n.TRTL}<br>` +
         `Locked: ${atomicToHuman(lockedBalance, true)} ${il8n.TRTL}`;
-    } else if (symbolLocation === 'prefix' && displayCurrency === 'fiat') {
+    } else if (symbolLocation === "prefix" && displayCurrency === "fiat") {
       balanceTooltip =
         `Unlocked: ${fiatSymbol}${formatLikeCurrency(
           Number(fiatPrice * atomicToHuman(unlockedBalance, false)).toFixed(
@@ -121,7 +121,7 @@ export default class Balance extends Component<Props, State> {
           )
         )}
         <br>`;
-    } else if (symbolLocation === 'suffix' && displayCurrency === 'fiat') {
+    } else if (symbolLocation === "suffix" && displayCurrency === "fiat") {
       balanceTooltip =
         `Unlocked: ${(
           fiatPrice * atomicToHuman(unlockedBalance, false)
@@ -131,7 +131,7 @@ export default class Balance extends Component<Props, State> {
           fiatDecimals
         )}${fiatSymbol}`;
     } else {
-      balanceTooltip = 'No wallet open!';
+      balanceTooltip = "No wallet open!";
     }
 
     return (
@@ -145,7 +145,7 @@ export default class Balance extends Component<Props, State> {
       >
         <div className="tags has-addons">
           <span className={`tag ${color} ${size}`}>{il8n.balance_colon}</span>
-          {displayCurrency === 'TRTL' && (
+          {displayCurrency === "TRTL" && (
             <span
               className={
                 lockedBalance > 0
@@ -164,7 +164,7 @@ export default class Balance extends Component<Props, State> {
               &nbsp;{il8n.TRTL}
             </span>
           )}
-          {displayCurrency === 'fiat' && symbolLocation === 'prefix' && (
+          {displayCurrency === "fiat" && symbolLocation === "prefix" && (
             <span
               className={
                 lockedBalance > 0
@@ -200,7 +200,7 @@ export default class Balance extends Component<Props, State> {
               )}
             </span>
           )}
-          {displayCurrency === 'fiat' && symbolLocation === 'suffix' && (
+          {displayCurrency === "fiat" && symbolLocation === "suffix" && (
             <span
               className={
                 lockedBalance > 0

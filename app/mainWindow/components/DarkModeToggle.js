@@ -1,9 +1,9 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
-import { uiType } from '../utils/utils';
-import { config, eventEmitter, configManager } from '../index';
+import React, { Component } from "react";
+import { uiType } from "../utils/utils";
+import { config, eventEmitter, configManager } from "../index";
 
 type State = {
   darkMode: boolean
@@ -30,8 +30,8 @@ export default class DarkModeToggle extends Component<Props, State> {
       darkMode: true
     });
     config.darkMode = true;
-    configManager.modifyConfig('darkmode', true);
-    eventEmitter.emit('darkmodeon');
+    configManager.modifyConfig("darkmode", true);
+    eventEmitter.emit("darkmodeon");
   };
 
   darkModeOff = () => {
@@ -39,8 +39,8 @@ export default class DarkModeToggle extends Component<Props, State> {
       darkMode: false
     });
     config.darkMode = false;
-    configManager.modifyConfig('darkmode', false);
-    eventEmitter.emit('darkmodeoff');
+    configManager.modifyConfig("darkmode", false);
+    eventEmitter.emit("darkmodeoff");
   };
 
   render() {

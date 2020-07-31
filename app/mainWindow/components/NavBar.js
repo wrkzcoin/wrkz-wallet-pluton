@@ -2,13 +2,13 @@
 //
 // Please see the included LICENSE file for more information.
 
-import React, { Component } from 'react';
-import log from 'electron-log';
-import { Link, Redirect, withRouter } from 'react-router-dom';
-import routes from '../constants/routes';
-import { session, eventEmitter, il8n, loginCounter } from '../index';
-import { uiType } from '../utils/utils';
-import Modal from './Modal';
+import React, { Component } from "react";
+import log from "electron-log";
+import { Link, Redirect, withRouter } from "react-router-dom";
+import routes from "../constants/routes";
+import { session, eventEmitter, il8n, loginCounter } from "../index";
+import { uiType } from "../utils/utils";
+import Modal from "./Modal";
 
 type Location = {
   hash: string,
@@ -39,7 +39,7 @@ class NavBar extends Component<Props, State> {
     super(props);
     this.state = {
       navBarCount: loginCounter.navBarCount,
-      query: props.query || '',
+      query: props.query || "",
       submitSearch: false
     };
     this.logOut = this.logOut.bind(this);
@@ -54,7 +54,7 @@ class NavBar extends Component<Props, State> {
   componentWillUnmount() {}
 
   logOut = () => {
-    eventEmitter.emit('logOut');
+    eventEmitter.emit("logOut");
   };
 
   handleQueryChange = (event: any) => {
@@ -68,7 +68,7 @@ class NavBar extends Component<Props, State> {
     event.preventDefault();
     const { query } = this.state;
 
-    if (query === '') {
+    if (query === "") {
       return;
     }
 
@@ -118,40 +118,40 @@ class NavBar extends Component<Props, State> {
                 <div className="navbar-start">
                   <Link to={routes.HOME} className="navbar-item">
                     <i className="fa fa-credit-card" />
-                    {pathname === '/' && (
+                    {pathname === "/" && (
                       <p className="sans">
                         <strong>&nbsp;&nbsp;{il8n.wallet}</strong>
                       </p>
                     )}
-                    {pathname !== '/' && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
+                    {pathname !== "/" && <p>&nbsp;&nbsp;{il8n.wallet}</p>}
                   </Link>
 
                   <Link className="navbar-item" to={routes.SEND}>
                     <i className="fa fa-paper-plane" />
-                    {pathname.includes('/send') && (
+                    {pathname.includes("/send") && (
                       <strong>&nbsp;&nbsp;{il8n.send}</strong>
                     )}
-                    {!pathname.includes('/send') && (
+                    {!pathname.includes("/send") && (
                       <p>&nbsp;&nbsp;{il8n.send}</p>
                     )}
                   </Link>
 
                   <Link className="navbar-item" to={routes.RECEIVE}>
                     <i className="fa fa-arrow-circle-down" />
-                    {pathname === '/receive' && (
+                    {pathname === "/receive" && (
                       <strong>&nbsp;&nbsp;{il8n.receive}</strong>
                     )}
-                    {pathname !== '/receive' && (
+                    {pathname !== "/receive" && (
                       <p>&nbsp;&nbsp;{il8n.receive}</p>
                     )}
                   </Link>
 
                   <Link className="navbar-item" to={routes.ADDRESSBOOK}>
                     <i className="fas fa-address-book" />
-                    {pathname === '/addressbook' && (
+                    {pathname === "/addressbook" && (
                       <strong>&nbsp;&nbsp;Address Book</strong>
                     )}
-                    {pathname !== '/addressbook' && (
+                    {pathname !== "/addressbook" && (
                       <p>&nbsp;&nbsp;Address Book</p>
                     )}
                   </Link>
@@ -180,7 +180,7 @@ class NavBar extends Component<Props, State> {
                       </div>
                     </form>
                   </div>
-                  {session.walletPassword !== '' && (
+                  {session.walletPassword !== "" && (
                     <div className="navbar-item">
                       <Link className="buttons" to={routes.LOGIN}>
                         <span
@@ -221,10 +221,10 @@ class NavBar extends Component<Props, State> {
                     <span
                       className="icon button is-large is-danger"
                       onClick={() => {
-                        eventEmitter.emit('goToLogin');
+                        eventEmitter.emit("goToLogin");
                       }}
                       onKeyPress={() => {
-                        eventEmitter.emit('goToLogin');
+                        eventEmitter.emit("goToLogin");
                       }}
                       role="button"
                       tabIndex={0}
@@ -243,7 +243,7 @@ class NavBar extends Component<Props, State> {
 }
 
 NavBar.defaultProps = {
-  query: ''
+  query: ""
 };
 
 export default withRouter(NavBar);

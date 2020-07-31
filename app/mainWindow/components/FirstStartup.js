@@ -1,12 +1,12 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
-import log from 'electron-log';
-import { eventEmitter, il8n, config } from '../index';
-import Redirector from './Redirector';
-import Modal from './Modal';
-import { uiType } from '../utils/utils';
+import React, { Component } from "react";
+import log from "electron-log";
+import { eventEmitter, il8n, config } from "../index";
+import Redirector from "./Redirector";
+import Modal from "./Modal";
+import { uiType } from "../utils/utils";
 
 // import styles from './Send.css';
 
@@ -33,19 +33,19 @@ export default class FirstStartup extends Component<Props, State> {
   componentWillUnmount() {}
 
   openExisting = () => {
-    log.debug('User selected to open an existing wallet.');
-    eventEmitter.emit('handleOpen');
+    log.debug("User selected to open an existing wallet.");
+    eventEmitter.emit("handleOpen");
   };
 
   createNew = () => {
-    log.debug('User selected to create a new wallet.');
-    eventEmitter.emit('handleNew');
+    log.debug("User selected to create a new wallet.");
+    eventEmitter.emit("handleNew");
   };
 
   importFromKeysOrSeed = () => {
     const { darkMode } = this.state;
     const { textColor } = uiType(darkMode);
-    log.debug('User selected to import wallet.');
+    log.debug("User selected to import wallet.");
     const message = (
       <div>
         <center>
@@ -60,13 +60,13 @@ export default class FirstStartup extends Component<Props, State> {
       </div>
     );
     eventEmitter.emit(
-      'openModal',
+      "openModal",
       message,
-      'Seed',
+      "Seed",
       null,
-      'importSeed',
-      'Key',
-      'importKey'
+      "importSeed",
+      "Key",
+      "importKey"
     );
   };
 

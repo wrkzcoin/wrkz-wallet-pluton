@@ -1,13 +1,13 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
-import { ipcRenderer } from 'electron';
-import { eventEmitter, il8n, loginCounter, config } from '../index';
-import NavBar from './NavBar';
-import BottomBar from './BottomBar';
-import Redirector from './Redirector';
-import { uiType } from '../utils/utils';
+import React, { Component } from "react";
+import { ipcRenderer } from "electron";
+import { eventEmitter, il8n, loginCounter, config } from "../index";
+import NavBar from "./NavBar";
+import BottomBar from "./BottomBar";
+import Redirector from "./Redirector";
+import { uiType } from "../utils/utils";
 
 type Props = {};
 
@@ -25,10 +25,10 @@ export default class ChangePassword extends Component<Props, State> {
     super(props);
     this.state = {
       darkMode: config.darkMode,
-      pageAnimationIn: loginCounter.getAnimation('/changepassword'),
-      oldPassword: '',
-      newPassword: '',
-      passwordConfirm: ''
+      pageAnimationIn: loginCounter.getAnimation("/changepassword"),
+      oldPassword: "",
+      newPassword: "",
+      passwordConfirm: ""
     };
     this.changePassword = this.changePassword.bind(this);
   }
@@ -53,11 +53,11 @@ export default class ChangePassword extends Component<Props, State> {
           </p>
         </div>
       );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
+      eventEmitter.emit("openModal", message, "OK", null, null);
       return;
     }
     const request = { oldPassword, newPassword };
-    ipcRenderer.send('fromFrontend', 'changePasswordRequest', request);
+    ipcRenderer.send("fromFrontend", "changePasswordRequest", request);
   };
 
   render() {

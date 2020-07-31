@@ -1,17 +1,17 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from 'react';
-import ReactTooltip from 'react-tooltip';
-import { clipboard, remote } from 'electron';
-import log from 'electron-log';
-import jdenticon from 'jdenticon';
-import { WalletBackend, Daemon } from 'turtlecoin-wallet-backend';
-import NavBar from './NavBar';
-import BottomBar from './BottomBar';
-import Redirector from './Redirector';
-import { uiType } from '../utils/utils';
-import { backupToFile, eventEmitter, reInitWallet, config } from '../index';
+import React, { Component } from "react";
+import ReactTooltip from "react-tooltip";
+import { clipboard, remote } from "electron";
+import log from "electron-log";
+import jdenticon from "jdenticon";
+import { WalletBackend, Daemon } from "turtlecoin-wallet-backend";
+import NavBar from "./NavBar";
+import BottomBar from "./BottomBar";
+import Redirector from "./Redirector";
+import { uiType } from "../utils/utils";
+import { backupToFile, eventEmitter, reInitWallet, config } from "../index";
 
 type State = {
   darkMode: boolean,
@@ -32,12 +32,12 @@ export default class NewWallet extends Component<Props, State> {
     this.state = {
       darkMode: config.darkMode,
       newWallet: WalletBackend.createWallet(
-        new Daemon('blockapi.turtlepay.io', 443)
+        new Daemon("blockapi.turtlepay.io", 443)
       ),
-      activePage: 'generate',
-      password: '',
-      confirmPassword: '',
-      confirmSeed: '',
+      activePage: "generate",
+      password: "",
+      confirmPassword: "",
+      confirmSeed: "",
       showPassword: false
     };
 
@@ -68,15 +68,15 @@ export default class NewWallet extends Component<Props, State> {
   evaluatePageNumber = (pageName: string) => {
     switch (pageName) {
       default:
-        log.error('Programmer error!');
+        log.error("Programmer error!");
         break;
-      case 'generate':
+      case "generate":
         return 1;
-      case 'secure':
+      case "secure":
         return 2;
-      case 'backup':
+      case "backup":
         return 3;
-      case 'verify':
+      case "verify":
         return 4;
     }
   };
@@ -84,16 +84,16 @@ export default class NewWallet extends Component<Props, State> {
   evaluatePageName = (pageNumber: number) => {
     switch (pageNumber) {
       default:
-        log.error('Programmer error!');
+        log.error("Programmer error!");
         break;
       case 1:
-        return 'generate';
+        return "generate";
       case 2:
-        return 'secure';
+        return "secure";
       case 3:
-        return 'backup';
+        return "backup";
       case 4:
-        return 'verify';
+        return "verify";
     }
   };
 
@@ -135,7 +135,7 @@ export default class NewWallet extends Component<Props, State> {
     if (currentPageNumber === 4) {
       // import the seed so we can confirm it works
       const [confirmWallet, err] = WalletBackend.importWalletFromSeed(
-        new Daemon('blockapi.turtlepay.io', 443),
+        new Daemon("blockapi.turtlepay.io", 443),
         100000,
         confirmSeed
       );
@@ -152,7 +152,7 @@ export default class NewWallet extends Component<Props, State> {
             <p className={`subtitle ${textColor}`}>{err.customMessage}</p>
           </div>
         );
-        eventEmitter.emit('openModal', message, 'OK', null, null);
+        eventEmitter.emit("openModal", message, "OK", null, null);
       }
 
       // seed was valid, let's check if it's the same address
@@ -163,11 +163,11 @@ export default class NewWallet extends Component<Props, State> {
         ) {
           // get the save as path
           const options = {
-            defaultPath: remote.app.getPath('documents'),
+            defaultPath: remote.app.getPath("documents"),
             filters: [
               {
-                name: 'TurtleCoin Wallet File (v0)',
-                extensions: ['wallet']
+                name: "TurtleCoin Wallet File (v0)",
+                extensions: ["wallet"]
               }
             ]
           };
@@ -194,10 +194,10 @@ export default class NewWallet extends Component<Props, State> {
                 </p>
               </div>
             );
-            eventEmitter.emit('openModal', message, 'OK', null, null);
+            eventEmitter.emit("openModal", message, "OK", null, null);
           }
         } else {
-          log.error('Wallet creation error.');
+          log.error("Wallet creation error.");
           const message = (
             <div>
               <center>
@@ -210,7 +210,7 @@ export default class NewWallet extends Component<Props, State> {
               </p>
             </div>
           );
-          eventEmitter.emit('openModal', message, 'OK', null, null);
+          eventEmitter.emit("openModal", message, "OK", null, null);
         }
       }
       return;
@@ -265,7 +265,7 @@ export default class NewWallet extends Component<Props, State> {
     const { backgroundColor, fillColor, elementBaseColor, textColor } = uiType(
       darkMode
     );
-    const copiedTip = 'Copied!';
+    const copiedTip = "Copied!";
 
     return (
       <div>
@@ -276,16 +276,16 @@ export default class NewWallet extends Component<Props, State> {
             <div className={`steps ${textColor} is-dark`} id="stepsDemo">
               <div
                 className={`step-item ${
-                  activePage === 'generate' ? 'is-active' : ''
+                  activePage === "generate" ? "is-active" : ""
                 } ${
-                  this.evaluatePageNumber(activePage) > 1 ? 'is-completed' : ''
+                  this.evaluatePageNumber(activePage) > 1 ? "is-completed" : ""
                 } is-success`}
               >
                 <div className="step-marker">
                   {this.evaluatePageNumber(activePage) > 1 ? (
                     <i className="fas fa-check" />
                   ) : (
-                    '1'
+                    "1"
                   )}
                 </div>
                 <div className="step-details">
@@ -294,17 +294,17 @@ export default class NewWallet extends Component<Props, State> {
               </div>
               <div
                 className={`step-item ${
-                  activePage === 'secure' ? 'is-active' : ''
+                  activePage === "secure" ? "is-active" : ""
                 } ${
-                  this.evaluatePageNumber(activePage) > 2 ? 'is-completed' : ''
+                  this.evaluatePageNumber(activePage) > 2 ? "is-completed" : ""
                 } is-success`}
               >
                 <div className="step-marker">
-                  {' '}
+                  {" "}
                   {this.evaluatePageNumber(activePage) > 2 ? (
                     <i className="fas fa-check" />
                   ) : (
-                    '2'
+                    "2"
                   )}
                 </div>
                 <div className="step-details">
@@ -313,17 +313,17 @@ export default class NewWallet extends Component<Props, State> {
               </div>
               <div
                 className={`step-item ${
-                  activePage === 'backup' ? 'is-active' : ''
+                  activePage === "backup" ? "is-active" : ""
                 } ${
-                  this.evaluatePageNumber(activePage) > 3 ? 'is-completed' : ''
+                  this.evaluatePageNumber(activePage) > 3 ? "is-completed" : ""
                 } is-success`}
               >
                 <div className="step-marker">
-                  {' '}
+                  {" "}
                   {this.evaluatePageNumber(activePage) > 3 ? (
                     <i className="fas fa-check" />
                   ) : (
-                    '3'
+                    "3"
                   )}
                 </div>
                 <div className="step-details">
@@ -332,7 +332,7 @@ export default class NewWallet extends Component<Props, State> {
               </div>
               <div
                 className={`step-item ${
-                  activePage === 'verify' ? 'is-active' : ''
+                  activePage === "verify" ? "is-active" : ""
                 } is-success`}
               >
                 <div className="step-marker">4</div>
@@ -342,7 +342,7 @@ export default class NewWallet extends Component<Props, State> {
               </div>
             </div>
 
-            {activePage === 'generate' && (
+            {activePage === "generate" && (
               <div>
                 <p className={`subtitle ${textColor}`}>
                   Welcome to the wallet creation wizard. Each address is
@@ -382,7 +382,7 @@ export default class NewWallet extends Component<Props, State> {
               </div>
             )}
 
-            {activePage === 'secure' && (
+            {activePage === "secure" && (
               <div>
                 <p className={`subtitle ${textColor}`}>
                   Set a password for your wallet. Take care not to forget it.
@@ -393,12 +393,12 @@ export default class NewWallet extends Component<Props, State> {
                     <div className="control">
                       <input
                         className="input is-large"
-                        type={showPassword ? 'input' : 'password'}
+                        type={showPassword ? "input" : "password"}
                         placeholder="Enter a password"
                         value={password}
                         onChange={this.handlePasswordChange}
                         onKeyPress={event => {
-                          if (event.key === 'Enter') {
+                          if (event.key === "Enter") {
                             this.nextPage();
                           }
                         }}
@@ -408,23 +408,23 @@ export default class NewWallet extends Component<Props, State> {
                 </div>
                 <div className="field">
                   <label className={`label ${textColor}`} htmlFor="scanheight">
-                    Confirm Password:{' '}
+                    Confirm Password:{" "}
                     {password !== confirmPassword ? (
                       <span className="has-text-danger">
                         &nbsp;&nbsp;Passwords do not match!
                       </span>
                     ) : (
-                      ''
+                      ""
                     )}
                     <div className="control">
                       <input
                         className="input is-large"
-                        type={showPassword ? 'input' : 'password'}
+                        type={showPassword ? "input" : "password"}
                         placeholder="Confirm password"
                         value={confirmPassword}
                         onChange={this.handleConfirmPasswordChange}
                         onKeyPress={event => {
-                          if (event.key === 'Enter') {
+                          if (event.key === "Enter") {
                             this.nextPage();
                           }
                         }}
@@ -467,10 +467,10 @@ export default class NewWallet extends Component<Props, State> {
               </div>
             )}
 
-            {activePage === 'backup' && (
+            {activePage === "backup" && (
               <div>
                 <p className={`subtitle ${textColor}`}>
-                  Please back up the following mnemonic seed safely.{' '}
+                  Please back up the following mnemonic seed safely.{" "}
                   <span className="has-text-danger has-text-weight-bold ">
                     If you lose it your funds will be lost forever.
                   </span>
@@ -518,7 +518,7 @@ export default class NewWallet extends Component<Props, State> {
               </div>
             )}
 
-            {activePage === 'verify' && (
+            {activePage === "verify" && (
               <div>
                 <p className={`subtitle ${textColor}`}>
                   Enter your seed to confirm you&apos;ve backed it up.
@@ -531,7 +531,7 @@ export default class NewWallet extends Component<Props, State> {
                     onChange={this.handleConfirmSeedChange}
                     rows="4"
                     onKeyPress={event => {
-                      if (event.key === 'Enter') {
+                      if (event.key === "Enter") {
                         this.nextPage();
                       }
                     }}
@@ -562,7 +562,7 @@ export default class NewWallet extends Component<Props, State> {
                   tabIndex={0}
                   onMouseDown={event => event.preventDefault()}
                 >
-                  {activePage === 'verify' ? 'Save Wallet As' : 'Next'}
+                  {activePage === "verify" ? "Save Wallet As" : "Next"}
                 </span>
               </div>
             </center>

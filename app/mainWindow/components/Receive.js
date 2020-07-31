@@ -1,19 +1,19 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import crypto from 'crypto';
-import React, { Component } from 'react';
-import QRCode from 'qrcode.react';
-import ReactTooltip from 'react-tooltip';
+import crypto from "crypto";
+import React, { Component } from "react";
+import QRCode from "qrcode.react";
+import ReactTooltip from "react-tooltip";
 import {
   createIntegratedAddress,
   validatePaymentID
-} from 'turtlecoin-wallet-backend';
-import { session, il8n, loginCounter, config } from '../index';
-import NavBar from './NavBar';
-import BottomBar from './BottomBar';
-import Redirector from './Redirector';
-import { uiType } from '../utils/utils';
+} from "turtlecoin-wallet-backend";
+import { session, il8n, loginCounter, config } from "../index";
+import NavBar from "./NavBar";
+import BottomBar from "./BottomBar";
+import Redirector from "./Redirector";
+import { uiType } from "../utils/utils";
 
 type Props = {
   copyToClipboard: string => void
@@ -41,11 +41,11 @@ export default class Receive extends Component<Props, State> {
     this.state = {
       darkMode: config.darkMode,
       sessionAddress: session.getPrimaryAddress(),
-      paymentID: '',
+      paymentID: "",
       usingIntegratedAddress: false,
-      paymentIDHighlight: '',
+      paymentIDHighlight: "",
       masterSwitch: false,
-      pageAnimationIn: loginCounter.getAnimation('/receive')
+      pageAnimationIn: loginCounter.getAnimation("/receive")
     };
     this.handleCopiedTip = this.handleCopiedTip.bind(this);
     this.generateIntegratedAddress = this.generateIntegratedAddress.bind(this);
@@ -66,14 +66,14 @@ export default class Receive extends Component<Props, State> {
   };
 
   generateIntegratedAddress = (specifiedID?: string) => {
-    const paymentID = specifiedID || crypto.randomBytes(32).toString('hex');
+    const paymentID = specifiedID || crypto.randomBytes(32).toString("hex");
     const integratedAddress = createIntegratedAddress(
       session.getPrimaryAddress(),
       paymentID
     );
     this.setState({
       masterSwitch: true,
-      paymentIDHighlight: 'is-success',
+      paymentIDHighlight: "is-success",
       usingIntegratedAddress: true,
       sessionAddress: integratedAddress,
       paymentID
@@ -84,13 +84,13 @@ export default class Receive extends Component<Props, State> {
     this.setState({
       usingIntegratedAddress: false,
       sessionAddress: session.getPrimaryAddress(),
-      paymentID: ''
+      paymentID: ""
     });
   };
 
   handlePaymentIDChange = (event: any) => {
     this.setState({
-      paymentIDHighlight: ''
+      paymentIDHighlight: ""
     });
     const enteredID = event.target.value;
     this.setState({
@@ -105,11 +105,11 @@ export default class Receive extends Component<Props, State> {
     if (errorCode === 0) {
       this.generateIntegratedAddress(paymentID);
       this.setState({
-        paymentIDHighlight: 'is-success'
+        paymentIDHighlight: "is-success"
       });
     } else {
       this.setState({
-        paymentIDHighlight: 'is-danger'
+        paymentIDHighlight: "is-danger"
       });
     }
   };
@@ -132,7 +132,7 @@ export default class Receive extends Component<Props, State> {
       elementBaseColor
     } = uiType(darkMode);
 
-    const copiedTip = 'Copied!';
+    const copiedTip = "Copied!";
 
     return (
       <div>

@@ -1,36 +1,36 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import log from 'electron-log';
-import os from 'os';
-import fs from 'fs';
-import path from 'path';
-import React, { Fragment } from 'react';
-import LocalizedStrings from 'react-localization';
-import ErrorBoundary from 'react-error-boundary';
-import { render } from 'react-dom';
-import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { ipcRenderer, remote } from 'electron';
-import EventEmitter from 'events';
-import Root from './containers/Root';
-import { configureStore, history } from './store/configureStore';
-import './app.global.css';
-import WalletSession from './wallet/session';
-import iConfig from './constants/config';
-import AutoUpdater from './wallet/autoUpdater';
-import LoginCounter from './wallet/loginCounter';
-import { uiType } from './utils/utils';
-import ProtonConfig from './wallet/protonConfig';
+import log from "electron-log";
+import os from "os";
+import fs from "fs";
+import path from "path";
+import React, { Fragment } from "react";
+import LocalizedStrings from "react-localization";
+import ErrorBoundary from "react-error-boundary";
+import { render } from "react-dom";
+import { AppContainer as ReactHotAppContainer } from "react-hot-loader";
+import { ipcRenderer, remote } from "electron";
+import EventEmitter from "events";
+import Root from "./containers/Root";
+import { configureStore, history } from "./store/configureStore";
+import "./app.global.css";
+import WalletSession from "./wallet/session";
+import iConfig from "./constants/config";
+import AutoUpdater from "./wallet/autoUpdater";
+import LoginCounter from "./wallet/loginCounter";
+import { uiType } from "./utils/utils";
+import ProtonConfig from "./wallet/protonConfig";
 
 export function savedInInstallDir(response: string) {
-  const programDirectory = path.resolve(remote.app.getAppPath(), '../../');
-  const saveDirectory = path.resolve(response, '../');
+  const programDirectory = path.resolve(remote.app.getAppPath(), "../../");
+  const saveDirectory = path.resolve(response, "../");
 
   log.info(programDirectory, saveDirectory);
 
   const relative = path.relative(programDirectory, saveDirectory);
   return (
-    (relative && !relative.startsWith('..') && !path.isAbsolute(relative)) ||
+    (relative && !relative.startsWith("..") && !path.isAbsolute(relative)) ||
     programDirectory === saveDirectory
   );
 }
@@ -44,9 +44,9 @@ export const directories = [
 
 export const il8n = new LocalizedStrings({
   // eslint-disable-next-line global-require
-  en: require('./il8n/en.json'),
+  en: require("./il8n/en.json"),
   // eslint-disable-next-line global-require
-  fr: require('./il8n/fr.json')
+  fr: require("./il8n/fr.json")
 });
 
 export let config = iConfig;
@@ -60,14 +60,14 @@ updater.getLatestVersion();
 
 export let loginCounter = new LoginCounter();
 
-remote.app.setAppUserModelId('wallet.proton.extra');
+remote.app.setAppUserModelId("wallet.proton.extra");
 
 log.debug(`Proton wallet started...`);
 
 const [programDirectory] = directories;
 
 if (!fs.existsSync(`${programDirectory}/config.json`)) {
-  log.debug('Config not detected, writing internal config to disk...');
+  log.debug("Config not detected, writing internal config to disk...");
 } else {
   log.debug("Config file found in user's home directory, using it...");
   const rawUserConfig = fs
@@ -78,7 +78,7 @@ if (!fs.existsSync(`${programDirectory}/config.json`)) {
   try {
     config = Object.assign(config, JSON.parse(rawUserConfig));
   } catch {
-    log.debug('User config is not valid JSON!');
+    log.debug("User config is not valid JSON!");
   }
 }
 
@@ -98,23 +98,23 @@ const { darkMode } = config;
 
 let { textColor } = uiType(darkMode);
 
-eventEmitter.on('darkmodeon', () => {
-  textColor = 'has-text-white';
+eventEmitter.on("darkmodeon", () => {
+  textColor = "has-text-white";
 });
-eventEmitter.on('darkmodeoff', () => {
-  textColor = 'has-text-dark';
+eventEmitter.on("darkmodeoff", () => {
+  textColor = "has-text-dark";
 });
 
 export let session = new WalletSession();
 
-ipcRenderer.on('handleDonate', handleDonate);
-eventEmitter.on('handleDonate', handleDonate);
+ipcRenderer.on("handleDonate", handleDonate);
+eventEmitter.on("handleDonate", handleDonate);
 
-let latestUpdate = '';
+let latestUpdate = "";
 
-eventEmitter.on('sendTransaction', handleSendTransaction);
+eventEmitter.on("sendTransaction", handleSendTransaction);
 
-eventEmitter.on('updateRequired', updateFile => {
+eventEmitter.on("updateRequired", updateFile => {
   latestUpdate = updateFile;
   const message = (
     <div>
@@ -129,18 +129,19 @@ eventEmitter.on('updateRequired', updateFile => {
     </div>
   );
   eventEmitter.emit(
-    'openModal',
+    "openModal",
     message,
-    'Download',
+    "Download",
     `Not Right Now`,
-    'getUpdate'
+    "getUpdate"
   );
 });
 
-ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
+ipcRenderer.on("fromMain", (event: Electron.IpcRendererEvent, message: any) => {
   const { data, messageType } = message;
   switch (messageType) {
-    case 'config':
+    case "config":
+      console.log(data);
       configManager = new ProtonConfig(data.config, data.configPath);
       break;
     default:
@@ -150,54 +151,54 @@ ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
 });
 
 ipcRenderer.on(
-  'fromBackend',
+  "fromBackend",
   (event: Electron.IpcRendererEvent, message: any) => {
     const { data, messageType } = message;
 
     switch (messageType) {
-      case 'authenticationError':
+      case "authenticationError":
         handleAuthenticationError(data);
         break;
-      case 'prepareTransactionResponse':
+      case "prepareTransactionResponse":
         handlePrepareTransactionResponse(data);
         break;
-      case 'transactionCount':
+      case "transactionCount":
         session.setTransactionCount(data);
         break;
-      case 'rescanResponse':
+      case "rescanResponse":
         handleRescanResponse(data);
         break;
-      case 'daemonConnectionInfo':
+      case "daemonConnectionInfo":
         session.setDaemonConnectionInfo(data);
         break;
-      case 'passwordChangeResponse':
+      case "passwordChangeResponse":
         handlePasswordChangeResponse(data);
         break;
-      case 'saveWalletResponse':
+      case "saveWalletResponse":
         handleSaveWalletResponse(data);
         break;
-      case 'walletActiveStatus':
+      case "walletActiveStatus":
         loginCounter.setWalletActive(data);
         break;
-      case 'primaryAddress':
+      case "primaryAddress":
         session.setPrimaryAddress(data);
         break;
-      case 'transactionList':
+      case "transactionList":
         session.setTransactions(data);
         break;
-      case 'syncStatus':
+      case "syncStatus":
         session.setSyncStatus(data);
         break;
-      case 'balance':
+      case "balance":
         session.setBalance(data);
         break;
-      case 'nodeFee':
+      case "nodeFee":
         session.setNodeFee(data);
         break;
-      case 'sendTransactionResponse':
+      case "sendTransactionResponse":
         handleSendTransactionResponse(data);
         break;
-      case 'backendLogLine':
+      case "backendLogLine":
         session.addBackendLogLine(data);
         break;
       default:
@@ -218,11 +219,11 @@ function handleRescanResponse(height: string) {
       </p>
     </div>
   );
-  eventEmitter.emit('openModal', modalMessage, 'OK', null, 'transactionCancel');
+  eventEmitter.emit("openModal", modalMessage, "OK", null, "transactionCancel");
 }
 
 function handlePrepareTransactionResponse(response: any) {
-  if (response.status === 'FAILURE') {
+  if (response.status === "FAILURE") {
     const modalMessage = (
       <div>
         <center>
@@ -236,17 +237,17 @@ function handlePrepareTransactionResponse(response: any) {
       </div>
     );
     eventEmitter.emit(
-      'openModal',
+      "openModal",
       modalMessage,
-      'OK',
+      "OK",
       null,
-      'transactionCancel'
+      "transactionCancel"
     );
   }
 }
 
 function handleSendTransactionResponse(response: any) {
-  if (response.status === 'SUCCESS') {
+  if (response.status === "SUCCESS") {
     const modalMessage = (
       <div>
         <center>
@@ -260,11 +261,11 @@ function handleSendTransactionResponse(response: any) {
       </div>
     );
     eventEmitter.emit(
-      'openModal',
+      "openModal",
       modalMessage,
-      'OK',
+      "OK",
       null,
-      'transactionCancel'
+      "transactionCancel"
     );
   } else {
     const modalMessage = (
@@ -280,11 +281,11 @@ function handleSendTransactionResponse(response: any) {
       </div>
     );
     eventEmitter.emit(
-      'openModal',
+      "openModal",
       modalMessage,
-      'OK',
+      "OK",
       null,
-      'transactionCancel'
+      "transactionCancel"
     );
   }
 }
@@ -304,7 +305,7 @@ function handleSaveWalletResponse(response: any) {
         </p>
       </div>
     );
-    eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
+    eventEmitter.emit("openModal", modalMessage, "OK", null, null);
   } else {
     const modalMessage = (
       <div>
@@ -318,7 +319,7 @@ function handleSaveWalletResponse(response: any) {
         </p>
       </div>
     );
-    eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
+    eventEmitter.emit("openModal", modalMessage, "OK", null, null);
   }
 }
 
@@ -332,12 +333,12 @@ function handleAuthenticationError(error: any) {
       <p className={`subtitle ${textColor}`}>{error.errorString}</p>
     </div>
   );
-  eventEmitter.emit('openModal', message, 'OK', null, null);
+  eventEmitter.emit("openModal", message, "OK", null, null);
 }
 
 function handlePasswordChangeResponse(response: any) {
   const { status, error } = response;
-  if (status === 'SUCCESS') {
+  if (status === "SUCCESS") {
     const message = (
       <div>
         <center>
@@ -349,9 +350,9 @@ function handlePasswordChangeResponse(response: any) {
         </p>
       </div>
     );
-    eventEmitter.emit('openModal', message, 'OK', null, 'openNewWallet');
+    eventEmitter.emit("openModal", message, "OK", null, "openNewWallet");
   } else {
-    if (error === 'AUTHERROR') {
+    if (error === "AUTHERROR") {
       const message = (
         <div>
           <center>
@@ -363,9 +364,9 @@ function handlePasswordChangeResponse(response: any) {
           </p>
         </div>
       );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
+      eventEmitter.emit("openModal", message, "OK", null, null);
     }
-    if (error === 'SAVEERROR') {
+    if (error === "SAVEERROR") {
       const message = (
         <div>
           <center>
@@ -379,33 +380,33 @@ function handlePasswordChangeResponse(response: any) {
           </p>
         </div>
       );
-      eventEmitter.emit('openModal', message, 'OK', null, null);
+      eventEmitter.emit("openModal", message, "OK", null, null);
     }
   }
 }
 
-eventEmitter.on('getUpdate', () => {
+eventEmitter.on("getUpdate", () => {
   remote.shell.openExternal(latestUpdate);
   remote.app.exit();
 });
 
-ipcRenderer.on('handleLock', () => {
-  if (session && loginCounter.isLoggedIn && session.walletPassword !== '') {
-    eventEmitter.emit('logOut');
+ipcRenderer.on("handleLock", () => {
+  if (session && loginCounter.isLoggedIn && session.walletPassword !== "") {
+    eventEmitter.emit("logOut");
   }
 });
 
-ipcRenderer.on('handleSaveAs', async () => {
+ipcRenderer.on("handleSaveAs", async () => {
   if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
-    eventEmitter.emit('refreshLogin');
+    eventEmitter.emit("refreshLogin");
     return;
   }
   const options = {
-    defaultPath: remote.app.getPath('documents'),
+    defaultPath: remote.app.getPath("documents"),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
-        extensions: ['wallet']
+        name: "TurtleCoin Wallet File (v0)",
+        extensions: ["wallet"]
       }
     ]
   };
@@ -417,20 +418,20 @@ ipcRenderer.on('handleSaveAs', async () => {
   log.info(response);
 
   const request = { notify: true, savePath: `${response.filePath}.wallet` };
-  ipcRenderer.send('fromFrontend', 'saveWalletAs', request);
+  ipcRenderer.send("fromFrontend", "saveWalletAs", request);
 });
 
-ipcRenderer.on('exportToCSV', async () => {
+ipcRenderer.on("exportToCSV", async () => {
   if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
-    eventEmitter.emit('refreshLogin');
+    eventEmitter.emit("refreshLogin");
     return;
   }
   const options = {
-    defaultPath: remote.app.getPath('documents'),
+    defaultPath: remote.app.getPath("documents"),
     filters: [
       {
-        name: 'CSV Text File',
-        extensions: ['csv']
+        name: "CSV Text File",
+        extensions: ["csv"]
       }
     ]
   };
@@ -438,43 +439,43 @@ ipcRenderer.on('exportToCSV', async () => {
   if (response.canceled) {
     return;
   }
-  ipcRenderer.send('fromFrontend', 'exportToCSV', response.filePath);
+  ipcRenderer.send("fromFrontend", "exportToCSV", response.filePath);
 });
 
-ipcRenderer.on('handleOpen', handleOpen);
-eventEmitter.on('handleOpen', handleOpen);
+ipcRenderer.on("handleOpen", handleOpen);
+eventEmitter.on("handleOpen", handleOpen);
 
 function handleAbout() {
   remote.shell.openExternal(
-    'http://github.com/turtlecoin/turtle-wallet-proton#readme'
+    "http://github.com/turtlecoin/turtle-wallet-proton#readme"
   );
 }
 
 function handleHelp() {
-  remote.shell.openExternal('https://discord.gg/P7urHQs');
+  remote.shell.openExternal("https://discord.gg/P7urHQs");
 }
 
 function handleIssues() {
   remote.shell.openExternal(
-    'https://github.com/turtlecoin/turtle-wallet-proton/issues'
+    "https://github.com/turtlecoin/turtle-wallet-proton/issues"
   );
 }
 
-eventEmitter.on('handleHelp', handleHelp);
-eventEmitter.on('handleAbout', handleAbout);
-eventEmitter.on('handleIssues', handleIssues);
+eventEmitter.on("handleHelp", handleHelp);
+eventEmitter.on("handleAbout", handleAbout);
+eventEmitter.on("handleIssues", handleIssues);
 
-ipcRenderer.on('handleNew', handleNew);
-eventEmitter.on('handleNew', handleNew);
+ipcRenderer.on("handleNew", handleNew);
+eventEmitter.on("handleNew", handleNew);
 
-eventEmitter.on('backupToFile', backupToFile);
-eventEmitter.on('backupToClipboard', backupToClipboard);
+eventEmitter.on("backupToFile", backupToFile);
+eventEmitter.on("backupToClipboard", backupToClipboard);
 
-ipcRenderer.on('handleBackup', handleBackup);
-eventEmitter.on('handleBackup', handleBackup);
+ipcRenderer.on("handleBackup", handleBackup);
+eventEmitter.on("handleBackup", handleBackup);
 
-eventEmitter.on('handleImport', handleImport);
-ipcRenderer.on('handleImport', handleImport);
+eventEmitter.on("handleImport", handleImport);
+ipcRenderer.on("handleImport", handleImport);
 
 const store = configureStore();
 
@@ -520,13 +521,13 @@ render(
       </div>
     </ErrorBoundary>
   </AppContainer>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 if (module.hot) {
-  module.hot.accept('./containers/Root', () => {
+  module.hot.accept("./containers/Root", () => {
     // eslint-disable-next-line global-require
-    const NextRoot = require('./containers/Root').default;
+    const NextRoot = require("./containers/Root").default;
     render(
       <AppContainer>
         <div
@@ -535,32 +536,32 @@ if (module.hot) {
           role="button"
           tabIndex={0}
         >
-          <NextRoot store={store} history={history} />{' '}
+          <NextRoot store={store} history={history} />{" "}
         </div>
       </AppContainer>,
-      document.getElementById('root')
+      document.getElementById("root")
     );
   });
 }
 
 function handleSendTransaction() {
   ipcRenderer.send(
-    'fromFrontend',
-    'sendTransactionRequest',
+    "fromFrontend",
+    "sendTransactionRequest",
     session.getPreparedTransactionHash()
   );
 }
 
 function handleDonate() {
-  eventEmitter.emit('goToDonate');
+  eventEmitter.emit("goToDonate");
 }
 
 function activityDetected() {
-  eventEmitter.emit('activityDetected');
+  eventEmitter.emit("activityDetected");
 }
 
 function handleImport() {
-  log.debug('User selected to import wallet.');
+  log.debug("User selected to import wallet.");
   const message = (
     <div>
       <center>
@@ -573,13 +574,13 @@ function handleImport() {
     </div>
   );
   eventEmitter.emit(
-    'openModal',
+    "openModal",
     message,
-    'Seed',
+    "Seed",
     null,
-    'importSeed',
-    'Keys',
-    'importKey'
+    "importSeed",
+    "Keys",
+    "importKey"
   );
 }
 
@@ -588,7 +589,7 @@ function backupToClipboard() {
     return;
   }
 
-  ipcRenderer.send('fromFrontend', 'backupToClipboard', undefined);
+  ipcRenderer.send("fromFrontend", "backupToClipboard", undefined);
 }
 
 export async function backupToFile() {
@@ -597,11 +598,11 @@ export async function backupToFile() {
   }
 
   const options = {
-    defaultPath: remote.app.getPath('documents'),
+    defaultPath: remote.app.getPath("documents"),
     filters: [
       {
-        name: 'Text File',
-        extensions: ['txt']
+        name: "Text File",
+        extensions: ["txt"]
       }
     ]
   };
@@ -611,12 +612,12 @@ export async function backupToFile() {
     return;
   }
 
-  ipcRenderer.send('fromFrontend', 'backupToFile', response.filePath);
+  ipcRenderer.send("fromFrontend", "backupToFile", response.filePath);
 }
 
 function handleBackup() {
   if (!loginCounter.isLoggedIn) {
-    eventEmitter.emit('refreshLogin');
+    eventEmitter.emit("refreshLogin");
     return;
   }
   const message = (
@@ -631,28 +632,28 @@ function handleBackup() {
     </div>
   );
   eventEmitter.emit(
-    'openModal',
+    "openModal",
     message,
-    'Copy to Clipboard',
+    "Copy to Clipboard",
     null,
-    'backupToClipboard',
-    'Save to File',
-    'backupToFile'
+    "backupToClipboard",
+    "Save to File",
+    "backupToFile"
   );
 }
 
 function handleNew() {
-  eventEmitter.emit('goToNewWallet');
+  eventEmitter.emit("goToNewWallet");
 }
 
 // TODO: verify that it's a wallet file before opening
 async function handleOpen() {
   const options = {
-    defaultPath: remote.app.getPath('documents'),
+    defaultPath: remote.app.getPath("documents"),
     filters: [
       {
-        name: 'TurtleCoin Wallet File (v0)',
-        extensions: ['wallet']
+        name: "TurtleCoin Wallet File (v0)",
+        extensions: ["wallet"]
       }
     ]
   };
@@ -666,11 +667,11 @@ async function handleOpen() {
 }
 
 export function reInitWallet(walletPath: string) {
-  ipcRenderer.send('fromFrontend', 'openNewWallet', undefined);
-  configManager.modifyConfig('walletFile', walletPath);
-  ipcRenderer.send('fromFrontend', 'config', config);
+  ipcRenderer.send("fromFrontend", "openNewWallet", undefined);
+  configManager.modifyConfig("walletFile", walletPath);
+  ipcRenderer.send("fromFrontend", "config", config);
   session = new WalletSession();
   loginCounter = new LoginCounter();
-  eventEmitter.emit('goToLogin');
-  eventEmitter.emit('refreshLogin');
+  eventEmitter.emit("goToLogin");
+  eventEmitter.emit("refreshLogin");
 }
