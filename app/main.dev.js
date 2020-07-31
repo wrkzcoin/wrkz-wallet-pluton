@@ -14,7 +14,8 @@ import {
   shell,
   dialog,
   ipcMain,
-  nativeImage
+  nativeImage,
+  systemPreferences
 } from 'electron';
 import isDev from 'electron-is-dev';
 import log from 'electron-log';
@@ -70,6 +71,7 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
   // check if the user config is valid JSON before parsing it
   try {
     config = JSON.parse(rawUserConfig);
+    config.darkMode = systemPreferences.isDarkMode();
   } catch {
     // if it isn't, set the internal config to the user config
     config = iConfig;
@@ -78,6 +80,7 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
   if (frontendReady && backendReady) windowEvents.emit('bothWindowsReady');
 } else {
   config = iConfig;
+  config.darkMode = systemPreferences.isDarkMode();
   configReady = true;
   if (frontendReady && backendReady) windowEvents.emit('bothWindowsReady');
 }
