@@ -12,7 +12,8 @@ import {
   Menu,
   shell,
   dialog,
-  ipcMain
+  ipcMain,
+  nativeImage
 } from 'electron';
 import isDev from 'electron-is-dev';
 import log from 'electron-log';
@@ -134,16 +135,16 @@ if (process.env.NODE_ENV === 'production') {
 
 require('electron-debug')();
 
-const installExtensions = async () => {
-  // eslint-disable-next-line global-require
-  const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+// const installExtensions = async () => {
+//   // eslint-disable-next-line global-require
+//   const installer = require('electron-devtools-installer');
+//   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+//   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
 
-  return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
-  ).catch(console.log);
-};
+//   return Promise.all(
+//     extensions.map(name => installer.default(installer[name], forceDownload))
+//   ).catch(console.log);
+// };
 
 /**
  * Add event listeners...
@@ -217,7 +218,7 @@ contextMenu({
 });
 
 app.on('ready', async () => {
-  await installExtensions();
+  // await installExtensions();
 
   mainWindow = new BrowserWindow({
     title: `Proton v${version}`,
@@ -228,7 +229,7 @@ app.on('ready', async () => {
     minWidth: 1250,
     minHeight: 625,
     backgroundColor: '#121212',
-    icon: path.join(__dirname, 'images/icon.png'),
+    icon: nativeImage.createFromPath(path.join(__dirname, 'images/icon.png')),
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegrationInWorker: true,
