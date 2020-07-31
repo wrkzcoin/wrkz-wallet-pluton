@@ -120,7 +120,7 @@ export default class NewWallet extends Component<Props, State> {
     });
   };
 
-  nextPage = () => {
+  nextPage = async () => {
     const {
       activePage,
       password,
@@ -171,13 +171,16 @@ export default class NewWallet extends Component<Props, State> {
               }
             ]
           };
-          const savePath = remote.dialog.showSaveDialog(null, options);
-          if (savePath === undefined) {
+          const response = await remote.dialog.showSaveDialog(null, options);
+          if (response.canceled) {
             return;
           }
-          const saved = newWallet.saveWalletToFile(savePath, password);
+          const saved = newWallet.saveWalletToFile(
+            `${response.filePath}.wallet`,
+            password
+          );
           if (saved) {
-            reInitWallet(savePath);
+            reInitWallet(`${response.filePath}.wallet`);
           } else {
             const message = (
               <div>

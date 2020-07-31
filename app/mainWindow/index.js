@@ -22,9 +22,9 @@ import LoginCounter from './wallet/loginCounter';
 import { uiType } from './utils/utils';
 import ProtonConfig from './wallet/protonConfig';
 
-export function savedInInstallDir(savePath: string) {
+export function savedInInstallDir(response: string) {
   const programDirectory = path.resolve(remote.app.getAppPath(), '../../');
-  const saveDirectory = path.resolve(savePath, '../');
+  const saveDirectory = path.resolve(response, '../');
 
   log.info(programDirectory, saveDirectory);
 
@@ -395,7 +395,7 @@ ipcRenderer.on('handleLock', () => {
   }
 });
 
-ipcRenderer.on('handleSaveAs', () => {
+ipcRenderer.on('handleSaveAs', async () => {
   if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     eventEmitter.emit('refreshLogin');
     return;
@@ -409,16 +409,18 @@ ipcRenderer.on('handleSaveAs', () => {
       }
     ]
   };
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
+  const response = await remote.dialog.showSaveDialog(null, options);
+  if (response.canceled) {
     return;
   }
 
-  const request = { notify: true, savePath };
+  log.info(response);
+
+  const request = { notify: true, savePath: `${response.filePath}.wallet` };
   ipcRenderer.send('fromFrontend', 'saveWalletAs', request);
 });
 
-ipcRenderer.on('exportToCSV', () => {
+ipcRenderer.on('exportToCSV', async () => {
   if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     eventEmitter.emit('refreshLogin');
     return;
@@ -432,11 +434,11 @@ ipcRenderer.on('exportToCSV', () => {
       }
     ]
   };
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
+  const response = await remote.dialog.showSaveDialog(null, options);
+  if (response.canceled) {
     return;
   }
-  ipcRenderer.send('fromFrontend', 'exportToCSV', savePath);
+  ipcRenderer.send('fromFrontend', 'exportToCSV', response.filePath);
 });
 
 ipcRenderer.on('handleOpen', handleOpen);
@@ -589,7 +591,7 @@ function backupToClipboard() {
   ipcRenderer.send('fromFrontend', 'backupToClipboard', undefined);
 }
 
-export function backupToFile() {
+export async function backupToFile() {
   if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     return;
   }
@@ -604,12 +606,12 @@ export function backupToFile() {
     ]
   };
 
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
+  const response = await remote.dialog.showSaveDialog(null, options);
+  if (response.canceled) {
     return;
   }
 
-  ipcRenderer.send('fromFrontend', 'backupToFile', savePath);
+  ipcRenderer.send('fromFrontend', 'backupToFile', response.filePath);
 }
 
 function handleBackup() {
@@ -644,7 +646,7 @@ function handleNew() {
 }
 
 // TODO: verify that it's a wallet file before opening
-function handleOpen() {
+async function handleOpen() {
   const options = {
     defaultPath: remote.app.getPath('documents'),
     filters: [
@@ -654,11 +656,13 @@ function handleOpen() {
       }
     ]
   };
-  const getPaths = remote.dialog.showOpenDialog(null, options);
-  if (getPaths === undefined) {
+  const response = await remote.dialog.showOpenDialog(null, options);
+
+  if (response.canceled) {
     return;
   }
-  reInitWallet(getPaths[0]);
+
+  reInitWallet(response.filePaths[0]);
 }
 
 export function reInitWallet(walletPath: string) {
