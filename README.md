@@ -1,4 +1,4 @@
-# Proton Wallet
+# TurtleCoin Wallet
 
 ![Download Count](https://img.shields.io/github/downloads/turtlecoin/turtle-wallet-proton/total.svg)
 ![Open Issue Count](https://img.shields.io/github/issues/turtlecoin/turtle-wallet-proton)
@@ -7,24 +7,20 @@
 
 ### Master Build Status
 
-![Master Build Status](https://github.com/turtlecoin/turtle-wallet-proton/workflows/Build%20Proton/badge.svg?branch=master)
+![Master Build Status](https://github.com/turtlecoin/turtle-wallet-proton/workflows/Build%20TurtleCoin/badge.svg?branch=master)
 
 ### Development Build Status
 
-![Development Build Status](https://github.com/turtlecoin/turtle-wallet-proton/workflows/Build%20Proton/badge.svg?branch=development)
+![Development Build Status](https://github.com/turtlecoin/turtle-wallet-proton/workflows/Build%20TurtleCoin/badge.svg?branch=development)
 
 <img src="https://raw.githubusercontent.com/turtlecoin/turtle-wallet-proton/development/screenshots/screenshot.png">
 <p>
-  Proton Wallet is a TurtleCoin wallet that uses <a href="http://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/turtlecoin/turtlecoin-wallet-backend-js">Turtlecoin-Wallet-Backend-JS</a>, <a href="https://github.com/reactjs/redux">Redux</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="http://webpack.github.io/docs/">Webpack</a> and <a href="https://github.com/gaearon/react-hot-loader">React Hot Loader</a>.
-</p>
-
-<p>
-  All of the code is released under the GPLv3 license. The icons in the ./resources and ./app/images folders, however, are not released under this license, rather they are maintained to be intellectual property of ExtraHash, and may not be used to represent the brand or identity of any other piece of software or group. See the included license file in ./resources/LICENSE and ./app/images/LICENSE for more details.
+  TurtleCoin Wallet is a TurtleCoin wallet that uses <a href="http://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, and <a href="https://github.com/turtlecoin/turtlecoin-wallet-backend-js">Turtlecoin-Wallet-Backend-JS</a>.
 </p>
 
 ## Installing
 
-**Check out the full tutorial on how to install and use Proton at the [official TurtleCoin docs page](https://docs.turtlecoin.lol/guides/wallets/using-proton-wallet)!**
+**Check out the full tutorial on how to install and use this wallet at the [official TurtleCoin docs page](https://docs.turtlecoin.lol/guides/wallets/using-proton-wallet)!**
 
 ## Development Setup (All Platforms)
 
@@ -32,13 +28,13 @@
 
 #### You will need the following dependencies installed before you can proceed to the "Setup" step:
 
-- Node.JS (Latest LTS version - 10.x) https://nodejs.org/
+- Node.JS (12.x) https://nodejs.org/
 
 - Yarn https://yarnpkg.com/en/
 
 - Git https://git-scm.com/downloads
 
-Tip: If you already have a different version of node.js installed besides 10.x, try using [Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script).
+Tip: If you already have a different version of node.js installed besides 12.x, try using [Node Version Manager](https://github.com/nvm-sh/nvm#install--update-script).
 
 #### Setup
 
@@ -79,5 +75,6 @@ $ yarn package
 
 ## License
 
-© [ExtraHash](https://github.com/ExtraHash)
+All of the code is released under the GPLv3 license.
 See included License file for more details.
+© [ExtraHash](https://github.com/ExtraHash)
