@@ -1,20 +1,20 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import log from "electron-log";
-import { remote, ipcRenderer } from "electron";
-import React, { Component, Fragment } from "react";
-import ReactTooltip from "react-tooltip";
-import { session, eventEmitter, il8n, loginCounter, config } from "../index";
-import NavBar from "./NavBar";
-import BottomBar from "./BottomBar";
-import Redirector from "./Redirector";
+import log from 'electron-log';
+import { remote, ipcRenderer } from 'electron';
+import React, { Component, Fragment } from 'react';
+import ReactTooltip from 'react-tooltip';
+import { session, eventEmitter, il8n, loginCounter, config } from '../index';
+import NavBar from './NavBar';
+import BottomBar from './BottomBar';
+import Redirector from './Redirector';
 import {
   uiType,
   formatLikeCurrency,
   atomicToHuman,
   convertTimestamp
-} from "../utils/utils";
+} from '../utils/utils';
 
 let displayedTransactionCount: number = 50;
 
@@ -50,7 +50,7 @@ export default class Home extends Component<Props, State> {
       fiatSymbol: config.fiatSymbol,
       symbolLocation: config.symbolLocation,
       fiatDecimals: config.fiatDecimals,
-      pageAnimationIn: loginCounter.getAnimation("/"),
+      pageAnimationIn: loginCounter.getAnimation('/'),
       expandedRows: [],
       networkBlockHeight: session.getNetworkBlockHeight()
     };
@@ -67,12 +67,12 @@ export default class Home extends Component<Props, State> {
   }
 
   componentDidMount() {
-    eventEmitter.on("openNewWallet", this.openNewWallet);
-    eventEmitter.on("gotSyncStatus", this.handleNewSyncStatus);
-    eventEmitter.on("gotFiatPrice", this.updateFiatPrice);
-    eventEmitter.on("modifyCurrency", this.modifyCurrency);
-    eventEmitter.on("gotTransactionCount", this.handleNewTransactionCount);
-    eventEmitter.on("gotNewTransactions", this.handleNewTransactions);
+    eventEmitter.on('openNewWallet', this.openNewWallet);
+    eventEmitter.on('gotSyncStatus', this.handleNewSyncStatus);
+    eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.on('modifyCurrency', this.modifyCurrency);
+    eventEmitter.on('gotTransactionCount', this.handleNewTransactionCount);
+    eventEmitter.on('gotNewTransactions', this.handleNewTransactions);
     const { loginFailed, firstLoadOnLogin } = session;
     if (firstLoadOnLogin && loginFailed === false) {
       this.switchOffAnimation();
@@ -81,12 +81,12 @@ export default class Home extends Component<Props, State> {
 
   componentWillUnmount() {
     displayedTransactionCount = 50;
-    eventEmitter.off("gotSyncStatus", this.handleNewSyncStatus);
-    eventEmitter.off("openNewWallet", this.openNewWallet);
-    eventEmitter.off("gotFiatPrice", this.updateFiatPrice);
-    eventEmitter.off("modifyCurrency", this.modifyCurrency);
-    eventEmitter.off("gotTransactionCount", this.handleNewTransactionCount);
-    eventEmitter.off("gotNewTransactions", this.handleNewTransactions);
+    eventEmitter.off('gotSyncStatus', this.handleNewSyncStatus);
+    eventEmitter.off('openNewWallet', this.openNewWallet);
+    eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.off('modifyCurrency', this.modifyCurrency);
+    eventEmitter.off('gotTransactionCount', this.handleNewTransactionCount);
+    eventEmitter.off('gotNewTransactions', this.handleNewTransactions);
   }
 
   handleNewTransactionCount = () => {
@@ -132,7 +132,7 @@ export default class Home extends Component<Props, State> {
   }
 
   refreshListOnNewTransaction = () => {
-    log.debug("Transaction found, refreshing transaction list...");
+    log.debug('Transaction found, refreshing transaction list...');
     displayedTransactionCount += 1;
     this.setState({
       transactions: session.getTransactions(0, displayedTransactionCount, false)
@@ -140,7 +140,7 @@ export default class Home extends Component<Props, State> {
   };
 
   openNewWallet = () => {
-    log.debug("Initialized new wallet session, refreshing transaction list...");
+    log.debug('Initialized new wallet session, refreshing transaction list...');
     displayedTransactionCount = 50;
     this.setState({
       transactions: session.getTransactions(0, displayedTransactionCount, false)
@@ -152,8 +152,8 @@ export default class Home extends Component<Props, State> {
     event.preventDefault();
     displayedTransactionCount += 50;
     ipcRenderer.send(
-      "fromFrontend",
-      "transactionRequest",
+      'fromFrontend',
+      'transactionRequest',
       displayedTransactionCount
     );
   };
@@ -162,8 +162,8 @@ export default class Home extends Component<Props, State> {
     event.preventDefault();
     displayedTransactionCount = 50;
     ipcRenderer.send(
-      "fromFrontend",
-      "transactionRequest",
+      'fromFrontend',
+      'transactionRequest',
       displayedTransactionCount
     );
   };
@@ -240,7 +240,7 @@ export default class Home extends Component<Props, State> {
                 {transactions.map(tx => {
                   const rowIsExpanded = expandedRows.includes(tx[1]);
                   const transactionHash = tx[1];
-                  const toggleSymbol = rowIsExpanded ? "-" : "+";
+                  const toggleSymbol = rowIsExpanded ? '-' : '+';
                   return (
                     <Fragment key={transactionHash}>
                       <tr>
@@ -266,44 +266,44 @@ export default class Home extends Component<Props, State> {
                         {tx[2] < 0 && (
                           <td>
                             <p className="has-text-danger has-text-right">
-                              {displayCurrency === "TRTL" &&
+                              {displayCurrency === 'TRTL' &&
                                 atomicToHuman(tx[2], true)}
-                              {displayCurrency === "fiat" &&
-                                symbolLocation === "prefix" &&
+                              {displayCurrency === 'fiat' &&
+                                symbolLocation === 'prefix' &&
                                 fiatPrice !== 0 &&
                                 `-${fiatSymbol}${formatLikeCurrency(
                                   (
                                     fiatPrice * atomicToHuman(tx[2], false)
                                   ).toFixed(fiatDecimals)
                                 ).substring(1)}`}
-                              {displayCurrency === "fiat" &&
-                                symbolLocation === "suffix" &&
+                              {displayCurrency === 'fiat' &&
+                                symbolLocation === 'suffix' &&
                                 fiatPrice !== 0 &&
                                 `-${formatLikeCurrency(
                                   (
                                     fiatPrice * atomicToHuman(tx[2], false)
                                   ).toFixed(2)
                                 ).substring(1)}${fiatSymbol}`}
-                              {displayCurrency === "fiat" &&
+                              {displayCurrency === 'fiat' &&
                                 fiatPrice === 0 &&
-                                ""}
+                                ''}
                             </p>
                           </td>
                         )}
                         {tx[2] > 0 && (
                           <td>
                             <p className="has-text-right">
-                              {displayCurrency === "TRTL" &&
+                              {displayCurrency === 'TRTL' &&
                                 atomicToHuman(tx[2], true)}
-                              {displayCurrency === "fiat" &&
-                                symbolLocation === "prefix" &&
+                              {displayCurrency === 'fiat' &&
+                                symbolLocation === 'prefix' &&
                                 `${fiatSymbol}${formatLikeCurrency(
                                   (
                                     fiatPrice * atomicToHuman(tx[2], false)
                                   ).toFixed(fiatDecimals)
                                 )}`}
-                              {displayCurrency === "fiat" &&
-                                symbolLocation === "suffix" &&
+                              {displayCurrency === 'fiat' &&
+                                symbolLocation === 'suffix' &&
                                 `${formatLikeCurrency(
                                   (
                                     fiatPrice * atomicToHuman(tx[2], false)
@@ -314,17 +314,17 @@ export default class Home extends Component<Props, State> {
                         )}
                         <td>
                           <p className="has-text-right">
-                            {displayCurrency === "TRTL" &&
+                            {displayCurrency === 'TRTL' &&
                               atomicToHuman(tx[3], true)}
-                            {displayCurrency === "fiat" &&
-                              symbolLocation === "prefix" &&
+                            {displayCurrency === 'fiat' &&
+                              symbolLocation === 'prefix' &&
                               `${fiatSymbol}${formatLikeCurrency(
                                 (
                                   fiatPrice * atomicToHuman(tx[3], false)
                                 ).toFixed(fiatDecimals)
                               )}`}
-                            {displayCurrency === "fiat" &&
-                              symbolLocation === "suffix" &&
+                            {displayCurrency === 'fiat' &&
+                              symbolLocation === 'suffix' &&
                               `${formatLikeCurrency(
                                 (
                                   fiatPrice * atomicToHuman(tx[3], false)
@@ -362,7 +362,7 @@ export default class Home extends Component<Props, State> {
                                   </td>
                                   <td>
                                     {tx[0] === 0
-                                      ? "Still In Memory Pool"
+                                      ? 'Still In Memory Pool'
                                       : convertTimestamp(tx[0])}
                                     <br />
                                     {tx[0] !== 0
@@ -370,20 +370,20 @@ export default class Home extends Component<Props, State> {
                                       : 0}
                                     <br />
                                     {tx[0] === 0
-                                      ? "Still In Memory Pool"
+                                      ? 'Still In Memory Pool'
                                       : formatLikeCurrency(tx[4])}
                                     <br />
                                     {tx[8]} <br />
                                     {tx[1]} <br />
-                                    {tx[5] !== "" ? tx[5] : "none"}
+                                    {tx[5] !== '' ? tx[5] : 'none'}
                                     <br />
                                     {atomicToHuman(tx[7], true)} TRTL
                                     <br />
                                     <p
                                       className={
                                         tx[2] < 0
-                                          ? "is-negative-transaction has-text-danger"
-                                          : ""
+                                          ? 'is-negative-transaction has-text-danger'
+                                          : ''
                                       }
                                     >
                                       {atomicToHuman(tx[2], true)} TRTL

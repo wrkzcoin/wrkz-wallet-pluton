@@ -1,9 +1,9 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import { session, eventEmitter } from "../index";
-import { uiType } from "../utils/utils";
+import React, { Component } from 'react';
+import { session, eventEmitter } from '../index';
+import { uiType } from '../utils/utils';
 
 type Props = {
   darkMode: boolean
@@ -31,11 +31,11 @@ export default class SyncReminder extends Component<Props, State> {
   }
 
   componentDidMount() {
-    eventEmitter.on("gotSyncStatus", this.handleNewSyncStatus);
+    eventEmitter.on('gotSyncStatus', this.handleNewSyncStatus);
   }
 
   componentWillUnmount() {
-    eventEmitter.off("gotSyncStatus", this.handleNewSyncStatus);
+    eventEmitter.off('gotSyncStatus', this.handleNewSyncStatus);
   }
 
   handleNewSyncStatus() {

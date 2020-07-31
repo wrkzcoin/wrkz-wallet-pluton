@@ -1,20 +1,20 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import fs from "fs";
-import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
-import jdenticon from "jdenticon";
+import fs from 'fs';
+import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import jdenticon from 'jdenticon';
 import {
   validateAddress,
   validatePaymentID
-} from "turtlecoin-wallet-backend/dist/lib/ValidateParameters";
-import NavBar from "./NavBar";
-import BottomBar from "./BottomBar";
-import Redirector from "./Redirector";
-import { uiType } from "../utils/utils";
-import { addressList, directories, loginCounter, config } from "../index";
-import routes from "../constants/routes";
+} from 'turtlecoin-wallet-backend/dist/lib/ValidateParameters';
+import NavBar from './NavBar';
+import BottomBar from './BottomBar';
+import Redirector from './Redirector';
+import { uiType } from '../utils/utils';
+import { addressList, directories, loginCounter, config } from '../index';
+import routes from '../constants/routes';
 
 type State = {
   darkMode: boolean,
@@ -41,14 +41,14 @@ class AddressBook extends Component<Props, State> {
     this.state = {
       darkMode: config.darkMode,
       showNewContactForm: false,
-      newName: "",
-      newAddress: "",
-      newPaymentID: "",
+      newName: '',
+      newAddress: '',
+      newPaymentID: '',
       addressBook: addressList,
       deletionRequests: [],
       badAddress: false,
       badPaymentID: false,
-      pageAnimationIn: loginCounter.getAnimation("/addressbook")
+      pageAnimationIn: loginCounter.getAnimation('/addressbook')
     };
     this.showAddContactForm = this.showAddContactForm.bind(this);
     this.handleNewAddressChange = this.handleNewAddressChange.bind(this);
@@ -127,9 +127,9 @@ class AddressBook extends Component<Props, State> {
   cancelAddContact = () => {
     this.setState({
       showNewContactForm: false,
-      newAddress: "",
-      newPaymentID: "",
-      newName: "",
+      newAddress: '',
+      newPaymentID: '',
+      newName: '',
       badAddress: false,
       badPaymentID: false
     });
@@ -161,7 +161,7 @@ class AddressBook extends Component<Props, State> {
       badPaymentID = false;
     }
 
-    const duplicate = this.search(newAddress, addressBook, "address");
+    const duplicate = this.search(newAddress, addressBook, 'address');
 
     if (duplicate) {
       badAddress = true;
@@ -189,9 +189,9 @@ class AddressBook extends Component<Props, State> {
 
     this.setState({
       addressBook,
-      newAddress: "",
-      newPaymentID: "",
-      newName: "",
+      newAddress: '',
+      newPaymentID: '',
+      newName: '',
       showNewContactForm: false
     });
   };
@@ -257,7 +257,7 @@ class AddressBook extends Component<Props, State> {
                     <td>
                       <input
                         className={`input is-large ${
-                          badAddress ? "is-danger" : ""
+                          badAddress ? 'is-danger' : ''
                         }`}
                         value={newAddress}
                         onChange={this.handleNewAddressChange}
@@ -266,7 +266,7 @@ class AddressBook extends Component<Props, State> {
                     <td>
                       <input
                         className={`input is-large ${
-                          badPaymentID ? "is-danger" : ""
+                          badPaymentID ? 'is-danger' : ''
                         }`}
                         value={newPaymentID}
                         onChange={this.handleNewPaymentIDChange}
@@ -377,7 +377,7 @@ class AddressBook extends Component<Props, State> {
                           <a
                             className={
                               deletionRequests.includes(index)
-                                ? "has-text-danger"
+                                ? 'has-text-danger'
                                 : textColor
                             }
                           >

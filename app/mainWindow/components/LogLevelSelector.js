@@ -1,36 +1,36 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import Select from "react-select";
-import { ipcRenderer } from "electron";
-import { config, configManager } from "../index";
-import { uiType, search } from "../utils/utils";
+import React, { Component } from 'react';
+import Select from 'react-select';
+import { ipcRenderer } from 'electron';
+import { config, configManager } from '../index';
+import { uiType, search } from '../utils/utils';
 
 const logLevels = [
   {
-    value: "DISABLED",
-    label: "DISABLED"
+    value: 'DISABLED',
+    label: 'DISABLED'
   },
   {
-    value: "DEBUG",
-    label: "DEBUG"
+    value: 'DEBUG',
+    label: 'DEBUG'
   },
   {
-    value: "ERROR",
-    label: "ERROR"
+    value: 'ERROR',
+    label: 'ERROR'
   },
   {
-    value: "INFO",
-    label: "INFO"
+    value: 'INFO',
+    label: 'INFO'
   },
   {
-    value: "TRACE",
-    label: "TRACE"
+    value: 'TRACE',
+    label: 'TRACE'
   },
   {
-    value: "WARNING",
-    label: "WARNING"
+    value: 'WARNING',
+    label: 'WARNING'
   }
 ];
 
@@ -53,7 +53,7 @@ export default class LogLevelSelector extends Component<Props, State> {
     super(props);
     this.options = logLevels;
     this.state = {
-      selectedLogLevel: search(config.logLevel, logLevels, "value")
+      selectedLogLevel: search(config.logLevel, logLevels, 'value')
     };
     this.handleLogLevelChange = this.handleLogLevelChange.bind(this);
   }
@@ -67,12 +67,12 @@ export default class LogLevelSelector extends Component<Props, State> {
   };
 
   handleLogLevelChange = (event: any) => {
-    const logLevel = search(event.value, logLevels, "value");
+    const logLevel = search(event.value, logLevels, 'value');
     this.setState({
-      selectedLogLevel: search(logLevel, logLevels, "value")
+      selectedLogLevel: search(logLevel, logLevels, 'value')
     });
-    configManager.modifyConfig("logLevel", event.value);
-    ipcRenderer.send("fromFrontend", "logLevelRequest", event.value);
+    configManager.modifyConfig('logLevel', event.value);
+    ipcRenderer.send('fromFrontend', 'logLevelRequest', event.value);
   };
 
   render() {

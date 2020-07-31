@@ -1,9 +1,9 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import { uiType } from "../utils/utils";
-import { eventEmitter } from "../index";
+import React, { Component } from 'react';
+import { uiType } from '../utils/utils';
+import { eventEmitter } from '../index';
 
 type State = {
   isActive: string,
@@ -23,13 +23,13 @@ export default class Modal extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isActive: "",
-      message: "",
-      confirmLabel: "",
-      denyLabel: "",
-      confirmAction: "",
-      extraLabel: "",
-      extraAction: ""
+      isActive: '',
+      message: '',
+      confirmLabel: '',
+      denyLabel: '',
+      confirmAction: '',
+      extraLabel: '',
+      extraAction: ''
     };
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
@@ -39,21 +39,21 @@ export default class Modal extends Component<Props, State> {
   }
 
   componentWillMount() {
-    eventEmitter.on("openModal", this.openModal);
+    eventEmitter.on('openModal', this.openModal);
   }
 
   componentWillUnmount() {
-    eventEmitter.off("openModal", this.openModal);
+    eventEmitter.off('openModal', this.openModal);
   }
 
   closeModal = () => {
     this.setState({
-      isActive: ""
+      isActive: ''
     });
   };
 
   handleEsc = (event: any) => {
-    if (event.key === "Escape") {
+    if (event.key === 'Escape') {
       this.closeModal();
     }
   };
@@ -82,13 +82,13 @@ export default class Modal extends Component<Props, State> {
     extraAction?: string
   ) => {
     this.setState({
-      isActive: "is-active",
+      isActive: 'is-active',
       message,
       confirmLabel,
       denyLabel,
       confirmAction,
-      extraLabel: extraLabel !== "" ? extraLabel : "",
-      extraAction: extraAction !== "" ? extraAction : ""
+      extraLabel: extraLabel !== '' ? extraLabel : '',
+      extraAction: extraAction !== '' ? extraAction : ''
     });
   };
 

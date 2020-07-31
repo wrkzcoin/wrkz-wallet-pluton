@@ -1,10 +1,10 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import { ipcRenderer } from "electron";
-import { config, configManager } from "../index";
-import { uiType } from "../utils/utils";
+import React, { Component } from 'react';
+import { ipcRenderer } from 'electron';
+import { config, configManager } from '../index';
+import { uiType } from '../utils/utils';
 
 type State = {
   notifications: boolean
@@ -30,11 +30,11 @@ export default class NotificationsToggle extends Component<Props, State> {
   toggle = () => {
     const { notifications } = this.state;
 
-    configManager.modifyConfig("notifications", !notifications);
+    configManager.modifyConfig('notifications', !notifications);
     this.setState({
       notifications: !notifications
     });
-    ipcRenderer.send("fromFrontend", "notificationsRequest", !notifications);
+    ipcRenderer.send('fromFrontend', 'notificationsRequest', !notifications);
   };
 
   render() {

@@ -1,14 +1,14 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import { ipcRenderer } from "electron";
-import ReactLoading from "react-loading";
-import { session, eventEmitter, loginCounter, il8n, config } from "../index";
-import Redirector from "./Redirector";
-import SyncReminder from "./SyncReminder";
-import Modal from "./Modal";
-import { uiType } from "../utils/utils";
+import React, { Component } from 'react';
+import { ipcRenderer } from 'electron';
+import ReactLoading from 'react-loading';
+import { session, eventEmitter, loginCounter, il8n, config } from '../index';
+import Redirector from './Redirector';
+import SyncReminder from './SyncReminder';
+import Modal from './Modal';
+import { uiType } from '../utils/utils';
 
 type Props = {};
 
@@ -40,22 +40,22 @@ export default class Login extends Component<Props, State> {
 
   componentDidMount() {
     loginCounter.navBarCount = 0;
-    ipcRenderer.on("fromBackend", this.handleBackendMessage);
+    ipcRenderer.on('fromBackend', this.handleBackendMessage);
   }
 
   componentWillUnmount() {
-    ipcRenderer.off("fromBackend", this.handleBackendMessage);
+    ipcRenderer.off('fromBackend', this.handleBackendMessage);
   }
 
   handleBackendMessage = (event: Electron.IpcRendererEvent, message: any) => {
     const { messageType, data } = message;
-    if (messageType === "authenticationStatus") {
+    if (messageType === 'authenticationStatus') {
       loginCounter.isLoggedIn = data;
       loginCounter.lastLoginAttemptFailed = !data;
       loginCounter.loginFailed = !data;
-      eventEmitter.emit("goHome");
+      eventEmitter.emit('goHome');
     }
-    if (messageType === "authenticationError") {
+    if (messageType === 'authenticationError') {
       this.setState({
         loginInProgress: false
       });
@@ -78,9 +78,9 @@ export default class Login extends Component<Props, State> {
       return;
     }
     if (!loginCounter.walletActive) {
-      ipcRenderer.send("fromFrontend", "walletPassword", password);
+      ipcRenderer.send('fromFrontend', 'walletPassword', password);
     } else {
-      ipcRenderer.send("fromFrontend", "verifyWalletPassword", password);
+      ipcRenderer.send('fromFrontend', 'verifyWalletPassword', password);
     }
   };
 
@@ -114,8 +114,8 @@ export default class Login extends Component<Props, State> {
                             ref={input => input && input.focus()}
                             className={
                               wrongPassword
-                                ? "input is-large is-danger"
-                                : "input is-large"
+                                ? 'input is-large is-danger'
+                                : 'input is-large'
                             }
                             type="password"
                             placeholder={il8n.password_input_placeholder}
@@ -158,7 +158,7 @@ export default class Login extends Component<Props, State> {
                   <center>
                     <ReactLoading
                       type="spinningBubbles"
-                      color={darkMode ? "#F5F5F5" : "#0A0A0A"}
+                      color={darkMode ? '#F5F5F5' : '#0A0A0A'}
                       height={170}
                       width={170}
                     />

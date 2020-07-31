@@ -4,13 +4,13 @@
 
 /* eslint-disable jsx-a11y/label-has-associated-control */
 
-import crypto from "crypto";
-import { ipcRenderer } from "electron";
-import isDev from "electron-is-dev";
-import log from "electron-log";
-import React, { Component } from "react";
-import Creatable from "react-select/creatable";
-import ReactTooltip from "react-tooltip";
+import crypto from 'crypto';
+import { ipcRenderer } from 'electron';
+import isDev from 'electron-is-dev';
+import log from 'electron-log';
+import React, { Component } from 'react';
+import Creatable from 'react-select/creatable';
+import ReactTooltip from 'react-tooltip';
 import {
   session,
   eventEmitter,
@@ -18,12 +18,12 @@ import {
   config,
   loginCounter,
   addressList
-} from "../index";
-import NavBar from "./NavBar";
-import BottomBar from "./BottomBar";
-import Redirector from "./Redirector";
-import { uiType, atomicToHuman, search } from "../utils/utils";
-import donateInfo from "../constants/donateInfo.json";
+} from '../index';
+import NavBar from './NavBar';
+import BottomBar from './BottomBar';
+import Redirector from './Redirector';
+import { uiType, atomicToHuman, search } from '../utils/utils';
+import donateInfo from '../constants/donateInfo.json';
 
 type Props = {
   uriAddress?: string,
@@ -54,21 +54,21 @@ const customStyles = {
     ...base,
     height: 54,
     minHeight: 54,
-    fontSize: "1.5rem"
+    fontSize: '1.5rem'
   }),
   placeholder: base => ({
     ...base,
-    color: "hsl(0, 0%, 71%)",
-    fontWeight: "normal"
+    color: 'hsl(0, 0%, 71%)',
+    fontWeight: 'normal'
   }),
   menuList: base => ({
     ...base,
-    color: "hsl(0, 0%, 21%)",
-    fontWeight: "normal"
+    color: 'hsl(0, 0%, 21%)',
+    fontWeight: 'normal'
   }),
   singleValue: base => ({
     ...base,
-    fontWeight: "normal"
+    fontWeight: 'normal'
   })
 };
 
@@ -85,16 +85,16 @@ export default class Send extends Component<Props, State> {
     super(props);
     this.state = {
       unlockedBalance: session.getUnlockedBalance(),
-      enteredAmount: "",
-      sendToAddress: props.uriAddress || "",
-      paymentID: props.uriPaymentID || "",
+      enteredAmount: '',
+      sendToAddress: props.uriAddress || '',
+      paymentID: props.uriPaymentID || '',
       darkMode: config.darkMode,
       transactionInProgress: false,
       displayCurrency: config.displayCurrency,
       fiatPrice: session.fiatPrice,
       fiatSymbol: config.fiatSymbol,
       symbolLocation: config.symbolLocation,
-      pageAnimationIn: loginCounter.getAnimation("/send"),
+      pageAnimationIn: loginCounter.getAnimation('/send'),
       selectedContact: null,
       menuIsOpen: false,
       nodeFee: session.getNodeFee(),
@@ -129,13 +129,13 @@ export default class Send extends Component<Props, State> {
   }
 
   componentDidMount() {
-    eventEmitter.on("transactionInProgress", this.handleTransactionInProgress);
-    eventEmitter.on("transactionCancel", this.handleTransactionCancel);
-    eventEmitter.on("gotFiatPrice", this.updateFiatPrice);
-    eventEmitter.on("gotNodeFee", this.handleNewNodeFee);
-    eventEmitter.on("modifyCurrency", this.modifyCurrency);
-    ipcRenderer.on("handleDonate", this.handleDonate);
-    ipcRenderer.on("fromBackend", this.handleBackendMessages);
+    eventEmitter.on('transactionInProgress', this.handleTransactionInProgress);
+    eventEmitter.on('transactionCancel', this.handleTransactionCancel);
+    eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.on('gotNodeFee', this.handleNewNodeFee);
+    eventEmitter.on('modifyCurrency', this.modifyCurrency);
+    ipcRenderer.on('handleDonate', this.handleDonate);
+    ipcRenderer.on('fromBackend', this.handleBackendMessages);
     // eslint-disable-next-line react/destructuring-assignment
     if (this.props && this.props.uriAddress) {
       const { uriAddress } = this.props;
@@ -143,7 +143,7 @@ export default class Send extends Component<Props, State> {
       const selectedContact = search(
         uriAddress,
         [this.devContact, ...this.autoCompleteContacts],
-        "value"
+        'value'
       );
 
       this.setState({
@@ -153,13 +153,13 @@ export default class Send extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    eventEmitter.off("transactionInProgress", this.handleTransactionInProgress);
-    eventEmitter.off("transactionCancel", this.handleTransactionCancel);
-    eventEmitter.off("gotFiatPrice", this.updateFiatPrice);
-    eventEmitter.off("gotNodeFee", this.handleNewNodeFee);
-    eventEmitter.off("modifyCurrency", this.modifyCurrency);
-    ipcRenderer.off("handleDonate", this.handleDonate);
-    ipcRenderer.off("fromBackend", this.handleBackendMessages);
+    eventEmitter.off('transactionInProgress', this.handleTransactionInProgress);
+    eventEmitter.off('transactionCancel', this.handleTransactionCancel);
+    eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.off('gotNodeFee', this.handleNewNodeFee);
+    eventEmitter.off('modifyCurrency', this.modifyCurrency);
+    ipcRenderer.off('handleDonate', this.handleDonate);
+    ipcRenderer.off('fromBackend', this.handleBackendMessages);
   }
 
   modifyCurrency = (displayCurrency: string) => {
@@ -199,14 +199,14 @@ export default class Send extends Component<Props, State> {
 
   handleAmountChange = (event: any) => {
     let enteredAmount = event.target.value;
-    if (enteredAmount === "") {
+    if (enteredAmount === '') {
       this.setState({
-        enteredAmount: ""
+        enteredAmount: ''
       });
       return;
     }
-    if (enteredAmount === ".") {
-      enteredAmount = "0.";
+    if (enteredAmount === '.') {
+      enteredAmount = '0.';
     }
 
     const regex = /^\d*(\.(\d\d?)?)?$/;
@@ -223,14 +223,14 @@ export default class Send extends Component<Props, State> {
     const { messageType, data } = message;
     const { darkMode } = this.state;
     const { textColor } = uiType(darkMode);
-    if (messageType === "sendTransactionResponse") {
-      if (data.status === "SUCCESS") {
+    if (messageType === 'sendTransactionResponse') {
+      if (data.status === 'SUCCESS') {
         this.resetForm();
       }
     }
-    if (messageType === "prepareTransactionResponse") {
-      eventEmitter.emit("transactionCancel");
-      if (data.status === "SUCCESS") {
+    if (messageType === 'prepareTransactionResponse') {
+      eventEmitter.emit('transactionCancel');
+      if (data.status === 'SUCCESS') {
         const { address, paymentID, amount, fee, nodeFee, hash } = data;
         session.setPreparedTransactionHash(hash);
         const modalMessage = (
@@ -258,8 +258,8 @@ export default class Send extends Component<Props, State> {
                   nodeFee,
                   true
                 )} TRTL)`}
-            </p>{" "}
-            {paymentID !== "" && (
+            </p>{' '}
+            {paymentID !== '' && (
               <p className={`subtitle ${textColor}`}>
                 <b>Payment ID:</b>
                 <br />
@@ -269,11 +269,11 @@ export default class Send extends Component<Props, State> {
           </div>
         );
         eventEmitter.emit(
-          "openModal",
+          'openModal',
           modalMessage,
-          "Send it!",
-          "Wait a minute...",
-          "sendTransaction"
+          'Send it!',
+          'Wait a minute...',
+          'sendTransaction'
         );
       } else {
         log.info(data);
@@ -310,7 +310,7 @@ export default class Send extends Component<Props, State> {
       ? true
       : session.getUnlockedBalance() > Number(enteredAmount) / 100;
 
-    if (!sendAll && (sendToAddress === "" || enteredAmount === "")) {
+    if (!sendAll && (sendToAddress === '' || enteredAmount === '')) {
       return;
     }
 
@@ -329,7 +329,7 @@ export default class Send extends Component<Props, State> {
           </p>
         </div>
       );
-      eventEmitter.emit("openModal", message, "OK", null, "transactionCancel");
+      eventEmitter.emit('openModal', message, 'OK', null, 'transactionCancel');
       return;
     }
 
@@ -349,15 +349,15 @@ export default class Send extends Component<Props, State> {
           </p>
         </div>
       );
-      eventEmitter.emit("openModal", message, "OK", null, null);
-      eventEmitter.emit("transactionCancel");
+      eventEmitter.emit('openModal', message, 'OK', null, null);
+      eventEmitter.emit('transactionCancel');
       return;
     }
 
     const transactionData = {
       address: sendToAddress,
       amount:
-        displayCurrency === "TRTL"
+        displayCurrency === 'TRTL'
           ? Number(enteredAmount) * 100
           : parseInt((Number(enteredAmount) * 100) / fiatPrice, 10),
       paymentID,
@@ -367,8 +367,8 @@ export default class Send extends Component<Props, State> {
     log.info(transactionData);
 
     ipcRenderer.send(
-      "fromFrontend",
-      "prepareTransactionRequest",
+      'fromFrontend',
+      'prepareTransactionRequest',
       transactionData
     );
   };
@@ -389,7 +389,7 @@ export default class Send extends Component<Props, State> {
   };
 
   generatePaymentID = () => {
-    const paymentID = crypto.randomBytes(32).toString("hex");
+    const paymentID = crypto.randomBytes(32).toString('hex');
     log.debug(`Generated paymentID: ${paymentID}`);
     this.setState({ paymentID });
     return paymentID;
@@ -401,15 +401,15 @@ export default class Send extends Component<Props, State> {
 
   resetForm = () => {
     this.setState({
-      paymentID: "",
-      enteredAmount: "",
-      sendToAddress: "",
+      paymentID: '',
+      enteredAmount: '',
+      sendToAddress: '',
       selectedContact: null
     });
   };
 
   resetAmounts = () => {
-    this.setState({ enteredAmount: "" });
+    this.setState({ enteredAmount: '' });
   };
 
   sendAll = () => {
@@ -423,7 +423,7 @@ export default class Send extends Component<Props, State> {
         : totalAmount - 10 - parseInt(nodeFee, 10);
     this.setState({
       enteredAmount:
-        displayCurrency === "TRTL"
+        displayCurrency === 'TRTL'
           ? atomicToHuman(enteredAmount, false).toString()
           : atomicToHuman(enteredAmount * fiatPrice, false).toString()
     });
@@ -455,13 +455,13 @@ export default class Send extends Component<Props, State> {
       const { paymentID } = search(
         event.value,
         [donateInfo, ...addressList],
-        "address"
+        'address'
       );
 
       this.setState({
         selectedContact: event,
         sendToAddress: event.value,
-        paymentID: paymentID || ""
+        paymentID: paymentID || ''
       });
     } else {
       this.setState({
@@ -491,7 +491,7 @@ export default class Send extends Component<Props, State> {
     } = this.state;
 
     const exampleAmount =
-      symbolLocation === "prefix" ? `${fiatSymbol}100` : `100${fiatSymbol}`;
+      symbolLocation === 'prefix' ? `${fiatSymbol}100` : `100${fiatSymbol}`;
 
     const {
       backgroundColor,
@@ -576,11 +576,11 @@ export default class Send extends Component<Props, State> {
                       type="text"
                       placeholder={
                         sendAll
-                          ? "Sending entire wallet balance "
+                          ? 'Sending entire wallet balance '
                           : `How much to send (eg. ${
-                              displayCurrency === "fiat"
+                              displayCurrency === 'fiat'
                                 ? exampleAmount
-                                : "100 TRTL"
+                                : '100 TRTL'
                             })`
                       }
                       value={enteredAmount}
@@ -596,10 +596,10 @@ export default class Send extends Component<Props, State> {
                           onChange={event => {
                             this.setState({
                               sendAll: event.target.checked,
-                              enteredAmount: ""
+                              enteredAmount: ''
                             });
                           }}
-                        />{" "}
+                        />{' '}
                         Send all
                       </p>
                     </label>
@@ -692,6 +692,6 @@ export default class Send extends Component<Props, State> {
 }
 
 Send.defaultProps = {
-  uriAddress: "",
-  uriPaymentID: ""
+  uriAddress: '',
+  uriPaymentID: ''
 };

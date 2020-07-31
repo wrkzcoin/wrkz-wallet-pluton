@@ -1,10 +1,10 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import { ipcRenderer } from "electron";
-import { il8n, eventEmitter } from "../index";
-import { uiType } from "../utils/utils";
+import React, { Component } from 'react';
+import { ipcRenderer } from 'electron';
+import { il8n, eventEmitter } from '../index';
+import { uiType } from '../utils/utils';
 
 type Props = {
   darkMode: boolean
@@ -23,7 +23,7 @@ export default class Rescanner extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      scanHeight: "",
+      scanHeight: '',
       rescanInProgress: false
     };
     this.setRescanInProgress = this.setRescanInProgress.bind(this);
@@ -33,18 +33,18 @@ export default class Rescanner extends Component<Props, State> {
   }
 
   componentWillMount() {
-    eventEmitter.on("rescanWallet", this.rescanWallet);
-    ipcRenderer.on("fromBackend", this.handleRescanResponse);
+    eventEmitter.on('rescanWallet', this.rescanWallet);
+    ipcRenderer.on('fromBackend', this.handleRescanResponse);
   }
 
   componentWillUnmount() {
-    eventEmitter.off("rescanWallet", this.rescanWallet);
-    ipcRenderer.off("fromBackend", this.handleRescanResponse);
+    eventEmitter.off('rescanWallet', this.rescanWallet);
+    ipcRenderer.off('fromBackend', this.handleRescanResponse);
   }
 
   handleRescanResponse(event: Electron.IpcRendererEvent, message: any) {
     const { messageType } = message;
-    if (messageType === "rescanResponse") {
+    if (messageType === 'rescanResponse') {
       this.setRescanInProgress(false);
     }
   }
@@ -62,9 +62,9 @@ export default class Rescanner extends Component<Props, State> {
   rescanWallet = () => {
     this.setRescanInProgress(true);
     const { scanHeight } = this.state;
-    ipcRenderer.send("fromFrontend", "rescanRequest", parseInt(scanHeight, 10));
+    ipcRenderer.send('fromFrontend', 'rescanRequest', parseInt(scanHeight, 10));
     this.setState({
-      scanHeight: ""
+      scanHeight: ''
     });
   };
 
@@ -90,9 +90,9 @@ export default class Rescanner extends Component<Props, State> {
           <p className={`subtitle ${textColor}`} />
         </div>
       );
-      eventEmitter.emit("openModal", message, "OK", null, null);
+      eventEmitter.emit('openModal', message, 'OK', null, null);
       this.setState({
-        scanHeight: ""
+        scanHeight: ''
       });
       return;
     }
@@ -107,7 +107,7 @@ export default class Rescanner extends Component<Props, State> {
         </p>
       </div>
     );
-    eventEmitter.emit("openModal", message, "OK", "Nevermind", "rescanWallet");
+    eventEmitter.emit('openModal', message, 'OK', 'Nevermind', 'rescanWallet');
   };
 
   render() {
@@ -131,7 +131,7 @@ export default class Rescanner extends Component<Props, State> {
                 this.setState({ scanHeight: event.target.value });
               }}
               onKeyPress={event => {
-                if (event.key === "Enter") {
+                if (event.key === 'Enter') {
                   this.confirmRescan();
                 }
               }}
@@ -140,7 +140,7 @@ export default class Rescanner extends Component<Props, State> {
           <div className="control">
             <button
               className={`button is-danger ${
-                rescanInProgress ? "is-loading" : ""
+                rescanInProgress ? 'is-loading' : ''
               }`}
               onClick={this.confirmRescan}
             >

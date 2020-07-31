@@ -1,9 +1,9 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import fs from "fs";
-import log from "electron-log";
-import { config } from "../index";
+import fs from 'fs';
+import log from 'electron-log';
+import { config } from '../index';
 
 export default class ProtonConfig {
   configPath;

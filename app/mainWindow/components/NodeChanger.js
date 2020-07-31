@@ -1,10 +1,10 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import { remote, ipcRenderer } from "electron";
-import { il8n, eventEmitter, session, configManager } from "../index";
-import { uiType } from "../utils/utils";
+import React, { Component } from 'react';
+import { remote, ipcRenderer } from 'electron';
+import { il8n, eventEmitter, session, configManager } from '../index';
+import { uiType } from '../utils/utils';
 
 type Props = {
   darkMode: boolean
@@ -27,7 +27,7 @@ export default class NodeChanger extends Component<Props, State> {
       connectionString:
         `${session.getDaemonConnectionInfo().host}:${
           session.getDaemonConnectionInfo().port
-        }` || "Connecting, please wait...",
+        }` || 'Connecting, please wait...',
       nodeChangeInProgress: false,
       ssl: session.getDaemonConnectionInfo().ssl || false
     };
@@ -37,11 +37,11 @@ export default class NodeChanger extends Component<Props, State> {
   }
 
   componentWillMount() {
-    eventEmitter.on("gotDaemonConnectionInfo", this.handleNewNode);
+    eventEmitter.on('gotDaemonConnectionInfo', this.handleNewNode);
   }
 
   componentWillUnmount() {
-    eventEmitter.off("gotDaemonConnectionInfo", this.handleNewNode);
+    eventEmitter.off('gotDaemonConnectionInfo', this.handleNewNode);
   }
 
   resetConnectionString = () => {
@@ -63,7 +63,7 @@ export default class NodeChanger extends Component<Props, State> {
     const { darkMode } = this.props;
     const { textColor } = uiType(darkMode);
     // eslint-disable-next-line prefer-const
-    let [host, port] = connectionString.split(":", 2);
+    let [host, port] = connectionString.split(':', 2);
     if (port === undefined) {
       port = 11898;
     }
@@ -78,9 +78,9 @@ export default class NodeChanger extends Component<Props, State> {
     }
     if (!Number.isNaN(parseInt(port, 10))) {
       const request = { host, port: parseInt(port, 10) };
-      configManager.modifyConfig("daemonHost", host);
-      configManager.modifyConfig("daemonPort", parseInt(port, 10));
-      ipcRenderer.send("fromFrontend", "changeNode", request);
+      configManager.modifyConfig('daemonHost', host);
+      configManager.modifyConfig('daemonPort', parseInt(port, 10));
+      ipcRenderer.send('fromFrontend', 'changeNode', request);
     } else {
       this.resetConnectionString();
       const modalMessage = (
@@ -94,12 +94,12 @@ export default class NodeChanger extends Component<Props, State> {
           </p>
         </div>
       );
-      eventEmitter.emit("openModal", modalMessage, "OK", null, null);
+      eventEmitter.emit('openModal', modalMessage, 'OK', null, null);
     }
   };
 
   findNode = () => {
-    remote.shell.openExternal("https://explorer.turtlecoin.lol/nodes.html");
+    remote.shell.openExternal('https://explorer.turtlecoin.lol/nodes.html');
   };
 
   handleNewNode = () => {
@@ -123,7 +123,7 @@ export default class NodeChanger extends Component<Props, State> {
                 type="text"
                 value={connectionString}
                 onKeyPress={event => {
-                  if (event.key === "Enter") {
+                  if (event.key === 'Enter') {
                     this.changeNode();
                   }
                 }}

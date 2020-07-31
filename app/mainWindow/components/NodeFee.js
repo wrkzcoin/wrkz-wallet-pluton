@@ -1,9 +1,9 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import { session, eventEmitter, il8n } from "../index";
-import { atomicToHuman } from "../utils/utils";
+import React, { Component } from 'react';
+import { session, eventEmitter, il8n } from '../index';
+import { atomicToHuman } from '../utils/utils';
 
 type Props = {
   size: string,
@@ -28,11 +28,11 @@ export default class NodeFee extends Component<Props, State> {
   }
 
   componentDidMount() {
-    eventEmitter.on("gotNodeFee", this.handleNewNodeFee);
+    eventEmitter.on('gotNodeFee', this.handleNewNodeFee);
   }
 
   componentWillUnmount() {
-    eventEmitter.off("gotNodeFee", this.handleNewNodeFee);
+    eventEmitter.off('gotNodeFee', this.handleNewNodeFee);
   }
 
   handleNewNodeFee = () => {
@@ -44,7 +44,7 @@ export default class NodeFee extends Component<Props, State> {
   render() {
     const { darkMode, size } = this.props;
     const { nodeFee } = this.state;
-    const color = darkMode ? "is-dark" : "is-white";
+    const color = darkMode ? 'is-dark' : 'is-white';
 
     if (nodeFee > 0) {
       return (

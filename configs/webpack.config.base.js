@@ -2,9 +2,9 @@
 //
 // Please see the included LICENSE file for more information.
 
-import path from "path";
-import webpack from "webpack";
-import { dependencies } from "../package.json";
+import path from 'path';
+import webpack from 'webpack';
+import { dependencies } from '../package.json';
 
 export default {
   externals: [...Object.keys(dependencies || {})],
@@ -15,7 +15,7 @@ export default {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
             cacheDirectory: true
           }
@@ -25,21 +25,21 @@ export default {
   },
 
   output: {
-    path: path.join(__dirname, "..", "app"),
+    path: path.join(__dirname, '..', 'app'),
     // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: "commonjs2"
+    libraryTarget: 'commonjs2'
   },
 
   /**
    * Determine the array of extensions that should be used to resolve modules.
    */
   resolve: {
-    extensions: [".js", ".jsx", ".json"]
+    extensions: ['.js', '.jsx', '.json']
   },
 
   plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: "production"
+      NODE_ENV: 'production'
     }),
 
     new webpack.NamedModulesPlugin()

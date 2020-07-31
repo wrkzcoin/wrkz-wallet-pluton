@@ -1,7 +1,7 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import { config } from "../index";
+import { config } from '../index';
 
 export default class LoginCounter {
   userLoginAttempted: boolean;
@@ -43,9 +43,9 @@ export default class LoginCounter {
     this.navBarCount = 0;
     this.loopTest = false;
     this.looping = false;
-    this.lastSettingsTab = "node";
+    this.lastSettingsTab = 'node';
     this.pageFocusStack = [];
-    this.selectedLog = config.useLocalDaemon ? "daemon" : "wallet-backend";
+    this.selectedLog = config.useLocalDaemon ? 'daemon' : 'wallet-backend';
     this.daemonFailedInit = false;
     this.walletActive = false;
   }
@@ -61,46 +61,46 @@ export default class LoginCounter {
     );
 
     if (previousPageValue === -2) {
-      return "fadein";
+      return 'fadein';
     }
 
     if (previousPageValue === -1 && currentPageValue !== -1) {
-      return "";
+      return '';
     }
     if (previousPageValue !== -1 && currentPageValue === -1) {
-      return "";
+      return '';
     }
     if (currentPageValue > previousPageValue) {
-      return "slide-in-right";
+      return 'slide-in-right';
     }
     if (currentPageValue < previousPageValue) {
-      return "slide-in-left";
+      return 'slide-in-left';
     }
-    return "";
+    return '';
   }
 
   evaluatePageValue(location: string) {
     let pageValue: number;
     switch (location) {
-      case "/login":
+      case '/login':
         pageValue = -2;
         break;
-      case "/":
+      case '/':
         pageValue = 0;
         break;
-      case "/send":
+      case '/send':
         pageValue = 1;
         break;
-      case "/receive":
+      case '/receive':
         pageValue = 2;
         break;
-      case "/addressbook":
+      case '/addressbook':
         pageValue = 3;
         break;
-      case "/terminal":
+      case '/terminal':
         pageValue = 4;
         break;
-      case "/settings":
+      case '/settings':
         pageValue = 5;
         break;
       default:

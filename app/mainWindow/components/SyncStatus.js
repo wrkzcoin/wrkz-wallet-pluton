@@ -1,10 +1,10 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import ReactLoading from "react-loading";
-import ReactTooltip from "react-tooltip";
-import { session, eventEmitter } from "../index";
+import React, { Component } from 'react';
+import ReactLoading from 'react-loading';
+import ReactTooltip from 'react-tooltip';
+import { session, eventEmitter } from '../index';
 
 type Props = {
   size: string,
@@ -34,11 +34,11 @@ export default class SyncStatus extends Component<Props, State> {
   }
 
   componentDidMount() {
-    eventEmitter.on("gotSyncStatus", this.handleNewSyncStatus);
+    eventEmitter.on('gotSyncStatus', this.handleNewSyncStatus);
   }
 
   componentWillUnmount() {
-    eventEmitter.off("gotSyncStatus", this.handleNewSyncStatus);
+    eventEmitter.off('gotSyncStatus', this.handleNewSyncStatus);
   }
 
   handleNewSyncStatus() {
@@ -57,11 +57,11 @@ export default class SyncStatus extends Component<Props, State> {
       syncPercentage
     } = this.state;
     const { darkMode, size } = this.props;
-    const color = darkMode ? "is-dark" : "is-white";
+    const color = darkMode ? 'is-dark' : 'is-white';
 
     const syncTooltip =
       session.getNetworkBlockHeight() === 0
-        ? "Connecting, please wait..."
+        ? 'Connecting, please wait...'
         : `${walletBlockHeight}/${networkBlockHeight}`;
     return (
       <div className="control statusicons">

@@ -7,11 +7,11 @@ import {
   LogLevel,
   prettyPrintAmount,
   WalletErrorCode
-} from "turtlecoin-wallet-backend";
-import log from "electron-log";
-import { ipcRenderer } from "electron";
-import { createObjectCsvWriter } from "csv-writer";
-import { atomicToHuman, convertTimestamp } from "../mainWindow/utils/utils";
+} from 'turtlecoin-wallet-backend';
+import log from 'electron-log';
+import { ipcRenderer } from 'electron';
+import { createObjectCsvWriter } from 'csv-writer';
+import { atomicToHuman, convertTimestamp } from '../mainWindow/utils/utils';
 
 export default class Backend {
   notifications: boolean;
@@ -24,7 +24,7 @@ export default class Backend {
 
   walletFile: string;
 
-  walletPassword: string = "";
+  walletPassword: string = '';
 
   wallet: any;
 
@@ -72,19 +72,21 @@ export default class Backend {
   }
 
   getNodeFee(): void {
-    this.send("nodeFee", this.wallet.getNodeFee()[1]);
+    this.send('nodeFee', this.wallet.getNodeFee()[1]);
   }
 
   send(type: string, data: any) {
-    if (typeof data == "object") {
+    if (typeof data === 'object') {
+      // eslint-disable-next-line no-restricted-syntax
       for (const key in data) {
-        if (typeof data[key] === "function") {
+        if (typeof data[key] === 'function') {
+          // eslint-disable-next-line no-param-reassign
           delete data[key];
         }
       }
     }
     log.debug({ type, data });
-    ipcRenderer.send("fromBackend", type, data);
+    ipcRenderer.send('fromBackend', type, data);
   }
 
   getWalletActive(): boolean {
@@ -105,15 +107,15 @@ export default class Backend {
 
   evaluateLogLevel(logLevel: string): LogLevel {
     switch (logLevel) {
-      case "DEBUG":
+      case 'DEBUG':
         return LogLevel.DEBUG;
-      case "ERROR":
+      case 'ERROR':
         return LogLevel.ERROR;
-      case "INFO":
+      case 'INFO':
         return LogLevel.INFO;
-      case "WARNING":
+      case 'WARNING':
         return LogLevel.WARNING;
-      case "TRACE":
+      case 'TRACE':
         return LogLevel.TRACE;
       default:
         return LogLevel.DISABLED;
@@ -129,12 +131,12 @@ export default class Backend {
     const csvWriter = createObjectCsvWriter({
       path: savePath,
       header: [
-        { id: "date", title: "Date" },
-        { id: "blockHeight", title: "Block Height" },
-        { id: "transactionHash", title: "Transaction Hash" },
-        { id: "pid", title: "Payment ID" },
-        { id: "amount", title: "Amount" },
-        { id: "bal", title: "balance" }
+        { id: 'date', title: 'Date' },
+        { id: 'blockHeight', title: 'Block Height' },
+        { id: 'transactionHash', title: 'Transaction Hash' },
+        { id: 'pid', title: 'Payment ID' },
+        { id: 'amount', title: 'Amount' },
+        { id: 'bal', title: 'balance' }
       ]
     });
     const csvData = rawTransactions.map(item => {
@@ -164,21 +166,21 @@ export default class Backend {
         }, fee ${prettyPrintAmount(result.fee)}`
       );
       const response = {
-        status: "SUCCESS",
+        status: 'SUCCESS',
         hash: result.transactionHash,
         error: undefined
       };
-      this.send("sendTransactionResponse", response);
+      this.send('sendTransactionResponse', response);
       this.getTransactions(this.getLastTxAmountRequested() + 1);
     } else {
       console.log(`Failed to send transaction: ${result.error.toString()}`);
       result.error.errorString = result.error.toString();
       const response = {
-        status: "FAILURE",
+        status: 'FAILURE',
         hash: undefined,
         error: result.error
       };
-      this.send("sendTransactionResponse", response);
+      this.send('sendTransactionResponse', response);
     }
   }
 
@@ -204,7 +206,7 @@ export default class Backend {
       const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
       const balance = parseInt(unlockedBalance + lockedBalance, 10);
       const response = {
-        status: "SUCCESS",
+        status: 'SUCCESS',
         hash: result.transactionHash,
         address,
         paymentID,
@@ -213,13 +215,13 @@ export default class Backend {
         nodeFee: this.wallet.getNodeFee()[1],
         error: undefined
       };
-      this.send("prepareTransactionResponse", response);
+      this.send('prepareTransactionResponse', response);
       this.getTransactions(this.getLastTxAmountRequested() + 1);
     } else {
       console.log(`Failed to send transaction: ${result.error.toString()}`);
       result.error.errorString = result.error.toString();
       const response = {
-        status: "FAILURE",
+        status: 'FAILURE',
         hash: undefined,
         address,
         paymentID,
@@ -228,14 +230,14 @@ export default class Backend {
         nodeFee: this.wallet.getNodeFee()[1],
         error: result.error
       };
-      this.send("prepareTransactionResponse", response);
+      this.send('prepareTransactionResponse', response);
     }
   }
 
   verifyPassword(password: string): void {
     ipcRenderer.send(
-      "fromBackend",
-      "authenticationStatus",
+      'fromBackend',
+      'authenticationStatus',
       password === this.walletPassword
     );
   }
@@ -244,23 +246,23 @@ export default class Backend {
     const { oldPassword, newPassword } = passwords;
     let response;
     if (this.getWalletPassword() !== oldPassword) {
-      response = { status: "FAILURE", error: "AUTHERROR" };
+      response = { status: 'FAILURE', error: 'AUTHERROR' };
     } else {
       this.setWalletPassword(newPassword);
       const saved = this.saveWallet(false);
       if (saved) {
-        response = { status: "SUCCESS", error: undefined };
+        response = { status: 'SUCCESS', error: undefined };
       } else {
-        response = { status: "FAILURE", error: "SAVEERROR" };
+        response = { status: 'FAILURE', error: 'SAVEERROR' };
       }
     }
-    this.send("passwordChangeResponse", response);
+    this.send('passwordChangeResponse', response);
   }
 
   async rescanWallet(height: number) {
     await this.wallet.reset(height);
     this.saveWallet(false);
-    this.send("rescanResponse", height);
+    this.send('rescanResponse', height);
   }
 
   getFormattedTransactions(
@@ -301,25 +303,25 @@ export default class Backend {
       this.wallet.stop();
     }
     if (isShuttingDown) {
-      ipcRenderer.send("backendStopped");
+      ipcRenderer.send('backendStopped');
     }
   }
 
   getTransactions(displayCount: number): void {
     this.setLastTxAmountRequested(displayCount);
     ipcRenderer.send(
-      "fromBackend",
-      "transactionList",
+      'fromBackend',
+      'transactionList',
       this.getFormattedTransactions(0, displayCount, false)
     );
   }
 
   getTransactionCount(): void {
-    this.send("transactionCount", this.transactionCount);
+    this.send('transactionCount', this.transactionCount);
   }
 
   getBalance(): void {
-    this.send("balance", this.wallet.getBalance());
+    this.send('balance', this.wallet.getBalance());
   }
 
   saveWallet(notify: boolean, path?: string): boolean {
@@ -332,14 +334,14 @@ export default class Backend {
     );
 
     if (notify) {
-      this.send("saveWalletResponse", status);
+      this.send('saveWalletResponse', status);
     }
     return status;
   }
 
   transactionSearch(query: string) {
     const transactions = this.wallet.getTransactions();
-    const possibleTransactionValues = ["blockHeight", "hash", "paymentID"];
+    const possibleTransactionValues = ['blockHeight', 'hash', 'paymentID'];
     const transactionResults = possibleTransactionValues.map(value => {
       return this.search(query, transactions, value);
     });
@@ -352,8 +354,8 @@ export default class Backend {
     }
 
     ipcRenderer.send(
-      "fromBackend",
-      "transactionSearchResponse",
+      'fromBackend',
+      'transactionSearchResponse',
       sanitizedResults
     );
   }
@@ -369,11 +371,15 @@ export default class Backend {
       ) {
         /* we have to disable this because the function gets lost
         when we send the object over ipc */
+
         // eslint-disable-next-line no-param-reassign
         arrayToSearch[i].totalTxAmount = arrayToSearch[i].totalAmount();
+
         // we need to delete the function afterwards because of
         // electron 9's new serialization code
         // https://www.electronjs.org/docs/breaking-changes#behavior-changed-values-sent-over-ipc-are-now-serialized-with-structured-clone-algorithm
+
+        // eslint-disable-next-line no-param-reassign
         delete arrayToSearch[i].totalAmount;
 
         resultsToReturn.push(arrayToSearch[i]);
@@ -392,8 +398,8 @@ export default class Backend {
 
   getConnectionInfo(): void {
     ipcRenderer.send(
-      "fromBackend",
-      "daemonConnectionInfo",
+      'fromBackend',
+      'daemonConnectionInfo',
       this.wallet.getDaemonConnectionInfo()
     );
   }
@@ -407,25 +413,25 @@ export default class Backend {
     this.wallet = wallet;
     this.setLogLevel(this.logLevel);
     this.wallet.on(
-      "heightchange",
+      'heightchange',
       (walletBlockCount, localDaemonBlockCount, networkBlockCount) => {
-        this.send("syncStatus", [
+        this.send('syncStatus', [
           walletBlockCount,
           localDaemonBlockCount,
           networkBlockCount
         ]);
       }
     );
-    this.wallet.on("transaction", () => {
+    this.wallet.on('transaction', () => {
       this.getTransactionCount();
       this.getTransactions(this.getLastTxAmountRequested() + 1);
       this.getBalance();
     });
 
-    this.wallet.on("incomingtx", transaction => {
+    this.wallet.on('incomingtx', transaction => {
       if (this.notifications) {
         // eslint-disable-next-line no-new
-        new window.Notification("Transaction Received!", {
+        new window.Notification('Transaction Received!', {
           body: `You've just received ${atomicToHuman(
             transaction.totalAmount(),
             true
@@ -434,25 +440,25 @@ export default class Backend {
       }
     });
     this.setWalletActive(true);
-    this.send("syncStatus", this.wallet.getSyncStatus());
+    this.send('syncStatus', this.wallet.getSyncStatus());
     ipcRenderer.send(
-      "fromBackend",
-      "primaryAddress",
+      'fromBackend',
+      'primaryAddress',
       this.wallet.getPrimaryAddress()
     );
     ipcRenderer.send(
-      "fromBackend",
-      "transactionList",
+      'fromBackend',
+      'transactionList',
       this.getFormattedTransactions(0, 50, false)
     );
     this.getTransactionCount();
-    this.send("balance", this.wallet.getBalance());
-    this.send("walletActiveStatus", true);
-    this.send("authenticationStatus", true);
+    this.send('balance', this.wallet.getBalance());
+    this.send('walletActiveStatus', true);
+    this.send('authenticationStatus', true);
     await this.wallet.start();
     ipcRenderer.send(
-      "fromBackend",
-      "daemonConnectionInfo",
+      'fromBackend',
+      'daemonConnectionInfo',
       this.wallet.getDaemonConnectionInfo()
     );
     this.getNodeFee();
@@ -468,7 +474,7 @@ export default class Backend {
     let [mnemonicSeed, err] = this.wallet.getMnemonicSeed();
     if (err) {
       if (err.errorCode === 41) {
-        mnemonicSeed = "";
+        mnemonicSeed = '';
       } else {
         throw err;
       }
@@ -481,7 +487,7 @@ export default class Backend {
       privateSpendKey +
       `\n\nPrivate View Key:\n\n` +
       privateViewKey +
-      (mnemonicSeed !== "" ? `\n\nMnemonic Seed:\n\n` : "") +
+      (mnemonicSeed !== '' ? `\n\nMnemonic Seed:\n\n` : '') +
       mnemonicSeed +
       `\n\nPlease save these keys safely and securely. \nIf you lose your keys, you will not be able to recover your funds.`;
 
@@ -498,10 +504,10 @@ export default class Backend {
     if (!error) {
       this.walletInit(openWallet);
     } else if (error.errorCode === WalletErrorCode.WRONG_PASSWORD) {
-      this.send("authenticationStatus", false);
+      this.send('authenticationStatus', false);
     } else {
       error.errorString = error.toString();
-      this.send("authenticationError", error);
+      this.send('authenticationError', error);
     }
   }
 }

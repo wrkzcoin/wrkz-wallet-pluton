@@ -1,20 +1,19 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component, Fragment } from "react";
-import { remote, ipcRenderer } from "electron";
-import { Link, Redirect } from "react-router-dom";
-import jdenticon from "jdenticon";
-import NavBar from "./NavBar";
-import BottomBar from "./BottomBar";
-import Redirector from "./Redirector";
-import log from "electron-log";
+import React, { Component, Fragment } from 'react';
+import { remote, ipcRenderer } from 'electron';
+import { Link, Redirect } from 'react-router-dom';
+import jdenticon from 'jdenticon';
+import NavBar from './NavBar';
+import BottomBar from './BottomBar';
+import Redirector from './Redirector';
 import {
   uiType,
   formatLikeCurrency,
   atomicToHuman,
   convertTimestamp
-} from "../utils/utils";
+} from '../utils/utils';
 import {
   session,
   addressList,
@@ -22,9 +21,9 @@ import {
   config,
   eventEmitter,
   loginCounter
-} from "../index";
-import routes from "../constants/routes";
-import settings from "../constants/settings";
+} from '../index';
+import routes from '../constants/routes';
+import settings from '../constants/settings';
 
 type Props = {
   query: string
@@ -70,7 +69,7 @@ export default class Search extends Component<Props, States> {
       fiatDecimals: config.fiatDecimals,
       query: props.query,
       settingsResults: [],
-      redirectTo: "",
+      redirectTo: '',
       redirect: false,
       backendResultsReceived: false
     };
@@ -92,9 +91,9 @@ export default class Search extends Component<Props, States> {
       query
     });
 
-    eventEmitter.on("gotFiatPrice", this.updateFiatPrice);
-    eventEmitter.on("modifyCurrency", this.modifyCurrency);
-    ipcRenderer.on("fromBackend", this.handleTransactionSearchResponse);
+    eventEmitter.on('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.on('modifyCurrency', this.modifyCurrency);
+    ipcRenderer.on('fromBackend', this.handleTransactionSearchResponse);
   }
 
   componentWillReceiveProps(newProps: any) {
@@ -109,9 +108,9 @@ export default class Search extends Component<Props, States> {
   }
 
   componentWillUnmount() {
-    eventEmitter.off("gotFiatPrice", this.updateFiatPrice);
-    eventEmitter.off("modifyCurrency", this.modifyCurrency);
-    ipcRenderer.off("fromBackend", this.handleTransactionSearchResponse);
+    eventEmitter.off('gotFiatPrice', this.updateFiatPrice);
+    eventEmitter.off('modifyCurrency', this.modifyCurrency);
+    ipcRenderer.off('fromBackend', this.handleTransactionSearchResponse);
   }
 
   expandRow = (event: any) => {
@@ -136,7 +135,7 @@ export default class Search extends Component<Props, States> {
   ) => {
     const { messageType, data } = message;
 
-    if (messageType === "transactionSearchResponse") {
+    if (messageType === 'transactionSearchResponse') {
       this.setState({
         transactionResults: data,
         backendResultsReceived: true
@@ -171,7 +170,7 @@ export default class Search extends Component<Props, States> {
   };
 
   getContactResults = (query: string) => {
-    const possibleContactValues = ["name", "address", "paymentID"];
+    const possibleContactValues = ['name', 'address', 'paymentID'];
 
     const contactResults = possibleContactValues.map(value => {
       return this.search(query, addressList, value);
@@ -195,7 +194,7 @@ export default class Search extends Component<Props, States> {
   };
 
   getSettingsResults = (query: string) => {
-    const possibleSettingsValues = ["description", "settingName", "keywords"];
+    const possibleSettingsValues = ['description', 'settingName', 'keywords'];
 
     const settingsResults = possibleSettingsValues.map(value => {
       return this.search(query, settings, value);
@@ -215,24 +214,24 @@ export default class Search extends Component<Props, States> {
   };
 
   getTransactionResults = (query: string) => {
-    ipcRenderer.send("fromFrontend", "transactionSearchQuery", query);
+    ipcRenderer.send('fromFrontend', 'transactionSearchQuery', query);
   };
 
   goToSetting(location: string) {
-    let redirectTo: string = "";
+    let redirectTo: string = '';
     let redirect: boolean = false;
 
-    if (location[0] === "/") {
+    if (location[0] === '/') {
       redirect = true;
       redirectTo = location;
-    } else if (location[0] === ".") {
+    } else if (location[0] === '.') {
       const eventName = location.substr(1);
       eventEmitter.emit(eventName);
       redirect = false;
     } else {
       redirect = true;
       loginCounter.lastSettingsTab = location;
-      redirectTo = "/settings";
+      redirectTo = '/settings';
     }
 
     this.setState({
@@ -409,7 +408,7 @@ export default class Search extends Component<Props, States> {
 
                     const amount = tx.totalTxAmount;
                     const rowIsExpanded = expandedRows.includes(hash);
-                    const toggleSymbol = rowIsExpanded ? "-" : "+";
+                    const toggleSymbol = rowIsExpanded ? '-' : '+';
                     return (
                       <Fragment key={index}>
                         <tr>
@@ -437,10 +436,10 @@ export default class Search extends Component<Props, States> {
                           {amount < 0 && (
                             <td>
                               <p className="has-text-danger has-text-right">
-                                {displayCurrency === "TRTL" &&
+                                {displayCurrency === 'TRTL' &&
                                   atomicToHuman(amount, true)}
-                                {displayCurrency === "fiat" &&
-                                  symbolLocation === "prefix" &&
+                                {displayCurrency === 'fiat' &&
+                                  symbolLocation === 'prefix' &&
                                   fiatPrice !== 0 &&
                                   `-${fiatSymbol}${session
                                     .formatLikeCurrency(
@@ -449,8 +448,8 @@ export default class Search extends Component<Props, States> {
                                       ).toFixed(fiatDecimals)
                                     )
                                     .substring(1)}`}
-                                {displayCurrency === "fiat" &&
-                                  symbolLocation === "suffix" &&
+                                {displayCurrency === 'fiat' &&
+                                  symbolLocation === 'suffix' &&
                                   fiatPrice !== 0 &&
                                   `-${session
                                     .formatLikeCurrency(
@@ -459,26 +458,26 @@ export default class Search extends Component<Props, States> {
                                       ).toFixed(2)
                                     )
                                     .substring(1)}${fiatSymbol}`}
-                                {displayCurrency === "fiat" &&
+                                {displayCurrency === 'fiat' &&
                                   fiatPrice === 0 &&
-                                  ""}
+                                  ''}
                               </p>
                             </td>
                           )}
                           {amount > 0 && (
                             <td>
                               <p className="has-text-right">
-                                {displayCurrency === "TRTL" &&
+                                {displayCurrency === 'TRTL' &&
                                   atomicToHuman(amount, true)}
-                                {displayCurrency === "fiat" &&
-                                  symbolLocation === "prefix" &&
+                                {displayCurrency === 'fiat' &&
+                                  symbolLocation === 'prefix' &&
                                   `${fiatSymbol}${formatLikeCurrency(
                                     (
                                       fiatPrice * atomicToHuman(amount, false)
                                     ).toFixed(fiatDecimals)
                                   )}`}
-                                {displayCurrency === "fiat" &&
-                                  symbolLocation === "suffix" &&
+                                {displayCurrency === 'fiat' &&
+                                  symbolLocation === 'suffix' &&
                                   `${formatLikeCurrency(
                                     (
                                       fiatPrice * atomicToHuman(amount, false)
@@ -524,7 +523,7 @@ export default class Search extends Component<Props, States> {
                                     </td>
                                     <td>
                                       {timestamp === 0
-                                        ? "Still In Memory Pool"
+                                        ? 'Still In Memory Pool'
                                         : convertTimestamp(timestamp)}
                                       <br />
                                       {timestamp !== 0
@@ -536,20 +535,20 @@ export default class Search extends Component<Props, States> {
                                         : 0}
                                       <br />
                                       {timestamp === 0
-                                        ? "Still In Memory Pool"
+                                        ? 'Still In Memory Pool'
                                         : formatLikeCurrency(blockHeight)}
                                       <br />
                                       {unlockTime} <br />
                                       {hash} <br />
-                                      {paymentID !== "" ? paymentID : "none"}
+                                      {paymentID !== '' ? paymentID : 'none'}
                                       <br />
                                       {atomicToHuman(fee, true)} TRTL
                                       <br />
                                       <p
                                         className={
                                           amount < 0
-                                            ? "is-negative-transaction has-text-danger"
-                                            : ""
+                                            ? 'is-negative-transaction has-text-danger'
+                                            : ''
                                         }
                                       >
                                         {atomicToHuman(amount, true)} TRTL
@@ -621,7 +620,7 @@ export default class Search extends Component<Props, States> {
                   <div className={`box elem-to-center ${fillColor}`}>
                     <p className="title has-text-danger has-text-centered">
                       No results found!
-                    </p>{" "}
+                    </p>{' '}
                     {query.length === 64 && (
                       <Fragment>
                         <center>

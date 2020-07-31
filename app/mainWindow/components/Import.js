@@ -1,16 +1,16 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
-import React, { Component } from "react";
-import ReactTooltip from "react-tooltip";
-import { remote } from "electron";
-import log from "electron-log";
-import { WalletBackend, Daemon } from "turtlecoin-wallet-backend";
-import NavBar from "./NavBar";
-import BottomBar from "./BottomBar";
-import Redirector from "./Redirector";
-import { uiType } from "../utils/utils";
-import { eventEmitter, reInitWallet, config } from "../index";
+import React, { Component } from 'react';
+import ReactTooltip from 'react-tooltip';
+import { remote } from 'electron';
+import log from 'electron-log';
+import { WalletBackend, Daemon } from 'turtlecoin-wallet-backend';
+import NavBar from './NavBar';
+import BottomBar from './BottomBar';
+import Redirector from './Redirector';
+import { uiType } from '../utils/utils';
+import { eventEmitter, reInitWallet, config } from '../index';
 
 type State = {
   darkMode: boolean,
@@ -32,11 +32,11 @@ export default class Import extends Component<Props, State> {
     super(props);
     this.state = {
       darkMode: config.darkMode,
-      activePage: "enter_seed",
-      password: "",
-      confirmPassword: "",
-      mnemonicSeed: "",
-      scanHeight: "",
+      activePage: 'enter_seed',
+      password: '',
+      confirmPassword: '',
+      mnemonicSeed: '',
+      scanHeight: '',
       showPassword: false,
       importedWallet: null
     };
@@ -67,13 +67,13 @@ export default class Import extends Component<Props, State> {
   evaluatePageNumber = (pageName: string) => {
     switch (pageName) {
       default:
-        log.error("Programmer error!");
+        log.error('Programmer error!');
         break;
-      case "enter_seed":
+      case 'enter_seed':
         return 1;
-      case "verify":
+      case 'verify':
         return 2;
-      case "secure":
+      case 'secure':
         return 3;
     }
   };
@@ -81,14 +81,14 @@ export default class Import extends Component<Props, State> {
   evaluatePageName = (pageNumber: number) => {
     switch (pageNumber) {
       default:
-        log.error("Programmer error!");
+        log.error('Programmer error!');
         break;
       case 1:
-        return "enter_seed";
+        return 'enter_seed';
       case 2:
-        return "verify";
+        return 'verify';
       case 3:
-        return "secure";
+        return 'secure';
     }
   };
 
@@ -130,8 +130,8 @@ export default class Import extends Component<Props, State> {
 
     if (currentPageNumber === 1) {
       const [restoredWallet, error] = WalletBackend.importWalletFromSeed(
-        new Daemon("blockapi.turtlepay.io", 443),
-        scanHeight === "" ? 0 : Number(scanHeight),
+        new Daemon('blockapi.turtlepay.io', 443),
+        scanHeight === '' ? 0 : Number(scanHeight),
         mnemonicSeed
       );
 
@@ -148,7 +148,7 @@ export default class Import extends Component<Props, State> {
             </p>
           </div>
         );
-        eventEmitter.emit("openModal", message, "OK", null, null);
+        eventEmitter.emit('openModal', message, 'OK', null, null);
         return;
       }
       this.setState({
@@ -161,11 +161,11 @@ export default class Import extends Component<Props, State> {
         return;
       }
       const options = {
-        defaultPath: remote.app.getPath("documents"),
+        defaultPath: remote.app.getPath('documents'),
         filters: [
           {
-            name: "TurtleCoin Wallet File (v0)",
-            extensions: ["wallet"]
+            name: 'TurtleCoin Wallet File (v0)',
+            extensions: ['wallet']
           }
         ]
       };
@@ -193,7 +193,7 @@ export default class Import extends Component<Props, State> {
             </p>
           </div>
         );
-        eventEmitter.emit("openModal", message, "OK", null, null);
+        eventEmitter.emit('openModal', message, 'OK', null, null);
       }
       return;
     }
@@ -244,16 +244,16 @@ export default class Import extends Component<Props, State> {
             <div className={`steps ${textColor} is-dark`} id="stepsDemo">
               <div
                 className={`step-item ${
-                  activePage === "enter_seed" ? "is-active" : ""
+                  activePage === 'enter_seed' ? 'is-active' : ''
                 } ${
-                  this.evaluatePageNumber(activePage) > 1 ? "is-completed" : ""
+                  this.evaluatePageNumber(activePage) > 1 ? 'is-completed' : ''
                 } is-success`}
               >
                 <div className="step-marker">
                   {this.evaluatePageNumber(activePage) > 1 ? (
                     <i className="fas fa-check" />
                   ) : (
-                    "1"
+                    '1'
                   )}
                 </div>
                 <div className="step-details">
@@ -262,17 +262,17 @@ export default class Import extends Component<Props, State> {
               </div>
               <div
                 className={`step-item ${
-                  activePage === "verify" ? "is-active" : ""
+                  activePage === 'verify' ? 'is-active' : ''
                 } ${
-                  this.evaluatePageNumber(activePage) > 2 ? "is-completed" : ""
+                  this.evaluatePageNumber(activePage) > 2 ? 'is-completed' : ''
                 } is-success`}
               >
                 <div className="step-marker">
-                  {" "}
+                  {' '}
                   {this.evaluatePageNumber(activePage) > 2 ? (
                     <i className="fas fa-check" />
                   ) : (
-                    "2"
+                    '2'
                   )}
                 </div>
                 <div className="step-details">
@@ -281,17 +281,17 @@ export default class Import extends Component<Props, State> {
               </div>
               <div
                 className={`step-item ${
-                  activePage === "secure" ? "is-active" : ""
+                  activePage === 'secure' ? 'is-active' : ''
                 } ${
-                  this.evaluatePageNumber(activePage) > 3 ? "is-completed" : ""
+                  this.evaluatePageNumber(activePage) > 3 ? 'is-completed' : ''
                 } is-success`}
               >
                 <div className="step-marker">
-                  {" "}
+                  {' '}
                   {this.evaluatePageNumber(activePage) > 3 ? (
                     <i className="fas fa-check" />
                   ) : (
-                    "3"
+                    '3'
                   )}
                 </div>
                 <div className="step-details">
@@ -300,7 +300,7 @@ export default class Import extends Component<Props, State> {
               </div>
             </div>
 
-            {activePage === "enter_seed" && (
+            {activePage === 'enter_seed' && (
               <div>
                 <p className={`subtitle ${textColor}`}>
                   Welcome to the wallet import wizard. Please enter your
@@ -317,7 +317,7 @@ export default class Import extends Component<Props, State> {
                         this.setState({ mnemonicSeed: event.target.value });
                       }}
                       onKeyPress={event => {
-                        if (event.key === "Enter") {
+                        if (event.key === 'Enter') {
                           this.nextPage();
                         }
                       }}
@@ -334,7 +334,7 @@ export default class Import extends Component<Props, State> {
                         this.setState({ scanHeight: event.target.value });
                       }}
                       onKeyPress={event => {
-                        if (event.key === "Enter") {
+                        if (event.key === 'Enter') {
                           this.nextPage();
                         }
                       }}
@@ -348,10 +348,10 @@ export default class Import extends Component<Props, State> {
               </div>
             )}
 
-            {activePage === "verify" && (
+            {activePage === 'verify' && (
               <div>
                 <p className={`subtitle ${textColor}`}>
-                  Confirm the address below is the one you expect.{" "}
+                  Confirm the address below is the one you expect.{' '}
                   <span className="has-text-danger has-text-weight-bold ">
                     If it isn&apos;t correct, go back and double check your
                     seed.
@@ -369,7 +369,7 @@ export default class Import extends Component<Props, State> {
               </div>
             )}
 
-            {activePage === "secure" && (
+            {activePage === 'secure' && (
               <div>
                 <p className={`subtitle ${textColor}`}>
                   Set a password for your wallet. Take care not to forget it.
@@ -380,12 +380,12 @@ export default class Import extends Component<Props, State> {
                     <div className="control">
                       <input
                         className="input is-large"
-                        type={showPassword ? "input" : "password"}
+                        type={showPassword ? 'input' : 'password'}
                         placeholder="Enter a password"
                         value={password}
                         onChange={this.handlePasswordChange}
                         onKeyPress={event => {
-                          if (event.key === "Enter") {
+                          if (event.key === 'Enter') {
                             this.nextPage();
                           }
                         }}
@@ -395,23 +395,23 @@ export default class Import extends Component<Props, State> {
                 </div>
                 <div className="field">
                   <label className={`label ${textColor}`} htmlFor="scanheight">
-                    Confirm Password:{" "}
+                    Confirm Password:{' '}
                     {password !== confirmPassword ? (
                       <span className="has-text-danger">
                         &nbsp;&nbsp;Passwords do not match!
                       </span>
                     ) : (
-                      ""
+                      ''
                     )}
                     <div className="control">
                       <input
                         className="input is-large"
-                        type={showPassword ? "input" : "password"}
+                        type={showPassword ? 'input' : 'password'}
                         placeholder="Confirm password"
                         value={confirmPassword}
                         onChange={this.handleConfirmPasswordChange}
                         onKeyPress={event => {
-                          if (event.key === "Enter") {
+                          if (event.key === 'Enter') {
                             this.nextPage();
                           }
                         }}
@@ -476,7 +476,7 @@ export default class Import extends Component<Props, State> {
                   tabIndex={0}
                   onMouseDown={event => event.preventDefault()}
                 >
-                  {activePage === "secure" ? "Save Wallet As" : "Next"}
+                  {activePage === 'secure' ? 'Save Wallet As' : 'Next'}
                 </span>
               </div>
             </center>
