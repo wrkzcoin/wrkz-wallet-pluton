@@ -62,7 +62,7 @@ export let loginCounter = new LoginCounter();
 
 remote.app.setAppUserModelId('wallet.proton.extra');
 
-log.debug(`Proton wallet started...`);
+log.debug(`TurtleCoin wallet started...`);
 
 const [programDirectory] = directories;
 
@@ -123,8 +123,8 @@ eventEmitter.on('updateRequired', updateFile => {
       </center>
       <br />
       <p className={`subtitle ${textColor}`}>
-        There&apos;s a new version of Proton Wallet available. Would you like to
-        download it?
+        There&apos;s a new version of TurtleCoin Wallet available. Would you
+        like to download it?
       </p>
     </div>
   );

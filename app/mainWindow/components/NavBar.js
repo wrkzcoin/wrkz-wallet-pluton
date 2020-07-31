@@ -111,7 +111,7 @@ class NavBar extends Component<Props, State> {
                   <div className="navbar-item">
                     <img
                       src="images/icon_color_64x64.png"
-                      alt="proton wallet logo in green"
+                      alt="turtlecoin wallet logo in green"
                     />
                   </div>
                 </div>

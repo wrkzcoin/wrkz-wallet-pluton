@@ -122,7 +122,7 @@
   {
     "settingName": "About",
     "location": ".handleAbout",
-    "description": "View the readme for Proton Wallet",
+    "description": "View the readme for TurtleCoin Wallet",
     "keywords": ""
   },
   {
@@ -134,13 +134,13 @@
   {
     "settingName": "Request Feature",
     "location": ".handleIssues",
-    "description": "Make a feature request for Proton Wallet",
+    "description": "Make a feature request for TurtleCoin Wallet",
     "keywords": ""
   },
   {
     "settingName": "Donate",
     "location": ".goToDonate",
-    "description": "Like Proton Wallet? Consider donating to support its development",
+    "description": "Like TurtleCoin Wallet? Consider donating to support its development",
     "keywords": "donate developer"
   }
 ]
