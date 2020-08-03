@@ -11,6 +11,7 @@ import NavBar from './NavBar';
 import BottomBar from './BottomBar';
 import Redirector from './Redirector';
 import FiatSelector from './FiatSelector';
+import TimeSelector from './TimeSelector';
 import TimeoutSelector from './TimeoutSelector';
 import LogLevelSelector from './LogLevelSelector';
 import NodeChanger from './NodeChanger';
@@ -333,6 +334,8 @@ export default class Settings extends Component<Props, State> {
                 {activeTab === 'display' && (
                   <div className={inAnimation}>
                     <FiatSelector darkMode={darkMode} />
+                    <br />
+                    <TimeSelector darkMode={darkMode} />
                     <br />
                     <DarkModeToggle darkMode={darkMode} />
                   </div>

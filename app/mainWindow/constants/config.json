@@ -13,6 +13,7 @@
   "fiatSymbol": "$",
   "symbolLocation": "prefix",
   "fiatDecimals": 2,
+  "selectedTimeZone": "local",
   "autoLockInterval": 15,
   "autoLockEnabled": true,
   "useLocalDaemon": false,
