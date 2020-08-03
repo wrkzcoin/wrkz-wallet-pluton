@@ -1,6 +1,10 @@
 // Copyright (C) 2019 ExtraHash
 //
 // Please see the included LICENSE file for more information.
+
+import * as moment from 'moment-timezone';
+import { config } from '../index';
+
 export function uiType(darkMode: boolean) {
   const backgroundColor = darkMode
     ? 'has-background-dark'
@@ -72,13 +76,16 @@ export function atomicToHuman(x: number, prettyPrint?: boolean) {
 
 export function convertTimestamp(timestamp: Date) {
   const d = new Date(timestamp * 1000); // Convert the passed timestamp to milliseconds
-  const yyyy = d.getFullYear();
-  const mm = `0${d.getMonth() + 1}`.slice(-2); // Months are zero based. Add leading 0.
-  const dd = `0${d.getDate()}`.slice(-2); // Add leading 0.
-  const hh = `0${d.getHours()}`.slice(-2);
-  const min = `0${d.getMinutes()}`.slice(-2); // Add leading 0.
-  // ie: 2013-02-18, 16:35
-  const time = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+
+  let time = moment(d);
+
+  // If "default"show local pc time "default"
+  if (config.selectedTimeZone === 'local') {
+    time = time.format('YYYY-MM-DD HH:mm');
+  } else {
+    time = time.tz(config.selectedTimeZone).format('YYYY-MM-DD HH:mm');
+  }
+
   return time;
 }
 
