@@ -51,9 +51,7 @@ export default class TimeSelector extends Component<Props, State> {
   };
 
   changeTimeZone = (selectedTimeZone: string) => {
-    log.debug(
-      `User has selected ${selectedTimeZone} as alternate display time zone.`
-    );
+    log.debug(`User has selected ${selectedTimeZone} as display time zone.`);
     configManager.modifyConfig('selectedTimeZone', selectedTimeZone);
     session.getTimeZone(selectedTimeZone);
     this.setState({
@@ -88,7 +86,7 @@ export default class TimeSelector extends Component<Props, State> {
     return (
       <div>
         <p className={`has-text-weight-bold ${textColor}`}>
-          Alternate Display Time:
+          Wallet Display Time:
         </p>
         <Select
           value={selectedTimeZone}
