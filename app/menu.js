@@ -427,6 +427,26 @@ export default class MenuBuilder {
                   click: () => {
                     this.mainWindow.toggleDevTools();
                   }
+                },
+                {
+                  label: 'Zoom In',
+                  accelerator: 'Ctrl+Plus',
+                  click: () => {
+                    this.mainWindow.webContents.send('zoomIn');
+                  }
+                },
+                {
+                  label: 'Zoom Out',
+                  accelerator: 'Ctrl+-',
+                  click: () => {
+                    this.mainWindow.webContents.send('zoomOut');
+                  }
+                },
+                {
+                  label: 'Default Zoom',
+                  click: () => {
+                    this.mainWindow.webContents.send('zoomDefault');
+                  }
                 }
               ]
             : [
@@ -437,6 +457,26 @@ export default class MenuBuilder {
                     this.mainWindow.setFullScreen(
                       !this.mainWindow.isFullScreen()
                     );
+                  }
+                },
+                {
+                  label: 'Zoom In',
+                  accelerator: 'Ctrl+Plus',
+                  click: () => {
+                    this.mainWindow.webContents.send('zoomIn');
+                  }
+                },
+                {
+                  label: 'Zoom Out',
+                  accelerator: 'Ctrl+-',
+                  click: () => {
+                    this.mainWindow.webContents.send('zoomOut');
+                  }
+                },
+                {
+                  label: 'Default Zoom',
+                  click: () => {
+                    this.mainWindow.webContents.send('zoomDefault');
                   }
                 }
               ]
