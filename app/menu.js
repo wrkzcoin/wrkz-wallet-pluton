@@ -167,6 +167,20 @@ export default class MenuBuilder {
           click: () => {
             this.mainWindow.toggleDevTools();
           }
+        },
+        {
+          label: 'Zoom In',
+          accelerator: 'CommandOrControl+=',
+          click: () => {
+            this.mainWindow.webContents.send('zoomIn');
+          }
+        },
+        {
+          label: 'Zoom Out',
+          accelerator: 'Ctrl+-',
+          click: () => {
+            this.mainWindow.webContents.send('zoomOut');
+          }
         }
       ]
     };
@@ -178,6 +192,20 @@ export default class MenuBuilder {
           accelerator: 'Ctrl+Command+F',
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          }
+        },
+        {
+          label: 'Zoom In',
+          accelerator: 'CommandOrControl+=',
+          click: () => {
+            this.mainWindow.webContents.send('zoomIn');
+          }
+        },
+        {
+          label: 'Zoom Out',
+          accelerator: 'Ctrl+-',
+          click: () => {
+            this.mainWindow.webContents.send('zoomOut');
           }
         }
       ]
@@ -432,7 +460,7 @@ export default class MenuBuilder {
                 },
                 {
                   label: 'Zoom In',
-                  accelerator: 'Ctrl+Plus',
+                  accelerator: 'CommandOrControl+=',
                   click: () => {
                     this.mainWindow.webContents.send('zoomIn');
                   }
@@ -463,7 +491,7 @@ export default class MenuBuilder {
                 },
                 {
                   label: 'Zoom In',
-                  accelerator: 'Ctrl+Plus',
+                  accelerator: 'CommandOrControl+=',
                   click: () => {
                     this.mainWindow.webContents.send('zoomIn');
                   }
