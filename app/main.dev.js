@@ -231,8 +231,6 @@ app.on('ready', async () => {
     show: false,
     width: 1250,
     height: 625,
-    minWidth: 1250,
-    minHeight: 625,
     backgroundColor: '#121212',
     icon: nativeImage.createFromPath(path.join(__dirname, 'images/icon.png')),
     webPreferences: {
@@ -359,6 +357,19 @@ windowEvents.on('bothWindowsReady', () => {
     config,
     configPath: directories[0]
   });
+});
+
+ipcMain.on('resizeWindow', (event: any, dimensions: any) => {
+  const { width, height } = dimensions;
+
+  mainWindow.setSize(width, height);
+});
+
+ipcMain.on('windowResized', async () => {
+  console.log('window resized');
+  const [width, height] = mainWindow.getSize();
+
+  mainWindow.send('newWindowSize', { width, height });
 });
 
 ipcMain.on('closeToTrayToggle', (event: any, state: boolean) => {

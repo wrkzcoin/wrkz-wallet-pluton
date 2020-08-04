@@ -10,7 +10,7 @@ import LocalizedStrings from 'react-localization';
 import ErrorBoundary from 'react-error-boundary';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, remote, webFrame } from 'electron';
 import EventEmitter from 'events';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
@@ -63,6 +63,33 @@ export let loginCounter = new LoginCounter();
 remote.app.setAppUserModelId('work.wrkz.pluton');
 
 log.debug(`Proton wallet started...`);
+
+if (
+  localStorage.getItem('windowWidth') &&
+  localStorage.getItem('windowHeight')
+) {
+  ipcRenderer.send('resizeWindow', {
+    width: Number(localStorage.getItem('windowWidth')),
+    height: Number(localStorage.getItem('windowHeight'))
+  });
+}
+
+if (localStorage.getItem('zoomFactor') === null) {
+  localStorage.setItem('zoomFactor', 1);
+}
+
+webFrame.setZoomFactor(Number(localStorage.getItem('zoomFactor')));
+
+window.onresize = () => {
+  ipcRenderer.send('windowResized');
+};
+
+ipcRenderer.on('newWindowSize', (event, dimensions) => {
+  console.log('reached');
+  const { width, height } = dimensions;
+  localStorage.setItem('windowWidth', width);
+  localStorage.setItem('windowHeight', height);
+});
 
 const [programDirectory] = directories;
 
@@ -439,6 +466,21 @@ ipcRenderer.on('exportToCSV', async () => {
     return;
   }
   ipcRenderer.send('fromFrontend', 'exportToCSV', response.filePath);
+});
+
+ipcRenderer.on('zoomDefault', () => {
+  webFrame.setZoomFactor(1);
+  localStorage.setItem('zoomFactor', webFrame.getZoomFactor());
+});
+
+ipcRenderer.on('zoomIn', () => {
+  webFrame.setZoomFactor(webFrame.getZoomFactor() + 0.1);
+  localStorage.setItem('zoomFactor', webFrame.getZoomFactor());
+});
+
+ipcRenderer.on('zoomOut', () => {
+  webFrame.setZoomFactor(webFrame.getZoomFactor() - 0.1);
+  localStorage.setItem('zoomFactor', webFrame.getZoomFactor());
 });
 
 ipcRenderer.on('handleOpen', handleOpen);
