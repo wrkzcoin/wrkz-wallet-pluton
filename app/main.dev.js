@@ -159,12 +159,12 @@ if (!isSingleInstance) {
     "There's an instance of the application already locked, terminating..."
   );
   app.quit();
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.show();
-    mainWindow.focus();
-  }
 }
+
+app.on('second-instance', () => {
+  mainWindow.show();
+  mainWindow.focus();
+});
 
 app.on('before-quit', () => {
   log.debug('Exiting application.');
@@ -255,6 +255,7 @@ app.on('ready', async () => {
           click() {
             if (mainWindow) {
               mainWindow.show();
+              mainWindow.focus();
             }
           }
         },
