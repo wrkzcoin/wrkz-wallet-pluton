@@ -68,12 +68,17 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
     .readFileSync(`${programDirectory}/config.json`)
     .toString();
 
+  // eslint-disable-next-line no-restricted-syntax
+
   // check if the user config is valid JSON before parsing it
   try {
     config = JSON.parse(rawUserConfig);
+    config = { ...iConfig, ...config };
+    fs.writeFileSync(`${programDirectory}/config.json`, JSON.stringify(config));
   } catch {
     // if it isn't, set the internal config to the user config
     config = iConfig;
+    fs.writeFileSync(`${programDirectory}/config.json`, JSON.stringify(config));
   }
   configReady = true;
   if (frontendReady && backendReady) windowEvents.emit('bothWindowsReady');
