@@ -93,36 +93,11 @@ ipcRenderer.on('newWindowSize', (event, dimensions) => {
 
 const [programDirectory] = directories;
 
-if (!fs.existsSync(`${programDirectory}/config.json`)) {
-  log.debug('Config not detected, writing internal config to disk...');
-} else {
-  log.debug("Config file found in user's home directory, using it...");
-  const rawUserConfig = fs
-    .readFileSync(`${programDirectory}/config.json`)
-    .toString();
-
-  // add possible missing fields using internal config values
-  try {
-    config = Object.assign(config, JSON.parse(rawUserConfig));
-  } catch {
-    log.debug('User config is not valid JSON!');
-  }
-}
-
 export const addressList = JSON.parse(
   fs.readFileSync(`${programDirectory}/addressBook.json`).toString()
 );
 
-fs.writeFile(
-  `${programDirectory}/config.json`,
-  JSON.stringify(config, null, 4),
-  err => {
-    if (err) throw err;
-  }
-);
-
-const { darkMode } = config;
-
+let { darkMode } = config;
 let { textColor } = uiType(darkMode);
 
 eventEmitter.on('darkmodeon', () => {
@@ -150,7 +125,7 @@ eventEmitter.on('updateRequired', updateFile => {
       </center>
       <br />
       <p className={`subtitle ${textColor}`}>
-        There&apos;s a new version of Proton Wallet available. Would you like to
+        There&apos;s a new version of Pluton Wallet available. Would you like to
         download it?
       </p>
     </div>
@@ -168,7 +143,16 @@ ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
   const { data, messageType } = message;
   switch (messageType) {
     case 'config':
-      configManager = new PlutonConfig(data.config, data.configPath);
+      log.info(data);
+      // eslint-disable-next-line prefer-destructuring
+      config = data.config;
+      // eslint-disable-next-line prefer-destructuring
+      darkMode = data.config.darkMode;
+      // eslint-disable-next-line prefer-destructuring
+      textColor = uiType(data.config.darkMode).textColor;
+      configManager = new ProtonConfig(data.config, data.configPath);
+      reInitWallet(data.config.walletFile);
+      ipcRenderer.send('frontReady');
       break;
     default:
       log.info(data);

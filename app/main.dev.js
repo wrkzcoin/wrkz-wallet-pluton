@@ -71,7 +71,6 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
   // check if the user config is valid JSON before parsing it
   try {
     config = JSON.parse(rawUserConfig);
-    config.darkMode = systemPreferences.isDarkMode();
   } catch {
     // if it isn't, set the internal config to the user config
     config = iConfig;
@@ -284,12 +283,6 @@ app.on('ready', async () => {
     }
     frontendReady = true;
     if (backendReady && configReady) windowEvents.emit('bothWindowsReady');
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-      mainWindow.focus();
-    }
   });
 
   backendWindow.webContents.on('did-finish-load', () => {
@@ -379,6 +372,11 @@ ipcMain.on('closeToTrayToggle', (event: any, state: boolean) => {
 ipcMain.on('backendStopped', () => {
   clearTimeout(quitTimeout);
   app.exit();
+});
+
+ipcMain.on('frontReady', () => {
+  mainWindow.show();
+  mainWindow.focus();
 });
 
 function toggleCloseToTray(state: boolean) {
