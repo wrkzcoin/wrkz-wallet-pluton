@@ -75,7 +75,7 @@ const Configure = new function() {
      * Most people haven't mined any blocks, so lets not waste time scanning
      * them
      */
-    this.scanCoinbaseTransactions = true;
+    this.scanCoinbaseTransactions = false;
 
     /**
      * Disable AutoOptimization by default
