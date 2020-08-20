@@ -43,21 +43,14 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: warrenbuckley/Setup-MSBuild@v1
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
       - name: Setup Cache
-        uses: actions/cache@v1.2.0
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ matrix.target }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ matrix.target }}-yarn-
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Dependencies
-        run: yarn --mutex file --network-concurrency 1 --network-timeout 120000
+        run: yarn --network-concurrency 1 --network-timeout 120000
 
       - name: Build aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
