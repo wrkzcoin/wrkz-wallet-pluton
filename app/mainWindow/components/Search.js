@@ -135,6 +135,7 @@ export default class Search extends Component<Props, States> {
     message: any
   ) => {
     const { messageType, data } = message;
+
     if (messageType === 'transactionSearchResponse') {
       this.setState({
         transactionResults: data,
@@ -157,7 +158,6 @@ export default class Search extends Component<Props, States> {
 
   openSearchInExplorer = () => {
     const { query } = this.state;
-
     remote.shell.openExternal(
       `${Configure.ExplorerURL}/transaction.html?hash=${encodeURIComponent(query)}`
     );
@@ -408,7 +408,7 @@ export default class Search extends Component<Props, States> {
                       blockHeight
                     } = tx;
 
-                    const amount = tx.totalAmount;
+                    const amount = tx.totalTxAmount;
                     const rowIsExpanded = expandedRows.includes(hash);
                     const toggleSymbol = rowIsExpanded ? '-' : '+';
                     return (

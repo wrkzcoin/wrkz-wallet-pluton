@@ -171,6 +171,7 @@ export default class WalletSession {
     } catch (err) {
       log.debug(`Failed to get node list from API: : \n`, err);
     }
+  };
 
   getTimeZone = async (selectedTimeZone: string) => {
     return selectedTimeZone;

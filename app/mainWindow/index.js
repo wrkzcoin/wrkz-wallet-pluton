@@ -62,7 +62,7 @@ export let loginCounter = new LoginCounter();
 
 remote.app.setAppUserModelId('work.wrkz.pluton');
 
-log.debug(`Proton wallet started...`);
+log.debug(`Pluton wallet started...`);
 
 if (
   localStorage.getItem('windowWidth') &&
@@ -150,7 +150,7 @@ ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
       darkMode = data.config.darkMode;
       // eslint-disable-next-line prefer-destructuring
       textColor = uiType(data.config.darkMode).textColor;
-      configManager = new ProtonConfig(data.config, data.configPath);
+      configManager = new PlutonConfig(data.config, data.configPath);
       reInitWallet(data.config.walletFile);
       ipcRenderer.send('frontReady');
       break;
