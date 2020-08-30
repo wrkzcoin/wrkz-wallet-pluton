@@ -50,6 +50,7 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Dependencies
+        shell: bash
         run: |
           yarn --network-concurrency 1 --network-timeout 120000
           yarn add electron-rebuild
