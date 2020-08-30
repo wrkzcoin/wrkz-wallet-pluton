@@ -183,7 +183,7 @@ export default class Backend {
         error: undefined
       };
       this.send('sendTransactionResponse', response);
-      this.getTransactions(this.getLastTxAmountRequested() + 1);
+      await this.getTransactions(this.getLastTxAmountRequested() + 1);
     } else {
       /* TODO: Optionally allow retries in case of network error? */
       this.wallet.deletePreparedTransaction(hash);
@@ -198,8 +198,8 @@ export default class Backend {
     }
   }
 
-  async prepareTransaction(transaction): void {
-    const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+  async prepareTransaction(transaction): Promise<void> {
+    const [unlockedBalance, lockedBalance] = await this.wallet.getBalance();
 
     const networkHeight: number = this.daemon.getNetworkBlockCount();
 
@@ -267,7 +267,7 @@ export default class Backend {
         error: undefined
       };
       this.send('prepareTransactionResponse', response);
-      this.getTransactions(this.getLastTxAmountRequested() + 1);
+      await this.getTransactions(this.getLastTxAmountRequested() + 1);
     } else {
       console.log(`Failed to send transaction: ${result.error.toString()}`);
       result.error.errorString = result.error.toString();
@@ -312,17 +312,17 @@ export default class Backend {
     this.send('rescanResponse', height);
   }
 
-  getFormattedTransactions(
+  async getFormattedTransactions(
     startIndex?: number,
     numTransactions?: number,
     includeFusions?: boolean
   ): any[] {
-    const rawTransactions = this.wallet.getTransactions(
+    const rawTransactions = await this.wallet.getTransactions(
       startIndex,
       numTransactions,
       includeFusions || false
     );
-    const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+    const [unlockedBalance, lockedBalance] = await this.wallet.getBalance();
     let balance = parseInt(unlockedBalance + lockedBalance, 10);
     const transactions = [];
 
@@ -354,11 +354,12 @@ export default class Backend {
     }
   }
 
-  getTransactions(displayCount: number): void {
+  async getTransactions(displayCount: number): void {
     this.setLastTxAmountRequested(displayCount);
+    const get_tx = await this.getFormattedTransactions(0, displayCount, true);
     this.send(
       'transactionList',
-      this.getFormattedTransactions(0, displayCount, true)
+      get_tx
     );
   }
 
@@ -366,8 +367,8 @@ export default class Backend {
     this.send('transactionCount', this.transactionCount);
   }
 
-  getBalance(): void {
-    this.send('balance', this.wallet.getBalance());
+  async getBalance(): void {
+    this.send('balance', await this.wallet.getBalance());
   }
 
   saveWallet(notify: boolean, path?: string): boolean {
@@ -385,8 +386,8 @@ export default class Backend {
     return status;
   }
 
-  transactionSearch(query: string) {
-    const transactions = this.wallet.getTransactions();
+  async transactionSearch(query: string) {
+    const transactions = await this.wallet.getTransactions();
     const possibleTransactionValues = ['blockHeight', 'hash', 'paymentID'];
     const transactionResults = possibleTransactionValues.map(value => {
       return this.search(query, transactions, value);
@@ -460,9 +461,9 @@ export default class Backend {
         ]);
       }
     );
-    this.wallet.on('transaction', () => {
+    this.wallet.on('transaction', async () => {
       this.getTransactionCount();
-      this.getTransactions(this.getLastTxAmountRequested() + 1);
+      await this.getTransactions(this.getLastTxAmountRequested() + 1);
       this.getBalance();
     });
 
@@ -480,12 +481,13 @@ export default class Backend {
     this.setWalletActive(true);
     this.send('syncStatus', this.wallet.getSyncStatus());
     this.send('primaryAddress', this.wallet.getPrimaryAddress());
-    this.send('transactionList', this.getFormattedTransactions(0, 50, true));
+    this.send('transactionList', await this.getFormattedTransactions(0, 50, true));
     this.getTransactionCount();
-    this.send('balance', this.wallet.getBalance());
+    this.send('balance', await this.wallet.getBalance());
     this.send('walletActiveStatus', true);
     this.send('authenticationStatus', true);
     await this.wallet.start();
+    //this.wallet.usingNativeCrypto();
     this.send('daemonConnectionInfo', this.wallet.getDaemonConnectionInfo());
     this.getNodeFee();
   }
@@ -520,9 +522,9 @@ export default class Backend {
     return secret;
   }
 
-  startWallet(password: string): void {
+  async startWallet(password: string): Promise<void> {
     this.walletPassword = password;
-    const [openWallet, error] = WalletBackend.openWalletFromFile(
+    const [openWallet, error] = await WalletBackend.openWalletFromFile(
       this.daemon,
       this.walletFile,
       this.walletPassword,

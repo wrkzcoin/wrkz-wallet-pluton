@@ -50,8 +50,28 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Dependencies
-        run: yarn --network-concurrency 1 --network-timeout 120000
-
+        run: |
+          yarn --network-concurrency 1 --network-timeout 120000
+          yarn add electron-rebuild
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            cd node_modules\turtlecoin-crypto
+            node-gyp rebuild --target=8.2.4 --arch=x64 --dist-url=https://electronjs.org/headers
+            cd ..\..
+          elif [ "$RUNNER_OS" == "Linux" ] && [ "${{ matrix.target }}" != "armv7-unknown-linux-gnueabihf" ]; then
+            cd node_modules/turtlecoin-crypto
+            node-gyp rebuild --target=8.2.4 --arch=x64 --dist-url=https://electronjs.org/headers
+            cd ../..
+          elif [ "$RUNNER_OS" == "Linux" ] && [ "${{ matrix.target }}" == "armv7-unknown-linux-gnueabihf" ]; then
+            cd node_modules/turtlecoin-crypto
+            node-gyp rebuild --target=8.2.4 --arch=arm --dist-url=https://electronjs.org/headers
+            cd ../..
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            cd node_modules/turtlecoin-crypto
+            node-gyp rebuild --target=8.2.4 --arch=x64 --dist-url=https://electronjs.org/headers
+            cd ../..
+          fi
+          fi
+          yarn remove electron-rebuild
       - name: Build aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
         run: yarn package-arm64
