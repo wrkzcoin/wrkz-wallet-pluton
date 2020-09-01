@@ -156,7 +156,7 @@ ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
       ipcRenderer.send('frontReady');
       break;
     default:
-      log.info(config);
+      log.info(data);
       break;
   }
 });
