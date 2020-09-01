@@ -123,7 +123,7 @@ export default class TimeoutSelector extends Component<Props, State> {
         </form>
         <br />
         {timeoutEnabled && (
-          <span className={textColor}>
+          <span className={`flex-items-center ${textColor}`}>
             <a
               className="button is-success"
               onClick={this.disableTimeout}
@@ -139,7 +139,7 @@ export default class TimeoutSelector extends Component<Props, State> {
           </span>
         )}
         {!timeoutEnabled && (
-          <span className={textColor}>
+          <span className={`flex-items-center ${textColor}`}>
             <a
               className="button is-danger"
               onClick={this.enableTimeout}

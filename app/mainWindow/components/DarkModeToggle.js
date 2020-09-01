@@ -49,7 +49,7 @@ export default class DarkModeToggle extends Component<Props, State> {
     return (
       <div>
         {darkMode === true && (
-          <span className={textColor}>
+          <span className={`flex-items-center ${textColor}`}>
             <a
               className="button is-black"
               onClick={this.darkModeOff}
@@ -65,7 +65,7 @@ export default class DarkModeToggle extends Component<Props, State> {
           </span>
         )}
         {darkMode === false && (
-          <span>
+          <div className="flex-items-center">
             <a
               className="button is-info"
               onClick={this.darkModeOn}
@@ -77,8 +77,10 @@ export default class DarkModeToggle extends Component<Props, State> {
                 <i className="fas fa-sun" />
               </span>
             </a>
-            &nbsp;&nbsp; Dark Mode: <b>off</b>
-          </span>
+            <div>
+              &nbsp;&nbsp; Dark Mode: <b>off</b>
+            </div>
+          </div>
         )}
       </div>
     );
