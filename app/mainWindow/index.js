@@ -144,18 +144,19 @@ ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
   switch (messageType) {
     case 'config':
       log.info(data);
+
+      const config = data;
+      const configPath = directories[0]
       // eslint-disable-next-line prefer-destructuring
-      config = data.config;
+      darkMode = config.darkMode;
       // eslint-disable-next-line prefer-destructuring
-      darkMode = data.config.darkMode;
-      // eslint-disable-next-line prefer-destructuring
-      textColor = uiType(data.config.darkMode).textColor;
-      configManager = new ProtonConfig(data.config, data.configPath);
-      reInitWallet(data.config.walletFile);
+      textColor = uiType(darkMode).textColor;
+      configManager = new ProtonConfig(config, configPath);
+      reInitWallet(config.walletFile);
       ipcRenderer.send('frontReady');
       break;
     default:
-      log.info(data);
+      log.info(config);
       break;
   }
 });
