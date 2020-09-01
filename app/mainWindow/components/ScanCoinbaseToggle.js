@@ -50,7 +50,7 @@ export default class ScanCoinbaseToggle extends Component<Props, State> {
     return (
       <div>
         {scanCoinbaseTransactions === false && (
-          <span className={textColor}>
+          <span className={`flex-items-center ${textColor}`}>
             <a
               className="button is-danger"
               onClick={this.toggleScanCoinbase}
@@ -66,7 +66,7 @@ export default class ScanCoinbaseToggle extends Component<Props, State> {
           </span>
         )}
         {scanCoinbaseTransactions === true && (
-          <span className={textColor}>
+          <span className={`flex-items-center ${textColor}`}>
             <a
               className="button is-success"
               onClick={this.toggleScanCoinbase}

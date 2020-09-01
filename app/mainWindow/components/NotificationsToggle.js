@@ -44,7 +44,7 @@ export default class NotificationsToggle extends Component<Props, State> {
     return (
       <div>
         {notifications === false && (
-          <span className={textColor}>
+          <span className={`flex-items-center ${textColor}`}>
             <a
               className="button is-danger"
               onClick={this.toggle}
@@ -60,7 +60,7 @@ export default class NotificationsToggle extends Component<Props, State> {
           </span>
         )}
         {notifications === true && (
-          <span className={textColor}>
+          <span className={`flex-items-center ${textColor}`}>
             <a
               className="button is-success"
               onClick={this.toggle}

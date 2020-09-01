@@ -779,3 +779,9 @@ html {
   overflow: auto;
   user-select: none;
 }
+
+.flex-items-center {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
