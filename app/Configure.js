@@ -78,9 +78,19 @@ const Configure = new function() {
     this.scanCoinbaseTransactions = false;
 
     /**
+     * Disable AutoOptimization by default
+     */
+    this.enableAutoOptimization = false;
+
+    /**
      * The minimum fee allowed for transactions, in ATOMIC units
      */
     this.minimumFee = 50000;
+
+    /**
+     * Fee per byte height
+     */
+    this.feePerByteHeight = 832000;
 
     /**
      * Mapping of height to mixin maximum and mixin minimum
@@ -98,7 +108,10 @@ const Configure = new function() {
         /* At height of 658,500 */
         new MixinLimit(658500, 1, 3, 1),
 
-    ], 3 /* Default mixin of 3 before block 440,000 */);
+        /* At height of 1,000,100 */
+        new MixinLimit(1000000, 1, 1, 1),
+
+    ], 1 /* Default mixin of 3 before block 440,000 */);
 
     /**
      * The length of a standard address for your coin
@@ -122,7 +135,7 @@ const Configure = new function() {
     /**
      * Amount of blocks to request from the daemon at once
      */
-    this.blocksPerDaemonRequest = 50;
+    this.blocksPerDaemonRequest = 40;
 
     /**
      * User agent string

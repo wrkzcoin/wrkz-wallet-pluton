@@ -20,12 +20,15 @@ export default merge.smart(baseConfig, {
 
   target: 'electron-renderer',
 
-  entry: path.join(__dirname, '..', 'app/index'),
+  entry: {
+    mainWindow: [path.join(__dirname, '..', 'app/mainWindow/index')],
+    backendWindow: [path.join(__dirname, '..', 'app/backendWindow/index')]
+  },
 
   output: {
     path: path.join(__dirname, '..', 'app/dist'),
-    publicPath: './dist/',
-    filename: 'renderer.prod.js'
+    publicPath: '../dist/',
+    filename: '[name].renderer.prod.js'
   },
 
   module: {
@@ -203,7 +206,7 @@ export default merge.smart(baseConfig, {
     }),
 
     new MiniCssExtractPlugin({
-      filename: 'style.css'
+      filename: '[name].css'
     }),
 
     new BundleAnalyzerPlugin({

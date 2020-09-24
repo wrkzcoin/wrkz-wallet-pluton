@@ -1,0 +1,21 @@
+{
+  "walletFile": "",
+  "enableAutoOptimization": false,
+  "scanCoinbaseTransactions": false,
+  "autoSelectDaemon": true,
+  "minimizeToTray": false,
+  "logLevel": "DISABLED",
+  "daemonHost": "wrkz.bot.tips",
+  "daemonPort": 443,
+  "darkMode": true,
+  "displayCurrency": "WRKZ",
+  "selectedFiat": "usd",
+  "fiatSymbol": "$",
+  "symbolLocation": "prefix",
+  "fiatDecimals": 2,
+  "selectedTimeZone": "local",
+  "autoLockInterval": 15,
+  "autoLockEnabled": true,
+  "useLocalDaemon": false,
+  "daemonLogPath": ""
+}
