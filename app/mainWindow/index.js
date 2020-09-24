@@ -10,7 +10,7 @@ import LocalizedStrings from 'react-localization';
 import ErrorBoundary from 'react-error-boundary';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { ipcRenderer, remote } from 'electron';
+import { ipcRenderer, remote, webFrame } from 'electron';
 import EventEmitter from 'events';
 import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
@@ -22,9 +22,9 @@ import LoginCounter from './wallet/loginCounter';
 import { uiType } from './utils/utils';
 import PlutonConfig from './wallet/plutonConfig';
 
-export function savedInInstallDir(savePath: string) {
+export function savedInInstallDir(response: string) {
   const programDirectory = path.resolve(remote.app.getAppPath(), '../../');
-  const saveDirectory = path.resolve(savePath, '../');
+  const saveDirectory = path.resolve(response, '../');
 
   log.info(programDirectory, saveDirectory);
 
@@ -62,40 +62,42 @@ export let loginCounter = new LoginCounter();
 
 remote.app.setAppUserModelId('work.wrkz.pluton');
 
-log.debug(`Proton wallet started...`);
+log.debug(`Pluton wallet started...`);
+
+if (
+  localStorage.getItem('windowWidth') &&
+  localStorage.getItem('windowHeight')
+) {
+  ipcRenderer.send('resizeWindow', {
+    width: Number(localStorage.getItem('windowWidth')),
+    height: Number(localStorage.getItem('windowHeight'))
+  });
+}
+
+if (localStorage.getItem('zoomFactor') === null) {
+  localStorage.setItem('zoomFactor', 1);
+}
+
+webFrame.setZoomFactor(Number(localStorage.getItem('zoomFactor')));
+
+window.onresize = () => {
+  ipcRenderer.send('windowResized');
+};
+
+ipcRenderer.on('newWindowSize', (event, dimensions) => {
+  console.log('reached');
+  const { width, height } = dimensions;
+  localStorage.setItem('windowWidth', width);
+  localStorage.setItem('windowHeight', height);
+});
 
 const [programDirectory] = directories;
-
-if (!fs.existsSync(`${programDirectory}/config.json`)) {
-  log.debug('Config not detected, writing internal config to disk...');
-} else {
-  log.debug("Config file found in user's home directory, using it...");
-  const rawUserConfig = fs
-    .readFileSync(`${programDirectory}/config.json`)
-    .toString();
-
-  // add possible missing fields using internal config values
-  try {
-    config = Object.assign(config, JSON.parse(rawUserConfig));
-  } catch {
-    log.debug('User config is not valid JSON!');
-  }
-}
 
 export const addressList = JSON.parse(
   fs.readFileSync(`${programDirectory}/addressBook.json`).toString()
 );
 
-fs.writeFile(
-  `${programDirectory}/config.json`,
-  JSON.stringify(config, null, 4),
-  err => {
-    if (err) throw err;
-  }
-);
-
-const { darkMode } = config;
-
+let { darkMode } = config;
 let { textColor } = uiType(darkMode);
 
 eventEmitter.on('darkmodeon', () => {
@@ -123,7 +125,7 @@ eventEmitter.on('updateRequired', updateFile => {
       </center>
       <br />
       <p className={`subtitle ${textColor}`}>
-        There&apos;s a new version of Proton Wallet available. Would you like to
+        There&apos;s a new version of Pluton Wallet available. Would you like to
         download it?
       </p>
     </div>
@@ -141,7 +143,14 @@ ipcRenderer.on('fromMain', (event: Electron.IpcRendererEvent, message: any) => {
   const { data, messageType } = message;
   switch (messageType) {
     case 'config':
+      config = data.config;
+      // eslint-disable-next-line prefer-destructuring
+      darkMode = data.config.darkMode;
+
+      textColor = uiType(data.config.darkMode).textColor;
       configManager = new PlutonConfig(data.config, data.configPath);
+      reInitWallet(data.config.walletFile);
+      ipcRenderer.send('frontReady');
       break;
     default:
       log.info(data);
@@ -395,7 +404,7 @@ ipcRenderer.on('handleLock', () => {
   }
 });
 
-ipcRenderer.on('handleSaveAs', () => {
+ipcRenderer.on('handleSaveAs', async () => {
   if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     eventEmitter.emit('refreshLogin');
     return;
@@ -409,16 +418,18 @@ ipcRenderer.on('handleSaveAs', () => {
       }
     ]
   };
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
+  const response = await remote.dialog.showSaveDialog(null, options);
+  if (response.canceled) {
     return;
   }
 
-  const request = { notify: true, savePath };
+  log.info(response);
+
+  const request = { notify: true, savePath: `${response.filePath}.wallet` };
   ipcRenderer.send('fromFrontend', 'saveWalletAs', request);
 });
 
-ipcRenderer.on('exportToCSV', () => {
+ipcRenderer.on('exportToCSV', async () => {
   if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     eventEmitter.emit('refreshLogin');
     return;
@@ -432,11 +443,26 @@ ipcRenderer.on('exportToCSV', () => {
       }
     ]
   };
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
+  const response = await remote.dialog.showSaveDialog(null, options);
+  if (response.canceled) {
     return;
   }
-  ipcRenderer.send('fromFrontend', 'exportToCSV', savePath);
+  ipcRenderer.send('fromFrontend', 'exportToCSV', response.filePath);
+});
+
+ipcRenderer.on('zoomDefault', () => {
+  webFrame.setZoomFactor(1);
+  localStorage.setItem('zoomFactor', webFrame.getZoomFactor());
+});
+
+ipcRenderer.on('zoomIn', () => {
+  webFrame.setZoomFactor(webFrame.getZoomFactor() + 0.1);
+  localStorage.setItem('zoomFactor', webFrame.getZoomFactor());
+});
+
+ipcRenderer.on('zoomOut', () => {
+  webFrame.setZoomFactor(webFrame.getZoomFactor() - 0.1);
+  localStorage.setItem('zoomFactor', webFrame.getZoomFactor());
 });
 
 ipcRenderer.on('handleOpen', handleOpen);
@@ -589,7 +615,7 @@ function backupToClipboard() {
   ipcRenderer.send('fromFrontend', 'backupToClipboard', undefined);
 }
 
-export function backupToFile() {
+export async function backupToFile() {
   if (!loginCounter.isLoggedIn || !loginCounter.walletActive) {
     return;
   }
@@ -604,12 +630,12 @@ export function backupToFile() {
     ]
   };
 
-  const savePath = remote.dialog.showSaveDialog(null, options);
-  if (savePath === undefined) {
+  const response = await remote.dialog.showSaveDialog(null, options);
+  if (response.canceled) {
     return;
   }
 
-  ipcRenderer.send('fromFrontend', 'backupToFile', savePath);
+  ipcRenderer.send('fromFrontend', 'backupToFile', response.filePath);
 }
 
 function handleBackup() {
@@ -644,7 +670,7 @@ function handleNew() {
 }
 
 // TODO: verify that it's a wallet file before opening
-function handleOpen() {
+async function handleOpen() {
   const options = {
     defaultPath: remote.app.getPath('documents'),
     filters: [
@@ -654,11 +680,13 @@ function handleOpen() {
       }
     ]
   };
-  const getPaths = remote.dialog.showOpenDialog(null, options);
-  if (getPaths === undefined) {
+  const response = await remote.dialog.showOpenDialog(null, options);
+
+  if (response.canceled) {
     return;
   }
-  reInitWallet(getPaths[0]);
+
+  reInitWallet(response.filePaths[0]);
 }
 
 export function reInitWallet(walletPath: string) {

@@ -13,7 +13,9 @@ import {
   Menu,
   shell,
   dialog,
-  ipcMain
+  ipcMain,
+  nativeImage,
+  systemPreferences
 } from 'electron';
 import isDev from 'electron-is-dev';
 import log from 'electron-log';
@@ -66,17 +68,23 @@ if (fs.existsSync(`${programDirectory}/config.json`)) {
     .readFileSync(`${programDirectory}/config.json`)
     .toString();
 
+  // eslint-disable-next-line no-restricted-syntax
+
   // check if the user config is valid JSON before parsing it
   try {
     config = JSON.parse(rawUserConfig);
+    config = { ...iConfig, ...config };
+    fs.writeFileSync(`${programDirectory}/config.json`, JSON.stringify(config));
   } catch {
     // if it isn't, set the internal config to the user config
     config = iConfig;
+    fs.writeFileSync(`${programDirectory}/config.json`, JSON.stringify(config));
   }
   configReady = true;
   if (frontendReady && backendReady) windowEvents.emit('bothWindowsReady');
 } else {
   config = iConfig;
+  config.darkMode = systemPreferences.isDarkMode();
   configReady = true;
   if (frontendReady && backendReady) windowEvents.emit('bothWindowsReady');
 }
@@ -136,16 +144,16 @@ if (process.env.NODE_ENV === 'production') {
 
 require('electron-debug')();
 
-const installExtensions = async () => {
-  // eslint-disable-next-line global-require
-  const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+// const installExtensions = async () => {
+//   // eslint-disable-next-line global-require
+//   const installer = require('electron-devtools-installer');
+//   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+//   const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
 
-  return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
-  ).catch(console.log);
-};
+//   return Promise.all(
+//     extensions.map(name => installer.default(installer[name], forceDownload))
+//   ).catch(console.log);
+// };
 
 /**
  * Add event listeners...
@@ -158,12 +166,12 @@ if (!isSingleInstance) {
     "There's an instance of the application already locked, terminating..."
   );
   app.quit();
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.show();
-    mainWindow.focus();
-  }
 }
+
+app.on('second-instance', () => {
+  mainWindow.show();
+  mainWindow.focus();
+});
 
 app.on('before-quit', () => {
   log.debug('Exiting application.');
@@ -219,7 +227,7 @@ contextMenu({
 });
 
 app.on('ready', async () => {
-  await installExtensions();
+  // await installExtensions();
 
   mainWindow = new BrowserWindow({
     title: `Pluton v${version}`,
@@ -227,10 +235,8 @@ app.on('ready', async () => {
     show: false,
     width: 1250,
     height: 625,
-    minWidth: 1250,
-    minHeight: 625,
     backgroundColor: '#121212',
-    icon: path.join(__dirname, 'images/icon.png'),
+    icon: nativeImage.createFromPath(path.join(__dirname, 'images/icon.png')),
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegrationInWorker: true,
@@ -256,6 +262,7 @@ app.on('ready', async () => {
           click() {
             if (mainWindow) {
               mainWindow.show();
+              mainWindow.focus();
             }
           }
         },
@@ -282,12 +289,6 @@ app.on('ready', async () => {
     }
     frontendReady = true;
     if (backendReady && configReady) windowEvents.emit('bothWindowsReady');
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-      mainWindow.focus();
-    }
   });
 
   backendWindow.webContents.on('did-finish-load', () => {
@@ -357,6 +358,19 @@ windowEvents.on('bothWindowsReady', () => {
   });
 });
 
+ipcMain.on('resizeWindow', (event: any, dimensions: any) => {
+  const { width, height } = dimensions;
+
+  mainWindow.setSize(width, height);
+});
+
+ipcMain.on('windowResized', async () => {
+  console.log('window resized');
+  const [width, height] = mainWindow.getSize();
+
+  mainWindow.send('newWindowSize', { width, height });
+});
+
 ipcMain.on('closeToTrayToggle', (event: any, state: boolean) => {
   toggleCloseToTray(state);
 });
@@ -364,6 +378,11 @@ ipcMain.on('closeToTrayToggle', (event: any, state: boolean) => {
 ipcMain.on('backendStopped', () => {
   clearTimeout(quitTimeout);
   app.exit();
+});
+
+ipcMain.on('frontReady', () => {
+  mainWindow.show();
+  mainWindow.focus();
 });
 
 function toggleCloseToTray(state: boolean) {

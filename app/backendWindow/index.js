@@ -17,7 +17,7 @@ ipcRenderer.on('fromFrontend', (event: IpcRendererEvent, message: any) => {
   parseMessage(message);
 });
 
-function parseMessage(message: any) {
+async function parseMessage(message: any) {
   const { messageType, data } = message;
   switch (messageType) {
     case 'config':
@@ -61,14 +61,16 @@ function parseMessage(message: any) {
       backend.changeNode(data);
       break;
     case 'backupToFile':
-      fs.writeFile(data, backend.getSecret(), error => {
+      const key_file = await backend.getSecret();
+      fs.writeFile(data, key_file, error => {
         if (error) {
           throw error;
         }
       });
       break;
     case 'backupToClipboard':
-      clipboard.writeText(backend.getSecret());
+      const keys = await backend.getSecret();
+      clipboard.writeText(keys);
       break;
     case 'exportToCSV':
       backend.exportToCSV(data);

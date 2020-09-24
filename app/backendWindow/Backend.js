@@ -77,7 +77,21 @@ export default class Backend {
   }
 
   getNodeFee(): void {
-    ipcRenderer.send('fromBackend', 'nodeFee', this.wallet.getNodeFee()[1]);
+    this.send('nodeFee', this.wallet.getNodeFee()[1]);
+  }
+
+  send(type: string, data: any) {
+    if (typeof data === 'object') {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const key in data) {
+        if (typeof data[key] === 'function') {
+          // eslint-disable-next-line no-param-reassign
+          delete data[key];
+        }
+      }
+    }
+    log.debug({ type, data });
+    ipcRenderer.send('fromBackend', type, data);
   }
 
   getWalletActive(): boolean {
@@ -117,7 +131,7 @@ export default class Backend {
     const rawTransactions = this.getFormattedTransactions(
       undefined,
       undefined,
-      false
+      true
     );
     const csvWriter = createObjectCsvWriter({
       path: savePath,
@@ -168,8 +182,8 @@ export default class Backend {
         hash: result.transactionHash,
         error: undefined
       };
-      ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
-      this.getTransactions(this.getLastTxAmountRequested() + 1);
+      this.send('sendTransactionResponse', response);
+      await this.getTransactions(this.getLastTxAmountRequested() + 1);
     } else {
       /* TODO: Optionally allow retries in case of network error? */
       this.wallet.deletePreparedTransaction(hash);
@@ -180,12 +194,12 @@ export default class Backend {
         hash: undefined,
         error: result.error
       };
-      ipcRenderer.send('fromBackend', 'sendTransactionResponse', response);
+      this.send('sendTransactionResponse', response);
     }
   }
 
-  async prepareTransaction(transaction): void {
-    const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+  async prepareTransaction(transaction): Promise<void> {
+    const [unlockedBalance, lockedBalance] = await this.wallet.getBalance();
 
     const networkHeight: number = this.daemon.getNetworkBlockCount();
 
@@ -252,8 +266,8 @@ export default class Backend {
         nodeFee: nodeFee,
         error: undefined
       };
-      ipcRenderer.send('fromBackend', 'prepareTransactionResponse', response);
-      this.getTransactions(this.getLastTxAmountRequested() + 1);
+      this.send('prepareTransactionResponse', response);
+      await this.getTransactions(this.getLastTxAmountRequested() + 1);
     } else {
       console.log(`Failed to send transaction: ${result.error.toString()}`);
       result.error.errorString = result.error.toString();
@@ -267,16 +281,12 @@ export default class Backend {
         nodeFee: nodeFee,
         error: result.error
       };
-      ipcRenderer.send('fromBackend', 'prepareTransactionResponse', response);
+      this.send('prepareTransactionResponse', response);
     }
   }
 
   verifyPassword(password: string): void {
-    ipcRenderer.send(
-      'fromBackend',
-      'authenticationStatus',
-      password === this.walletPassword
-    );
+    this.send('authenticationStatus', password === this.walletPassword);
   }
 
   changePassword(passwords: any): void {
@@ -293,26 +303,26 @@ export default class Backend {
         response = { status: 'FAILURE', error: 'SAVEERROR' };
       }
     }
-    ipcRenderer.send('fromBackend', 'passwordChangeResponse', response);
+    this.send('passwordChangeResponse', response);
   }
 
   async rescanWallet(height: number) {
     await this.wallet.reset(height);
     this.saveWallet(false);
-    ipcRenderer.send('fromBackend', 'rescanResponse', height);
+    this.send('rescanResponse', height);
   }
 
-  getFormattedTransactions(
+  async getFormattedTransactions(
     startIndex?: number,
     numTransactions?: number,
     includeFusions?: boolean
   ): any[] {
-    const rawTransactions = this.wallet.getTransactions(
+    const rawTransactions = await this.wallet.getTransactions(
       startIndex,
       numTransactions,
       includeFusions || false
     );
-    const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+    const [unlockedBalance, lockedBalance] = await this.wallet.getBalance();
     let balance = parseInt(unlockedBalance + lockedBalance, 10);
     const transactions = [];
 
@@ -344,21 +354,21 @@ export default class Backend {
     }
   }
 
-  getTransactions(displayCount: number): void {
+  async getTransactions(displayCount: number): void {
     this.setLastTxAmountRequested(displayCount);
-    ipcRenderer.send(
-      'fromBackend',
+    const get_tx = await this.getFormattedTransactions(0, displayCount, true);
+    this.send(
       'transactionList',
-      this.getFormattedTransactions(0, displayCount, false)
+      get_tx
     );
   }
 
   getTransactionCount(): void {
-    ipcRenderer.send('fromBackend', 'transactionCount', this.transactionCount);
+    this.send('transactionCount', this.transactionCount);
   }
 
-  getBalance(): void {
-    ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
+  async getBalance(): void {
+    this.send('balance', await this.wallet.getBalance());
   }
 
   saveWallet(notify: boolean, path?: string): boolean {
@@ -371,28 +381,26 @@ export default class Backend {
     );
 
     if (notify) {
-      ipcRenderer.send('fromBackend', 'saveWalletResponse', status);
+      this.send('saveWalletResponse', status);
     }
     return status;
   }
 
-  transactionSearch(query: string) {
-    const transactions = this.wallet.getTransactions();
+  async transactionSearch(query: string) {
+    const transactions = await this.wallet.getTransactions();
     const possibleTransactionValues = ['blockHeight', 'hash', 'paymentID'];
     const transactionResults = possibleTransactionValues.map(value => {
       return this.search(query, transactions, value);
     });
+
     let sanitizedResults = [];
     /* the search function returns a separate array of results for each
     value searched, we need to concat them together with spread */
     for (let i = 0; i < transactionResults.length; i++) {
       sanitizedResults = [...transactionResults[i], ...sanitizedResults];
     }
-    ipcRenderer.send(
-      'fromBackend',
-      'transactionSearchResponse',
-      sanitizedResults
-    );
+
+    this.send('transactionSearchResponse', sanitizedResults);
   }
 
   search(searchedValue: any, arrayToSearch: any[], objectPropertyName: string) {
@@ -406,8 +414,17 @@ export default class Backend {
       ) {
         /* we have to disable this because the function gets lost
         when we send the object over ipc */
+
         // eslint-disable-next-line no-param-reassign
         arrayToSearch[i].totalTxAmount = arrayToSearch[i].totalAmount();
+
+        // we need to delete the function afterwards because of
+        // electron 9's new serialization code
+        // https://www.electronjs.org/docs/breaking-changes#behavior-changed-values-sent-over-ipc-are-now-serialized-with-structured-clone-algorithm
+
+        // eslint-disable-next-line no-param-reassign
+        delete arrayToSearch[i].totalAmount;
+
         resultsToReturn.push(arrayToSearch[i]);
       }
     }
@@ -423,11 +440,7 @@ export default class Backend {
   }
 
   getConnectionInfo(): void {
-    ipcRenderer.send(
-      'fromBackend',
-      'daemonConnectionInfo',
-      this.wallet.getDaemonConnectionInfo()
-    );
+    this.send('daemonConnectionInfo', this.wallet.getDaemonConnectionInfo());
   }
 
   setLogLevel(logLevel: string): void {
@@ -441,16 +454,16 @@ export default class Backend {
     this.wallet.on(
       'heightchange',
       (walletBlockCount, localDaemonBlockCount, networkBlockCount) => {
-        ipcRenderer.send('fromBackend', 'syncStatus', [
+        this.send('syncStatus', [
           walletBlockCount,
           localDaemonBlockCount,
           networkBlockCount
         ]);
       }
     );
-    this.wallet.on('transaction', () => {
+    this.wallet.on('transaction', async () => {
       this.getTransactionCount();
-      this.getTransactions(this.getLastTxAmountRequested() + 1);
+      await this.getTransactions(this.getLastTxAmountRequested() + 1);
       this.getBalance();
     });
 
@@ -466,45 +479,40 @@ export default class Backend {
       }
     });
     this.setWalletActive(true);
-    ipcRenderer.send('fromBackend', 'syncStatus', this.wallet.getSyncStatus());
-    ipcRenderer.send(
-      'fromBackend',
-      'primaryAddress',
-      this.wallet.getPrimaryAddress()
-    );
-    ipcRenderer.send(
-      'fromBackend',
-      'transactionList',
-      this.getFormattedTransactions(0, 50, false)
-    );
+    this.send('syncStatus', this.wallet.getSyncStatus());
+    this.send('primaryAddress', this.wallet.getPrimaryAddress());
+    this.send('transactionList', await this.getFormattedTransactions(0, 50, true));
     this.getTransactionCount();
-    ipcRenderer.send('fromBackend', 'balance', this.wallet.getBalance());
-    ipcRenderer.send('fromBackend', 'walletActiveStatus', true);
-    ipcRenderer.send('fromBackend', 'authenticationStatus', true);
+    this.send('balance', await this.wallet.getBalance());
+    this.send('walletActiveStatus', true);
+    this.send('authenticationStatus', true);
     await this.wallet.start();
-    ipcRenderer.send(
-      'fromBackend',
-      'daemonConnectionInfo',
-      this.wallet.getDaemonConnectionInfo()
-    );
+    //this.wallet.usingNativeCrypto();
+    this.send('daemonConnectionInfo', this.wallet.getDaemonConnectionInfo());
     this.getNodeFee();
   }
 
-  getSecret(): string {
+  async getMnemonic(): string {
+      let [mnemonicSeed, err] = await this.wallet.getMnemonicSeed();
+      if (err) {
+        if (err.errorCode === 41) {
+          mnemonicSeed = '';
+        } else {
+          throw err;
+        }
+      }
+      return mnemonicSeed;
+  }
+
+  async getSecret(): string {
     const publicAddress = this.wallet.getPrimaryAddress();
     const [
       privateSpendKey,
       privateViewKey
     ] = this.wallet.getPrimaryAddressPrivateKeys();
     // eslint-disable-next-line prefer-const
-    let [mnemonicSeed, err] = this.wallet.getMnemonicSeed();
-    if (err) {
-      if (err.errorCode === 41) {
-        mnemonicSeed = '';
-      } else {
-        throw err;
-      }
-    }
+
+    let mnemonicSeed = await this.getMnemonic();
 
     const secret =
       // eslint-disable-next-line prefer-template
@@ -520,9 +528,9 @@ export default class Backend {
     return secret;
   }
 
-  startWallet(password: string): void {
+  async startWallet(password: string): Promise<void> {
     this.walletPassword = password;
-    const [openWallet, error] = WalletBackend.openWalletFromFile(
+    const [openWallet, error] = await WalletBackend.openWalletFromFile(
       this.daemon,
       this.walletFile,
       this.walletPassword,
@@ -531,10 +539,10 @@ export default class Backend {
     if (!error) {
       this.walletInit(openWallet);
     } else if (error.errorCode === WalletErrorCode.WRONG_PASSWORD) {
-      ipcRenderer.send('fromBackend', 'authenticationStatus', false);
+      this.send('authenticationStatus', false);
     } else {
       error.errorString = error.toString();
-      ipcRenderer.send('fromBackend', 'authenticationError', error);
+      this.send('authenticationError', error);
     }
   }
 }

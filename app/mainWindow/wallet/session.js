@@ -19,6 +19,8 @@ export default class WalletSession {
 
   fiatPrice: number;
 
+  selectedTimeZone: string;
+
   primaryAddress: string;
 
   transactions: any[] = [];
@@ -46,9 +48,11 @@ export default class WalletSession {
     this.loginFailed = false;
     this.firstLoadOnLogin = true;
     this.selectedFiat = config.selectedFiat;
+    this.selectedTimeZone = config.selectedTimeZone;
     this.fiatPrice = 0;
     this.getFiatPrice(this.selectedFiat);
     this.updateNodeList();
+    this.getTimeZone(this.selectedTimeZone);
   }
 
   setPreparedTransactionHash(hash: string): void {
@@ -134,6 +138,7 @@ export default class WalletSession {
     }
   };
 
+
   updateNodeList = async () => {
     const apiURL = `${Configure.nodeListURL}`;
 
@@ -166,6 +171,10 @@ export default class WalletSession {
     } catch (err) {
       log.debug(`Failed to get node list from API: : \n`, err);
     }
+  };
+
+  getTimeZone = async (selectedTimeZone: string) => {
+    return selectedTimeZone;
   };
 
   setSyncStatus(syncStatus: number[]) {

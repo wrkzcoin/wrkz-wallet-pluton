@@ -43,7 +43,7 @@ export default class Home extends Component<Props, State> {
   constructor(props?: Props) {
     super(props);
     this.state = {
-      transactions: session.getTransactions(),
+      transactions: undefined,
       transactionCount: session.getTransactionCount(),
       darkMode: config.darkMode,
       displayCurrency: config.displayCurrency,
@@ -65,6 +65,15 @@ export default class Home extends Component<Props, State> {
     this.handleNewSyncStatus = this.handleNewSyncStatus.bind(this);
     this.handleNewTransactions = this.handleNewTransactions.bind(this);
     this.handleNewTransactionCount = this.handleNewTransactionCount.bind(this);
+  }
+
+  async componentWillMount() {
+    try {
+      const get_tx = await session.getTransactions();
+      this.setState({ transactions: get_tx });
+    } catch (err) {
+      log.debug(err);
+    }
   }
 
   componentDidMount() {
@@ -96,10 +105,9 @@ export default class Home extends Component<Props, State> {
     });
   };
 
-  handleNewTransactions = () => {
-    this.setState({
-      transactions: session.getTransactions()
-    });
+  handleNewTransactions = async () => {
+    const get_tx = await session.getTransactions();
+    this.setState({ transactions: get_tx });
   };
 
   handleNewSyncStatus = () => {
@@ -132,20 +140,18 @@ export default class Home extends Component<Props, State> {
     session.firstLoadOnLogin = false;
   }
 
-  refreshListOnNewTransaction = () => {
+  refreshListOnNewTransaction = async () => {
     log.debug('Transaction found, refreshing transaction list...');
     displayedTransactionCount += 1;
-    this.setState({
-      transactions: session.getTransactions(0, displayedTransactionCount, false)
-    });
+    const get_tx = await session.getTransactions(0, displayedTransactionCount, false);
+    this.setState({ transactions: get_tx });
   };
 
-  openNewWallet = () => {
+  openNewWallet = async () => {
     log.debug('Initialized new wallet session, refreshing transaction list...');
     displayedTransactionCount = 50;
-    this.setState({
-      transactions: session.getTransactions(0, displayedTransactionCount, false)
-    });
+    const get_tx = await session.getTransactions(0, displayedTransactionCount, false);
+    this.setState({ transactions: get_tx });
   };
 
   // TODO: implement paging instead of just loading +50
@@ -238,7 +244,7 @@ export default class Home extends Component<Props, State> {
                 </tr>
               </thead>
               <tbody>
-                {transactions.map(tx => {
+                {transactions !== undefined && transactions.length > 0 && transactions.map(tx => {
                   const rowIsExpanded = expandedRows.includes(tx[1]);
                   const transactionHash = tx[1];
                   const toggleSymbol = rowIsExpanded ? '-' : '+';
@@ -407,10 +413,11 @@ export default class Home extends Component<Props, State> {
                       )}
                     </Fragment>
                   );
-                })}
+                })
+                }
               </tbody>
             </table>
-            {transactions.length === 0 && (
+            {transactions !== undefined && transactions.length === 0 && (
               <div className="elem-to-center">
                 <div className={`box ${fillColor}`}>
                   <p className={`${textColor} title has-text-centered`}>
@@ -425,7 +432,7 @@ export default class Home extends Component<Props, State> {
                 </div>
               </div>
             )}
-            {transactions.length > transactionCount && (
+            {transactions !== undefined && transactions.length > transactionCount && (
               <form>
                 <div className="field">
                   <div className="buttons">

@@ -35,13 +35,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v1.4.2
+      - uses: actions/setup-node@v1.4.3
         with:
           node-version: '12.x'
 
       - name: Setup MSBuild.exe
         if: matrix.os == 'windows-latest'
         uses: warrenbuckley/Setup-MSBuild@v1
+
+      # Fetch Dependencies
+      - name: Linux Dependencies
+        if: matrix.target != 'x86_64-pc-windows-msvc' && matrix.target != 'x86_64-apple-darwin'
+        run: |
+          sudo apt update
+          sudo apt install -y libusb-1.0-0-dev libudev-dev
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -57,7 +64,7 @@ jobs:
             ${{ matrix.target }}-yarn-
 
       - name: Dependencies
-        run: yarn --network-concurrency 1 --network-timeout 120000
+        run: yarn --network-concurrency 1 --network-timeout 300000
 
       - name: Build aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
