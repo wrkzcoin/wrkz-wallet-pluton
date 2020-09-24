@@ -37,7 +37,7 @@ jobs:
 
       - uses: actions/setup-node@v1.4.3
         with:
-          node-version: '14.x'
+          node-version: '12.x'
 
       - name: Setup MSBuild.exe
         if: matrix.os == 'windows-latest'
@@ -49,28 +49,18 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y libusb-1.0-0-dev libudev-dev
+      - name: Setup Cache
+        uses: actions/cache@v1.2.0
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ matrix.target }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ matrix.target }}-yarn-
 
       - name: Dependencies
-        shell: bash
-        run: |
-          yarn --network-concurrency 1 --network-timeout 120000
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            cd node_modules\turtlecoin-crypto
-            node-gyp rebuild --target=8.2.4 --arch=x64 --dist-url=https://electronjs.org/headers
-            cd ..\..
-          elif [ "$RUNNER_OS" == "Linux" ] && [ "${{ matrix.target }}" != "armv7-unknown-linux-gnueabihf" ]; then
-            cd node_modules/turtlecoin-crypto
-            node-gyp rebuild --target=8.2.4 --arch=x64 --dist-url=https://electronjs.org/headers
-            cd ../..
-          elif [ "$RUNNER_OS" == "Linux" ] && [ "${{ matrix.target }}" == "armv7-unknown-linux-gnueabihf" ]; then
-            cd node_modules/turtlecoin-crypto
-            node-gyp rebuild --target=8.2.4 --arch=arm --dist-url=https://electronjs.org/headers
-            cd ../..
-          elif [ "$RUNNER_OS" == "macOS" ]; then
-            cd node_modules/turtlecoin-crypto
-            node-gyp rebuild --target=8.2.4 --arch=x64 --dist-url=https://electronjs.org/headers
-            cd ../..
-          fi
+        run: yarn --network-concurrency 1 --network-timeout 120000
+
       - name: Build aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
         run: yarn package-arm64
