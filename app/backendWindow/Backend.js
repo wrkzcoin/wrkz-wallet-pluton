@@ -492,21 +492,27 @@ export default class Backend {
     this.getNodeFee();
   }
 
-  getSecret(): string {
+  async getMnemonic(): string {
+      let [mnemonicSeed, err] = await this.wallet.getMnemonicSeed();
+      if (err) {
+        if (err.errorCode === 41) {
+          mnemonicSeed = '';
+        } else {
+          throw err;
+        }
+      }
+      return mnemonicSeed;
+  }
+
+  async getSecret(): string {
     const publicAddress = this.wallet.getPrimaryAddress();
     const [
       privateSpendKey,
       privateViewKey
     ] = this.wallet.getPrimaryAddressPrivateKeys();
     // eslint-disable-next-line prefer-const
-    let [mnemonicSeed, err] = this.wallet.getMnemonicSeed();
-    if (err) {
-      if (err.errorCode === 41) {
-        mnemonicSeed = '';
-      } else {
-        throw err;
-      }
-    }
+
+    let mnemonicSeed = await this.getMnemonic();
 
     const secret =
       // eslint-disable-next-line prefer-template
