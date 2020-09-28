@@ -133,7 +133,7 @@ export default class ImportKey extends Component<Props, State> {
     let currentPageNumber: number = this.evaluatePageNumber(activePage);
 
     if (currentPageNumber === 1) {
-      const [restoredWallet, error] = WalletBackend.importWalletFromKeys(
+      const [restoredWallet, error] = await WalletBackend.importWalletFromKeys(
         Configure.defaultDaemon,
         scanHeight === '' ? 0 : Number(scanHeight),
         privateViewKey,

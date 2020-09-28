@@ -130,7 +130,7 @@ export default class Import extends Component<Props, State> {
     let currentPageNumber: number = this.evaluatePageNumber(activePage);
 
     if (currentPageNumber === 1) {
-      const [restoredWallet, error] = WalletBackend.importWalletFromSeed(
+      const [restoredWallet, error] = await WalletBackend.importWalletFromSeed(
         Configure.defaultDaemon,
         scanHeight === '' ? 0 : Number(scanHeight),
         mnemonicSeed,
