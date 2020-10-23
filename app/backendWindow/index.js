@@ -7,7 +7,7 @@ import isDev from 'electron-is-dev';
 import log from 'electron-log';
 import Backend from './Backend';
 
-let backend = null;
+let backend: Backend | null = null;
 
 ipcRenderer.on('fromMain', (event: IpcRendererEvent, message: any) => {
   parseMessage(message);
@@ -17,7 +17,7 @@ ipcRenderer.on('fromFrontend', (event: IpcRendererEvent, message: any) => {
   parseMessage(message);
 });
 
-function parseMessage(message: any) {
+async function parseMessage(message: any) {
   const { messageType, data } = message;
   switch (messageType) {
     case 'config':
@@ -34,13 +34,13 @@ function parseMessage(message: any) {
       break;
     case 'stopRequest':
       if (backend) {
-        backend.stop(true);
+        await backend.stop(true);
       } else {
         ipcRenderer.send('backendStopped');
       }
       break;
     case 'transactionSearchQuery':
-      backend.transactionSearch(data);
+      await backend.transactionSearch(data);
       break;
     case 'notificationsRequest':
       backend.setNotifications(data);
@@ -52,10 +52,10 @@ function parseMessage(message: any) {
       backend.setScanCoinbaseTransactions(data);
       break;
     case 'rescanRequest':
-      backend.rescanWallet(data);
+      await backend.rescanWallet(data);
       break;
     case 'changeNode':
-      backend.changeNode(data);
+      await backend.changeNode(data);
       break;
     case 'backupToFile':
       fs.writeFile(data, backend.getSecret(), error => {
@@ -78,12 +78,12 @@ function parseMessage(message: any) {
       break;
     case 'openNewWallet':
       if (backend) {
-        backend.stop(false);
+        await backend.stop(false);
         backend = null;
       }
       break;
     case 'walletPassword':
-      backend.startWallet(data);
+      await backend.startWallet(data);
       break;
     case 'verifyWalletPassword':
       backend.verifyPassword(data);
@@ -93,16 +93,16 @@ function parseMessage(message: any) {
       break;
     case 'transactionRequest':
       // data is the amount of transactions to get
-      backend.getTransactions(data);
+      await backend.getTransactions(data);
       break;
     case 'prepareTransactionRequest':
-      backend.prepareTransaction(data);
+      await backend.prepareTransaction(data);
       break;
     case 'sendTransactionRequest':
-      backend.sendTransaction(data);
+      await backend.sendTransaction(data);
       break;
     default:
-      log.info(message);
+      log.info(`UNSUPPORTED: ${message}`);
       break;
   }
 }

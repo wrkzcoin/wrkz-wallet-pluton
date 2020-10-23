@@ -26,7 +26,7 @@ export default class Backend {
 
   walletPassword: string = '';
 
-  wallet: any;
+  wallet: WalletBackend;
 
   walletActive: boolean = false;
 
@@ -156,7 +156,7 @@ export default class Backend {
     this.wallet.scanCoinbaseTransactions(value);
   }
 
-  async sendTransaction(hash: string): void {
+  async sendTransaction(hash: string): Promise<void> {
     const result = await this.wallet.sendPreparedTransaction(hash);
 
     if (result.success) {
@@ -184,7 +184,7 @@ export default class Backend {
     }
   }
 
-  async prepareTransaction(transaction): void {
+  async prepareTransaction(transaction): Promise<void> {
     const { address, amount, paymentID, sendAll } = transaction;
 
     const destinations = [[address, sendAll ? 100000 : amount]];
@@ -203,7 +203,7 @@ export default class Backend {
     log.info(result);
 
     if (result.success) {
-      const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+      const [unlockedBalance, lockedBalance] = await this.wallet.getBalance();
       const balance = parseInt(unlockedBalance + lockedBalance, 10);
       const response = {
         status: 'SUCCESS',
@@ -261,17 +261,17 @@ export default class Backend {
     this.send('rescanResponse', height);
   }
 
-  getFormattedTransactions(
+  async getFormattedTransactions(
     startIndex?: number,
     numTransactions?: number,
     includeFusions?: boolean
-  ): any[] {
-    const rawTransactions = this.wallet.getTransactions(
+  ): Promise<any[]> {
+    const rawTransactions = await this.wallet.getTransactions(
       startIndex,
       numTransactions,
       includeFusions || false
     );
-    const [unlockedBalance, lockedBalance] = this.wallet.getBalance();
+    const [unlockedBalance, lockedBalance] = await this.wallet.getBalance();
     let balance = parseInt(unlockedBalance + lockedBalance, 10);
     const transactions = [];
 
@@ -292,31 +292,30 @@ export default class Backend {
     return transactions;
   }
 
-  stop(isShuttingDown: boolean) {
+  async stop(isShuttingDown: boolean) {
     if (this.wallet) {
-      this.saveWallet(false);
+      await this.saveWallet(false);
       clearInterval(this.saveInterval);
-      this.wallet.stop();
+      await this.wallet.stop();
     }
     if (isShuttingDown) {
       ipcRenderer.send('backendStopped');
     }
   }
 
-  getTransactions(displayCount: number): void {
+  async getTransactions(displayCount: number): Promise<void> {
     this.setLastTxAmountRequested(displayCount);
-    this.send(
-      'transactionList',
-      this.getFormattedTransactions(0, displayCount, false)
-    );
+    const txList = await this.getFormattedTransactions(0, displayCount, false);
+    this.send('transactionList', txList);
   }
 
   getTransactionCount(): void {
     this.send('transactionCount', this.transactionCount);
   }
 
-  getBalance(): void {
-    this.send('balance', this.wallet.getBalance());
+  async getBalance(): Promise<void> {
+    const bal = this.wallet.getBalance();
+    this.send('balance', bal);
   }
 
   saveWallet(notify: boolean, path?: string): boolean {
@@ -334,8 +333,8 @@ export default class Backend {
     return status;
   }
 
-  transactionSearch(query: string) {
-    const transactions = this.wallet.getTransactions();
+  async transactionSearch(query: string) {
+    const transactions = await this.wallet.getTransactions();
     const possibleTransactionValues = ['blockHeight', 'hash', 'paymentID'];
     const transactionResults = possibleTransactionValues.map(value => {
       return this.search(query, transactions, value);
@@ -379,7 +378,7 @@ export default class Backend {
     return resultsToReturn;
   }
 
-  async changeNode(nodeInfo: any): void {
+  async changeNode(nodeInfo: any): Promise<void> {
     const { host, port } = nodeInfo;
     this.setDaemon(new Daemon(host, port));
     await this.wallet.swapNode(this.daemon);
@@ -402,6 +401,8 @@ export default class Backend {
     this.wallet.on(
       'heightchange',
       (walletBlockCount, localDaemonBlockCount, networkBlockCount) => {
+        log.info('booba');
+        log.info(this.wallet.getSyncStatus());
         this.send('syncStatus', [
           walletBlockCount,
           localDaemonBlockCount,
@@ -429,9 +430,11 @@ export default class Backend {
     this.setWalletActive(true);
     this.send('syncStatus', this.wallet.getSyncStatus());
     this.send('primaryAddress', this.wallet.getPrimaryAddress());
-    this.send('transactionList', this.getFormattedTransactions(0, 50, false));
+    const txList = await this.getFormattedTransactions(0, 50, false);
+    this.send('transactionList', txList);
     this.getTransactionCount();
-    this.send('balance', this.wallet.getBalance());
+    const bal = await this.wallet.getBalance();
+    this.send('balance', bal);
     this.send('walletActiveStatus', true);
     this.send('authenticationStatus', true);
     await this.wallet.start();
@@ -439,14 +442,14 @@ export default class Backend {
     this.getNodeFee();
   }
 
-  getSecret(): string {
+  async getSecret(): Promise<string> {
     const publicAddress = this.wallet.getPrimaryAddress();
     const [
       privateSpendKey,
       privateViewKey
     ] = this.wallet.getPrimaryAddressPrivateKeys();
     // eslint-disable-next-line prefer-const
-    let [mnemonicSeed, err] = this.wallet.getMnemonicSeed();
+    let [mnemonicSeed, err] = await this.wallet.getMnemonicSeed();
     if (err) {
       if (err.errorCode === 41) {
         mnemonicSeed = '';
@@ -469,15 +472,15 @@ export default class Backend {
     return secret;
   }
 
-  startWallet(password: string): void {
+  async startWallet(password: string): Promise<void> {
     this.walletPassword = password;
-    const [openWallet, error] = WalletBackend.openWalletFromFile(
+    const [openWallet, error] = await WalletBackend.openWalletFromFile(
       this.daemon,
       this.walletFile,
       this.walletPassword
     );
     if (!error) {
-      this.walletInit(openWallet);
+      await this.walletInit(openWallet);
     } else if (error.errorCode === WalletErrorCode.WRONG_PASSWORD) {
       this.send('authenticationStatus', false);
     } else {
