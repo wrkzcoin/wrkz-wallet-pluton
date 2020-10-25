@@ -55,15 +55,15 @@ jobs:
 
       - name: Build aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
-        run: yarn package-arm64
+        run: yarn package-arm64 --scripts-prepend-node-path true
 
       - name: Build armv7
         if: matrix.target == 'armv7-unknown-linux-gnueabihf'
-        run: yarn package-arm
+        run: yarn package-arm --scripts-prepend-node-path true
 
       - name: Build Non-aarch64
         if: matrix.target != 'aarch64-unknown-linux-gnu' && matrix.target != 'armv7-unknown-linux-gnueabihf'
-        run: yarn package
+        run: yarn package --scripts-prepend-node-path true
 
       - name: Prepare to Deploy
         id: before_deploy
