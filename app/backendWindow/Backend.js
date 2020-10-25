@@ -322,8 +322,11 @@ export default class Backend {
       numTransactions,
       includeFusions || false
     );
+
     const [unlockedBalance, lockedBalance] = await this.wallet.getBalance();
+
     let balance = parseInt(unlockedBalance + lockedBalance, 10);
+
     const transactions = [];
 
     for (const [index, tx] of rawTransactions.entries()) {
@@ -368,6 +371,7 @@ export default class Backend {
   }
 
   async getBalance(): void {
+    console.log(`balance: ${this.wallet.getBalance()}`);
     this.send('balance', await this.wallet.getBalance());
   }
 
@@ -453,18 +457,22 @@ export default class Backend {
     this.setLogLevel(this.logLevel);
     this.wallet.on(
       'heightchange',
-      (walletBlockCount, localDaemonBlockCount, networkBlockCount) => {
+      async (walletBlockCount, localDaemonBlockCount, networkBlockCount) => {
         this.send('syncStatus', [
           walletBlockCount,
           localDaemonBlockCount,
           networkBlockCount
         ]);
+        if (networkBlockCount !== 0 && walletBlockCount !== 0 && (networkBlockCount - walletBlockCount) < 40) {
+            this.send('balance', await this.wallet.getBalance());
+        }
       }
     );
+
     this.wallet.on('transaction', async () => {
       this.getTransactionCount();
       await this.getTransactions(this.getLastTxAmountRequested() + 1);
-      this.getBalance();
+      await this.getBalance();
     });
 
     this.wallet.on('incomingtx', transaction => {

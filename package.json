@@ -1,7 +1,7 @@
 {
   "name": "pluton-wallet",
   "productName": "Pluton",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "WrkzCoin wallet based on React, React Router, Webpack, and React Hot Loader",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
