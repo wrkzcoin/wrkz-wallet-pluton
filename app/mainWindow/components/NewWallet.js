@@ -194,11 +194,11 @@ export default class NewWallet extends Component<Props, State> {
             return;
           }
           const saved = newWallet.saveWalletToFile(
-            `${response.filePath}.wallet`,
+            `${response.filePath}`,
             password
           );
           if (saved) {
-            reInitWallet(`${response.filePath}.wallet`);
+            reInitWallet(`${response.filePath}`);
           } else {
             const message = (
               <div>

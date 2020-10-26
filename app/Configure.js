@@ -160,7 +160,7 @@ const Configure = new function() {
      * Default daemon to use. Can either be a BlockchainCacheApi(baseURL, SSL),
      * or a ConventionalDaemon(url, port).
      */
-    this.defaultDaemon = new ConventionalDaemon('turtle.imhard4.men', 11898);
+    this.defaultDaemon = new Daemon('turtle.imhard4.men', 11898);
 
     /**
      * A url to fetch node info from. Should follow the turtlepay format 
@@ -169,7 +169,7 @@ const Configure = new function() {
 
     this.DefaultDaemonRPCPort = '11898';
 
-    this.nodeListURL = 'https://blockapi.turtlepay.io/node/stats';
+    this.nodeListURL = 'http://trtl-nodes.bot.tips/list';
 
     this.ExplorerURL = 'https://explorer.turtlecoin.lol';
 

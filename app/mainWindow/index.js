@@ -428,7 +428,7 @@ ipcRenderer.on('handleSaveAs', async () => {
 
   log.info(response);
 
-  const request = { notify: true, savePath: `${response.filePath}.wallet` };
+  const request = { notify: true, savePath: `${response.filePath}` };
   ipcRenderer.send('fromFrontend', 'saveWalletAs', request);
 });
 

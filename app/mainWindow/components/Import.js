@@ -177,11 +177,11 @@ export default class Import extends Component<Props, State> {
       }
 
       const saved = importedWallet.saveWalletToFile(
-        `${response.filePath}.wallet`,
+        `${response.filePath}`,
         password
       );
       if (saved) {
-        reInitWallet(`${response.filePath}.wallet`);
+        reInitWallet(`${response.filePath}`);
       } else {
         const message = (
           <div>
