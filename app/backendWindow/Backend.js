@@ -131,7 +131,7 @@ export default class Backend {
     const rawTransactions = this.getFormattedTransactions(
       undefined,
       undefined,
-      false
+      true
     );
     const csvWriter = createObjectCsvWriter({
       path: savePath,
@@ -356,15 +356,19 @@ export default class Backend {
 
   async getTransactions(displayCount: number): void {
     this.setLastTxAmountRequested(displayCount);
-    const txList = await this.getFormattedTransactions(0, displayCount, false);
-    this.send('transactionList', txList);
+    const get_tx = await this.getFormattedTransactions(0, displayCount, true);
+    this.send(
+      'transactionList',
+      get_tx
+    );
   }
 
   getTransactionCount(): void {
     this.send('transactionCount', this.transactionCount);
   }
 
-  async getBalance(): Promise<void> {
+  async getBalance(): void {
+    console.log(`balance: ${this.wallet.getBalance()}`);
     this.send('balance', await this.wallet.getBalance());
   }
 
@@ -482,7 +486,7 @@ export default class Backend {
     this.setWalletActive(true);
     this.send('syncStatus', this.wallet.getSyncStatus());
     this.send('primaryAddress', this.wallet.getPrimaryAddress());
-    this.send('transactionList', await this.getFormattedTransactions(0, 50, false));
+    this.send('transactionList', await this.getFormattedTransactions(0, 50, true));
     this.getTransactionCount();
     this.send('balance', await this.wallet.getBalance());
     this.send('walletActiveStatus', true);
