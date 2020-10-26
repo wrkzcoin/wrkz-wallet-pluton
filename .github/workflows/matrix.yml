@@ -38,6 +38,7 @@ jobs:
       - uses: actions/setup-node@v1.4.3
         with:
           node-version: '12.x'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Setup MSBuild.exe
         if: matrix.os == 'windows-latest'
@@ -51,9 +52,7 @@ jobs:
           sudo apt install -y libusb-1.0-0-dev libudev-dev
 
       - name: Dependencies
-        run: |
-          yarn config set registry https://registry.npmjs.org
-          yarn --network-concurrency 1 --network-timeout 1200000 --scripts-prepend-node-path true
+        run: yarn --network-concurrency 1 --network-timeout 1200000 --scripts-prepend-node-path true
 
       - name: Build aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
