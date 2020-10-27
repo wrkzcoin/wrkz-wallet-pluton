@@ -14143,7 +14143,7 @@ turtlecoin-mnemonics@0.0.9:
 
 "turtlecoin-wallet-backend@https://github.com/wrkzcoin/turtlecoin-wallet-backend-js#dev":
   version "6.0.0"
-  resolved "https://github.com/wrkzcoin/turtlecoin-wallet-backend-js#058e32c134dd161c7c5c03ab5e99be9df408ffd9"
+  resolved "https://github.com/wrkzcoin/turtlecoin-wallet-backend-js#26fb79236fcacaa1e1c1d20c12a9be0d7e5f370c"
   dependencies:
     lodash "^4.17.15"
     object-sizeof "https://github.com/zpalmtree/sizeof"
@@ -14975,7 +14975,7 @@ write@1.0.3:
 
 "wrkzcoin-utils@https://github.com/wrkzcoin/wrkzcoin-utils#dev":
   version "3.0.3"
-  resolved "https://github.com/wrkzcoin/wrkzcoin-utils#0bbf6d79261ca4b5a31bbfa69ffade9bd04cfae4"
+  resolved "https://github.com/wrkzcoin/wrkzcoin-utils#49ec30ad90581ea28e4bab198217e09dea284f7f"
   dependencies:
     "@ledgerhq/hw-transport" "^5.22.0"
     "@types/ledgerhq__hw-transport" "^4.21.2"
