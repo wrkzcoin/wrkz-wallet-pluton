@@ -180,11 +180,11 @@ export default class ImportKey extends Component<Props, State> {
         return;
       }
       const saved = importedWallet.saveWalletToFile(
-        `${response.filePath}.wallet`,
+        `${response.filePath}`,
         password
       );
       if (saved) {
-        reInitWallet(`${response.filePath}.wallet`);
+        reInitWallet(`${response.filePath}`);
       } else {
         const message = (
           <div>
