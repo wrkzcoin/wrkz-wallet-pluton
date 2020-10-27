@@ -52,7 +52,7 @@ jobs:
           sudo apt install -y libusb-1.0-0-dev libudev-dev
 
       - name: Dependencies
-        run: yarn --frozen-lockfile --network-concurrency 1 --network-timeout 1200000 --scripts-prepend-node-path true
+        run: yarn --network-concurrency 1 --network-timeout 1000000 --scripts-prepend-node-path true
 
       - name: Build aarch64
         if: matrix.target == 'aarch64-unknown-linux-gnu'
