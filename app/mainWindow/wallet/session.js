@@ -33,6 +33,8 @@ export default class WalletSession {
 
   transactionCount: number = 0;
 
+  backendLogLines: string[] = [];
+
   daemonConnectionInfo: DaemonConnection = {
     daemonType: 1,
     daemonTypeDetermined: true,
@@ -106,6 +108,15 @@ export default class WalletSession {
   setTransactionCount(txCount: number): void {
     this.transactionCount = txCount;
     eventEmitter.emit('gotTransactionCount');
+  }
+
+  addBackendLogLine(line: string): void {
+    this.backendLogLines.push(line);
+    eventEmitter.emit('gotBackendLogLine');
+  }
+
+  getBackendLogLines(): string[] {
+    return this.backendLogLines;
   }
 
   getTransactions() {

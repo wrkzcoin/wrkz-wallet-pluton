@@ -129,14 +129,14 @@
     "url": "https://github.com/wrkzcoin/wrkz-wallet-pluton/issues"
   },
   "keywords": [
-    "turtlecoin",
+    "wrkzcoin",
     "gui wallet",
     "electron",
     "proton",
     "wrkzcoin",
     "pluton"
   ],
-  "homepage": "https://github.com/turtlecoin/turtle-wallet-proton#readme",
+  "homepage": "https://github.com/wrkzcoin/turtle-wallet-proton#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
@@ -281,7 +281,8 @@
     "semver": "^6.2.0",
     "source-code-pro": "^2.30.2",
     "tail": "^2.0.3",
-    "turtlecoin-wallet-backend": "https://github.com/wrkzcoin/turtlecoin-wallet-backend-js#dev"
+    "wrkzcoin-wallet-backend": "https://github.com/wrkzcoin/wrkzcoin-wallet-backend-js#dev",
+    "wrkzcoin-crypto": "https://github.com/wrkzcoin/wrkzcoin-crypto.git#dev"
   },
   "devEngines": {
     "node": ">=10.x",

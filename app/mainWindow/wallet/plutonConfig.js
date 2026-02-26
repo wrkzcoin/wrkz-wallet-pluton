@@ -23,16 +23,17 @@ export default class PlutonConfig {
 
   modifyConfig(propertyName: string, value: any) {
     const programDirectory = this.getConfigPath();
-    log.debug(`Config update: ${propertyName} set to ${value.toString()}`);
+    log.debug(`Config update: ${propertyName} set to ${String(value)}`);
     config[propertyName] = value;
-    fs.writeFileSync(
-      `${programDirectory}/config.json`,
-      JSON.stringify(config, null, 4),
-      err => {
-        if (err) throw err;
-        log.debug(err);
-        return false;
-      }
-    );
+    try {
+      fs.writeFileSync(
+        `${programDirectory}/config.json`,
+        JSON.stringify(config, null, 4)
+      );
+    } catch (err) {
+      log.error('Failed to write config file.', err);
+      return false;
+    }
+    return true;
   }
 }

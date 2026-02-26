@@ -9,6 +9,14 @@ import Backend from './Backend';
 
 let backend = null;
 
+function backendUnavailable(messageType: string): boolean {
+  if (backend) {
+    return false;
+  }
+  log.warn(`Ignoring '${messageType}' request: wallet backend not initialized.`);
+  return true;
+}
+
 ipcRenderer.on('fromMain', (event: IpcRendererEvent, message: any) => {
   parseMessage(message);
 });
@@ -40,45 +48,57 @@ async function parseMessage(message: any) {
       }
       break;
     case 'transactionSearchQuery':
+      if (backendUnavailable(messageType)) break;
       backend.transactionSearch(data);
       break;
     case 'notificationsRequest':
+      if (backendUnavailable(messageType)) break;
       backend.setNotifications(data);
       break;
     case 'logLevelRequest':
+      if (backendUnavailable(messageType)) break;
       backend.setLogLevel(data);
       break;
     case 'scanCoinbaseRequest':
+      if (backendUnavailable(messageType)) break;
       backend.setScanCoinbaseTransactions(data);
       break;
     case 'AutoOptimizationRequest':
+      if (backendUnavailable(messageType)) break;
       backend.setenableAutoOptimization(data);
       break;
     case 'rescanRequest':
+      if (backendUnavailable(messageType)) break;
       backend.rescanWallet(data);
       break;
     case 'changeNode':
+      if (backendUnavailable(messageType)) break;
       backend.changeNode(data);
       break;
     case 'backupToFile':
+      if (backendUnavailable(messageType)) break;
       const key_file = await backend.getSecret();
       fs.writeFile(data, key_file, error => {
         if (error) {
-          throw error;
+          log.error(error);
         }
       });
       break;
     case 'backupToClipboard':
+      if (backendUnavailable(messageType)) break;
       const keys = await backend.getSecret();
       clipboard.writeText(keys);
       break;
     case 'exportToCSV':
-      backend.exportToCSV(data);
+      if (backendUnavailable(messageType)) break;
+      await backend.exportToCSV(data);
       break;
     case 'saveWallet':
+      if (backendUnavailable(messageType)) break;
       backend.saveWallet(data);
       break;
     case 'saveWalletAs':
+      if (backendUnavailable(messageType)) break;
       backend.saveWallet(data.notify, data.savePath);
       break;
     case 'openNewWallet':
@@ -88,22 +108,28 @@ async function parseMessage(message: any) {
       }
       break;
     case 'walletPassword':
+      if (backendUnavailable(messageType)) break;
       backend.startWallet(data);
       break;
     case 'verifyWalletPassword':
+      if (backendUnavailable(messageType)) break;
       backend.verifyPassword(data);
       break;
     case 'changePasswordRequest':
+      if (backendUnavailable(messageType)) break;
       backend.changePassword(data);
       break;
     case 'transactionRequest':
+      if (backendUnavailable(messageType)) break;
       // data is the amount of transactions to get
       backend.getTransactions(data);
       break;
     case 'prepareTransactionRequest':
+      if (backendUnavailable(messageType)) break;
       backend.prepareTransaction(data);
       break;
     case 'sendTransactionRequest':
+      if (backendUnavailable(messageType)) break;
       backend.sendTransaction(data);
       break;
     default:

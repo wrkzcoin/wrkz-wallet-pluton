@@ -102,7 +102,7 @@ export default class Backend {
     this.walletActive = state;
   }
 
-  getLastTxAmountRequested(): boolean {
+  getLastTxAmountRequested(): number {
     return this.lastTxAmountRequested;
   }
 
@@ -127,8 +127,8 @@ export default class Backend {
     }
   }
 
-  exportToCSV(savePath: string) {
-    const rawTransactions = this.getFormattedTransactions(
+  async exportToCSV(savePath: string): Promise<void> {
+    const rawTransactions = await this.getFormattedTransactions(
       undefined,
       undefined,
       true
@@ -154,7 +154,7 @@ export default class Backend {
         bal: atomicToHuman(item[3], true)
       };
     });
-    csvWriter.writeRecords(csvData);
+    await csvWriter.writeRecords(csvData);
   }
 
   setScanCoinbaseTransactions(value: boolean) {
@@ -377,7 +377,7 @@ export default class Backend {
 
   saveWallet(notify: boolean, path?: string): boolean {
     if (!this.getWalletActive()) {
-      return;
+      return false;
     }
     const status = this.wallet.saveWalletToFile(
       path || this.walletFile,
@@ -482,7 +482,7 @@ export default class Backend {
           body: `You've just received ${atomicToHuman(
             transaction.totalAmount(),
             true
-          )} {Configure.ticker}.`
+          )} ${Configure.ticker}.`
         });
       }
     });
@@ -554,3 +554,4 @@ export default class Backend {
     }
   }
 }
+
