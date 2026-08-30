@@ -111,6 +111,11 @@ const Configure = new function() {
         /* At height of 1,000,100 */
         new MixinLimit(1000000, 1, 1, 1),
 
+        /* At height of 4,300,000 the default ring size becomes 8. The old
+           minimum stays valid so that a denomination without enough decoys on
+           chain is still spendable at a smaller ring. */
+        new MixinLimit(4300000, 1, 7, 7),
+
     ], 1 /* Default mixin of 3 before block 440,000 */);
 
     /**
